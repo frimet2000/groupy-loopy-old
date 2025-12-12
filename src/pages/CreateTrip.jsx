@@ -32,6 +32,8 @@ export default function CreateTrip() {
   const [loading, setLoading] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
   
+  console.log('CreateTrip rendered. Loading:', loading);
+  
   const [formData, setFormData] = useState({
     title_he: '',
     title_en: '',
