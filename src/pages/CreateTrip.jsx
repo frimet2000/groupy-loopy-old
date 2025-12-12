@@ -107,7 +107,7 @@ export default function CreateTrip() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     console.log('🎯 Form submitted!', { user, formData });
 
     if (!user) {
