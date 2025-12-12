@@ -109,6 +109,24 @@ export default function CreateTrip() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validation
+    if (!formData.title_he || !formData.title_en) {
+      toast.error(language === 'he' ? 'נא למלא כותרת בעברית ובאנגלית' : 'Please fill in title in both languages');
+      return;
+    }
+    if (!formData.location) {
+      toast.error(language === 'he' ? 'נא למלא את המיקום' : 'Please fill in location');
+      return;
+    }
+    if (!formData.region) {
+      toast.error(language === 'he' ? 'נא לבחור אזור' : 'Please select region');
+      return;
+    }
+    if (!formData.date) {
+      toast.error(language === 'he' ? 'נא לבחור תאריך' : 'Please select date');
+      return;
+    }
+
     setLoading(true);
     try {
       const tripData = {
@@ -127,7 +145,8 @@ export default function CreateTrip() {
       toast.success(t('tripCreated'));
       navigate(createPageUrl('MyTrips'));
     } catch (error) {
-      toast.error(language === 'he' ? 'שגיאה ביצירת הטיול' : 'Error creating trip');
+      console.error('Error creating trip:', error);
+      toast.error(language === 'he' ? 'שגיאה ביצירת הטיול: ' + error.message : 'Error creating trip: ' + error.message);
     }
     setLoading(false);
   };
