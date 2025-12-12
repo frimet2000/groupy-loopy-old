@@ -67,22 +67,33 @@ export default function TripDetails() {
 
   const joinMutation = useMutation({
     mutationFn: async () => {
-      const updatedParticipants = [
-        ...(trip.participants || []),
+      const updatedPendingRequests = [
+        ...(trip.pending_requests || []),
         {
           email: user.email,
           name: user.full_name,
-          joined_at: new Date().toISOString()
+          requested_at: new Date().toISOString()
         }
       ];
       await base44.entities.Trip.update(tripId, {
-        participants: updatedParticipants,
-        current_participants: updatedParticipants.length
+        pending_requests: updatedPendingRequests
+      });
+
+      // Send email to organizer
+      const title = language === 'he' ? trip.title_he : trip.title_en;
+      await base44.integrations.Core.SendEmail({
+        to: trip.organizer_email,
+        subject: language === 'he' 
+          ? `בקשה להצטרפות לטיול "${title}"`
+          : `Join request for trip "${title}"`,
+        body: language === 'he'
+          ? `שלום ${trip.organizer_name},\n\n${user.full_name} מבקש להצטרף לטיול "${title}" שלך.\n\nהיכנס לעמוד הטיול כדי לאשר או לדחות את הבקשה.\n\nבברכה,\nצוות TripMate`
+          : `Hello ${trip.organizer_name},\n\n${user.full_name} has requested to join your trip "${title}".\n\nVisit the trip page to approve or reject the request.\n\nBest regards,\nTripMate Team`
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['trip', tripId]);
-      toast.success(t('joinedTrip'));
+      toast.success(language === 'he' ? 'הבקשה נשלחה למארגן' : 'Request sent to organizer');
     },
   });
 
@@ -104,7 +115,72 @@ export default function TripDetails() {
 
   const isOrganizer = user?.email === trip?.organizer_email;
   const hasJoined = trip?.participants?.some(p => p.email === user?.email);
+  const hasPendingRequest = trip?.pending_requests?.some(r => r.email === user?.email);
   const isFull = trip?.current_participants >= trip?.max_participants;
+
+  const approveMutation = useMutation({
+    mutationFn: async (requestEmail) => {
+      const request = trip.pending_requests.find(r => r.email === requestEmail);
+      const updatedPendingRequests = trip.pending_requests.filter(r => r.email !== requestEmail);
+      const updatedParticipants = [
+        ...(trip.participants || []),
+        {
+          email: request.email,
+          name: request.name,
+          joined_at: new Date().toISOString()
+        }
+      ];
+      
+      await base44.entities.Trip.update(tripId, {
+        pending_requests: updatedPendingRequests,
+        participants: updatedParticipants,
+        current_participants: updatedParticipants.length
+      });
+
+      // Send approval email
+      const title = language === 'he' ? trip.title_he : trip.title_en;
+      await base44.integrations.Core.SendEmail({
+        to: requestEmail,
+        subject: language === 'he' 
+          ? `בקשתך להצטרפות לטיול "${title}" אושרה`
+          : `Your request to join "${title}" was approved`,
+        body: language === 'he'
+          ? `שלום ${request.name},\n\nבקשתך להצטרף לטיול "${title}" אושרה על ידי המארגן.\n\nמקווים שתהנה מהטיול!\n\nבברכה,\nצוות TripMate`
+          : `Hello ${request.name},\n\nYour request to join "${title}" has been approved by the organizer.\n\nHope you enjoy the trip!\n\nBest regards,\nTripMate Team`
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['trip', tripId]);
+      toast.success(language === 'he' ? 'הבקשה אושרה' : 'Request approved');
+    },
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: async (requestEmail) => {
+      const request = trip.pending_requests.find(r => r.email === requestEmail);
+      const updatedPendingRequests = trip.pending_requests.filter(r => r.email !== requestEmail);
+      
+      await base44.entities.Trip.update(tripId, {
+        pending_requests: updatedPendingRequests
+      });
+
+      // Send rejection email
+      const title = language === 'he' ? trip.title_he : trip.title_en;
+      await base44.integrations.Core.SendEmail({
+        to: requestEmail,
+        subject: language === 'he' 
+          ? `בקשתך להצטרפות לטיול "${title}"`
+          : `Your request to join "${title}"`,
+        body: language === 'he'
+          ? `שלום ${request.name},\n\nמצטערים, בקשתך להצטרף לטיול "${title}" נדחתה על ידי המארגן.\n\nבברכה,\nצוות TripMate`
+          : `Hello ${request.name},\n\nSorry, your request to join "${title}" was declined by the organizer.\n\nBest regards,\nTripMate Team`
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['trip', tripId]);
+      toast.success(language === 'he' ? 'הבקשה נדחתה' : 'Request declined');
+    },
+  });
 
   const handleShare = async () => {
     try {
@@ -238,6 +314,10 @@ export default function TripDetails() {
                       <X className="w-4 h-4 mr-2" />
                       {t('leave')}
                     </Button>
+                  ) : hasPendingRequest ? (
+                    <Badge variant="outline" className="border-yellow-300 text-yellow-700 bg-yellow-50">
+                      {language === 'he' ? 'הבקשה ממתינה לאישור' : 'Request pending approval'}
+                    </Badge>
                   ) : (
                     <Button 
                       onClick={() => joinMutation.mutate()}
@@ -245,7 +325,7 @@ export default function TripDetails() {
                       className="bg-emerald-600 hover:bg-emerald-700"
                     >
                       <Check className="w-4 h-4 mr-2" />
-                      {isFull ? t('tripFull') : t('join')}
+                      {isFull ? t('tripFull') : (language === 'he' ? 'בקש להצטרף' : 'Request to Join')}
                     </Button>
                   )
                 )}
@@ -338,6 +418,56 @@ export default function TripDetails() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Pending Requests (Organizer Only) */}
+              {isOrganizer && trip.pending_requests && trip.pending_requests.length > 0 && (
+                <Card className="border-yellow-200 bg-yellow-50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-yellow-800">
+                      <Clock className="w-5 h-5" />
+                      {language === 'he' ? 'בקשות להצטרפות' : 'Join Requests'} ({trip.pending_requests.length})
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {trip.pending_requests.map((request, index) => (
+                        <div key={index} className="flex items-center gap-3 p-3 bg-white rounded-lg">
+                          <Avatar>
+                            <AvatarFallback className="bg-yellow-200">
+                              {request.name?.charAt(0) || 'P'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <p className="font-medium">{request.name}</p>
+                            <p className="text-sm text-gray-500">
+                              {format(new Date(request.requested_at), 'MMM d, HH:mm')}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              onClick={() => approveMutation.mutate(request.email)}
+                              disabled={approveMutation.isLoading || rejectMutation.isLoading}
+                              className="bg-emerald-600 hover:bg-emerald-700"
+                            >
+                              <Check className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => rejectMutation.mutate(request.email)}
+                              disabled={approveMutation.isLoading || rejectMutation.isLoading}
+                              className="text-red-600 border-red-200 hover:bg-red-50"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Participants */}
               <Card>
