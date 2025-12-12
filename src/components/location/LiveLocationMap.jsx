@@ -138,73 +138,72 @@ export default function LiveLocationMap({ trip, currentUserEmail, onUpdate }) {
   const activeLocations = liveLocations.filter(loc => loc.sharing_enabled);
 
   return (
-    <Card className="border-0 shadow-lg">
-      <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-t-xl">
-        <CardTitle className="flex items-center gap-2">
-          <Radio className="w-5 h-5" />
-          {language === 'he' ? 'מיקום חי של הקבוצה' : 'Live Group Location'}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-4 space-y-4">
-        {/* Toggle Location Sharing */}
-        <Card className={`${sharingEnabled ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200'}`}>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${sharingEnabled ? 'bg-emerald-600' : 'bg-gray-400'}`}>
-                  <MapPin className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <Label className="font-semibold">
-                    {language === 'he' ? 'שתף את המיקום שלי' : 'Share My Location'}
-                  </Label>
-                  <p className="text-xs text-gray-600">
-                    {sharingEnabled 
-                      ? (language === 'he' ? 'המיקום שלך מעודכן בזמן אמת' : 'Your location updates in real-time')
-                      : (language === 'he' ? 'אחרים לא יכולים לראות את המיקום שלך' : 'Others cannot see your location')}
-                  </p>
-                </div>
-              </div>
-              <Switch
-                checked={sharingEnabled}
-                onCheckedChange={handleToggleSharing}
-                className="data-[state=checked]:bg-emerald-600"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Active Locations Count */}
-        <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+    <>
+      <div className="p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-blue-600" />
-            <span className="font-semibold text-blue-900">
-              {language === 'he' ? 'משתפים מיקום כרגע' : 'Currently Sharing'}
-            </span>
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <Radio className="w-4 h-4 text-white animate-pulse" />
+            </div>
+            <h3 className="font-semibold text-gray-900">
+              {language === 'he' ? 'מיקום חי' : 'Live Location'}
+            </h3>
+            {activeLocations.length > 0 && (
+              <Badge className="ml-1 bg-blue-600">
+                {activeLocations.length}
+              </Badge>
+            )}
           </div>
-          <Badge className="bg-blue-600">
-            {activeLocations.length} / {trip.participants?.length || 0}
-          </Badge>
+        </div>
+      </div>
+
+      <div className="p-4 space-y-4">
+        {/* Toggle Location Sharing */}
+        <div className={`rounded-xl p-3.5 border-2 ${sharingEnabled ? 'bg-emerald-50 border-emerald-300' : 'bg-gray-50 border-gray-200'}`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${sharingEnabled ? 'bg-emerald-600' : 'bg-gray-400'}`}>
+                <MapPin className="w-4.5 h-4.5 text-white" />
+              </div>
+              <div>
+                <Label className="font-semibold text-sm">
+                  {language === 'he' ? 'שתף מיקום' : 'Share Location'}
+                </Label>
+                <p className="text-xs text-gray-600 mt-0.5">
+                  {sharingEnabled 
+                    ? (language === 'he' ? 'מעודכן בזמן אמת' : 'Real-time updates')
+                    : (language === 'he' ? 'לא פעיל' : 'Not active')}
+                </p>
+              </div>
+            </div>
+            <Switch
+              checked={sharingEnabled}
+              onCheckedChange={handleToggleSharing}
+              className="data-[state=checked]:bg-emerald-600"
+            />
+          </div>
         </div>
 
         {activeLocations.length === 0 ? (
-          <div className="text-center py-8 bg-gray-50 rounded-lg">
-            <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-600">
+          <div className="text-center py-12 px-4">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <MapPin className="w-8 h-8 text-blue-600" />
+            </div>
+            <p className="text-gray-900 font-medium mb-1">
               {language === 'he' 
-                ? 'אף אחד לא משתף מיקום כרגע'
-                : 'No one is sharing location right now'}
+                ? 'אף אחד לא משתף מיקום'
+                : 'No active locations'}
             </p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-500">
               {language === 'he' 
-                ? 'הפעל שיתוף מיקום כדי לראות את המשתתפים האחרים'
-                : 'Enable location sharing to see other participants'}
+                ? 'הפעל שיתוף כדי לראות אחרים'
+                : 'Enable sharing to see others'}
             </p>
           </div>
         ) : (
           <>
             {/* Map */}
-            <div className="h-80 rounded-lg overflow-hidden border-2 border-blue-200">
+            <div className="h-80 rounded-xl overflow-hidden border-2 border-blue-200 shadow-sm">
               <MapContainer
                 center={mapCenter}
                 zoom={13}
@@ -262,24 +261,24 @@ export default function LiveLocationMap({ trip, currentUserEmail, onUpdate }) {
 
             {/* Location List */}
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-gray-700">
-                {language === 'he' ? 'רשימת משתתפים' : 'Participants List'}
+              <Label className="text-xs font-semibold text-gray-600 uppercase tracking-wide px-1">
+                {language === 'he' ? 'משתתפים פעילים' : 'Active Participants'}
               </Label>
               {activeLocations.map((loc, index) => (
-                <div key={loc.email} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200">
+                <div key={loc.email} className="flex items-center gap-2.5 p-2.5 bg-white rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
                   <div 
-                    className="w-3 h-3 rounded-full" 
+                    className="w-2.5 h-2.5 rounded-full animate-pulse" 
                     style={{ backgroundColor: colors[index % colors.length] }}
                   />
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback style={{ backgroundColor: colors[index % colors.length] + '20' }}>
+                  <Avatar className="h-8 w-8 border-2" style={{ borderColor: colors[index % colors.length] }}>
+                    <AvatarFallback className="text-xs font-semibold" style={{ backgroundColor: colors[index % colors.length] + '20', color: colors[index % colors.length] }}>
                       {loc.name?.charAt(0) || 'U'}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1">
-                    <p className="font-medium text-sm">{loc.name}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate">{loc.name}</p>
                     <p className="text-xs text-gray-500 flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
+                      <Clock className="w-3 h-3 flex-shrink-0" />
                       {formatDistanceToNow(new Date(loc.timestamp), { 
                         addSuffix: true,
                         locale: language === 'he' ? he : enUS 
@@ -287,8 +286,8 @@ export default function LiveLocationMap({ trip, currentUserEmail, onUpdate }) {
                     </p>
                   </div>
                   {loc.email === currentUserEmail && (
-                    <Badge className="bg-emerald-600">
-                      {language === 'he' ? 'אתה' : 'You'}
+                    <Badge className="bg-emerald-600 text-xs px-2">
+                      {language === 'he' ? 'אני' : 'Me'}
                     </Badge>
                   )}
                 </div>
@@ -298,15 +297,15 @@ export default function LiveLocationMap({ trip, currentUserEmail, onUpdate }) {
         )}
 
         {/* Privacy Notice */}
-        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-          <p className="text-xs text-amber-800">
-            <strong>{language === 'he' ? 'פרטיות:' : 'Privacy:'}</strong>{' '}
+        <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
+          <p className="text-xs text-amber-800 leading-relaxed">
+            <strong>{language === 'he' ? '🔒 פרטיות' : '🔒 Privacy'}:</strong>{' '}
             {language === 'he' 
-              ? 'המיקום שלך משותף רק עם משתתפי הטיול. תוכל להפסיק את השיתוף בכל עת.'
-              : 'Your location is only shared with trip participants. You can stop sharing at any time.'}
+              ? 'משותף רק עם משתתפי הטיול'
+              : 'Shared only with trip participants'}
           </p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </>
   );
 }

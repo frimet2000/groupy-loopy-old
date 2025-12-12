@@ -91,60 +91,78 @@ export default function TripGallery({ trip, currentUserEmail, onUpdate }) {
 
   return (
     <>
-      <CardHeader>
+      <div className="p-4 border-b bg-gradient-to-r from-purple-50 to-pink-50">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Camera className="w-5 h-5 text-purple-600" />
-            {language === 'he' ? 'גלריית תמונות' : 'Photo Gallery'}
-          </CardTitle>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+              <Camera className="w-4 h-4 text-white" />
+            </div>
+            <h3 className="font-semibold text-gray-900">
+              {language === 'he' ? 'גלריית תמונות' : 'Gallery'}
+            </h3>
+            {photos.length > 0 && (
+              <Badge variant="secondary" className="ml-1">
+                {photos.length}
+              </Badge>
+            )}
+          </div>
           {isParticipant && (
             <Button
               onClick={() => setShowUploadDialog(true)}
-              className="bg-purple-600 hover:bg-purple-700 gap-2"
               size="sm"
+              className="bg-purple-600 hover:bg-purple-700 shadow-sm"
             >
-              <Upload className="w-4 h-4" />
+              <Upload className="w-3.5 h-3.5 mr-1.5" />
               {language === 'he' ? 'העלה' : 'Upload'}
             </Button>
           )}
         </div>
-      </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-[500px]">
-          {photos.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <ImageIcon className="w-16 h-16 text-gray-300 mb-3" />
-              <p className="text-gray-500">
-                {language === 'he' 
-                  ? 'אין תמונות עדיין'
-                  : 'No photos yet'}
-              </p>
+      </div>
+
+      <ScrollArea className="h-[500px]">
+        {photos.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full py-16 px-4 text-center">
+            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-3">
+              <Camera className="w-8 h-8 text-purple-600" />
             </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-3 pr-4">
-              {photos.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((photo) => (
-                <div 
-                  key={photo.id} 
-                  className="group relative aspect-square rounded-lg overflow-hidden cursor-pointer bg-gray-100"
-                  onClick={() => setSelectedPhoto(photo)}
-                >
-                  <img
-                    src={photo.url}
-                    alt={photo.caption || 'Trip photo'}
-                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <p className="text-gray-900 font-medium mb-1">
+              {language === 'he' ? 'אין תמונות עדיין' : 'No photos yet'}
+            </p>
+            <p className="text-sm text-gray-500">
+              {language === 'he' 
+                ? 'שתפו תמונות מהטיול'
+                : 'Share photos from the trip'}
+            </p>
+          </div>
+        ) : (
+          <div className="p-4 grid grid-cols-2 gap-3">
+            {photos.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((photo) => (
+              <div 
+                key={photo.id} 
+                className="group relative aspect-square rounded-xl overflow-hidden cursor-pointer bg-gray-100 shadow-sm hover:shadow-md transition-all"
+                onClick={() => setSelectedPhoto(photo)}
+              >
+                <img
+                  src={photo.url}
+                  alt={photo.caption || 'Trip photo'}
+                  className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute bottom-2 left-2 right-2 text-white transform translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all">
+                  <p className="text-xs font-medium truncate">
+                    {photo.uploader_name}
+                  </p>
                   {photo.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 p-2 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                    <p className="text-xs opacity-90 truncate mt-0.5">
                       {photo.caption}
-                    </div>
+                    </p>
                   )}
                 </div>
-              ))}
-            </div>
-          )}
-        </ScrollArea>
-      </CardContent>
+              </div>
+            ))}
+          </div>
+        )}
+      </ScrollArea>
 
       {/* Upload Dialog */}
       <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
