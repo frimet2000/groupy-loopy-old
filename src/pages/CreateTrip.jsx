@@ -98,11 +98,6 @@ export default function CreateTrip() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!formData.title_he || !formData.title_en || !formData.location || !formData.date) {
-      toast.error(language === 'he' ? 'יש למלא את כל השדות הנדרשים' : 'Please fill all required fields');
-      return;
-    }
 
     setLoading(true);
     try {
