@@ -32,8 +32,6 @@ export default function CreateTrip() {
   const [loading, setLoading] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
   
-  console.log('CreateTrip rendered. Loading:', loading);
-  
   const [formData, setFormData] = useState({
     title_he: '',
     title_en: '',
@@ -108,9 +106,7 @@ export default function CreateTrip() {
     setImageUploading(false);
   };
 
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
-    console.log('🎯 Form submitted!', { user, formData });
+  const handleSubmit = async () => {
 
     if (!user) {
       toast.error(language === 'he' ? 'אין משתמש מחובר' : 'No user logged in');
@@ -131,7 +127,6 @@ export default function CreateTrip() {
       return;
     }
 
-    console.log('✅ Validation passed, creating trip...');
     setLoading(true);
     try {
       const tripData = {
@@ -166,14 +161,10 @@ export default function CreateTrip() {
         }]
       };
 
-      console.log('📤 Sending to server:', tripData);
       const result = await base44.entities.Trip.create(tripData);
-      console.log('✅ Trip created successfully:', result);
       toast.success(t('tripCreated'));
       navigate(createPageUrl('MyTrips'));
     } catch (error) {
-      console.error('❌ Error creating trip:', error);
-      console.error('Error details:', error.response?.data || error.message);
       toast.error(language === 'he' ? `שגיאה: ${error.response?.data?.message || error.message}` : `Error: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
@@ -183,11 +174,6 @@ export default function CreateTrip() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
               {t('createTrip')}
@@ -542,26 +528,19 @@ export default function CreateTrip() {
               >
                 {t('cancel')}
               </Button>
-              <button
-                onMouseDown={() => console.log('🟡 MOUSE DOWN')}
-                onMouseUp={() => console.log('🟢 MOUSE UP')}
-                onClick={async (e) => {
-                  console.log('🔴 BUTTON CLICKED!', e);
-                  await handleSubmit();
-                }}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg min-w-[140px] disabled:opacity-50 cursor-pointer"
+              <Button 
+                onClick={handleSubmit}
+                className="bg-emerald-600 hover:bg-emerald-700 min-w-[140px]"
                 disabled={loading}
-                style={{ pointerEvents: 'auto', zIndex: 50 }}
               >
                 {loading ? (
-                  <Loader2 className="w-4 h-4 animate-spin mx-auto" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   t('save')
                 )}
-              </button>
+              </Button>
             </div>
           </div>
-        </motion.div>
       </div>
     </div>
   );
