@@ -39,6 +39,7 @@ export default function Onboarding() {
     accessibility_requirements: '',
     trip_interests: [],
     home_region: '',
+    vehicle_type: 'none',
     has_4x4_vehicle: false,
   });
 
@@ -372,24 +373,96 @@ export default function Onboarding() {
                             {language === 'he' ? 'רכב' : 'Vehicle'}
                           </Label>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <Checkbox
-                            id="vehicle"
-                            checked={formData.has_4x4_vehicle}
-                            onCheckedChange={(checked) => handleChange('has_4x4_vehicle', checked)}
-                            className="data-[state=checked]:bg-purple-600"
-                          />
-                          <Label htmlFor="vehicle" className="cursor-pointer">
-                            {language === 'he' ? 'יש לי רכב שטח (4X4)' : 'I have a 4X4 vehicle'}
-                          </Label>
+                        
+                        <div className="space-y-3">
+                          <div 
+                            onClick={() => {
+                              handleChange('vehicle_type', 'none');
+                              handleChange('has_4x4_vehicle', false);
+                            }}
+                            className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                              formData.vehicle_type === 'none' 
+                                ? 'border-purple-600 bg-purple-100' 
+                                : 'border-gray-200 hover:border-purple-300'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className={`w-4 h-4 rounded-full border-2 ${
+                                formData.vehicle_type === 'none' 
+                                  ? 'border-purple-600 bg-purple-600' 
+                                  : 'border-gray-300'
+                              }`}>
+                                {formData.vehicle_type === 'none' && (
+                                  <div className="w-2 h-2 bg-white rounded-full m-auto mt-0.5" />
+                                )}
+                              </div>
+                              <span className="font-medium">
+                                {language === 'he' ? 'אין לי רכב' : 'No vehicle'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div 
+                            onClick={() => {
+                              handleChange('vehicle_type', 'regular');
+                              handleChange('has_4x4_vehicle', false);
+                            }}
+                            className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                              formData.vehicle_type === 'regular' 
+                                ? 'border-purple-600 bg-purple-100' 
+                                : 'border-gray-200 hover:border-purple-300'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className={`w-4 h-4 rounded-full border-2 ${
+                                formData.vehicle_type === 'regular' 
+                                  ? 'border-purple-600 bg-purple-600' 
+                                  : 'border-gray-300'
+                              }`}>
+                                {formData.vehicle_type === 'regular' && (
+                                  <div className="w-2 h-2 bg-white rounded-full m-auto mt-0.5" />
+                                )}
+                              </div>
+                              <span className="font-medium">
+                                {language === 'he' ? 'רכב רגיל' : 'Regular vehicle'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div 
+                            onClick={() => {
+                              handleChange('vehicle_type', '4x4');
+                              handleChange('has_4x4_vehicle', true);
+                            }}
+                            className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                              formData.vehicle_type === '4x4' 
+                                ? 'border-purple-600 bg-purple-100' 
+                                : 'border-gray-200 hover:border-purple-300'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className={`w-4 h-4 rounded-full border-2 ${
+                                formData.vehicle_type === '4x4' 
+                                  ? 'border-purple-600 bg-purple-600' 
+                                  : 'border-gray-300'
+                              }`}>
+                                {formData.vehicle_type === '4x4' && (
+                                  <div className="w-2 h-2 bg-white rounded-full m-auto mt-0.5" />
+                                )}
+                              </div>
+                              <span className="font-medium">
+                                {language === 'he' ? 'רכב שטח (4X4)' : '4X4 vehicle'}
+                              </span>
+                            </div>
+                            {formData.vehicle_type === '4x4' && (
+                              <p className="text-sm text-purple-700 mt-2 mr-6">
+                                {language === 'he' 
+                                  ? '🎉 מעולה! נציג לך גם טיולים שדורשים רכב שטח'
+                                  : '🎉 Great! We\'ll show you trips that require 4X4 vehicles'}
+                              </p>
+                            )}
+                          </div>
                         </div>
-                        {formData.has_4x4_vehicle && (
-                          <p className="text-sm text-purple-700">
-                            {language === 'he' 
-                              ? '🎉 מעולה! נציג לך גם טיולים שדורשים רכב שטח'
-                              : '🎉 Great! We\'ll show you trips that require 4X4 vehicles'}
-                          </p>
-                        )}
                       </div>
                     </div>
                   )}
