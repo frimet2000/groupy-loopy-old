@@ -49,9 +49,20 @@ export default function Home() {
   const displayedTrips = filteredTrips.slice(0, visibleCount);
 
   const openTrips = trips.filter(t => t.status === 'open');
+  
+  // Count unique participants by email
+  const uniqueParticipants = new Set();
+  openTrips.forEach(trip => {
+    if (trip.participants && Array.isArray(trip.participants)) {
+      trip.participants.forEach(p => {
+        if (p.email) uniqueParticipants.add(p.email);
+      });
+    }
+  });
+  
   const stats = [
     { icon: Compass, value: openTrips.length, label: language === 'he' ? 'טיולים פעילים' : 'Active Trips' },
-    { icon: Users, value: openTrips.reduce((acc, t) => acc + (t.current_participants || 1), 0), label: language === 'he' ? 'משתתפים' : 'Participants' },
+    { icon: Users, value: uniqueParticipants.size, label: language === 'he' ? 'משתתפים' : 'Participants' },
     { icon: MapPin, value: new Set(openTrips.map(t => t.region)).size, label: language === 'he' ? 'אזורים' : 'Regions' },
   ];
 
