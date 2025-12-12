@@ -18,7 +18,8 @@ import {
   Navigation,
   Backpack,
   Check,
-  ExternalLink
+  ExternalLink,
+  AlertTriangle
 } from 'lucide-react';
 import {
   Dialog,
@@ -54,6 +55,18 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
     { id: 'map', item_he: 'מפה', item_en: 'Map' },
     { id: 'jacket', item_he: 'ג\'קט', item_en: 'Jacket' },
     { id: 'backpack', item_he: 'תיק גב', item_en: 'Backpack' },
+  ];
+
+  const allergensList = [
+    { id: 'gluten', name_he: 'גלוטן', name_en: 'Gluten' },
+    { id: 'dairy', name_he: 'חלב', name_en: 'Dairy' },
+    { id: 'eggs', name_he: 'ביצים', name_en: 'Eggs' },
+    { id: 'nuts', name_he: 'אגוזים', name_en: 'Nuts' },
+    { id: 'peanuts', name_he: 'בוטנים', name_en: 'Peanuts' },
+    { id: 'soy', name_he: 'סויה', name_en: 'Soy' },
+    { id: 'fish', name_he: 'דגים', name_en: 'Fish' },
+    { id: 'shellfish', name_he: 'פירות ים', name_en: 'Shellfish' },
+    { id: 'sesame', name_he: 'שומשום', name_en: 'Sesame' },
   ];
 
   useEffect(() => {
@@ -229,6 +242,20 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
     }
   };
 
+  const handleToggleAllergen = async (allergenId) => {
+    const currentAllergens = trip.allergens || [];
+    const updatedAllergens = currentAllergens.includes(allergenId)
+      ? currentAllergens.filter(id => id !== allergenId)
+      : [...currentAllergens, allergenId];
+
+    try {
+      await base44.entities.Trip.update(trip.id, { allergens: updatedAllergens });
+      onUpdate();
+    } catch (error) {
+      toast.error(language === 'he' ? 'שגיאה בעדכון' : 'Error updating');
+    }
+  };
+
   return (
     <>
       <Card className="border-0 shadow-lg">
@@ -377,7 +404,44 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
                 </>
               )}
 
-              <ScrollArea className="h-[500px]">
+              {/* Allergens Section */}
+              <Card className="bg-orange-50 border-orange-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <AlertTriangle className="w-5 h-5 text-orange-600" />
+                    <p className="font-semibold text-orange-900">
+                      {language === 'he' ? 'אלרגנים במזון' : 'Food Allergens'}
+                    </p>
+                  </div>
+                  <p className="text-xs text-orange-700 mb-3">
+                    {language === 'he' 
+                      ? 'סמן אלרגנים שיש להימנע מהם בטיול'
+                      : 'Mark allergens to avoid during the trip'}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {allergensList.map((allergen) => {
+                      const allergenName = language === 'he' ? allergen.name_he : allergen.name_en;
+                      const isSelected = (trip.allergens || []).includes(allergen.id);
+                      return (
+                        <button
+                          key={allergen.id}
+                          onClick={() => handleToggleAllergen(allergen.id)}
+                          className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm transition-all ${
+                            isSelected
+                              ? 'bg-orange-600 text-white'
+                              : 'bg-white text-gray-700 border border-orange-300 hover:border-orange-500'
+                          }`}
+                        >
+                          {isSelected && <Check className="w-3 h-3" />}
+                          {allergenName}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <ScrollArea className="h-[400px]">
                 {equipmentChecklist.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                     <Backpack className="w-12 h-12 text-gray-300 mb-3" />
