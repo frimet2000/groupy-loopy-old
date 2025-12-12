@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Upload, MapPin, Mountain, Clock, Sparkles } from 'lucide-react';
+import { Loader2, Upload, MapPin, Mountain, Clock, Sparkles, Navigation } from 'lucide-react';
 import { detectUserLocation } from '../components/utils/LocationDetector';
 
 const regions = ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'];
@@ -94,6 +94,37 @@ export default function CreateTrip() {
       toast.success(language === 'he' ? 'התמונה הועלתה' : 'Image uploaded');
     } catch (error) {
       toast.error(language === 'he' ? 'שגיאה בהעלאת התמונה' : 'Error uploading image');
+    }
+    setImageUploading(false);
+  };
+
+  const handleLocationSearch = async () => {
+    if (!formData.location) {
+      toast.error(language === 'he' ? 'נא להזין מיקום' : 'Please enter a location');
+      return;
+    }
+
+    setImageUploading(true); // reuse loading state
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: language === 'he'
+          ? `מצא קואורדינטות GPS (latitude, longitude) עבור המיקום "${formData.location}" בישראל. חפש ב-Google Maps ותן קואורדינטות מדויקות.`
+          : `Find GPS coordinates (latitude, longitude) for the location "${formData.location}" in Israel. Search Google Maps and provide exact coordinates.`,
+        add_context_from_internet: true,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            latitude: { type: "number" },
+            longitude: { type: "number" }
+          }
+        }
+      });
+      
+      handleChange('latitude', result.latitude);
+      handleChange('longitude', result.longitude);
+      toast.success(language === 'he' ? 'מיקום נמצא במפה' : 'Location found on map');
+    } catch (error) {
+      toast.error(language === 'he' ? 'לא ניתן למצוא את המיקום' : 'Could not find location');
     }
     setImageUploading(false);
   };
@@ -221,28 +252,53 @@ export default function CreateTrip() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>{t('location')}</Label>
-                  <Input
-                    value={formData.location}
-                    onChange={(e) => handleChange('location', e.target.value)}
-                    placeholder={language === 'he' ? 'נחל דוד, עין גדי' : 'Nahal David, Ein Gedi'}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>{t('region')}</Label>
-                  <Select value={formData.region} onValueChange={(v) => handleChange('region', v)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('selectRegion')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {regions.map(r => (
-                        <SelectItem key={r} value={r}>{t(r)}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>{t('location')}</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        value={formData.location}
+                        onChange={(e) => handleChange('location', e.target.value)}
+                        placeholder={language === 'he' ? 'נחל דוד, עין גדי' : 'Nahal David, Ein Gedi'}
+                        required
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleLocationSearch}
+                        disabled={imageUploading || !formData.location}
+                        className="gap-2"
+                      >
+                        {imageUploading ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Navigation className="w-4 h-4" />
+                        )}
+                        {language === 'he' ? 'חפש במפה' : 'Find on Map'}
+                      </Button>
+                    </div>
+                    {formData.latitude && formData.longitude && (
+                      <p className="text-xs text-green-600 flex items-center gap-1">
+                        <MapPin className="w-3 h-3" />
+                        {language === 'he' ? 'מיקום נמצא במפה' : 'Location found'}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t('region')}</Label>
+                    <Select value={formData.region} onValueChange={(v) => handleChange('region', v)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('selectRegion')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {regions.map(r => (
+                          <SelectItem key={r} value={r}>{t(r)}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
