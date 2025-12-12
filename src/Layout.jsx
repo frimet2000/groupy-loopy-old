@@ -143,8 +143,8 @@ function LayoutContent({ children, currentPageName }) {
                           </AvatarFallback>
                         </Avatar>
                       </Button>
-                    </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-56">
                     <div className="px-3 py-2">
                       <p className="font-semibold">{user.full_name}</p>
                       <p className="text-sm text-gray-500">{user.email}</p>
@@ -160,8 +160,9 @@ function LayoutContent({ children, currentPageName }) {
                       {t('logout')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
+                  </DropdownMenu>
+                  </>
+                  ) : (
                 <Button 
                   onClick={() => base44.auth.redirectToLogin()}
                   className="bg-emerald-600 hover:bg-emerald-700"
@@ -226,9 +227,9 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* Permissions Request Dialog */}
       {user && <PermissionsRequest />}
-      </div>
-      );
-      }
+    </div>
+  );
+}
 
 export default function Layout({ children, currentPageName }) {
   return (
