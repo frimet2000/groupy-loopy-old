@@ -61,8 +61,26 @@ export default function TripCard({ trip }) {
   const handleDelete = async () => {
     setDeleting(true);
     try {
+      // Send emails to all participants except the organizer
+      const participants = trip.participants || [];
+      const emailPromises = participants
+        .filter(p => p.email !== trip.organizer_email)
+        .map(participant => 
+          base44.integrations.Core.SendEmail({
+            to: participant.email,
+            subject: language === 'he' 
+              ? `הטיול "${title}" בוטל`
+              : `Trip "${title}" has been cancelled`,
+            body: language === 'he'
+              ? `שלום ${participant.name},\n\nהטיול "${title}" שתוכנן ל-${format(new Date(trip.date), 'dd/MM/yyyy')} במיקום ${trip.location} בוטל על ידי המארגן.\n\nמצטערים על אי הנוחות.\n\nבברכה,\nצוות TripMate`
+              : `Hello ${participant.name},\n\nThe trip "${title}" scheduled for ${format(new Date(trip.date), 'dd/MM/yyyy')} at ${trip.location} has been cancelled by the organizer.\n\nSorry for the inconvenience.\n\nBest regards,\nTripMate Team`
+          })
+        );
+
+      await Promise.all(emailPromises);
       await base44.entities.Trip.delete(trip.id);
-      toast.success(language === 'he' ? 'הטיול נמחק בהצלחה' : 'Trip deleted successfully');
+      
+      toast.success(language === 'he' ? 'הטיול נמחק והמשתתפים קיבלו הודעה' : 'Trip deleted and participants notified');
       queryClient.invalidateQueries({ queryKey: ['trips'] });
     } catch (error) {
       toast.error(language === 'he' ? 'שגיאה במחיקת הטיול' : 'Error deleting trip');
