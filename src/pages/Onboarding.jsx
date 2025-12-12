@@ -28,6 +28,7 @@ export default function Onboarding() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
+  const [completed, setCompleted] = useState(false);
   const totalSteps = 4;
   
   const [formData, setFormData] = useState({
@@ -99,7 +100,7 @@ export default function Onboarding() {
         profile_completed: true
       });
       toast.success(language === 'he' ? 'הפרופיל נשמר בהצלחה!' : 'Profile saved successfully!');
-      navigate(createPageUrl('Home'));
+      setCompleted(true);
     } catch (error) {
       toast.error(language === 'he' ? 'שגיאה בשמירת הפרופיל' : 'Error saving profile');
     }
@@ -107,6 +108,73 @@ export default function Onboarding() {
   };
 
   const progress = (step / totalSteps) * 100;
+
+  if (completed) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 py-8 px-4 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-2xl w-full"
+        >
+          <Card className="border-0 shadow-2xl">
+            <CardContent className="p-8 text-center space-y-6">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-full mb-4 shadow-lg shadow-emerald-500/30">
+                <CheckCircle2 className="w-10 h-10 text-white" />
+              </div>
+              
+              <div className="space-y-3">
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                  {language === 'he' ? 'מעולה! הפרופיל שלך מוכן 🎉' : 'Great! Your profile is ready 🎉'}
+                </h1>
+                <p className="text-lg text-gray-600">
+                  {language === 'he' 
+                    ? 'עכשיו הגיע הזמן למצוא שותפים לטיול הבא שלך'
+                    : 'Now it\'s time to find partners for your next trip'}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                <Button
+                  onClick={() => navigate(createPageUrl('Home'))}
+                  size="lg"
+                  variant="outline"
+                  className="h-auto py-6 flex flex-col gap-2 border-2 hover:border-emerald-500 hover:bg-emerald-50"
+                >
+                  <Users className="w-8 h-8 text-emerald-600" />
+                  <div className="space-y-1">
+                    <div className="font-bold text-base">
+                      {language === 'he' ? 'הצטרף לטיול קיים' : 'Join Existing Trip'}
+                    </div>
+                    <div className="text-xs text-gray-500 font-normal">
+                      {language === 'he' ? 'מצא קבוצה שמתכננת טיול' : 'Find a group planning a trip'}
+                    </div>
+                  </div>
+                </Button>
+
+                <Button
+                  onClick={() => navigate(createPageUrl('CreateTrip'))}
+                  size="lg"
+                  className="h-auto py-6 flex flex-col gap-2 bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800"
+                >
+                  <Plus className="w-8 h-8" />
+                  <div className="space-y-1">
+                    <div className="font-bold text-base">
+                      {language === 'he' ? 'צור טיול חדש' : 'Create New Trip'}
+                    </div>
+                    <div className="text-xs text-emerald-100 font-normal">
+                      {language === 'he' ? 'הזמן אחרים להצטרף אליך' : 'Invite others to join you'}
+                    </div>
+                  </div>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 py-8 px-4">

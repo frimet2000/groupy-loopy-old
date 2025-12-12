@@ -75,10 +75,12 @@ export default function Home() {
             className="max-w-3xl"
           >
             <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
-              {t('heroTitle')}
+              {language === 'he' ? 'מצאו שותפים לטיול' : 'Find Trip Partners'}
             </h1>
             <p className="text-xl md:text-2xl text-emerald-100/90 mb-10 leading-relaxed">
-              {t('heroSubtitle')}
+              {language === 'he' 
+                ? 'הצטרפו לקבוצות מאורגנות או צרו טיול משלכם והזמינו אחרים'
+                : 'Join organized groups or create your own trip and invite others'}
             </p>
             
             <div className="flex flex-wrap gap-4">

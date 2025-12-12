@@ -142,8 +142,8 @@ const translations = {
     to: "To",
     
     // Hero
-    heroTitle: "Discover Israel Together",
-    heroSubtitle: "Find hiking partners and explore amazing trails",
+    heroTitle: "Find Trip Partners",
+    heroSubtitle: "Join organized groups or create your own trip and invite others",
     exploreTrips: "Explore Trips",
     
     // Empty states
@@ -291,8 +291,8 @@ const translations = {
     to: "עד",
     
     // Hero
-    heroTitle: "גלו את ישראל יחד",
-    heroSubtitle: "מצאו שותפים לטיול וגלו מסלולים מדהימים",
+    heroTitle: "מצאו שותפים לטיול",
+    heroSubtitle: "הצטרפו לקבוצות מאורגנות או צרו טיול משלכם והזמינו אחרים",
     exploreTrips: "גלה טיולים",
     
     // Empty states
