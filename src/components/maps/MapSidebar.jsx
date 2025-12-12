@@ -74,42 +74,32 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
     try {
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: language === 'he'
-          ? `חפש מקומות לאכילה ושתייה בטווח של עד 10 ק"מ ממיקום "${trip.location}" (קואורדינטות: ${trip.latitude}, ${trip.longitude}).
-          
-כלול:
-- מסעדות, בתי קפה, דוכני אוכל
-- מכולות, מינימרקטים, תחנות דלק עם חנויות
-- יישובים קרובים עם אפשרויות אוכל
-
-עבור כל מקום כלול:
-1. שם המקום/היישוב
-2. תיאור קצר (סוג המקום ומה יש שם)
-3. קואורדינטות GPS מדויקות
-4. סוג: restaurant/cafe/store/gas_station
+          ? `חפש במפות גוגל (Google Maps) בלבד מסעדות, בתי קפה ועגלות קפה בטווח של עד 10 ק"מ ממיקום "${trip.location}" (קואורדינטות: ${trip.latitude}, ${trip.longitude}).
 
 חשוב מאוד: 
+- השתמש אך ורק בנתונים ממפות גוגל (Google Maps)
 - חפש במרחק של עד 10 ק"מ בלבד
-- השתמש בנתונים עדכניים ממפות גוגל
-- אם יש יישוב קרוב, ציין אותו גם אם אין מקום אוכל ספציפי
-- תן לפחות 3-5 אפשרויות אם קיימות`
-          : `Search for food and drink options within 10 km of "${trip.location}" (coordinates: ${trip.latitude}, ${trip.longitude}).
+- תן רק מקומות שקיימים ממש במפות גוגל עם קואורדינטות מדויקות
+- אל תמציא מקומות - רק מה שמופיע במפות גוגל
 
-Include:
-- Restaurants, cafes, food stands
-- Grocery stores, mini-markets, gas stations with shops
-- Nearby settlements with food options
+עבור כל מקום כלול:
+1. שם המקום כפי שמופיע במפות גוגל
+2. תיאור קצר (סוג המקום)
+3. קואורדינטות GPS מדויקות ממפות גוגל
+4. סוג: restaurant/cafe/food_stand`
+          : `Search on Google Maps ONLY for restaurants, cafes, and coffee carts within 10 km of "${trip.location}" (coordinates: ${trip.latitude}, ${trip.longitude}).
+
+Critical:
+- Use ONLY data from Google Maps
+- Search within 10 km radius only
+- Provide only real places that exist on Google Maps with accurate coordinates
+- Do not invent places - only what appears on Google Maps
 
 For each place include:
-1. Place/settlement name
-2. Brief description (type of place and what's available)
-3. Accurate GPS coordinates
-4. Type: restaurant/cafe/store/gas_station
-
-Important:
-- Search within 10 km radius only
-- Use current data from Google Maps
-- If there's a nearby settlement, mention it even without specific restaurant
-- Provide at least 3-5 options if available`,
+1. Place name as shown on Google Maps
+2. Brief description (type of place)
+3. Accurate GPS coordinates from Google Maps
+4. Type: restaurant/cafe/food_stand`,
         add_context_from_internet: true,
         response_json_schema: {
           type: "object",
