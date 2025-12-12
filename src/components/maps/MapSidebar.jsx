@@ -74,8 +74,8 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
     try {
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: language === 'he'
-          ? `מצא מסעדות, בתי קפה ועגלות קפה באזור ${trip.location} (קואורדינטות: ${trip.latitude}, ${trip.longitude}). כלול שם, תיאור קצר, וקואורדינטות משוערות.`
-          : `Find restaurants, cafes, and coffee carts near ${trip.location} (coordinates: ${trip.latitude}, ${trip.longitude}). Include name, brief description, and approximate coordinates.`,
+          ? `מצא מסעדות, בתי קפה ועגלות קפה בטווח של 15 קילומטר ממיקום ${trip.location} (קואורדינטות: ${trip.latitude}, ${trip.longitude}). כלול שם, תיאור קצר, וקואורדינטות מדויקות. חשוב: רק מקומות בטווח של 15 ק"מ.`
+          : `Find restaurants, cafes, and coffee carts within 15 kilometers of ${trip.location} (coordinates: ${trip.latitude}, ${trip.longitude}). Include name, brief description, and accurate coordinates. Important: only places within 15km radius.`,
         add_context_from_internet: true,
         response_json_schema: {
           type: "object",
