@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, Heart, MapPin, Car, Activity, ChevronRight, ChevronLeft, 
-  CheckCircle2, Loader2, Accessibility, Plus, X
+  CheckCircle2, Loader2, Accessibility, Plus, X, User, Upload, Camera
 } from 'lucide-react';
 
 const interests = ['nature', 'history', 'photography', 'birdwatching', 'archaeology', 'geology', 'botany', 'extreme_sports', 'family_friendly', 'romantic'];
@@ -27,11 +27,15 @@ export default function Onboarding() {
   const { t, language, isRTL } = useLanguage();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState(1);
+  const [imageUploading, setImageUploading] = useState(false);
+  const [step, setStep] = useState(0);
   const [completed, setCompleted] = useState(false);
-  const totalSteps = 4;
+  const totalSteps = 5;
   
   const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    profile_image: '',
     family_ages: [{ relation: 'self', age: 30 }],
     fitness_level: 'moderate',
     has_physical_disability: false,
@@ -80,14 +84,33 @@ export default function Onboarding() {
     }));
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageUploading(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      handleChange('profile_image', file_url);
+      toast.success(language === 'he' ? 'התמונה הועלתה' : 'Image uploaded');
+    } catch (error) {
+      toast.error(language === 'he' ? 'שגיאה בהעלאת התמונה' : 'Error uploading image');
+    }
+    setImageUploading(false);
+  };
+
   const handleNext = () => {
-    if (step < totalSteps) {
+    if (step === 0 && (!formData.first_name || !formData.last_name)) {
+      toast.error(language === 'he' ? 'נא למלא שם פרטי ושם משפחה' : 'Please fill in first and last name');
+      return;
+    }
+    if (step < totalSteps - 1) {
       setStep(step + 1);
     }
   };
 
   const handleBack = () => {
-    if (step > 1) {
+    if (step > 0) {
       setStep(step - 1);
     }
   };
@@ -95,8 +118,10 @@ export default function Onboarding() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
+      const fullName = `${formData.first_name} ${formData.last_name}`.trim();
       await base44.auth.updateMe({
         ...formData,
+        full_name: fullName,
         profile_completed: true
       });
       toast.success(language === 'he' ? 'הפרופיל נשמר בהצלחה!' : 'Profile saved successfully!');
@@ -107,7 +132,7 @@ export default function Onboarding() {
     setLoading(false);
   };
 
-  const progress = (step / totalSteps) * 100;
+  const progress = ((step + 1) / totalSteps) * 100;
 
   if (completed) {
     return (
@@ -206,7 +231,7 @@ export default function Onboarding() {
                 {language === 'he' ? 'התקדמות' : 'Progress'}
               </span>
               <span className="text-sm font-medium text-emerald-600">
-                {step}/{totalSteps}
+                {step + 1}/{totalSteps}
               </span>
             </div>
             <Progress value={progress} className="h-2" />
@@ -224,17 +249,20 @@ export default function Onboarding() {
               <Card className="border-0 shadow-xl">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
+                    {step === 0 && <User className="w-6 h-6 text-indigo-600" />}
                     {step === 1 && <Users className="w-6 h-6 text-blue-600" />}
                     {step === 2 && <Activity className="w-6 h-6 text-emerald-600" />}
                     {step === 3 && <Heart className="w-6 h-6 text-rose-600" />}
                     {step === 4 && <MapPin className="w-6 h-6 text-purple-600" />}
                     
+                    {step === 0 && (language === 'he' ? 'פרטים אישיים' : 'Personal Details')}
                     {step === 1 && (language === 'he' ? 'בני המשפחה' : 'Family Members')}
                     {step === 2 && (language === 'he' ? 'רמת כושר ונגישות' : 'Fitness & Accessibility')}
                     {step === 3 && (language === 'he' ? 'תחומי עניין' : 'Interests')}
                     {step === 4 && (language === 'he' ? 'מיקום ורכב' : 'Location & Vehicle')}
                   </CardTitle>
                   <CardDescription>
+                    {step === 0 && (language === 'he' ? 'איך נקרא לך?' : 'What should we call you?')}
                     {step === 1 && (language === 'he' ? 'מי יצא איתכם לטיולים?' : 'Who will be joining you on trips?')}
                     {step === 2 && (language === 'he' ? 'מה רמת הכושר הפיזי ודרישות הנגישות?' : 'What is your fitness level and accessibility needs?')}
                     {step === 3 && (language === 'he' ? 'מה מעניין אתכם בטיולים?' : 'What interests you in trips?')}
@@ -242,6 +270,87 @@ export default function Onboarding() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6 pt-6">
+                  {/* Step 0: Personal Details */}
+                  {step === 0 && (
+                    <div className="space-y-6">
+                      {/* Profile Image */}
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="relative">
+                          {formData.profile_image ? (
+                            <img 
+                              src={formData.profile_image} 
+                              alt="Profile" 
+                              className="w-32 h-32 rounded-full object-cover border-4 border-indigo-100"
+                            />
+                          ) : (
+                            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center border-4 border-indigo-100">
+                              <Camera className="w-12 h-12 text-indigo-400" />
+                            </div>
+                          )}
+                          <label className="absolute bottom-0 right-0 cursor-pointer">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleImageUpload}
+                              className="hidden"
+                            />
+                            <div className="w-10 h-10 rounded-full bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center shadow-lg transition-all">
+                              {imageUploading ? (
+                                <Loader2 className="w-5 h-5 text-white animate-spin" />
+                              ) : (
+                                <Upload className="w-5 h-5 text-white" />
+                              )}
+                            </div>
+                          </label>
+                        </div>
+                        <p className="text-sm text-gray-500 text-center">
+                          {language === 'he' 
+                            ? 'הוסף תמונת פרופיל (אופציונלי)'
+                            : 'Add profile photo (optional)'}
+                        </p>
+                      </div>
+
+                      {/* Name Fields */}
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label className="text-base font-semibold flex items-center gap-2">
+                            {language === 'he' ? 'שם פרטי' : 'First Name'}
+                            <span className="text-red-500">*</span>
+                          </Label>
+                          <Input
+                            value={formData.first_name}
+                            onChange={(e) => handleChange('first_name', e.target.value)}
+                            placeholder={language === 'he' ? 'לדוגמה: יוסי' : 'e.g., John'}
+                            className="h-12 text-lg"
+                            dir={language === 'he' ? 'rtl' : 'ltr'}
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="text-base font-semibold flex items-center gap-2">
+                            {language === 'he' ? 'שם משפחה' : 'Last Name'}
+                            <span className="text-red-500">*</span>
+                          </Label>
+                          <Input
+                            value={formData.last_name}
+                            onChange={(e) => handleChange('last_name', e.target.value)}
+                            placeholder={language === 'he' ? 'לדוגמה: כהן' : 'e.g., Smith'}
+                            className="h-12 text-lg"
+                            dir={language === 'he' ? 'rtl' : 'ltr'}
+                          />
+                        </div>
+
+                        <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mt-4">
+                          <p className="text-sm text-indigo-800 leading-relaxed">
+                            💡 {language === 'he' 
+                              ? 'השם הזה יוצג למשתתפים אחרים בטיולים ויעזור להם להכיר אותך'
+                              : 'This name will be shown to other participants on trips and help them get to know you'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Step 1: Family Ages */}
                   {step === 1 && (
                     <div className="space-y-4">
@@ -544,14 +653,14 @@ export default function Onboarding() {
             <Button
               variant="outline"
               onClick={handleBack}
-              disabled={step === 1}
+              disabled={step === 0}
               className="flex items-center gap-2"
             >
               {isRTL ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
               {language === 'he' ? 'הקודם' : 'Previous'}
             </Button>
 
-            {step < totalSteps ? (
+            {step < totalSteps - 1 ? (
               <Button
                 onClick={handleNext}
                 className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2"
