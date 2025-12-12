@@ -108,6 +108,7 @@ export default function CreateTrip() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('🎯 Form submitted!', { user, formData });
 
     if (!user) {
       toast.error(language === 'he' ? 'אין משתמש מחובר' : 'No user logged in');
@@ -128,6 +129,7 @@ export default function CreateTrip() {
       return;
     }
 
+    console.log('✅ Validation passed, creating trip...');
     setLoading(true);
     try {
       const tripData = {
