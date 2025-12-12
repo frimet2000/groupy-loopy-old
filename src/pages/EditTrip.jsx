@@ -103,6 +103,7 @@ export default function EditTrip() {
           difficulty: trip.difficulty || 'moderate',
           trail_type: trip.trail_type || [],
           interests: trip.interests || [],
+          accessibility_types: trip.accessibility_types || [],
           parent_age_ranges: trip.parent_age_ranges || [],
           children_age_ranges: trip.children_age_ranges || [],
           pets_allowed: trip.pets_allowed || false,
