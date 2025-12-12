@@ -14,7 +14,7 @@ const weatherIcons = {
 };
 
 export default function WeatherWidget({ location, date }) {
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, language } = useLanguage();
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -23,8 +23,9 @@ export default function WeatherWidget({ location, date }) {
       setLoading(true);
       try {
         const result = await base44.integrations.Core.InvokeLLM({
-          prompt: `Get weather forecast for ${location}, Israel on ${date}. 
-          Provide realistic weather data for Israel based on the season and location.`,
+          prompt: language === 'he' 
+            ? `תן תחזית מזג אוויר עבור ${location}, ישראל בתאריך ${date}. ספק נתוני מזג אוויר ריאליסטיים עבור ישראל בהתבסס על העונה והמיקום. התשובה חייבת להיות בעברית.`
+            : `Get weather forecast for ${location}, Israel on ${date}. Provide realistic weather data for Israel based on the season and location.`,
           add_context_from_internet: true,
           response_json_schema: {
             type: "object",
@@ -48,7 +49,7 @@ export default function WeatherWidget({ location, date }) {
           humidity: 45,
           wind_speed: 12,
           condition: "sunny",
-          description: "Clear skies expected"
+          description: language === 'he' ? "שמיים בהירים צפויים" : "Clear skies expected"
         });
       }
       setLoading(false);
@@ -57,7 +58,7 @@ export default function WeatherWidget({ location, date }) {
     if (location && date) {
       fetchWeather();
     }
-  }, [location, date]);
+  }, [location, date, language]);
 
   if (loading) {
     return (
