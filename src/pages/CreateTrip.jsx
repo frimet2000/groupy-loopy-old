@@ -108,9 +108,6 @@ export default function CreateTrip() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted!');
-    console.log('Form data:', formData);
-    console.log('User:', user);
 
     if (!user) {
       toast.error(language === 'he' ? 'אין משתמש מחובר' : 'No user logged in');
@@ -126,10 +123,6 @@ export default function CreateTrip() {
       toast.error(language === 'he' ? 'נא למלא את המיקום' : 'Please fill in location');
       return;
     }
-    if (!formData.region) {
-      toast.error(language === 'he' ? 'נא לבחור אזור' : 'Please select region');
-      return;
-    }
     if (!formData.date) {
       toast.error(language === 'he' ? 'נא לבחור תאריך' : 'Please select date');
       return;
@@ -138,27 +131,46 @@ export default function CreateTrip() {
     setLoading(true);
     try {
       const tripData = {
-        ...formData,
-        organizer_name: user.full_name,
-        organizer_email: user.email,
+        title_he: formData.title_he,
+        title_en: formData.title_en,
+        description_he: formData.description_he || '',
+        description_en: formData.description_en || '',
+        location: formData.location,
+        region: formData.region || 'center',
+        date: formData.date,
+        duration_type: formData.duration_type,
+        duration_value: formData.duration_value,
+        difficulty: formData.difficulty,
+        trail_type: formData.trail_type,
+        interests: formData.interests,
+        parent_age_min: formData.parent_age_min,
+        parent_age_max: formData.parent_age_max,
+        children_age_min: formData.children_age_min,
+        children_age_max: formData.children_age_max,
+        pets_allowed: formData.pets_allowed,
+        camping_available: formData.camping_available,
+        max_participants: formData.max_participants,
         current_participants: 1,
+        image_url: formData.image_url || '',
+        status: 'open',
+        organizer_name: user.full_name || user.email,
+        organizer_email: user.email,
         participants: [{
           email: user.email,
-          name: user.full_name,
+          name: user.full_name || user.email,
           joined_at: new Date().toISOString()
         }]
       };
 
-      console.log('Creating trip with data:', tripData);
-      const result = await base44.entities.Trip.create(tripData);
-      console.log('Trip created:', result);
+      await base44.entities.Trip.create(tripData);
       toast.success(t('tripCreated'));
       navigate(createPageUrl('MyTrips'));
     } catch (error) {
       console.error('Error creating trip:', error);
-      toast.error(language === 'he' ? 'שגיאה ביצירת הטיול: ' + error.message : 'Error creating trip: ' + error.message);
+      toast.error(language === 'he' ? 'שגיאה ביצירת הטיול' : 'Error creating trip');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
