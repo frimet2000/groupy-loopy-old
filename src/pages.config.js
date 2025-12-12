@@ -3,6 +3,7 @@ import CreateTrip from './pages/CreateTrip';
 import TripDetails from './pages/TripDetails';
 import MyTrips from './pages/MyTrips';
 import AIRecommendations from './pages/AIRecommendations';
+import Profile from './pages/Profile';
 import __Layout from './Layout.jsx';
 
 
@@ -12,6 +13,7 @@ export const PAGES = {
     "TripDetails": TripDetails,
     "MyTrips": MyTrips,
     "AIRecommendations": AIRecommendations,
+    "Profile": Profile,
 }
 
 export const pagesConfig = {
