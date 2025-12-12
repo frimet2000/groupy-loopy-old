@@ -17,7 +17,7 @@ import { motion } from 'framer-motion';
 import {
   Calendar, MapPin, Clock, Users, Mountain, Dog, Tent,
   Share2, ArrowLeft, ArrowRight, Check, X, User,
-  Droplets, TreePine, Sun, History, Building, Navigation
+  Droplets, TreePine, Sun, History, Building, Navigation, Edit
 } from 'lucide-react';
 
 const difficultyColors = {

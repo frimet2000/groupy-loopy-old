@@ -5,6 +5,7 @@ import AIRecommendations from './pages/AIRecommendations';
 import Profile from './pages/Profile';
 import Onboarding from './pages/Onboarding';
 import CreateTrip from './pages/CreateTrip';
+import EditTrip from './pages/EditTrip';
 import __Layout from './Layout.jsx';
 
 
@@ -16,6 +17,7 @@ export const PAGES = {
     "Profile": Profile,
     "Onboarding": Onboarding,
     "CreateTrip": CreateTrip,
+    "EditTrip": EditTrip,
 }
 
 export const pagesConfig = {
