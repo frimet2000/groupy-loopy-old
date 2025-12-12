@@ -5,19 +5,30 @@ import { useLanguage } from '../components/LanguageContext';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import WeatherWidget from '../components/weather/WeatherWidget';
+import TripChat from '../components/chat/TripChat';
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import {
   Calendar, MapPin, Clock, Users, Mountain, Dog, Tent,
   Share2, ArrowLeft, ArrowRight, Check, X, User,
-  Droplets, TreePine, Sun, History, Building, Navigation, Edit
+  Droplets, TreePine, Sun, History, Building, Navigation, Edit, MessageCircle
 } from 'lucide-react';
 
 const difficultyColors = {
@@ -40,6 +51,9 @@ export default function TripDetails() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
+  const [joinMessage, setJoinMessage] = useState('');
+  const [showJoinDialog, setShowJoinDialog] = useState(false);
+  const [sendingMessage, setSendingMessage] = useState(false);
 
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get('id');
@@ -72,7 +86,8 @@ export default function TripDetails() {
         {
           email: user.email,
           name: user.full_name,
-          requested_at: new Date().toISOString()
+          requested_at: new Date().toISOString(),
+          message: joinMessage
         }
       ];
       await base44.entities.Trip.update(tripId, {
@@ -81,18 +96,22 @@ export default function TripDetails() {
 
       // Send email to organizer
       const title = language === 'he' ? trip.title_he : trip.title_en;
+      const emailBody = language === 'he'
+        ? `שלום ${trip.organizer_name},\n\n${user.full_name} מבקש להצטרף לטיול "${title}" שלך.${joinMessage ? `\n\nהודעה מהמשתתף:\n"${joinMessage}"` : ''}\n\nהיכנס לעמוד הטיול כדי לאשר או לדחות את הבקשה.\n\nבברכה,\nצוות TripMate`
+        : `Hello ${trip.organizer_name},\n\n${user.full_name} has requested to join your trip "${title}".${joinMessage ? `\n\nMessage from participant:\n"${joinMessage}"` : ''}\n\nVisit the trip page to approve or reject the request.\n\nBest regards,\nTripMate Team`;
+      
       await base44.integrations.Core.SendEmail({
         to: trip.organizer_email,
         subject: language === 'he' 
           ? `בקשה להצטרפות לטיול "${title}"`
           : `Join request for trip "${title}"`,
-        body: language === 'he'
-          ? `שלום ${trip.organizer_name},\n\n${user.full_name} מבקש להצטרף לטיול "${title}" שלך.\n\nהיכנס לעמוד הטיול כדי לאשר או לדחות את הבקשה.\n\nבברכה,\nצוות TripMate`
-          : `Hello ${trip.organizer_name},\n\n${user.full_name} has requested to join your trip "${title}".\n\nVisit the trip page to approve or reject the request.\n\nBest regards,\nTripMate Team`
+        body: emailBody
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['trip', tripId]);
+      setJoinMessage('');
+      setShowJoinDialog(false);
       toast.success(language === 'he' ? 'הבקשה נשלחה למארגן' : 'Request sent to organizer');
     },
   });
@@ -192,6 +211,31 @@ export default function TripDetails() {
       navigator.clipboard.writeText(window.location.href);
       toast.success(language === 'he' ? 'הקישור הועתק' : 'Link copied');
     }
+  };
+
+  const handleSendChatMessage = async ({ content, type, recipient_email }) => {
+    setSendingMessage(true);
+    try {
+      const newMessage = {
+        id: Date.now().toString(),
+        sender_email: user.email,
+        sender_name: user.full_name,
+        content,
+        timestamp: new Date().toISOString(),
+        type,
+        recipient_email: recipient_email || null
+      };
+
+      const updatedMessages = [...(trip.messages || []), newMessage];
+      await base44.entities.Trip.update(tripId, {
+        messages: updatedMessages
+      });
+
+      queryClient.invalidateQueries(['trip', tripId]);
+    } catch (error) {
+      toast.error(language === 'he' ? 'שגיאה בשליחת ההודעה' : 'Error sending message');
+    }
+    setSendingMessage(false);
   };
 
   if (isLoading) {
@@ -332,7 +376,7 @@ export default function TripDetails() {
                     </Badge>
                   ) : (
                     <Button 
-                      onClick={() => joinMutation.mutate()}
+                      onClick={() => setShowJoinDialog(true)}
                       disabled={joinMutation.isLoading || isFull}
                       className="bg-emerald-600 hover:bg-emerald-700"
                     >
@@ -496,6 +540,14 @@ export default function TripDetails() {
                             <p className="text-sm text-gray-500">
                               {format(new Date(request.requested_at), 'MMM d, HH:mm')}
                             </p>
+                            {request.message && (
+                              <div className="mt-2 p-2 bg-white rounded text-sm text-gray-700 border border-gray-200">
+                                <div className="flex items-start gap-1">
+                                  <MessageCircle className="w-3 h-3 text-gray-400 mt-0.5" />
+                                  <span className="italic">"{request.message}"</span>
+                                </div>
+                              </div>
+                            )}
                           </div>
                           <div className="flex gap-2">
                             <Button
@@ -570,10 +622,77 @@ export default function TripDetails() {
             {/* Sidebar */}
             <div className="space-y-6">
               <WeatherWidget location={trip.location} date={trip.date} />
+
+              {/* Chat - visible only to participants */}
+              {hasJoined && (
+                <TripChat 
+                  trip={trip}
+                  currentUserEmail={user?.email}
+                  onSendMessage={handleSendChatMessage}
+                  sending={sendingMessage}
+                />
+              )}
             </div>
           </div>
         </motion.div>
       </div>
+
+      {/* Join Request Dialog */}
+      <Dialog open={showJoinDialog} onOpenChange={setShowJoinDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {language === 'he' ? 'בקשה להצטרפות לטיול' : 'Request to Join Trip'}
+            </DialogTitle>
+            <DialogDescription>
+              {language === 'he' 
+                ? 'ספר למארגן מעט על עצמך או שאל שאלות על הטיול'
+                : 'Tell the organizer about yourself or ask questions about the trip'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>
+                {language === 'he' ? 'הודעה למארגן (אופציונלי)' : 'Message to organizer (optional)'}
+              </Label>
+              <Textarea
+                value={joinMessage}
+                onChange={(e) => setJoinMessage(e.target.value)}
+                placeholder={language === 'he' 
+                  ? 'לדוגמה: שלום, אני בעל ניסיון בטיולים בדרום. יש לכם עוד מקום לאדם נוסף?'
+                  : 'e.g., Hi, I have experience hiking in the south. Do you have room for one more?'}
+                rows={4}
+                dir={language === 'he' ? 'rtl' : 'ltr'}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setShowJoinDialog(false);
+                setJoinMessage('');
+              }}
+            >
+              {t('cancel')}
+            </Button>
+            <Button 
+              onClick={() => joinMutation.mutate()}
+              disabled={joinMutation.isLoading}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              {joinMutation.isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Check className="w-4 h-4 mr-2" />
+              )}
+              {language === 'he' ? 'שלח בקשה' : 'Send Request'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
