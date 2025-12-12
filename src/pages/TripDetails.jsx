@@ -756,10 +756,28 @@ export default function TripDetails() {
                   </div>
                 </CardContent>
               </Card>
-            </div>
+              </div>
 
-            {/* Sidebar */}
-            <div className="space-y-6">
+              {/* Sidebar */}
+              <div className="space-y-6">
+              {/* Gallery - visible to participants */}
+              {hasJoined && (
+                <TripGallery 
+                  trip={trip}
+                  currentUserEmail={user?.email}
+                  onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
+                />
+              )}
+
+              {/* Experiences - visible to participants */}
+              {hasJoined && (
+                <TripExperiences 
+                  trip={trip}
+                  currentUserEmail={user?.email}
+                  onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
+                />
+              )}
+
               {/* Map Sidebar */}
               <MapSidebar 
                 trip={trip}
