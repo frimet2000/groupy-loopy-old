@@ -66,6 +66,21 @@ const translations = {
     mountain: "Mountain",
     historical: "Historical",
     urban: "Urban",
+
+    // Activity types
+    hiking: "Hiking",
+    cycling: "Cycling",
+    activityType: "Activity Type",
+
+    // Cycling types
+    road: "Road Cycling",
+    gravel: "Gravel",
+    hybrid: "Hybrid",
+    bmx: "BMX",
+    electric: "Electric Bike",
+    cyclingType: "Cycling Type",
+    cyclingDistance: "Distance (km)",
+    cyclingElevation: "Elevation Gain (m)",
     
     // Interests
     nature: "Nature",
@@ -225,6 +240,21 @@ const translations = {
     mountain: "הרים",
     historical: "היסטורי",
     urban: "עירוני",
+
+    // Activity types
+    hiking: "טיול רגלי",
+    cycling: "רכיבת אופניים",
+    activityType: "סוג פעילות",
+
+    // Cycling types
+    road: "אופני כביש",
+    gravel: "גראבל",
+    hybrid: "היברידי",
+    bmx: "BMX",
+    electric: "אופניים חשמליים",
+    cyclingType: "סוג אופניים",
+    cyclingDistance: "מרחק (ק\"מ)",
+    cyclingElevation: "עליה מצטברת (מ')",
     
     // Interests
     nature: "טבע",

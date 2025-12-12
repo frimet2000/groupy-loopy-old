@@ -29,7 +29,7 @@ import { motion } from 'framer-motion';
 import {
   Calendar, MapPin, Clock, Users, Mountain, Dog, Tent,
   Share2, ArrowLeft, ArrowRight, Check, X, User,
-  Droplets, TreePine, Sun, History, Building, Navigation, Edit, MessageCircle
+  Droplets, TreePine, Sun, History, Building, Navigation, Edit, MessageCircle, Bike
 } from 'lucide-react';
 
 const difficultyColors = {
@@ -391,7 +391,13 @@ export default function TripDetails() {
                     <Users className="w-5 h-5 text-rose-600" />
                     <span>{trip.current_participants || 1}/{trip.max_participants}</span>
                   </div>
-                </div>
+                  {trip.activity_type === 'cycling' && (
+                    <div className="flex items-center gap-2">
+                      <Bike className="w-5 h-5 text-blue-600" />
+                      <span>{t(trip.cycling_type || 'cycling')}</span>
+                    </div>
+                  )}
+                  </div>
 
                 {user && !isOrganizer && (
                   hasJoined ? (
@@ -487,6 +493,24 @@ export default function TripDetails() {
                       )}
                     </div>
                   </div>
+
+                  {trip.activity_type === 'cycling' && (trip.cycling_distance || trip.cycling_elevation) && (
+                    <div>
+                      <p className="font-medium mb-2">{t('cycling')} {language === 'he' ? 'פרטים' : 'Details'}</p>
+                      <div className="flex flex-wrap gap-3">
+                        {trip.cycling_distance && (
+                          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                            {trip.cycling_distance} {language === 'he' ? 'ק"מ' : 'km'}
+                          </Badge>
+                        )}
+                        {trip.cycling_elevation && (
+                          <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                            ↗ {trip.cycling_elevation} {language === 'he' ? 'מ\'' : 'm'}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   {trip.trail_type && trip.trail_type.length > 0 && (
                     <div>
