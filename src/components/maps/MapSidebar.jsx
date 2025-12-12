@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import { useLanguage } from '../LanguageContext';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,7 +22,8 @@ import {
   Utensils,
   Navigation,
   Backpack,
-  Check
+  Check,
+  ExternalLink
 } from 'lucide-react';
 import {
   Dialog,
@@ -283,38 +283,44 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
                 </Button>
               )}
 
-              <div className="h-[400px] rounded-lg overflow-hidden border-2 border-emerald-200">
-                <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  
-                  {/* Start Point */}
-                  <Marker position={center}>
-                    <Popup>
-                      <div className="text-center">
-                        <p className="font-semibold">{language === 'he' ? 'נקודת התחלה' : 'Start'}</p>
-                        <p className="text-sm">{trip.location}</p>
+              {/* Trip Location */}
+              <Card className="bg-emerald-50 border-emerald-200">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-emerald-900">{trip.location}</p>
+                      <p className="text-sm text-emerald-700 mt-1">
+                        {language === 'he' ? 'נקודת התחלה' : 'Starting Point'}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        <a
+                          href={`https://www.google.com/maps?q=${trip.latitude},${trip.longitude}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 gap-2">
+                            <ExternalLink className="w-4 h-4" />
+                            {language === 'he' ? 'פתח במפות גוגל' : 'Open in Google Maps'}
+                          </Button>
+                        </a>
+                        <a
+                          href={`https://waze.com/ul?ll=${trip.latitude},${trip.longitude}&navigate=yes`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button size="sm" variant="outline" className="gap-2 border-emerald-300">
+                            <Navigation className="w-4 h-4" />
+                            Waze
+                          </Button>
+                        </a>
                       </div>
-                    </Popup>
-                  </Marker>
-
-                  {/* Waypoints */}
-                  {waypoints.map((waypoint, index) => (
-                    <Marker key={waypoint.id} position={[waypoint.latitude, waypoint.longitude]}>
-                      <Popup>
-                        <div>
-                          <p className="font-semibold">{waypoint.name}</p>
-                          {waypoint.description && <p className="text-sm">{waypoint.description}</p>}
-                        </div>
-                      </Popup>
-                    </Marker>
-                  ))}
-
-                  {/* Trail Path */}
-                  {trailPath.length > 1 && (
-                    <Polyline positions={trailPath} color="emerald" weight={4} opacity={0.7} />
-                  )}
-                </MapContainer>
-              </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
               <ScrollArea className="h-[200px]">
                 <div className="space-y-2">
@@ -363,27 +369,7 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
                 </div>
               ) : (
                 <>
-                  <div className="h-[300px] rounded-lg overflow-hidden border-2 border-amber-200">
-                    <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>
-                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                      
-                      {nearbyRestaurants.map((place, index) => (
-                        <Marker key={index} position={[place.latitude, place.longitude]}>
-                          <Popup>
-                            <div>
-                              <p className="font-semibold flex items-center gap-1">
-                                {place.type === 'cafe' ? <Coffee className="w-4 h-4" /> : <Utensils className="w-4 h-4" />}
-                                {place.name}
-                              </p>
-                              <p className="text-sm">{place.description}</p>
-                            </div>
-                          </Popup>
-                        </Marker>
-                      ))}
-                    </MapContainer>
-                  </div>
-
-                  <ScrollArea className="h-[300px]">
+                  <ScrollArea className="h-[500px]">
                     <div className="space-y-3">
                       {nearbyRestaurants.map((place, index) => (
                         <Card key={index} className="border-amber-200 bg-amber-50/50">
@@ -399,15 +385,28 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
                               <div className="flex-1">
                                 <p className="font-semibold text-gray-900">{place.name}</p>
                                 <p className="text-sm text-gray-600 mt-1">{place.description}</p>
-                                <a
-                                  href={`https://www.google.com/maps/dir/?api=1&destination=${place.latitude},${place.longitude}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-xs text-amber-600 hover:text-amber-700 mt-2"
-                                >
-                                  <Navigation className="w-3 h-3" />
-                                  {language === 'he' ? 'נווט' : 'Navigate'}
-                                </a>
+                                <div className="flex gap-2 mt-2">
+                                  <a
+                                    href={`https://www.google.com/maps?q=${place.latitude},${place.longitude}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    <Button size="sm" variant="outline" className="gap-1 h-7 text-xs border-amber-300">
+                                      <ExternalLink className="w-3 h-3" />
+                                      {language === 'he' ? 'מפות גוגל' : 'Google Maps'}
+                                    </Button>
+                                  </a>
+                                  <a
+                                    href={`https://www.google.com/maps/dir/?api=1&origin=${trip.latitude},${trip.longitude}&destination=${place.latitude},${place.longitude}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    <Button size="sm" variant="outline" className="gap-1 h-7 text-xs border-amber-300">
+                                      <Navigation className="w-3 h-3" />
+                                      {language === 'he' ? 'נווט' : 'Navigate'}
+                                    </Button>
+                                  </a>
+                                </div>
                               </div>
                             </div>
                           </CardContent>
