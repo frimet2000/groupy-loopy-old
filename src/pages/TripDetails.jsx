@@ -9,6 +9,7 @@ import TripChat from '../components/chat/TripChat';
 import MapSidebar from '../components/maps/MapSidebar';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -58,6 +59,8 @@ export default function TripDetails() {
   const [showRequestDialog, setShowRequestDialog] = useState(false);
   const [currentRequestIndex, setCurrentRequestIndex] = useState(0);
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({});
   
   const accessibilityTypes = ['wheelchair', 'visual_impairment', 'hearing_impairment', 'mobility_aid', 'stroller_friendly', 'elderly_friendly'];
 
@@ -243,6 +246,33 @@ export default function TripDetails() {
     } catch (e) {
       navigator.clipboard.writeText(window.location.href);
       toast.success(language === 'he' ? 'הקישור הועתק' : 'Link copied');
+    }
+  };
+
+  const handleStartEdit = () => {
+    setEditData({
+      title_he: trip.title_he,
+      title_en: trip.title_en,
+      description_he: trip.description_he,
+      description_en: trip.description_en,
+      max_participants: trip.max_participants,
+    });
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditData({});
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      await base44.entities.Trip.update(tripId, editData);
+      queryClient.invalidateQueries(['trip', tripId]);
+      setIsEditing(false);
+      toast.success(language === 'he' ? 'הטיול עודכן בהצלחה' : 'Trip updated successfully');
+    } catch (error) {
+      toast.error(language === 'he' ? 'שגיאה בעדכון' : 'Error updating');
     }
   };
 
@@ -454,10 +484,50 @@ export default function TripDetails() {
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
               {/* Description */}
-              {description && (
+              {(description || isEditing) && (
                 <Card>
                   <CardContent className="p-6">
-                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{description}</p>
+                    {isEditing ? (
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">{language === 'he' ? 'כותרת (עברית)' : 'Title (Hebrew)'}</label>
+                          <Input
+                            value={editData.title_he}
+                            onChange={(e) => setEditData({...editData, title_he: e.target.value})}
+                            dir="rtl"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">{language === 'he' ? 'תיאור (עברית)' : 'Description (Hebrew)'}</label>
+                          <Textarea
+                            value={editData.description_he || ''}
+                            onChange={(e) => setEditData({...editData, description_he: e.target.value})}
+                            dir="rtl"
+                            rows={4}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">{language === 'he' ? 'מקסימום משתתפים' : 'Max Participants'}</label>
+                          <Input
+                            type="number"
+                            value={editData.max_participants}
+                            onChange={(e) => setEditData({...editData, max_participants: parseInt(e.target.value)})}
+                            min={trip.current_participants}
+                          />
+                        </div>
+                        <div className="flex gap-2 justify-end">
+                          <Button variant="outline" onClick={handleCancelEdit}>
+                            {language === 'he' ? 'ביטול' : 'Cancel'}
+                          </Button>
+                          <Button onClick={handleSaveEdit} className="bg-emerald-600 hover:bg-emerald-700">
+                            <Check className="w-4 h-4 mr-2" />
+                            {language === 'he' ? 'שמור' : 'Save'}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{description}</p>
+                    )}
                   </CardContent>
                 </Card>
               )}
