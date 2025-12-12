@@ -244,13 +244,15 @@ export default function CreateTrip() {
                         onChange={handleImageUpload}
                         className="hidden"
                       />
-                      <Button type="button" variant="outline" disabled={imageUploading}>
-                        {imageUploading ? (
-                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                        ) : (
-                          <Upload className="w-4 h-4 mr-2" />
-                        )}
-                        {language === 'he' ? 'העלה תמונה' : 'Upload'}
+                      <Button type="button" variant="outline" disabled={imageUploading} asChild>
+                        <span>
+                          {imageUploading ? (
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                          ) : (
+                            <Upload className="w-4 h-4 mr-2" />
+                          )}
+                          {language === 'he' ? 'העלה תמונה' : 'Upload'}
+                        </span>
                       </Button>
                     </label>
                   </div>
@@ -296,7 +298,7 @@ export default function CreateTrip() {
                     <Label>{t('date')}</Label>
                     <Popover>
                       <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full justify-start text-left">
+                        <Button type="button" variant="outline" className="w-full justify-start text-left">
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {formData.date ? format(new Date(formData.date), 'PPP') : t('selectDate')}
                         </Button>
