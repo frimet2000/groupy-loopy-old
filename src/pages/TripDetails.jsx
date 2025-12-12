@@ -245,14 +245,26 @@ export default function TripDetails() {
           >
             {isRTL ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
           </Button>
-          <Button 
-            variant="secondary" 
-            size="icon" 
-            className="rounded-full bg-white/90 hover:bg-white"
-            onClick={handleShare}
-          >
-            <Share2 className="w-5 h-5" />
-          </Button>
+          <div className="flex gap-2">
+            {isOrganizer && (
+              <Button 
+                variant="secondary" 
+                size="icon" 
+                className="rounded-full bg-white/90 hover:bg-white"
+                onClick={() => navigate(createPageUrl('EditTrip') + '?id=' + tripId)}
+              >
+                <Edit className="w-5 h-5" />
+              </Button>
+            )}
+            <Button 
+              variant="secondary" 
+              size="icon" 
+              className="rounded-full bg-white/90 hover:bg-white"
+              onClick={handleShare}
+            >
+              <Share2 className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
 
         <div className="absolute bottom-6 left-6 right-6">
