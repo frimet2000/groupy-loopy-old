@@ -447,6 +447,29 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
                   ))}
                 </div>
               </ScrollArea>
+
+              {waypoints.length > 0 && (
+                <a
+                  href={(() => {
+                    const origin = `${trip.latitude},${trip.longitude}`;
+                    const sortedWaypoints = waypoints.sort((a, b) => a.order - b.order);
+                    const lastWaypoint = sortedWaypoints[sortedWaypoints.length - 1];
+                    const destination = `${lastWaypoint.latitude},${lastWaypoint.longitude}`;
+                    const waypointsParam = sortedWaypoints.slice(0, -1)
+                      .map(w => `${w.latitude},${w.longitude}`)
+                      .join('|');
+                    return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}${waypointsParam ? `&waypoints=${waypointsParam}` : ''}&travelmode=walking`;
+                  })()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                >
+                  <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 gap-2 shadow-lg" size="lg">
+                    <Navigation className="w-5 h-5" />
+                    {language === 'he' ? 'נווט עם כל נקודות הציון בגוגל מפות' : 'Navigate Full Route in Google Maps'}
+                  </Button>
+                </a>
+              )}
             </CardContent>
           </TabsContent>
 
