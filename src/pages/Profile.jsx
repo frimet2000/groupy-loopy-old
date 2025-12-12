@@ -104,6 +104,21 @@ export default function Profile() {
     setImageUploading(false);
   };
 
+  const handleCameraCapture = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageUploading(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      handleChange('profile_image', file_url);
+      toast.success(language === 'he' ? 'התמונה צולמה והועלתה' : 'Photo captured and uploaded');
+    } catch (error) {
+      toast.error(language === 'he' ? 'שגיאה בצילום התמונה' : 'Error capturing photo');
+    }
+    setImageUploading(false);
+  };
+
   const handleSave = async () => {
     if (!formData.first_name || !formData.last_name) {
       toast.error(language === 'he' ? 'נא למלא שם פרטי ושם משפחה' : 'Please fill in first and last name');
@@ -163,21 +178,39 @@ export default function Profile() {
                           <Camera className="w-8 h-8 text-emerald-400" />
                         </div>
                       )}
-                      <label className="absolute bottom-0 right-0 cursor-pointer">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageUpload}
-                          className="hidden"
-                        />
-                        <div className="w-8 h-8 rounded-full bg-emerald-600 hover:bg-emerald-700 flex items-center justify-center shadow-lg transition-all">
-                          {imageUploading ? (
-                            <Loader2 className="w-4 h-4 text-white animate-spin" />
-                          ) : (
-                            <Upload className="w-4 h-4 text-white" />
-                          )}
-                        </div>
-                      </label>
+                      <div className="absolute bottom-0 right-0 flex gap-1">
+                        <label className="cursor-pointer">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            capture="environment"
+                            onChange={handleCameraCapture}
+                            className="hidden"
+                          />
+                          <div className="w-8 h-8 rounded-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center shadow-lg transition-all">
+                            {imageUploading ? (
+                              <Loader2 className="w-4 h-4 text-white animate-spin" />
+                            ) : (
+                              <Camera className="w-4 h-4 text-white" />
+                            )}
+                          </div>
+                        </label>
+                        <label className="cursor-pointer">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                          />
+                          <div className="w-8 h-8 rounded-full bg-emerald-600 hover:bg-emerald-700 flex items-center justify-center shadow-lg transition-all">
+                            {imageUploading ? (
+                              <Loader2 className="w-4 h-4 text-white animate-spin" />
+                            ) : (
+                              <Upload className="w-4 h-4 text-white" />
+                            )}
+                          </div>
+                        </label>
+                      </div>
                     </>
                   ) : (
                     <>
