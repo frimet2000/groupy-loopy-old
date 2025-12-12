@@ -258,15 +258,15 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
 
   return (
     <>
-      <Card className="border-0 shadow-lg">
+      <Card className="border-0 shadow-lg overflow-hidden">
         <Tabs value={activeTab} onValueChange={setActiveTab} dir="rtl" className="h-full">
-          <TabsList className="grid w-full grid-cols-2 bg-gradient-to-r from-emerald-50 to-blue-50 p-1 m-0">
-            <TabsTrigger value="trail" className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white gap-2">
-              <Route className="w-4 h-4" />
+          <TabsList className="grid w-full grid-cols-2 bg-gradient-to-r from-purple-500 to-purple-600 p-1.5 m-0">
+            <TabsTrigger value="trail" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 text-white/90 font-semibold gap-2 rounded-md">
+              <Route className="w-5 h-5" />
               {language === 'he' ? 'מסלול' : 'Trail'}
             </TabsTrigger>
-            <TabsTrigger value="equipment" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white gap-2">
-              <Backpack className="w-4 h-4" />
+            <TabsTrigger value="equipment" className="data-[state=active]:bg-white data-[state=active]:text-purple-700 text-white/90 font-semibold gap-2 rounded-md">
+              <Backpack className="w-5 h-5" />
               {language === 'he' ? 'ציוד' : 'Equipment'}
             </TabsTrigger>
           </TabsList>
@@ -495,25 +495,30 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
                           {/* Water liters selection */}
                           {isWater && (
                             <div className="px-3 pb-3 pt-0">
-                              <div className="bg-white/70 rounded-lg p-2 border border-purple-200">
-                                <p className="text-xs font-medium text-gray-600 mb-2">
-                                  {language === 'he' ? 'כמות ליטרים:' : 'Amount (liters):'}
+                              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-3 border-2 border-blue-200 shadow-sm">
+                                <p className="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
+                                  💧 {language === 'he' ? 'בחר כמות ליטרים:' : 'Select liters:'}
                                 </p>
                                 <div className="flex flex-wrap gap-2">
-                                  {[1, 1.5, 2, 3, 4, 5].map(liters => (
+                                  {[1, 1.5, 2, 3, 4].map(liters => (
                                     <button
                                       key={liters}
                                       onClick={() => handleWaterLitersChange(item.id, liters)}
-                                      className={`px-3 py-1 rounded-md text-sm transition-all ${
+                                      className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                                         waterLiters[item.id] === liters
-                                          ? 'bg-purple-600 text-white'
-                                          : 'bg-white text-gray-700 border border-purple-200 hover:border-purple-400'
+                                          ? 'bg-blue-600 text-white shadow-lg scale-105'
+                                          : 'bg-white text-blue-700 border-2 border-blue-300 hover:border-blue-500 hover:shadow-md'
                                       }`}
                                     >
                                       {liters}L
                                     </button>
                                   ))}
                                 </div>
+                                {waterLiters[item.id] && (
+                                  <p className="text-xs text-blue-700 mt-2 font-medium">
+                                    {language === 'he' ? `נבחרו ${waterLiters[item.id]} ליטרים` : `${waterLiters[item.id]} liters selected`}
+                                  </p>
+                                )}
                               </div>
                             </div>
                           )}
