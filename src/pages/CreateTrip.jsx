@@ -164,12 +164,15 @@ export default function CreateTrip() {
         }]
       };
 
-      await base44.entities.Trip.create(tripData);
+      console.log('📤 Sending to server:', tripData);
+      const result = await base44.entities.Trip.create(tripData);
+      console.log('✅ Trip created successfully:', result);
       toast.success(t('tripCreated'));
       navigate(createPageUrl('MyTrips'));
     } catch (error) {
-      console.error('Error creating trip:', error);
-      toast.error(language === 'he' ? 'שגיאה ביצירת הטיול' : 'Error creating trip');
+      console.error('❌ Error creating trip:', error);
+      console.error('Error details:', error.response?.data || error.message);
+      toast.error(language === 'he' ? `שגיאה: ${error.response?.data?.message || error.message}` : `Error: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
     }
