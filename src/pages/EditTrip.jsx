@@ -223,6 +223,7 @@ export default function EditTrip() {
         difficulty: formData.difficulty,
         trail_type: formData.trail_type,
         interests: formData.interests,
+        accessibility_types: formData.accessibility_types,
         parent_age_ranges: formData.parent_age_ranges,
         children_age_ranges: formData.children_age_ranges,
         pets_allowed: formData.pets_allowed,
