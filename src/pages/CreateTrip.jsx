@@ -532,7 +532,12 @@ export default function CreateTrip() {
                 {t('cancel')}
               </Button>
               <Button 
-                onClick={handleSubmit}
+                type="button"
+                onClick={(e) => {
+                  console.log('🔴 CLICK EVENT:', e);
+                  console.log('Loading state:', loading);
+                  handleSubmit();
+                }}
                 className="bg-emerald-600 hover:bg-emerald-700 min-w-[140px]"
                 disabled={loading}
               >
