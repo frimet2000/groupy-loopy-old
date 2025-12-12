@@ -84,6 +84,11 @@ export default function TripDetails() {
     enabled: !!tripId,
   });
 
+  const isOrganizer = user?.email === trip?.organizer_email;
+  const hasJoined = trip?.participants?.some(p => p.email === user?.email);
+  const hasPendingRequest = trip?.pending_requests?.some(r => r.email === user?.email);
+  const isFull = trip?.current_participants >= trip?.max_participants;
+
   // Show pending requests dialog for organizer
   useEffect(() => {
     if (trip && isOrganizer && trip.pending_requests?.length > 0 && !showRequestDialog) {
@@ -147,11 +152,6 @@ export default function TripDetails() {
       toast.success(t('leftTrip'));
     },
   });
-
-  const isOrganizer = user?.email === trip?.organizer_email;
-  const hasJoined = trip?.participants?.some(p => p.email === user?.email);
-  const hasPendingRequest = trip?.pending_requests?.some(r => r.email === user?.email);
-  const isFull = trip?.current_participants >= trip?.max_participants;
 
   const approveMutation = useMutation({
     mutationFn: async (requestEmail) => {
