@@ -70,6 +70,7 @@ const translations = {
     // Activity types
     hiking: "Hiking",
     cycling: "Cycling",
+    offroad: "Off-Road",
     activityType: "Activity Type",
 
     // Cycling types
@@ -81,6 +82,28 @@ const translations = {
     cyclingType: "Cycling Type",
     cyclingDistance: "Distance (km)",
     cyclingElevation: "Elevation Gain (m)",
+
+    // Off-road types
+    jeep: "Jeep",
+    atv: "ATV / Quad",
+    dirt_bike: "Dirt Bike",
+    side_by_side: "Side by Side / UTV",
+    buggy: "Buggy",
+    truck: "4x4 Truck",
+    offroadVehicleType: "Vehicle Type",
+    offroadDistance: "Distance (km)",
+    offroadTerrainType: "Terrain Types",
+
+    // Terrain types
+    sand: "Sand Dunes",
+    rocks: "Rocky Terrain",
+    mud: "Mud",
+    hills: "Hills & Slopes",
+    forest_trails: "Forest Trails",
+    river_crossing: "River Crossing",
+
+    // Difficulty levels
+    extreme: "Extreme",
     
     // Interests
     nature: "Nature",
@@ -244,6 +267,7 @@ const translations = {
     // Activity types
     hiking: "טיול רגלי",
     cycling: "רכיבת אופניים",
+    offroad: "טיול שטח",
     activityType: "סוג פעילות",
 
     // Cycling types
@@ -255,6 +279,28 @@ const translations = {
     cyclingType: "סוג אופניים",
     cyclingDistance: "מרחק (ק\"מ)",
     cyclingElevation: "עליה מצטברת (מ')",
+
+    // Off-road types
+    jeep: "ג'יפ",
+    atv: "טרקטורון",
+    dirt_bike: "אופנוע שטח",
+    side_by_side: "טרקטורון דו-מושבי",
+    buggy: "באגי",
+    truck: "רכב שטח 4X4",
+    offroadVehicleType: "סוג רכב",
+    offroadDistance: "מרחק (ק\"מ)",
+    offroadTerrainType: "סוגי שטח",
+
+    // Terrain types
+    sand: "דיונות חול",
+    rocks: "סלעים",
+    mud: "בוץ",
+    hills: "גבעות ומדרונות",
+    forest_trails: "שבילי יער",
+    river_crossing: "חציית נחלים",
+
+    // Difficulty levels
+    extreme: "אקסטרים",
     
     // Interests
     nature: "טבע",

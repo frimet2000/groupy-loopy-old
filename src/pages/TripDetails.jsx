@@ -29,7 +29,7 @@ import { motion } from 'framer-motion';
 import {
   Calendar, MapPin, Clock, Users, Mountain, Dog, Tent,
   Share2, ArrowLeft, ArrowRight, Check, X, User,
-  Droplets, TreePine, Sun, History, Building, Navigation, Edit, MessageCircle, Bike
+  Droplets, TreePine, Sun, History, Building, Navigation, Edit, MessageCircle, Bike, Truck
 } from 'lucide-react';
 
 const difficultyColors = {
@@ -397,6 +397,12 @@ export default function TripDetails() {
                       <span>{t(trip.cycling_type || 'cycling')}</span>
                     </div>
                   )}
+                  {trip.activity_type === 'offroad' && (
+                    <div className="flex items-center gap-2">
+                      <Truck className="w-5 h-5 text-orange-600" />
+                      <span>{t(trip.offroad_vehicle_type || 'offroad')}</span>
+                    </div>
+                  )}
                   </div>
 
                 {user && !isOrganizer && (
@@ -507,6 +513,31 @@ export default function TripDetails() {
                           <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
                             ↗ {trip.cycling_elevation} {language === 'he' ? 'מ\'' : 'm'}
                           </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {trip.activity_type === 'offroad' && (
+                    <div>
+                      <p className="font-medium mb-2">{t('offroad')} {language === 'he' ? 'פרטים' : 'Details'}</p>
+                      <div className="space-y-2">
+                        {trip.offroad_distance && (
+                          <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                            {trip.offroad_distance} {language === 'he' ? 'ק"מ' : 'km'}
+                          </Badge>
+                        )}
+                        {trip.offroad_terrain_type && trip.offroad_terrain_type.length > 0 && (
+                          <div>
+                            <p className="text-sm text-gray-500 mb-1">{t('offroadTerrainType')}:</p>
+                            <div className="flex flex-wrap gap-2">
+                              {trip.offroad_terrain_type.map(terrain => (
+                                <Badge key={terrain} variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                                  {t(terrain)}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
                         )}
                       </div>
                     </div>

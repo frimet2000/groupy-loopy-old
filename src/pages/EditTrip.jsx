@@ -17,10 +17,12 @@ import { getRegionFromCoordinates } from '../components/utils/LocationDetector';
 import LocationPicker from '../components/maps/LocationPicker';
 
 const regions = ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'];
-const difficulties = ['easy', 'moderate', 'challenging', 'hard'];
+const difficulties = ['easy', 'moderate', 'challenging', 'hard', 'extreme'];
 const durations = ['hours', 'half_day', 'full_day', 'overnight', 'multi_day'];
-const activityTypes = ['hiking', 'cycling'];
+const activityTypes = ['hiking', 'cycling', 'offroad'];
 const cyclingTypes = ['road', 'mountain', 'gravel', 'hybrid', 'bmx', 'electric'];
+const offroadVehicleTypes = ['jeep', 'atv', 'dirt_bike', 'side_by_side', 'buggy', 'truck'];
+const offroadTerrainTypes = ['sand', 'rocks', 'mud', 'hills', 'desert', 'forest_trails', 'river_crossing'];
 const trailTypes = ['water', 'full_shade', 'partial_shade', 'desert', 'forest', 'coastal', 'mountain', 'historical', 'urban'];
 const interests = ['nature', 'history', 'photography', 'birdwatching', 'archaeology', 'geology', 'botany', 'extreme_sports', 'family_friendly', 'romantic'];
 const accessibilityTypes = ['wheelchair', 'visual_impairment', 'hearing_impairment', 'mobility_aid', 'stroller_friendly', 'elderly_friendly'];
@@ -52,6 +54,9 @@ export default function EditTrip() {
     cycling_type: '',
     cycling_distance: '',
     cycling_elevation: '',
+    offroad_vehicle_type: '',
+    offroad_distance: '',
+    offroad_terrain_type: [],
     trail_type: [],
     interests: [],
     accessibility_types: [],
@@ -111,6 +116,9 @@ export default function EditTrip() {
           cycling_type: trip.cycling_type || '',
           cycling_distance: trip.cycling_distance || '',
           cycling_elevation: trip.cycling_elevation || '',
+          offroad_vehicle_type: trip.offroad_vehicle_type || '',
+          offroad_distance: trip.offroad_distance || '',
+          offroad_terrain_type: trip.offroad_terrain_type || [],
           trail_type: trip.trail_type || [],
           interests: trip.interests || [],
           accessibility_types: trip.accessibility_types || [],
@@ -236,6 +244,9 @@ export default function EditTrip() {
         cycling_type: formData.cycling_type,
         cycling_distance: formData.cycling_distance,
         cycling_elevation: formData.cycling_elevation,
+        offroad_vehicle_type: formData.offroad_vehicle_type,
+        offroad_distance: formData.offroad_distance,
+        offroad_terrain_type: formData.offroad_terrain_type,
         trail_type: formData.trail_type,
         interests: formData.interests,
         accessibility_types: formData.accessibility_types,
@@ -523,6 +534,56 @@ export default function EditTrip() {
                         onChange={(e) => handleChange('cycling_elevation', parseInt(e.target.value))}
                         placeholder="500"
                       />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Off-road Specific Fields */}
+              {formData.activity_type === 'offroad' && (
+                <>
+                  <div className="space-y-2">
+                    <Label>{t('offroadVehicleType')} *</Label>
+                    <Select value={formData.offroad_vehicle_type} onValueChange={(v) => handleChange('offroad_vehicle_type', v)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('offroadVehicleType')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {offroadVehicleTypes.map(type => (
+                          <SelectItem key={type} value={type}>{t(type)}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>{t('offroadDistance')}</Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      value={formData.offroad_distance}
+                      onChange={(e) => handleChange('offroad_distance', parseInt(e.target.value))}
+                      placeholder="80"
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label>{t('offroadTerrainType')}</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {offroadTerrainTypes.map(type => (
+                        <Badge
+                          key={type}
+                          variant={formData.offroad_terrain_type.includes(type) ? 'default' : 'outline'}
+                          className={`cursor-pointer transition-all ${
+                            formData.offroad_terrain_type.includes(type) 
+                              ? 'bg-orange-600 hover:bg-orange-700' 
+                              : 'hover:border-orange-500'
+                          }`}
+                          onClick={() => handleArrayToggle('offroad_terrain_type', type)}
+                        >
+                          {t(type)}
+                        </Badge>
+                      ))}
                     </div>
                   </div>
                 </>

@@ -17,10 +17,12 @@ import { detectUserLocation, getRegionFromCoordinates } from '../components/util
 import LocationPicker from '../components/maps/LocationPicker';
 
 const regions = ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'];
-const difficulties = ['easy', 'moderate', 'challenging', 'hard'];
+const difficulties = ['easy', 'moderate', 'challenging', 'hard', 'extreme'];
 const durations = ['hours', 'half_day', 'full_day', 'overnight', 'multi_day'];
-const activityTypes = ['hiking', 'cycling'];
+const activityTypes = ['hiking', 'cycling', 'offroad'];
 const cyclingTypes = ['road', 'mountain', 'gravel', 'hybrid', 'bmx', 'electric'];
+const offroadVehicleTypes = ['jeep', 'atv', 'dirt_bike', 'side_by_side', 'buggy', 'truck'];
+const offroadTerrainTypes = ['sand', 'rocks', 'mud', 'hills', 'desert', 'forest_trails', 'river_crossing'];
 const trailTypes = ['water', 'full_shade', 'partial_shade', 'desert', 'forest', 'coastal', 'mountain', 'historical', 'urban'];
 const interests = ['nature', 'history', 'photography', 'birdwatching', 'archaeology', 'geology', 'botany', 'extreme_sports', 'family_friendly', 'romantic'];
 const accessibilityTypes = ['wheelchair', 'visual_impairment', 'hearing_impairment', 'mobility_aid', 'stroller_friendly', 'elderly_friendly'];
@@ -48,6 +50,9 @@ export default function CreateTrip() {
     cycling_type: '',
     cycling_distance: '',
     cycling_elevation: '',
+    offroad_vehicle_type: '',
+    offroad_distance: '',
+    offroad_terrain_type: [],
     trail_type: [],
     interests: [],
     accessibility_types: [],
