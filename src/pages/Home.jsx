@@ -8,6 +8,7 @@ import TripCard from '../components/trips/TripCard';
 import TripFilters from '../components/trips/TripFilters';
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 
