@@ -8,13 +8,29 @@ import TripCard from '../components/trips/TripCard';
 import TripFilters from '../components/trips/TripFilters';
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown } from 'lucide-react';
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { format, isPast, isToday, isTomorrow } from 'date-fns';
 
 export default function Home() {
   const { t, isRTL, language } = useLanguage();
   const [filters, setFilters] = useState({});
   const [visibleCount, setVisibleCount] = useState(8);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await base44.auth.me();
+        setUser(userData);
+      } catch (e) {
+        console.log('Not logged in');
+      }
+    };
+    fetchUser();
+  }, []);
 
   const { data: trips = [], isLoading } = useQuery({
     queryKey: ['trips'],
@@ -49,6 +65,15 @@ export default function Home() {
   const displayedTrips = filteredTrips.slice(0, visibleCount);
 
   const openTrips = trips.filter(t => t.status === 'open');
+  
+  // Get active video call invites for trips user is participating in
+  const myActiveInvites = user ? trips.filter(trip => 
+    trip.participants?.some(p => p.email === user.email) &&
+    trip.video_call_invites?.some(invite => invite.active && !isPast(new Date(invite.scheduled_time)))
+  ).map(trip => ({
+    trip,
+    invite: trip.video_call_invites.find(invite => invite.active && !isPast(new Date(invite.scheduled_time)))
+  })) : [];
   
   // Count unique participants by email
   const uniqueParticipants = new Set();
@@ -128,6 +153,71 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* Video Call Invites Banner */}
+      {myActiveInvites.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <Card className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0 shadow-xl">
+              <div className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <Video className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold">
+                      {language === 'he' ? 'זימונים לשיחות וידאו' : 'Video Call Invitations'}
+                    </h3>
+                    <p className="text-emerald-50 text-sm">
+                      {language === 'he' 
+                        ? `יש לך ${myActiveInvites.length} זימון${myActiveInvites.length > 1 ? 'ים' : ''} פעיל${myActiveInvites.length > 1 ? 'ים' : ''}`
+                        : `You have ${myActiveInvites.length} active invite${myActiveInvites.length > 1 ? 's' : ''}`}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  {myActiveInvites.map(({ trip, invite }) => {
+                    const title = language === 'he' ? trip.title_he : trip.title_en;
+                    const scheduledDate = new Date(invite.scheduled_time);
+                    const timeLabel = isToday(scheduledDate) 
+                      ? (language === 'he' ? 'היום' : 'Today')
+                      : isTomorrow(scheduledDate)
+                      ? (language === 'he' ? 'מחר' : 'Tomorrow')
+                      : format(scheduledDate, 'MMM d');
+
+                    return (
+                      <div key={trip.id} className="bg-white/10 backdrop-blur-sm rounded-lg p-4 flex items-center justify-between">
+                        <div className="flex-1">
+                          <p className="font-semibold text-lg">{title}</p>
+                          <div className="flex items-center gap-4 mt-1 text-sm text-emerald-50">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              {timeLabel} {format(scheduledDate, 'HH:mm')}
+                            </span>
+                            <span>
+                              {language === 'he' ? 'מאת' : 'by'} {invite.creator_name}
+                            </span>
+                          </div>
+                        </div>
+                        <Link to={createPageUrl('TripDetails') + '?id=' + trip.id}>
+                          <Button 
+                            className="bg-white text-emerald-600 hover:bg-emerald-50"
+                          >
+                            {language === 'he' ? 'צפה בטיול' : 'View Trip'}
+                          </Button>
+                        </Link>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        </section>
+      )}
 
       {/* Trips Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
