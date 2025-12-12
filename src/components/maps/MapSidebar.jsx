@@ -252,9 +252,9 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
 
   return (
     <>
-      <Card className="h-full border-0 shadow-lg">
-        <Tabs value={activeTab} onValueChange={setActiveTab} dir="rtl">
-          <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-emerald-50 to-blue-50 p-1">
+      <Card className="border-0 shadow-lg">
+        <Tabs value={activeTab} onValueChange={setActiveTab} dir="rtl" className="h-full">
+          <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-emerald-50 to-blue-50 p-1 m-0">
             <TabsTrigger value="trail" className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white gap-2">
               <Route className="w-4 h-4" />
               {language === 'he' ? 'מסלול' : 'Trail'}
@@ -270,7 +270,7 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
           </TabsList>
 
           {/* Trail Map */}
-          <TabsContent value="trail" className="p-0">
+          <TabsContent value="trail" className="p-0 m-0">
             <CardContent className="p-4 space-y-4">
               {isOrganizer && (
                 <Button
@@ -355,7 +355,7 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
           </TabsContent>
 
           {/* Restaurants */}
-          <TabsContent value="restaurants" className="p-0">
+          <TabsContent value="restaurants" className="p-0 m-0">
             <CardContent className="p-4 space-y-4">
               {loading ? (
                 <div className="flex items-center justify-center py-12">
@@ -421,7 +421,7 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
           </TabsContent>
 
           {/* Equipment Checklist */}
-          <TabsContent value="equipment" className="p-0">
+          <TabsContent value="equipment" className="p-0 m-0">
             <CardContent className="p-4 space-y-4">
               {isOrganizer && (
                 <>
