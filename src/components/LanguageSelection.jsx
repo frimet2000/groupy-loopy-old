@@ -40,28 +40,28 @@ export default function LanguageSelection({ onLanguageSelect }) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               {languages.map((lang) => (
                 <motion.button
                   key={lang.code}
                   onClick={() => setSelectedLanguage(lang.code)}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className={`p-3 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 ${
+                  className={`p-2 rounded-lg border-2 transition-all duration-200 flex flex-col items-center gap-1 ${
                     selectedLanguage === lang.code
                       ? 'border-emerald-500 bg-emerald-50 shadow-md'
                       : 'border-gray-200 hover:border-emerald-300 hover:bg-gray-50'
                   }`}
                 >
-                  <span className="text-3xl">{lang.flag}</span>
-                  <p className="font-semibold text-sm text-gray-900">{lang.nativeName}</p>
+                  <span className="text-2xl">{lang.flag}</span>
+                  <p className="font-semibold text-xs text-gray-900 text-center leading-tight">{lang.nativeName}</p>
                   {selectedLanguage === lang.code && (
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center"
+                      className="w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center"
                     >
-                      <Check className="w-3 h-3 text-white" />
+                      <Check className="w-2.5 h-2.5 text-white" />
                     </motion.div>
                   )}
                 </motion.button>
