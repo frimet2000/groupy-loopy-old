@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { 
@@ -20,17 +21,21 @@ import {
   Search,
   X,
   Loader2,
-  TrendingUp
+  TrendingUp,
+  Mail
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { formatDate } from '../components/utils/dateFormatter';
+import DirectMessageChat from '../components/chat/DirectMessageChat';
 
 export default function Community() {
   const { t, language, isRTL } = useLanguage();
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatFriend, setChatFriend] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -56,6 +61,21 @@ export default function Community() {
     queryKey: ['trips'],
     queryFn: () => base44.entities.Trip.list('-created_date'),
     enabled: !!user,
+  });
+
+  // Fetch unread message count
+  const { data: unreadCount = 0 } = useQuery({
+    queryKey: ['unreadCount', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return 0;
+      const messages = await base44.entities.DirectMessage.filter({ 
+        recipient_email: user.email,
+        read: false
+      });
+      return messages.length;
+    },
+    enabled: !!user?.email,
+    refetchInterval: 5000,
   });
 
   const myFriends = user?.friends || [];
@@ -165,6 +185,17 @@ export default function Community() {
     return name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
+  const openChat = (friendEmail) => {
+    const friend = users.find(u => u.email === friendEmail);
+    if (friend) {
+      const friendName = (friend.first_name && friend.last_name) 
+        ? `${friend.first_name} ${friend.last_name}` 
+        : friend.full_name || friend.email;
+      setChatFriend({ email: friendEmail, name: friendName });
+      setChatOpen(true);
+    }
+  };
+
   const UserCard = ({ targetUser }) => {
     const userName = (targetUser.first_name && targetUser.last_name) 
       ? `${targetUser.first_name} ${targetUser.last_name}` 
@@ -240,7 +271,7 @@ export default function Community() {
       </div>
 
       <Tabs defaultValue="feed" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
+        <TabsList className="grid w-full grid-cols-4 mb-6">
           <TabsTrigger value="feed" className="gap-2">
             <TrendingUp className="w-4 h-4" />
             {language === 'he' ? 'פיד' : 'Feed'}
@@ -248,6 +279,15 @@ export default function Community() {
           <TabsTrigger value="friends" className="gap-2">
             <Users className="w-4 h-4" />
             {language === 'he' ? 'חברים' : 'Friends'} ({myFriends.length})
+          </TabsTrigger>
+          <TabsTrigger value="messages" className="gap-2 relative">
+            <Mail className="w-4 h-4" />
+            {language === 'he' ? 'הודעות' : 'Messages'}
+            {unreadCount > 0 && (
+              <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500 text-white text-xs">
+                {unreadCount}
+              </Badge>
+            )}
           </TabsTrigger>
           <TabsTrigger value="discover" className="gap-2">
             <Search className="w-4 h-4" />
@@ -413,21 +453,85 @@ export default function Community() {
                       : friend.full_name || friend.email;
 
                     return (
-                      <Card key={friendEmail} className="hover:shadow-lg transition-all">
+                     <Card key={friendEmail} className="hover:shadow-lg transition-all">
+                       <CardContent className="p-4">
+                         <div className="flex items-center gap-3">
+                           <Link to={createPageUrl('Profile') + '?email=' + friendEmail} className="flex items-center gap-3 flex-1">
+                             <Avatar className="h-12 w-12">
+                               <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-700 text-white">
+                                 {name.charAt(0).toUpperCase()}
+                               </AvatarFallback>
+                             </Avatar>
+                             <div className="flex-1">
+                               <p className="font-semibold">{name}</p>
+                               <p className="text-sm text-gray-500">{friend.email}</p>
+                             </div>
+                           </Link>
+                           <Button
+                             size="sm"
+                             variant="outline"
+                             onClick={() => openChat(friendEmail)}
+                             className="gap-2"
+                           >
+                             <MessageCircle className="w-4 h-4" />
+                             {language === 'he' ? 'שלח הודעה' : 'Message'}
+                           </Button>
+                         </div>
+                       </CardContent>
+                     </Card>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Messages Tab */}
+        <TabsContent value="messages">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                {language === 'he' ? 'הודעות' : 'Messages'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {myFriends.length === 0 ? (
+                <p className="text-center py-8 text-gray-500">
+                  {language === 'he' 
+                    ? 'הוסף חברים כדי להתחיל לשלוח הודעות'
+                    : 'Add friends to start messaging'}
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {myFriends.map(friendEmail => {
+                    const friend = users.find(u => u.email === friendEmail);
+                    if (!friend) return null;
+                    const name = (friend.first_name && friend.last_name) 
+                      ? `${friend.first_name} ${friend.last_name}` 
+                      : friend.full_name || friend.email;
+
+                    return (
+                      <Card 
+                        key={friendEmail} 
+                        className="hover:shadow-lg transition-all cursor-pointer"
+                        onClick={() => openChat(friendEmail)}
+                      >
                         <CardContent className="p-4">
-                          <Link to={createPageUrl('Profile') + '?email=' + friendEmail}>
-                            <div className="flex items-center gap-3">
-                              <Avatar className="h-12 w-12">
-                                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-700 text-white">
-                                  {name.charAt(0).toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex-1">
-                                <p className="font-semibold">{name}</p>
-                                <p className="text-sm text-gray-500">{friend.email}</p>
-                              </div>
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-12 w-12">
+                              <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-emerald-700 text-white">
+                                {name.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                              <p className="font-semibold">{name}</p>
+                              <p className="text-sm text-gray-500 flex items-center gap-2">
+                                <MessageCircle className="w-3 h-3" />
+                                {language === 'he' ? 'לחץ לפתיחת צ\'אט' : 'Click to open chat'}
+                              </p>
                             </div>
-                          </Link>
+                          </div>
                         </CardContent>
                       </Card>
                     );
@@ -470,6 +574,20 @@ export default function Community() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Direct Message Dialog */}
+      <Dialog open={chatOpen} onOpenChange={setChatOpen}>
+        <DialogContent className="max-w-3xl p-0">
+          {chatFriend && (
+            <DirectMessageChat
+              friendEmail={chatFriend.email}
+              friendName={chatFriend.name}
+              currentUserEmail={user.email}
+              onClose={() => setChatOpen(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
