@@ -118,61 +118,160 @@ export default function Home() {
   return (
     <div className="pb-8">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 text-white">
-        <div className="absolute inset-0">
+      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-teal-900 to-emerald-950 text-white min-h-[85vh] flex items-center">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
           <img
             src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=80"
             alt="Israel landscape"
-            className="w-full h-full object-cover opacity-30"
+            className="w-full h-full object-cover opacity-20"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-emerald-900/80 via-emerald-900/60 to-emerald-900" />
-        </div>
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-32">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/95 via-teal-900/90 to-emerald-950/95" />
+
+          {/* Floating Orbs */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            animate={{
+              x: [0, 100, 0],
+              y: [0, -100, 0],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-20 left-20 w-96 h-96 bg-emerald-400/20 rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{
+              x: [0, -80, 0],
+              y: [0, 100, 0],
+              scale: [1, 1.3, 1],
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            className="absolute bottom-20 right-32 w-80 h-80 bg-teal-400/20 rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{
+              x: [0, 60, 0],
+              y: [0, -60, 0],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            className="absolute top-1/2 right-20 w-72 h-72 bg-emerald-300/15 rounded-full blur-3xl"
+          />
+
+          {/* Grid Pattern Overlay */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-3xl"
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="max-w-4xl"
           >
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
-              {t('heroTitle')}
-            </h1>
-            <p className="text-xl md:text-2xl text-emerald-100/90 mb-10 leading-relaxed">
+            {/* Decorative Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 backdrop-blur-sm border border-emerald-400/30 rounded-full px-5 py-2 mb-8"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span className="text-sm font-medium text-emerald-100">
+                {language === 'he' ? 'פלטפורמת הטיולים המתקדמת של ישראל' : 'Israel\'s Advanced Trip Platform'}
+              </span>
+            </motion.div>
+
+            {/* Main Title with Gradient */}
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-6"
+            >
+              <span className="bg-gradient-to-r from-white via-emerald-100 to-teal-200 bg-clip-text text-transparent">
+                {t('heroTitle')}
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.5 }}
+              className="text-xl md:text-2xl text-emerald-100/90 mb-12 leading-relaxed max-w-2xl"
+            >
               {t('heroSubtitle')}
-            </p>
-            
-            <div className="flex flex-wrap gap-4">
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.7 }}
+              className="flex flex-wrap gap-4"
+            >
               <Link to={createPageUrl('CreateTrip')}>
-                <Button size="lg" className="bg-white text-emerald-900 hover:bg-emerald-50 h-14 px-8 text-lg font-semibold shadow-xl">
-                  <Plus className="w-5 h-5 mr-2" />
-                  {t('createTrip')}
-                </Button>
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button size="lg" className="bg-gradient-to-r from-white to-emerald-50 text-emerald-900 hover:from-emerald-50 hover:to-white h-16 px-10 text-lg font-bold shadow-2xl shadow-emerald-500/20 border-2 border-white/50">
+                    <Plus className="w-6 h-6 mr-2" />
+                    {t('createTrip')}
+                  </Button>
+                </motion.div>
               </Link>
               <Link to={createPageUrl('AIRecommendations')}>
-                <Button size="lg" variant="outline" className="border-2 border-white text-emerald-900 bg-white/95 hover:bg-white h-14 px-8 text-lg font-bold">
-                  {t('aiRecommendations')}
-                  <ArrowRight className={`w-5 h-5 ${isRTL ? 'mr-2 rotate-180' : 'ml-2'}`} />
-                </Button>
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button size="lg" className="bg-white/10 backdrop-blur-md border-2 border-white/30 text-white hover:bg-white/20 h-16 px-10 text-lg font-bold shadow-xl">
+                    <span className="bg-gradient-to-r from-emerald-200 to-teal-200 bg-clip-text text-transparent font-bold">
+                      {t('aiRecommendations')}
+                    </span>
+                    <ArrowRight className={`w-6 h-6 ${isRTL ? 'mr-2 rotate-180' : 'ml-2'}`} />
+                  </Button>
+                </motion.div>
               </Link>
-            </div>
+            </motion.div>
           </motion.div>
 
-          {/* Stats */}
+          {/* Enhanced Stats with Animations */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="flex flex-wrap gap-8 mt-16"
+            transition={{ duration: 1, delay: 0.9 }}
+            className="flex flex-wrap gap-6 mt-20"
           >
             {stats.map((stat, index) => (
-              <div key={index} className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-2xl px-6 py-4">
-                <stat.icon className={`w-8 h-8 ${stat.color}`} />
-                <div>
-                  <div className="text-2xl font-bold">{stat.value}</div>
-                  <div className="text-sm text-emerald-200">{stat.label}</div>
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.9 + index * 0.1 }}
+                whileHover={{ scale: 1.05, y: -4 }}
+                className="group relative"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/30 to-teal-400/30 rounded-2xl blur-xl group-hover:blur-2xl transition-all" />
+                <div className="relative flex items-center gap-4 bg-white/10 backdrop-blur-md rounded-2xl px-8 py-5 border border-white/20">
+                  <div className="p-3 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-xl">
+                    <stat.icon className={`w-8 h-8 ${stat.color}`} />
+                  </div>
+                  <div>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 1, delay: 1 + index * 0.1 }}
+                      className="text-3xl font-bold bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent"
+                    >
+                      {stat.value}
+                    </motion.div>
+                    <div className="text-sm text-emerald-200 font-medium">{stat.label}</div>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
         </div>
