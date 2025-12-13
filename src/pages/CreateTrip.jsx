@@ -234,7 +234,7 @@ export default function CreateTrip() {
                 <Input
                   value={formData.title_he}
                   onChange={(e) => handleChange('title_he', e.target.value)}
-                  placeholder="כותרת בעברית"
+                  placeholder="כותרת"
                   dir="rtl"
                   required
                 />
