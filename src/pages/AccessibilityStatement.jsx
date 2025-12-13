@@ -9,7 +9,8 @@ export default function AccessibilityStatement() {
   const { language, isRTL } = useLanguage();
   const navigate = useNavigate();
 
-  const content = language === 'he' ? {
+  const getContent = () => {
+    if (language === 'he') return {
     title: 'הצהרת נגישות',
     lastUpdated: 'עודכן לאחרונה: 13 בדצמבר 2025',
     intro: 'The Group Loop מחויבת להנגיש את האפליקציה והשירותים שלה לכלל האוכלוסייה, כולל אנשים עם מוגבלות. אנו פועלים למימוש זכותם של כל האנשים לגלוש באתר באופן עצמאי, יעיל, שוויוני ונוח.',
@@ -173,7 +174,9 @@ export default function AccessibilityStatement() {
       title: 'Our Commitment',
       text: 'At The Group Loop, we believe everyone deserves equal access to information and services. We continue to work on improving accessibility, conduct periodic checks, and update the app according to changing standards and the changing needs of our community.'
     }
-  } : language === 'ru' ? {
+  };
+    
+    if (language === 'ru') return {
     title: 'Заявление о доступности',
     lastUpdated: 'Последнее обновление: 13 декабря 2025',
     intro: 'The Group Loop стремится сделать свое приложение и услуги доступными для всего населения, включая людей с ограниченными возможностями. Мы работаем над реализацией права всех людей просматривать сайт самостоятельно, эффективно, на равных и удобно.',
@@ -254,7 +257,93 @@ export default function AccessibilityStatement() {
       title: 'Наше обязательство',
       text: 'В The Group Loop мы верим, что каждый заслуживает равного доступа к информации и услугам. Мы продолжаем работать над улучшением доступности, проводим периодические проверки и обновляем приложение в соответствии с изменяющимися стандартами и меняющимися потребностями нашего сообщества.'
     }
-  } : content;
+  };
+    
+    return {
+      title: 'Accessibility Statement',
+      lastUpdated: 'Last Updated: December 13, 2025',
+      intro: 'The Group Loop is committed to making its app and services accessible to the entire population, including people with disabilities. We work to realize the right of all people to browse the site independently, efficiently, equally, and conveniently.',
+      sections: [
+        {
+          icon: Accessibility,
+          title: 'Accessibility Level',
+          text: 'The app is designed according to the Web Content Accessibility Guidelines (WCAG 2.1) Level AA. The app accessibility was implemented according to the Israeli Standard (IS 5568) for web content accessibility.'
+        },
+        {
+          icon: Eye,
+          title: 'Accessibility for People with Visual Impairments',
+          items: [
+            'Full support for screen readers such as NVDA, JAWS, and VoiceOver',
+            'Floating accessibility button to increase font size (80%-150%)',
+            'High contrast mode for display adjustment',
+            'Alternative text (Alt Text) for all images and icons',
+            'Navigation using keyboard only',
+            'Logical reading order of content',
+            'Proper labeling of headings and buttons'
+          ]
+        },
+        {
+          icon: Keyboard,
+          title: 'Keyboard Accessibility',
+          items: [
+            'Full navigation using keyboard (Tab, Enter, Space)',
+            'Clear marking of the active element',
+            'Convenient shortcuts for common actions',
+            'Option to skip navigation menu (Skip to Content)'
+          ]
+        },
+        {
+          icon: Mouse,
+          title: 'Operational Accessibility',
+          items: [
+            'Large buttons and clickable areas',
+            'Sufficient response time for actions',
+            'Option to cancel and correct errors',
+            'Avoiding flashing content that may cause seizures'
+          ]
+        },
+        {
+          icon: Smartphone,
+          title: 'Mobile Accessibility',
+          items: [
+            'Touch screen adapted interface',
+            'Support for iOS and Android accessibility features',
+            'Easy navigation using gestures',
+            'Option to zoom in on screen'
+          ]
+        },
+        {
+          icon: AlertCircle,
+          title: 'Exceptions and Limitations',
+          text: 'Despite our efforts, there may be parts of the app that have not yet been fully made accessible. We continue to work on improving accessibility and update the app regularly.',
+          items: [
+            'User-uploaded content - we have no control over their accessibility',
+            'Third-party services - may have accessibility limitations',
+            'Old content - undergoing gradual accessibility process'
+          ]
+        },
+        {
+          icon: Mail,
+          title: 'Accessibility Coordinator and Contact',
+          text: 'If you encounter an accessibility problem in the app, or have suggestions for improving accessibility, we would love to hear from you:',
+          contact: [
+            'Email: frimet@gmail.com'
+          ]
+        },
+        {
+          icon: Accessibility,
+          title: 'Accessibility Accommodations in Trips',
+          text: 'The app allows trip organizers to mark the accessibility level of the trip and specify special accommodations. Participants can indicate their accessibility needs when joining a trip.'
+        }
+      ],
+      commitment: {
+        title: 'Our Commitment',
+        text: 'At The Group Loop, we believe everyone deserves equal access to information and services. We continue to work on improving accessibility, conduct periodic checks, and update the app according to changing standards and the changing needs of our community.'
+      }
+    };
+  };
+
+  const content = getContent();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">

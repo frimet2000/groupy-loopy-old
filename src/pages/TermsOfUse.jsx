@@ -9,7 +9,8 @@ export default function TermsOfUse() {
   const { language, isRTL } = useLanguage();
   const navigate = useNavigate();
 
-  const content = language === 'he' ? {
+  const getContent = () => {
+    if (language === 'he') return {
     title: 'תקנון ותנאי שימוש',
     lastUpdated: 'עודכן לאחרונה: 13 בדצמבר 2025',
     intro: 'ברוכים הבאים ל-The Group Loop. השימוש באפליקציה ובשירותים שלנו כפוף לתנאי שימוש אלה. אנא קרא אותם בעיון לפני השימוש בשירות.',
@@ -195,7 +196,9 @@ export default function TermsOfUse() {
       }
     ],
     contact: 'For questions or clarifications regarding terms of use, you can contact us at frimet@gmail.com'
-  } : language === 'ru' ? {
+  };
+    
+    if (language === 'ru') return {
     title: 'Условия использования',
     lastUpdated: 'Последнее обновление: 13 декабря 2025',
     intro: 'Добро пожаловать в The Group Loop. Использование нашего приложения и услуг регулируется этими условиями использования. Пожалуйста, внимательно прочитайте их перед использованием сервиса.',
@@ -288,7 +291,105 @@ export default function TermsOfUse() {
       }
     ],
     contact: 'По вопросам или уточнениям относительно условий использования вы можете связаться с нами по адресу frimet@gmail.com'
-  } : content;
+  };
+    
+    return {
+      title: 'Terms of Use',
+      lastUpdated: 'Last Updated: December 13, 2025',
+      intro: 'Welcome to The Group Loop. Use of our app and services is subject to these terms of use. Please read them carefully before using the service.',
+      sections: [
+        {
+          icon: FileText,
+          title: 'Acceptance of Terms',
+          text: 'By accessing or using the app, you confirm that you have read, understood, and agree to be bound by these terms of use. If you do not agree to the terms, please stop using the service.'
+        },
+        {
+          icon: UserX,
+          title: 'Eligibility',
+          items: [
+            'You must be at least 18 years old to use the service',
+            'You must provide accurate and up-to-date information when registering',
+            'You are responsible for maintaining the confidentiality of your password',
+            'You may not transfer your account to another person'
+          ]
+        },
+        {
+          icon: Shield,
+          title: 'Permitted and Prohibited Uses',
+          allowed: {
+            title: 'Permitted:',
+            items: [
+              'Create and manage trips',
+              'Join trips by others',
+              'Communicate with other users',
+              'Share trip-related content'
+            ]
+          },
+          forbidden: {
+            title: 'Prohibited:',
+            items: [
+              'Violate any laws or regulations',
+              'Harass, insult, or harm other users',
+              'Post offensive, racist, or sexual content',
+              'Share false or misleading information',
+              'Attempt to hack or damage the system',
+              'Collect user information without permission',
+              'Use the service for commercial purposes without approval',
+              'Create fake accounts or impersonate others'
+            ]
+          }
+        },
+        {
+          icon: Copyright,
+          title: 'Intellectual Property',
+          text: 'All content in the app, including design, logo, text, graphics, and code, is our property or that of our licensors and is protected by copyright. You may not copy, reproduce, distribute, or use the content without express permission.',
+          userContent: {
+            title: 'User Content:',
+            text: 'You retain copyright to content you post. However, you grant us a worldwide, non-exclusive, royalty-free license to use, display, reproduce, and distribute your content within the service.'
+          }
+        },
+        {
+          icon: AlertTriangle,
+          title: 'Disclaimer',
+          items: [
+            'The app is provided "as is" without warranty of any kind',
+            'We are not responsible for actions, conduct, or safety of users',
+            'We are not liable for damages resulting from trip participation',
+            'We do not guarantee the service will always be available or error-free',
+            'We are not responsible for loss of information or other damages from use'
+          ]
+        },
+        {
+          icon: Shield,
+          title: 'Limitation of Liability',
+          text: 'In any event, our liability for any damage, loss, or claim against you shall be limited to the amount you paid us (if any) in the twelve months preceding the claim.'
+        },
+        {
+          icon: Shield,
+          title: 'Indemnification',
+          text: 'You agree to indemnify, defend, and hold us harmless from any claims, losses, damages, liabilities, and expenses arising from your use of the app or breach of terms of use.'
+        },
+        {
+          icon: Scale,
+          title: 'Governing Law and Jurisdiction',
+          text: 'These terms of use are governed by the laws of the State of Israel. Any dispute shall be resolved exclusively in the competent courts.'
+        },
+        {
+          icon: FileText,
+          title: 'Changes to Terms',
+          text: 'We reserve the right to change or update the terms of use at any time. We will notify you of significant changes through the app or email. Continued use after a change constitutes acceptance of the updated terms.'
+        },
+        {
+          icon: UserX,
+          title: 'Account Termination',
+          text: 'We reserve the right to suspend or close your account at any time, with or without prior notice, in case of violation of terms of use or misuse of service. You may close your account at any time through profile settings.'
+        }
+      ],
+      contact: 'For questions or clarifications regarding terms of use, you can contact us at frimet@gmail.com'
+    };
+  };
+
+  const content = getContent();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">

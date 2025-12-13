@@ -9,7 +9,8 @@ export default function PrivacyPolicy() {
   const { language, isRTL } = useLanguage();
   const navigate = useNavigate();
 
-  const content = language === 'he' ? {
+  const getContent = () => {
+    if (language === 'he') return {
     title: 'מדיניות פרטיות',
     lastUpdated: 'עודכן לאחרונה: 13 בדצמבר 2025',
     sections: [
@@ -217,7 +218,9 @@ export default function PrivacyPolicy() {
       title: 'Policy Changes',
       text: 'We may update the privacy policy from time to time. We will notify you of any significant changes through the app or email.'
     }
-  } : language === 'ru' ? {
+  };
+    
+    if (language === 'ru') return {
     title: 'Политика конфиденциальности',
     lastUpdated: 'Последнее обновление: 13 декабря 2025',
     sections: [
@@ -321,7 +324,116 @@ export default function PrivacyPolicy() {
       title: 'Изменения в политике',
       text: 'Мы можем время от времени обновлять политику конфиденциальности. Мы уведомим вас о любых значительных изменениях через приложение или электронную почту.'
     }
-  } : content;
+  };
+    
+    return {
+      title: 'Privacy Policy',
+      lastUpdated: 'Last Updated: December 13, 2025',
+      sections: [
+        {
+          icon: Shield,
+          title: 'Introduction',
+          text: 'At The Group Loop, we are committed to protecting your privacy and personal information. This privacy policy explains what information we collect, how we use it, and what rights you have regarding your information.'
+        },
+        {
+          icon: Database,
+          title: 'Information We Collect',
+          subsections: [
+            {
+              subtitle: 'Personal Information You Provide',
+              items: [
+                'Full name and email address during registration',
+                'Profile picture and additional information you choose to share',
+                'Details of trips you create or join',
+                'Messages and content you share on the platform',
+                'Accessibility preferences and special requirements'
+              ]
+            },
+            {
+              subtitle: 'Automatically Collected Information',
+              items: [
+                'IP address and geographic location data (with your consent)',
+                'Browser type and device information',
+                'Pages visited and actions performed on the site',
+                'Date and time of service usage'
+              ]
+            }
+          ]
+        },
+        {
+          icon: Cookie,
+          title: 'Use of Cookies',
+          text: 'We use cookies and similar technologies to improve user experience, save preferences, and analyze site traffic. You can control cookies through your browser settings.',
+          items: [
+            'Essential cookies - for proper site operation',
+            'Functional cookies - to save your preferences',
+            'Analytics cookies - to understand site usage',
+            'Marketing cookies - to improve personalized content'
+          ]
+        },
+        {
+          icon: Lock,
+          title: 'How We Use Your Information',
+          items: [
+            'To provide and improve app services',
+            'To match travelers with trips',
+            'To send relevant notifications and messages',
+            'To analyze and improve platform performance',
+            'To prevent abuse and enforce terms of use',
+            'To comply with legal requirements'
+          ]
+        },
+        {
+          icon: Share2,
+          title: 'Sharing Information with Third Parties',
+          text: 'We do not sell your personal information. We may share information only in the following cases:',
+          items: [
+            'With other users - information you chose to share in profile and trips',
+            'Service providers - such as hosting, analytics, and communications',
+            'Legal requirements - when required by law',
+            'Mergers and acquisitions - in case of company ownership change'
+          ]
+        },
+        {
+          icon: Shield,
+          title: 'Information Security',
+          text: 'We take technical and organizational security measures to protect your information, including encryption, two-factor authentication, and restricted access. However, no method of internet transmission or electronic storage is 100% secure.'
+        },
+        {
+          icon: Shield,
+          title: 'Your Rights',
+          text: 'According to privacy law, you have the following rights:',
+          items: [
+            'Right to access - to receive a copy of your personal information',
+            'Right to rectification - to correct inaccurate information',
+            'Right to erasure - to delete your information (subject to legal limitations)',
+            'Right to restriction - to limit certain uses of information',
+            'Right to object - to object to certain processing of your information',
+            'Right to portability - to receive your information in a portable format'
+          ]
+        },
+        {
+          icon: Mail,
+          title: 'Contact',
+          text: 'For questions or requests regarding privacy policy, you can contact us at frimet@gmail.com'
+        }
+      ],
+      gdpr: {
+        title: 'GDPR Compliance',
+        text: 'If you are a resident of the European Union, we comply with GDPR requirements. This includes your additional rights as detailed above, and the right to file a complaint with the data protection supervisory authority in your country.'
+      },
+      children: {
+        title: 'Minors',
+        text: 'Our service is intended for users over 18. We do not knowingly collect information from children under 13. If you are a parent and discovered that your child provided us with information, please contact us.'
+      },
+      changes: {
+        title: 'Policy Changes',
+        text: 'We may update the privacy policy from time to time. We will notify you of any significant changes through the app or email.'
+      }
+    };
+  };
+
+  const content = getContent();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
