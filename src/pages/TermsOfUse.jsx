@@ -88,7 +88,7 @@ export default function TermsOfUse() {
       {
         icon: Scale,
         title: 'דין וסמכות שיפוט',
-        text: 'תנאי שימוש אלה כפופים לחוקי מדינת ישראל. כל מחלוקת תתברר אך ורק בבתי המשפט המוסמכים במחוז תל אביב.'
+        text: 'תנאי שימוש אלה כפופים לחוקי מדינת ישראל. כל מחלוקת תתברר אך ורק בבתי המשפט המוסמכים.'
       },
       {
         icon: FileText,
@@ -181,7 +181,7 @@ export default function TermsOfUse() {
       {
         icon: Scale,
         title: 'Governing Law and Jurisdiction',
-        text: 'These terms of use are governed by the laws of the State of Israel. Any dispute shall be resolved exclusively in the competent courts of Tel Aviv district.'
+        text: 'These terms of use are governed by the laws of the State of Israel. Any dispute shall be resolved exclusively in the competent courts.'
       },
       {
         icon: FileText,
