@@ -37,6 +37,7 @@ import {
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { Link as RouterLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 function LayoutContent({ children, currentPageName }) {
@@ -89,7 +90,22 @@ function LayoutContent({ children, currentPageName }) {
       );
     },
     enabled: !!user?.email,
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 30000,
+  });
+
+  // Fetch unread notifications count
+  const { data: unreadNotifications = 0 } = useQuery({
+    queryKey: ['unreadNotifications', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return 0;
+      const notifications = await base44.entities.Notification.filter({ 
+        user_email: user.email,
+        read: false
+      });
+      return notifications.length;
+    },
+    enabled: !!user?.email,
+    refetchInterval: 15000,
   });
 
   const handleLogout = async () => {
@@ -156,6 +172,31 @@ function LayoutContent({ children, currentPageName }) {
               
               {user ? (
                 <>
+                  {/* Notifications Bell */}
+                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <RouterLink to={createPageUrl('Notifications')}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="relative hover:bg-blue-50 transition-all duration-300"
+                      >
+                        <div className="p-1.5 bg-blue-100 rounded-lg">
+                          <Bell className="w-5 h-5 text-blue-600" />
+                        </div>
+                        {unreadNotifications > 0 && (
+                          <motion.div
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                          >
+                            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold shadow-lg">
+                              {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                            </Badge>
+                          </motion.div>
+                        )}
+                      </Button>
+                    </RouterLink>
+                  </motion.div>
+
                   {/* Pending Requests Notification */}
                   {pendingCount > 0 && (
                     <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>

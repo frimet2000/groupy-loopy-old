@@ -22,6 +22,15 @@ import {
 export default function Settings() {
   const { t, language, isRTL } = useLanguage();
   const [user, setUser] = useState(null);
+  const [notificationPrefs, setNotificationPrefs] = useState({
+    trip_reminders: true,
+    reminder_hours: 24,
+    join_requests: true,
+    request_responses: true,
+    new_messages: true,
+    trip_updates: true,
+    trip_cancellations: true,
+  });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [notificationPrefs, setNotificationPrefs] = useState({
