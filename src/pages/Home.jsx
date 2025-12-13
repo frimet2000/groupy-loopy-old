@@ -409,7 +409,7 @@ export default function Home() {
       )}
 
       {/* Trips Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+      <section id="trips-section" className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
