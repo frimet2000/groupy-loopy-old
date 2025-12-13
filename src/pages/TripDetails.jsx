@@ -747,7 +747,12 @@ export default function TripDetails() {
                     <MapPin className="w-5 h-5 text-emerald-600 mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium">{t('location')}</p>
-                      <p className="text-gray-600 mb-2">{trip.location}</p>
+                      <p className="text-gray-600 mb-2">
+                        {trip.location}
+                        {trip.sub_region && `, ${trip.sub_region}`}
+                        {trip.region && `, ${trip.region}`}
+                        {trip.country && ` - ${t(trip.country)}`}
+                      </p>
                       {trip.latitude && trip.longitude && (
                         <div className="flex flex-wrap gap-2">
                           <a
