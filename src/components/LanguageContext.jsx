@@ -863,13 +863,84 @@ const translations = {
   }
 };
 
+const detectLanguageFromLocation = async () => {
+  if (typeof window === 'undefined' || !navigator.geolocation) {
+    return 'en';
+  }
+
+  return new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        
+        // Map coordinates to language based on region
+        if (latitude >= 29 && latitude <= 33.5 && longitude >= 34 && longitude <= 36) {
+          resolve('he'); // Israel
+        } else if (latitude >= 41 && latitude <= 51 && longitude >= -5 && longitude <= 10) {
+          // France, Spain, parts of Germany
+          if (longitude >= -5 && longitude <= 3) {
+            if (latitude >= 43 && latitude <= 51 && longitude >= -5 && longitude <= 5) {
+              resolve('fr'); // France
+            } else if (latitude >= 36 && latitude <= 44 && longitude >= -10 && longitude <= 4) {
+              resolve('es'); // Spain
+            } else {
+              resolve('fr');
+            }
+          } else if (latitude >= 47 && latitude <= 55 && longitude >= 5 && longitude <= 15) {
+            resolve('de'); // Germany
+          } else if (latitude >= 36 && latitude <= 48 && longitude >= 6 && longitude <= 19) {
+            resolve('it'); // Italy
+          } else {
+            resolve('en');
+          }
+        } else if (latitude >= 36 && latitude <= 48 && longitude >= 6 && longitude <= 19) {
+          resolve('it'); // Italy
+        } else if (latitude >= 47 && latitude <= 55 && longitude >= 5 && longitude <= 15) {
+          resolve('de'); // Germany, Austria, Switzerland
+        } else if (latitude >= 36 && latitude <= 44 && longitude >= -10 && longitude <= 4) {
+          resolve('es'); // Spain
+        } else if (latitude >= 41 && latitude <= 51 && longitude >= -5 && longitude <= 6) {
+          resolve('fr'); // France
+        } else {
+          resolve('en'); // Default to English
+        }
+      },
+      () => {
+        resolve('en'); // Default to English if geolocation fails
+      }
+    );
+  });
+};
+
 export function LanguageProvider({ children }) {
   const [language, setLanguage] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('language') || 'he';
+      const saved = localStorage.getItem('language');
+      if (saved) return saved;
+      
+      // Check if this is first visit
+      const firstVisit = !localStorage.getItem('language_detected');
+      if (firstVisit) {
+        return 'en'; // Temporary, will be updated by useEffect
+      }
+      return 'en';
     }
-    return 'he';
+    return 'en';
   });
+
+  useEffect(() => {
+    const initLanguage = async () => {
+      const saved = localStorage.getItem('language');
+      if (!saved && !localStorage.getItem('language_detected')) {
+        // First visit - detect language
+        const detected = await detectLanguageFromLocation();
+        setLanguage(detected);
+        localStorage.setItem('language', detected);
+        localStorage.setItem('language_detected', 'true');
+      }
+    };
+    initLanguage();
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('language', language);
