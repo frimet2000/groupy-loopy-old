@@ -4,6 +4,7 @@ import { createPageUrl } from '@/utils';
 import { LanguageProvider, useLanguage } from './components/LanguageContext';
 import LanguageSwitcher from './components/ui/LanguageSwitcher';
 import PermissionsRequest from './components/notifications/PermissionsRequest';
+import NotificationBell from './components/notifications/NotificationBell';
 import LanguageSelection from './components/LanguageSelection';
 import CookieConsent from './components/legal/CookieConsent';
 import AccessibilityButton from './components/accessibility/AccessibilityButton';
@@ -37,7 +38,6 @@ import {
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Link as RouterLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 function LayoutContent({ children, currentPageName }) {
@@ -90,22 +90,7 @@ function LayoutContent({ children, currentPageName }) {
       );
     },
     enabled: !!user?.email,
-    refetchInterval: 30000,
-  });
-
-  // Fetch unread notifications count
-  const { data: unreadNotifications = 0 } = useQuery({
-    queryKey: ['unreadNotifications', user?.email],
-    queryFn: async () => {
-      if (!user?.email) return 0;
-      const notifications = await base44.entities.Notification.filter({ 
-        user_email: user.email,
-        read: false
-      });
-      return notifications.length;
-    },
-    enabled: !!user?.email,
-    refetchInterval: 15000,
+    refetchInterval: 30000, // Refresh every 30 seconds
   });
 
   const handleLogout = async () => {
@@ -118,6 +103,7 @@ function LayoutContent({ children, currentPageName }) {
     { name: 'CreateTrip', icon: Plus, label: t('createTrip'), color: 'text-purple-600' },
     { name: 'AIRecommendations', icon: Sparkles, label: t('aiRecommendations'), color: 'text-indigo-600' },
     { name: 'Community', icon: Users, label: language === 'he' ? 'קהילה' : 'Community', color: 'text-pink-600' },
+    { name: 'Settings', icon: Bell, label: language === 'he' ? 'הגדרות' : 'Settings', color: 'text-gray-600' },
     ];
 
   const isActive = (pageName) => currentPageName === pageName;
@@ -167,35 +153,11 @@ function LayoutContent({ children, currentPageName }) {
 
             {/* Right Side */}
             <div className="flex items-center gap-3">
+              {user && <NotificationBell userEmail={user.email} />}
               <LanguageSwitcher />
               
               {user ? (
                 <>
-                  {/* Notifications Bell */}
-                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                    <RouterLink to={createPageUrl('Notifications')}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="relative hover:bg-blue-50 transition-all duration-300"
-                      >
-                        <div className="p-1.5 bg-blue-100 rounded-lg">
-                          <Bell className="w-5 h-5 text-blue-600" />
-                        </div>
-                        {unreadNotifications > 0 && (
-                          <motion.div
-                            animate={{ scale: [1, 1.2, 1] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                          >
-                            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold shadow-lg">
-                              {unreadNotifications > 9 ? '9+' : unreadNotifications}
-                            </Badge>
-                          </motion.div>
-                        )}
-                      </Button>
-                    </RouterLink>
-                  </motion.div>
-
                   {/* Pending Requests Notification */}
                   {pendingCount > 0 && (
                     <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
@@ -361,13 +323,6 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 safe-area-inset-bottom z-50 shadow-2xl">
-        {/* Animated Top Border */}
-        <motion.div 
-          className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500"
-          animate={{ x: ['-100%', '100%'] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-        />
-
         <div className="flex items-center justify-around h-16 px-2">
           {navItems.slice(0, 4).map((item, idx) => (
             <Link 
