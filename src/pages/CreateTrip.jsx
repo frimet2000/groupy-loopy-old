@@ -245,7 +245,7 @@ export default function CreateTrip() {
                 <Textarea
                   value={formData.description_he}
                   onChange={(e) => handleChange('description_he', e.target.value)}
-                  placeholder="תיאור בעברית"
+                  placeholder="תיאור"
                   dir="rtl"
                   rows={4}
                 />
