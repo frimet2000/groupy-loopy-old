@@ -860,6 +860,18 @@ const translations = {
     boutique: "מלון בוטיק",
     resort: "אתר נופש",
     vacation_rental: "דירת נופש",
+  },
+  fr: {
+    ...
+  },
+  es: {
+    ...
+  },
+  de: {
+    ...
+  },
+  it: {
+    ...
   }
 };
 
