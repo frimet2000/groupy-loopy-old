@@ -320,7 +320,6 @@ export default function Onboarding() {
                           <Input
                             value={formData.first_name}
                             onChange={(e) => handleChange('first_name', e.target.value)}
-                            placeholder={language === 'he' ? 'לדוגמה: יוסי' : 'e.g., John'}
                             className="h-12 text-lg"
                             dir={language === 'he' ? 'rtl' : 'ltr'}
                           />
@@ -334,7 +333,6 @@ export default function Onboarding() {
                           <Input
                             value={formData.last_name}
                             onChange={(e) => handleChange('last_name', e.target.value)}
-                            placeholder={language === 'he' ? 'לדוגמה: כהן' : 'e.g., Smith'}
                             className="h-12 text-lg"
                             dir={language === 'he' ? 'rtl' : 'ltr'}
                           />
