@@ -13,6 +13,7 @@ import TermsOfUse from './pages/TermsOfUse';
 import AccessibilityStatement from './pages/AccessibilityStatement';
 import AboutUs from './pages/AboutUs';
 import Admin from './pages/Admin';
+import Settings from './pages/Settings';
 import __Layout from './Layout.jsx';
 
 
@@ -32,6 +33,7 @@ export const PAGES = {
     "AccessibilityStatement": AccessibilityStatement,
     "AboutUs": AboutUs,
     "Admin": Admin,
+    "Settings": Settings,
 }
 
 export const pagesConfig = {
