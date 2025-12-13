@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 
 const languages = [
   { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
+  { code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
   { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷' },
   { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
   { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
