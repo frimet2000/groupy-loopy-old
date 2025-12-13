@@ -85,6 +85,68 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
     <>
       <Card className="border-0 shadow-lg overflow-hidden">
         <CardContent className="p-4 space-y-4">
+          {showMap ? (
+            <Card className="overflow-hidden border-2 border-emerald-200">
+              <div className="relative">
+                <div className="h-[400px] w-full">
+                  <GoogleMapWrapper
+                    center={{ lat: trip.latitude || 31.5, lng: trip.longitude || 34.75 }}
+                    zoom={13}
+                    onClick={handleMapClick}
+                    markers={[
+                      {
+                        position: { lat: trip.latitude || 31.5, lng: trip.longitude || 34.75 },
+                        label: 'S',
+                        title: trip.location
+                      },
+                      ...waypoints.sort((a, b) => a.order - b.order).map((waypoint, index) => ({
+                        position: { lat: waypoint.latitude, lng: waypoint.longitude },
+                        label: String(index + 1),
+                        title: waypoint.name
+                      }))
+                    ]}
+                    polyline={waypoints.length > 0 ? {
+                      path: [
+                        { lat: trip.latitude || 31.5, lng: trip.longitude || 34.75 },
+                        ...waypoints.sort((a, b) => a.order - b.order).map(w => ({ lat: w.latitude, lng: w.longitude }))
+                      ],
+                      color: '#10b981',
+                      weight: 3,
+                      opacity: 0.7
+                    } : null}
+                  />
+                </div>
+                
+                {isOrganizer && (
+                  <div className="absolute top-2 left-2 right-2 bg-emerald-600 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-medium z-[400]">
+                    <div className="flex items-center justify-between">
+                      <span>
+                        {language === 'he' 
+                          ? '💡 לחץ על המפה להוספת נקודת ציון' 
+                          : '💡 Click on map to add waypoint'}
+                      </span>
+                      <button
+                        onClick={() => setShowMap(false)}
+                        className="bg-white/20 hover:bg-white/30 rounded p-1"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Card>
+          ) : (
+            <Button
+              onClick={() => setShowMap(true)}
+              className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 gap-2 shadow-lg"
+              size="lg"
+            >
+              <MapPin className="w-5 h-5" />
+              {language === 'he' ? 'הצג מפה להוספת נקודות ציון' : 'Show Map to Add Waypoints'}
+            </Button>
+          )}
+
           <ScrollArea className="h-[300px]">
             <div className="space-y-2">
               {waypoints.sort((a, b) => a.order - b.order).map((waypoint, index) => (
