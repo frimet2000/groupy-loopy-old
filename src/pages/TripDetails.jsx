@@ -378,6 +378,7 @@ export default function TripDetails() {
       description: trip.description || trip.description_he || '',
       max_participants: trip.max_participants || 10,
       date: trip.date,
+      meeting_time: trip.meeting_time || '',
       location: trip.location,
       difficulty: trip.difficulty,
       duration_type: trip.duration_type,
@@ -661,13 +662,21 @@ export default function TripDetails() {
                       rows={3}
                     />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label>{language === 'he' ? 'תאריך' : 'Date'}</Label>
                       <Input
                         type="date"
                         value={editData.date}
                         onChange={(e) => setEditData({...editData, date: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{language === 'he' ? 'שעת התכנסות' : 'Meeting Time'}</Label>
+                      <Input
+                        type="time"
+                        value={editData.meeting_time || ''}
+                        onChange={(e) => setEditData({...editData, meeting_time: e.target.value})}
                       />
                     </div>
                     <div className="space-y-2">

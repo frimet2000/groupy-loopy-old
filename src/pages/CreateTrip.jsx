@@ -58,6 +58,7 @@ export default function CreateTrip() {
     region: '',
     sub_region: '',
     date: '',
+    meeting_time: '',
     duration_type: 'full_day',
     duration_value: 1,
     activity_type: 'hiking',
@@ -735,7 +736,7 @@ export default function CreateTrip() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>{t('date')}</Label>
                   <Input
@@ -745,6 +746,21 @@ export default function CreateTrip() {
                     required
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    {language === 'he' ? 'שעת התכנסות' : 'Meeting Time'}
+                  </Label>
+                  <Input
+                    type="time"
+                    value={formData.meeting_time}
+                    onChange={(e) => handleChange('meeting_time', e.target.value)}
+                    placeholder="08:00"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>{t('duration')}</Label>
                   <Select value={formData.duration_type} onValueChange={(v) => handleChange('duration_type', v)}>
