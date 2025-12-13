@@ -618,7 +618,7 @@ export default function TripDetails() {
                         </div>
                       </div>
                     ) : (
-                      <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{description}</p>
+                      <p className="text-gray-700 leading-relaxed whitespace-pre-wrap" dir={language === 'he' ? 'rtl' : 'ltr'}>{description}</p>
                     )}
                   </CardContent>
                 </Card>
@@ -629,7 +629,7 @@ export default function TripDetails() {
                 <CardHeader>
                   <CardTitle>{t('tripDetails')}</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-emerald-600 mt-0.5" />
                     <div className="flex-1">
