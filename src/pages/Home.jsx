@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, Share2 } from 'lucide-react';
+import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, Share2, SlidersHorizontal, List } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format, isPast, isToday, isTomorrow } from 'date-fns';
 import { toast } from "sonner";
@@ -21,6 +21,7 @@ export default function Home() {
   const [visibleCount, setVisibleCount] = useState(8);
   const [sortBy, setSortBy] = useState('date');
   const [user, setUser] = useState(null);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -106,6 +107,10 @@ export default function Home() {
         return (b.current_participants || 0) - (a.current_participants || 0);
       case 'likes':
         return (b.likes?.length || 0) - (a.likes?.length || 0);
+      case 'comments':
+        return (b.comments?.length || 0) - (a.comments?.length || 0);
+      case 'newest':
+        return new Date(b.created_date) - new Date(a.created_date);
       case 'title':
         const titleA = a.title || a.title_he || a.title_en;
         const titleB = b.title || b.title_he || b.title_en;
@@ -454,27 +459,56 @@ export default function Home() {
       <section id="trips-section" className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-              {t('exploreTrips')}
-            </h2>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">
-                {language === 'he' ? 'מיין לפי:' : 'Sort by:'}
-              </span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                {t('exploreTrips')}
+              </h2>
+              <p className="text-gray-600 mt-1">
+                {filteredTrips.length} {language === 'he' ? 'טיולים נמצאו' : 'trips found'}
+              </p>
+            </div>
+            <div className="flex items-center gap-3 flex-wrap">
+              {user && (
+                <Link to={createPageUrl('MyLists')}>
+                  <Button variant="outline" className="gap-2">
+                    <List className="w-4 h-4" />
+                    {language === 'he' ? 'הרשימות שלי' : 'My Lists'}
+                  </Button>
+                </Link>
+              )}
+              <Button
+                variant="outline"
+                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                className="gap-2"
               >
-                <option value="date">{language === 'he' ? 'תאריך (מוקדם לאוחר)' : 'Date (Early to Late)'}</option>
-                <option value="date_desc">{language === 'he' ? 'תאריך (אוחר למוקדם)' : 'Date (Late to Early)'}</option>
-                <option value="popularity">{language === 'he' ? 'פופולריות' : 'Popularity'}</option>
-                <option value="likes">{language === 'he' ? 'לייקים' : 'Most Liked'}</option>
-                <option value="title">{language === 'he' ? 'שם (א-ת)' : 'Title (A-Z)'}</option>
-              </select>
+                <SlidersHorizontal className="w-4 h-4" />
+                {language === 'he' ? 'סינון מתקדם' : 'Advanced Filters'}
+              </Button>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">
+                  {language === 'he' ? 'מיין:' : 'Sort:'}
+                </span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                >
+                  <option value="date">{language === 'he' ? 'תאריך ↑' : 'Date ↑'}</option>
+                  <option value="date_desc">{language === 'he' ? 'תאריך ↓' : 'Date ↓'}</option>
+                  <option value="popularity">{language === 'he' ? 'פופולריות' : 'Popularity'}</option>
+                  <option value="likes">{language === 'he' ? 'לייקים' : 'Most Liked'}</option>
+                  <option value="comments">{language === 'he' ? 'הכי מדוברים' : 'Most Discussed'}</option>
+                  <option value="newest">{language === 'he' ? 'החדשים ביותר' : 'Newest'}</option>
+                  <option value="title">{language === 'he' ? 'א-ת' : 'A-Z'}</option>
+                </select>
+              </div>
             </div>
           </div>
-          <TripFilters filters={filters} setFilters={setFilters} />
+          <TripFilters 
+            filters={filters} 
+            setFilters={setFilters} 
+            showAdvanced={showAdvancedFilters}
+          />
         </div>
 
         {isLoading ? (
