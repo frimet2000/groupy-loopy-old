@@ -531,19 +531,36 @@ export default function Home() {
                 hidden: { opacity: 0 },
                 visible: {
                   opacity: 1,
-                  transition: { staggerChildren: 0.1 }
+                  transition: { staggerChildren: 0.08 }
                 }
               }}
             >
-              {displayedTrips.map((trip) => (
+              {displayedTrips.map((trip, index) => (
                 <motion.div
                   key={trip.id}
                   variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0 }
+                    hidden: { opacity: 0, y: 30, scale: 0.95 },
+                    visible: { 
+                      opacity: 1, 
+                      y: 0,
+                      scale: 1,
+                      transition: {
+                        type: "spring",
+                        stiffness: 100,
+                        damping: 12
+                      }
+                    }
                   }}
+                  whileHover={{ 
+                    y: -8,
+                    transition: { duration: 0.3 }
+                  }}
+                  className="group relative"
                 >
-                  <TripCard trip={trip} />
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/0 to-teal-400/0 group-hover:from-emerald-400/20 group-hover:to-teal-400/20 rounded-2xl blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
+                  <div className="relative">
+                    <TripCard trip={trip} />
+                  </div>
                 </motion.div>
               ))}
             </motion.div>
@@ -563,17 +580,42 @@ export default function Home() {
             )}
           </>
         ) : (
-          <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
-            <Compass className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('noTripsFound')}</h3>
-            <p className="text-gray-500 mb-6">{t('createFirstTrip')}</p>
-            <Link to={createPageUrl('CreateTrip')}>
-              <Button className="bg-emerald-600 hover:bg-emerald-700">
-                <Plus className="w-4 h-4 mr-2" />
-                {t('createTrip')}
-              </Button>
-            </Link>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="relative text-center py-20 bg-gradient-to-br from-white to-gray-50 rounded-3xl border border-gray-200 shadow-xl overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.05),transparent_60%)]" />
+            <div className="relative">
+              <motion.div
+                animate={{ 
+                  rotate: [0, 10, -10, 0],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{ 
+                  duration: 3,
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
+              >
+                <Compass className="w-20 h-20 text-emerald-400 mx-auto mb-6" />
+              </motion.div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('noTripsFound')}</h3>
+              <p className="text-gray-600 mb-8 text-lg">{t('createFirstTrip')}</p>
+              <Link to={createPageUrl('CreateTrip')}>
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white h-14 px-8 text-lg font-bold shadow-2xl shadow-emerald-500/30">
+                    <Plus className="w-5 h-5 mr-2" />
+                    {t('createTrip')}
+                  </Button>
+                </motion.div>
+              </Link>
+            </div>
+          </motion.div>
         )}
       </section>
     </div>
