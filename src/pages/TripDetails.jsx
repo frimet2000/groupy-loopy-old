@@ -775,32 +775,101 @@ export default function TripDetails() {
 
             {/* Sidebar - Right Column with Tabs */}
             <div className="lg:sticky lg:top-20 lg:self-start">
-              <Card>
-                <Tabs defaultValue="map" dir={isRTL ? 'rtl' : 'ltr'}>
-                  <TabsList className="w-full grid grid-cols-3 lg:grid-cols-2 gap-1 bg-gray-100 p-1">
-                    <TabsTrigger value="map" className="gap-1.5 data-[state=active]:bg-white">
+              <Card className="overflow-hidden">
+                <Tabs defaultValue="map" dir={isRTL ? 'rtl' : 'ltr'} className="lg:flex">
+                  {/* Desktop Sidebar Navigation */}
+                  <div className="hidden lg:flex lg:flex-col lg:w-16 lg:border-l lg:border-gray-200 lg:bg-gradient-to-b lg:from-gray-50 lg:to-white">
+                    <button
+                      onClick={() => document.querySelector('[data-tab="map"]')?.click()}
+                      className="flex flex-col items-center justify-center gap-1.5 py-4 px-2 hover:bg-emerald-50 transition-colors border-b border-gray-100 group"
+                      data-tab="map"
+                    >
+                      <Route className="w-5 h-5 text-gray-600 group-hover:text-emerald-600" />
+                      <span className="text-[10px] text-gray-500 group-hover:text-emerald-600 font-medium">
+                        {language === 'he' ? 'מסלול' : 'Route'}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => document.querySelector('[data-tab="weather"]')?.click()}
+                      className="flex flex-col items-center justify-center gap-1.5 py-4 px-2 hover:bg-blue-50 transition-colors border-b border-gray-100 group"
+                      data-tab="weather"
+                    >
+                      <CloudSun className="w-5 h-5 text-gray-600 group-hover:text-blue-600" />
+                      <span className="text-[10px] text-gray-500 group-hover:text-blue-600 font-medium">
+                        {language === 'he' ? 'מזג' : 'Weather'}
+                      </span>
+                    </button>
+                    {hasJoined && (
+                      <>
+                        <button
+                          onClick={() => document.querySelector('[data-tab="location"]')?.click()}
+                          className="flex flex-col items-center justify-center gap-1.5 py-4 px-2 hover:bg-red-50 transition-colors border-b border-gray-100 group"
+                          data-tab="location"
+                        >
+                          <Radio className="w-5 h-5 text-gray-600 group-hover:text-red-600" />
+                          <span className="text-[10px] text-gray-500 group-hover:text-red-600 font-medium">
+                            {language === 'he' ? 'מיקום' : 'Live'}
+                          </span>
+                        </button>
+                        <button
+                          onClick={() => document.querySelector('[data-tab="gallery"]')?.click()}
+                          className="flex flex-col items-center justify-center gap-1.5 py-4 px-2 hover:bg-purple-50 transition-colors border-b border-gray-100 group"
+                          data-tab="gallery"
+                        >
+                          <Image className="w-5 h-5 text-gray-600 group-hover:text-purple-600" />
+                          <span className="text-[10px] text-gray-500 group-hover:text-purple-600 font-medium">
+                            {language === 'he' ? 'גלריה' : 'Gallery'}
+                          </span>
+                        </button>
+                        <button
+                          onClick={() => document.querySelector('[data-tab="experiences"]')?.click()}
+                          className="flex flex-col items-center justify-center gap-1.5 py-4 px-2 hover:bg-pink-50 transition-colors border-b border-gray-100 group"
+                          data-tab="experiences"
+                        >
+                          <Heart className="w-5 h-5 text-gray-600 group-hover:text-pink-600" />
+                          <span className="text-[10px] text-gray-500 group-hover:text-pink-600 font-medium">
+                            {language === 'he' ? 'חוויות' : 'Stories'}
+                          </span>
+                        </button>
+                        <button
+                          onClick={() => document.querySelector('[data-tab="chat"]')?.click()}
+                          className="flex flex-col items-center justify-center gap-1.5 py-4 px-2 hover:bg-indigo-50 transition-colors border-b border-gray-100 group"
+                          data-tab="chat"
+                        >
+                          <MessageCircle className="w-5 h-5 text-gray-600 group-hover:text-indigo-600" />
+                          <span className="text-[10px] text-gray-500 group-hover:text-indigo-600 font-medium">
+                            {language === 'he' ? 'צ\'אט' : 'Chat'}
+                          </span>
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Mobile Tabs List */}
+                  <TabsList className="lg:hidden w-full grid grid-cols-3 gap-1 bg-gray-100 p-1">
+                    <TabsTrigger value="map" className="gap-1.5 data-[state=active]:bg-white" data-tab="map">
                       <Route className="w-4 h-4" />
                       <span className="hidden sm:inline">{language === 'he' ? 'מסלול' : 'Route'}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="weather" className="gap-1.5 data-[state=active]:bg-white">
+                    <TabsTrigger value="weather" className="gap-1.5 data-[state=active]:bg-white" data-tab="weather">
                       <CloudSun className="w-4 h-4" />
                       <span className="hidden sm:inline">{language === 'he' ? 'מזג אוויר' : 'Weather'}</span>
                     </TabsTrigger>
                     {hasJoined && (
                       <>
-                        <TabsTrigger value="location" className="gap-1.5 data-[state=active]:bg-white">
+                        <TabsTrigger value="location" className="gap-1.5 data-[state=active]:bg-white" data-tab="location">
                           <Radio className="w-4 h-4" />
                           <span className="hidden sm:inline">{language === 'he' ? 'מיקום' : 'Live'}</span>
                         </TabsTrigger>
-                        <TabsTrigger value="gallery" className="gap-1.5 data-[state=active]:bg-white">
+                        <TabsTrigger value="gallery" className="gap-1.5 data-[state=active]:bg-white" data-tab="gallery">
                           <Image className="w-4 h-4" />
                           <span className="hidden sm:inline">{language === 'he' ? 'גלריה' : 'Gallery'}</span>
                         </TabsTrigger>
-                        <TabsTrigger value="experiences" className="gap-1.5 data-[state=active]:bg-white">
+                        <TabsTrigger value="experiences" className="gap-1.5 data-[state=active]:bg-white" data-tab="experiences">
                           <Heart className="w-4 h-4" />
                           <span className="hidden sm:inline">{language === 'he' ? 'חוויות' : 'Stories'}</span>
                         </TabsTrigger>
-                        <TabsTrigger value="chat" className="gap-1.5 data-[state=active]:bg-white">
+                        <TabsTrigger value="chat" className="gap-1.5 data-[state=active]:bg-white" data-tab="chat">
                           <MessageCircle className="w-4 h-4" />
                           <span className="hidden sm:inline">{language === 'he' ? 'צ\'אט' : 'Chat'}</span>
                         </TabsTrigger>
@@ -808,54 +877,70 @@ export default function TripDetails() {
                     )}
                   </TabsList>
 
-                  <TabsContent value="map" className="mt-0">
-                    <MapSidebar 
-                      trip={trip}
-                      isOrganizer={isOrganizer}
-                      onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
-                    />
-                  </TabsContent>
+                  {/* Hidden Desktop Triggers */}
+                  <div className="hidden">
+                    <TabsTrigger value="map" data-tab="map" />
+                    <TabsTrigger value="weather" data-tab="weather" />
+                    {hasJoined && (
+                      <>
+                        <TabsTrigger value="location" data-tab="location" />
+                        <TabsTrigger value="gallery" data-tab="gallery" />
+                        <TabsTrigger value="experiences" data-tab="experiences" />
+                        <TabsTrigger value="chat" data-tab="chat" />
+                      </>
+                    )}
+                  </div>
 
-                  <TabsContent value="weather" className="mt-4 px-4 pb-4">
-                    <WeatherWidget location={trip.location} date={trip.date} />
-                  </TabsContent>
+                  <div className="lg:flex-1">
+                    <TabsContent value="map" className="mt-0">
+                      <MapSidebar 
+                        trip={trip}
+                        isOrganizer={isOrganizer}
+                        onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
+                      />
+                    </TabsContent>
 
-                  {hasJoined && (
-                    <>
-                      <TabsContent value="location" className="mt-0">
-                        <LiveLocationMap 
-                          trip={trip}
-                          currentUserEmail={user?.email}
-                          onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
-                        />
-                      </TabsContent>
+                    <TabsContent value="weather" className="mt-4 px-4 pb-4 lg:mt-0">
+                      <WeatherWidget location={trip.location} date={trip.date} />
+                    </TabsContent>
 
-                      <TabsContent value="gallery" className="mt-0">
-                        <TripGallery 
-                          trip={trip}
-                          currentUserEmail={user?.email}
-                          onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
-                        />
-                      </TabsContent>
+                    {hasJoined && (
+                      <>
+                        <TabsContent value="location" className="mt-0">
+                          <LiveLocationMap 
+                            trip={trip}
+                            currentUserEmail={user?.email}
+                            onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
+                          />
+                        </TabsContent>
 
-                      <TabsContent value="experiences" className="mt-0">
-                        <TripExperiences 
-                          trip={trip}
-                          currentUserEmail={user?.email}
-                          onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
-                        />
-                      </TabsContent>
+                        <TabsContent value="gallery" className="mt-0">
+                          <TripGallery 
+                            trip={trip}
+                            currentUserEmail={user?.email}
+                            onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
+                          />
+                        </TabsContent>
 
-                      <TabsContent value="chat" className="mt-0">
-                        <TripChat 
-                          trip={trip}
-                          currentUserEmail={user?.email}
-                          onSendMessage={handleSendChatMessage}
-                          sending={sendingMessage}
-                        />
-                      </TabsContent>
-                    </>
-                  )}
+                        <TabsContent value="experiences" className="mt-0">
+                          <TripExperiences 
+                            trip={trip}
+                            currentUserEmail={user?.email}
+                            onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
+                          />
+                        </TabsContent>
+
+                        <TabsContent value="chat" className="mt-0">
+                          <TripChat 
+                            trip={trip}
+                            currentUserEmail={user?.email}
+                            onSendMessage={handleSendChatMessage}
+                            sending={sendingMessage}
+                          />
+                        </TabsContent>
+                      </>
+                    )}
+                  </div>
                 </Tabs>
               </Card>
             </div>
