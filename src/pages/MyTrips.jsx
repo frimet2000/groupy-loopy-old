@@ -8,7 +8,7 @@ import TripCard from '../components/trips/TripCard';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Calendar, UserCircle, Compass, Bookmark } from 'lucide-react';
+import { Plus, Calendar, UserCircle, Compass } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function MyTrips() {

@@ -7,9 +7,25 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import { MapPin, Edit, Trash2, Navigation, X, Plus } from 'lucide-react';
 import { toast } from "sonner";
-import GoogleMapWrapper from '../maps/GoogleMapWrapper';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+function MapClickHandler({ onMapClick }) {
+  useMapEvents({
+    click: (e) => onMapClick(e.latlng.lat, e.latlng.lng),
+  });
+  return null;
+}
 
 export default function WaypointsCreator({ waypoints, setWaypoints, startLat, startLng, locationName }) {
   const { language } = useLanguage();
@@ -18,9 +34,7 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
   const [editingIndex, setEditingIndex] = useState(null);
   const [waypointForm, setWaypointForm] = useState({ name: '', description: '', latitude: 0, longitude: 0 });
 
-  const handleMapClick = (e) => {
-    const lat = e.latLng.lat();
-    const lng = e.latLng.lng();
+  const handleMapClick = (lat, lng) => {
     setEditingIndex(null);
     setWaypointForm({ name: '', description: '', latitude: lat, longitude: lng });
     setEditDialog(true);
@@ -82,32 +96,54 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
             <Card className="overflow-hidden border-2 border-emerald-200">
               <div className="relative">
                 <div className="h-[350px] w-full">
-                  <GoogleMapWrapper
-                    center={{ lat: startLat || 31.5, lng: startLng || 34.75 }}
+                  <MapContainer
+                    center={[startLat || 31.5, startLng || 34.75]}
                     zoom={13}
-                    onClick={handleMapClick}
-                    markers={[
-                      ...(startLat && startLng ? [{
-                        position: { lat: startLat, lng: startLng },
-                        label: 'S',
-                        title: locationName || (language === 'he' ? 'התחלה' : 'Start')
-                      }] : []),
-                      ...waypoints.sort((a, b) => a.order - b.order).map((wp, idx) => ({
-                        position: { lat: wp.latitude, lng: wp.longitude },
-                        label: String(idx + 1),
-                        title: wp.name
-                      }))
-                    ]}
-                    polyline={waypoints.length > 0 && startLat && startLng ? {
-                      path: [
-                        { lat: startLat, lng: startLng },
-                        ...waypoints.sort((a, b) => a.order - b.order).map(w => ({ lat: w.latitude, lng: w.longitude }))
-                      ],
-                      color: '#10b981',
-                      weight: 3,
-                      opacity: 0.7
-                    } : null}
-                  />
+                    style={{ height: '100%', width: '100%' }}
+                  >
+                    <TileLayer
+                      attribution='&copy; OpenStreetMap'
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    
+                    {startLat && startLng && (
+                      <Marker position={[startLat, startLng]}>
+                        <Popup>
+                          <div className="text-center">
+                            <p className="font-bold text-emerald-700">
+                              {language === 'he' ? 'התחלה' : 'Start'}
+                            </p>
+                            <p className="text-sm">{locationName}</p>
+                          </div>
+                        </Popup>
+                      </Marker>
+                    )}
+
+                    {waypoints.sort((a, b) => a.order - b.order).map((wp, idx) => (
+                      <Marker key={idx} position={[wp.latitude, wp.longitude]}>
+                        <Popup>
+                          <div className="text-center">
+                            <p className="font-bold">{idx + 1}. {wp.name}</p>
+                            {wp.description && <p className="text-xs text-gray-600">{wp.description}</p>}
+                          </div>
+                        </Popup>
+                      </Marker>
+                    ))}
+
+                    {waypoints.length > 0 && startLat && startLng && (
+                      <Polyline
+                        positions={[
+                          [startLat, startLng],
+                          ...waypoints.sort((a, b) => a.order - b.order).map(w => [w.latitude, w.longitude])
+                        ]}
+                        color="#10b981"
+                        weight={3}
+                        opacity={0.7}
+                      />
+                    )}
+
+                    <MapClickHandler onMapClick={handleMapClick} />
+                  </MapContainer>
                 </div>
                 
                 <div className="absolute top-2 left-2 right-2 bg-emerald-600 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-medium z-[400]">

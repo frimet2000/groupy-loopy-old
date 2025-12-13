@@ -8,6 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { base44 } from '@/api/base44Client';
 import { toast } from "sonner";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import { 
   MapPin, 
   Edit, 
@@ -15,6 +18,14 @@ import {
   Navigation,
   X
 } from 'lucide-react';
+
+// Fix Leaflet default marker icon
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 import {
   Dialog,
   DialogContent,
@@ -23,7 +34,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import GoogleMapWrapper from './GoogleMapWrapper';
+
+// Component for adding waypoints by clicking on map
+function MapClickHandler({ isOrganizer, onMapClick }) {
+  useMapEvents({
+    click: (e) => {
+      if (isOrganizer) {
+        onMapClick(e.latlng.lat, e.latlng.lng);
+      }
+    },
+  });
+  return null;
+}
 
 export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
   const { language } = useLanguage();
@@ -34,10 +56,7 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
 
   const waypoints = trip.waypoints || [];
 
-  const handleMapClick = (e) => {
-    if (!isOrganizer) return;
-    const lat = e.latLng.lat();
-    const lng = e.latLng.lng();
+  const handleMapClick = (lat, lng) => {
     setEditingWaypoint(null);
     setWaypointForm({ 
       name: '', 
@@ -102,40 +121,68 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
     <>
       <Card className="border-0 shadow-lg overflow-hidden">
         <CardContent className="p-4 space-y-4">
+          {/* Interactive Map Section */}
           {showMap ? (
             <Card className="overflow-hidden border-2 border-emerald-200">
               <div className="relative">
                 <div className="h-[400px] w-full">
-                  <GoogleMapWrapper
-                    center={{ lat: trip.latitude || 31.5, lng: trip.longitude || 34.75 }}
+                  <MapContainer
+                    center={[trip.latitude || 31.5, trip.longitude || 34.75]}
                     zoom={13}
-                    onClick={handleMapClick}
-                    markers={[
-                      {
-                        position: { lat: trip.latitude || 31.5, lng: trip.longitude || 34.75 },
-                        label: 'S',
-                        title: trip.location
-                      },
-                      ...waypoints.sort((a, b) => a.order - b.order).map((waypoint, index) => ({
-                        position: { lat: waypoint.latitude, lng: waypoint.longitude },
-                        label: String(index + 1),
-                        title: waypoint.name
-                      }))
-                    ]}
-                    polyline={waypoints.length > 0 ? {
-                      path: [
-                        { lat: trip.latitude || 31.5, lng: trip.longitude || 34.75 },
-                        ...waypoints.sort((a, b) => a.order - b.order).map(w => ({ lat: w.latitude, lng: w.longitude }))
-                      ],
-                      color: '#10b981',
-                      weight: 3,
-                      opacity: 0.7
-                    } : null}
-                  />
+                    style={{ height: '100%', width: '100%' }}
+                  >
+                    <TileLayer
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    
+                    {/* Starting point marker */}
+                    <Marker position={[trip.latitude || 31.5, trip.longitude || 34.75]}>
+                      <Popup>
+                        <div className="text-center">
+                          <p className="font-bold text-emerald-700">
+                            {language === 'he' ? 'נקודת התחלה' : 'Starting Point'}
+                          </p>
+                          <p className="text-sm">{trip.location}</p>
+                        </div>
+                      </Popup>
+                    </Marker>
+
+                    {/* Waypoint markers */}
+                    {waypoints.sort((a, b) => a.order - b.order).map((waypoint, index) => (
+                      <Marker key={waypoint.id} position={[waypoint.latitude, waypoint.longitude]}>
+                        <Popup>
+                          <div className="text-center">
+                            <p className="font-bold">{index + 1}. {waypoint.name}</p>
+                            {waypoint.description && (
+                              <p className="text-xs text-gray-600 mt-1">{waypoint.description}</p>
+                            )}
+                          </div>
+                        </Popup>
+                      </Marker>
+                    ))}
+
+                    {/* Trail path */}
+                    {waypoints.length > 0 && (
+                      <Polyline
+                        positions={[
+                          [trip.latitude || 31.5, trip.longitude || 34.75],
+                          ...waypoints.sort((a, b) => a.order - b.order).map(w => [w.latitude, w.longitude])
+                        ]}
+                        color="#10b981"
+                        weight={3}
+                        opacity={0.7}
+                      />
+                    )}
+
+                    {/* Click handler for adding waypoints */}
+                    <MapClickHandler isOrganizer={isOrganizer} onMapClick={handleMapClick} />
+                  </MapContainer>
                 </div>
                 
+                {/* Map instructions overlay */}
                 {isOrganizer && (
-                  <div className="absolute top-2 left-2 right-2 bg-emerald-600 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-medium z-[400]">
+                  <div className="absolute top-2 left-2 right-2 bg-emerald-600 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-medium z-[1000]">
                     <div className="flex items-center justify-between">
                       <span>
                         {language === 'he' 
@@ -160,7 +207,7 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
               size="lg"
             >
               <MapPin className="w-5 h-5" />
-              {language === 'he' ? 'הצג מפה להוספת נקודות ציון' : 'Show Map to Add Waypoints'}
+              {language === 'he' ? 'הצג מפה אינטראקטיבית' : 'Show Interactive Map'}
             </Button>
           )}
 
