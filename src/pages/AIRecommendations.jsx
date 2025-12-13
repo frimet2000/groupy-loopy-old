@@ -472,7 +472,7 @@ Respond in ${language === 'he' ? 'Hebrew' : 'English'}.`,
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>{language === 'he' ? 'תקציב' : language === 'ru' ? 'Бюджет' : 'Budget'}
+                  <Label>{language === 'he' ? 'תקציב' : language === 'ru' ? 'Бюджет' : 'Budget'}</Label>
                   <Select 
                     value={preferences.budget} 
                     onValueChange={(v) => handlePreferenceChange('budget', v)}
@@ -490,7 +490,7 @@ Respond in ${language === 'he' ? 'Hebrew' : 'English'}.`,
                 </div>
 
                 <div className="space-y-2">
-                  <Label>{language === 'he' ? 'מלווים' : language === 'ru' ? 'Попутчики' : 'Travel Companions'}
+                  <Label>{language === 'he' ? 'מלווים' : language === 'ru' ? 'Попутчики' : 'Travel Companions'}</Label>
                   <Select 
                     value={preferences.companions} 
                     onValueChange={(v) => handlePreferenceChange('companions', v)}
@@ -510,7 +510,7 @@ Respond in ${language === 'he' ? 'Hebrew' : 'English'}.`,
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>{language === 'he' ? 'עצמת פעילות' : language === 'ru' ? 'Интенсивность' : 'Activity Intensity'}
+                  <Label>{language === 'he' ? 'עצמת פעילות' : language === 'ru' ? 'Интенсивность' : 'Activity Intensity'}</Label>
                   <Select 
                     value={preferences.intensity} 
                     onValueChange={(v) => handlePreferenceChange('intensity', v)}
@@ -528,7 +528,7 @@ Respond in ${language === 'he' ? 'Hebrew' : 'English'}.`,
                 </div>
 
                 <div className="space-y-2">
-                  <Label>{language === 'he' ? 'סוג לינה' : language === 'ru' ? 'Жилье' : 'Accommodation'}
+                  <Label>{language === 'he' ? 'סוג לינה' : language === 'ru' ? 'Жилье' : 'Accommodation'}</Label>
                   <Select 
                     value={preferences.accommodation} 
                     onValueChange={(v) => handlePreferenceChange('accommodation', v)}

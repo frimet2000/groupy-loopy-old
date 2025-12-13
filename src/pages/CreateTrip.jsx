@@ -537,7 +537,7 @@ export default function CreateTrip() {
               </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>{language === 'he' ? 'כותרת' : language === 'ru' ? 'Название' : 'Title'}
+                <Label>{language === 'he' ? 'כותרת' : language === 'ru' ? 'Название' : 'Title'}</Label>
                 <Input
                   value={formData.title}
                   onChange={(e) => handleChange('title', e.target.value)}
@@ -548,7 +548,7 @@ export default function CreateTrip() {
               </div>
 
               <div className="space-y-2">
-                <Label>{language === 'he' ? 'תיאור' : language === 'ru' ? 'Описание' : 'Description'}
+                <Label>{language === 'he' ? 'תיאור' : language === 'ru' ? 'Описание' : 'Description'}</Label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => handleChange('description', e.target.value)}
@@ -641,7 +641,7 @@ export default function CreateTrip() {
                   <div className={`grid grid-cols-1 ${formData.country === 'israel' ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-4`}>
                     {formData.country !== 'israel' && (
                       <div className="space-y-2">
-                        <Label>{language === 'he' ? 'מחוז/מדינה' : language === 'ru' ? 'Штат/Провинция' : 'State/Province'}
+                        <Label>{language === 'he' ? 'מחוז/מדינה' : language === 'ru' ? 'Штат/Провинция' : 'State/Province'}</Label>
                         <Select 
                           value={formData.region} 
                           onValueChange={(v) => handleChange('region', v)}
@@ -668,7 +668,7 @@ export default function CreateTrip() {
                     )}
 
                     <div className="space-y-2">
-                      <Label>{language === 'he' ? 'אזור/עיר' : language === 'ru' ? 'Район/Город' : 'Area/City'}
+                      <Label>{language === 'he' ? 'אזור/עיר' : language === 'ru' ? 'Район/Город' : 'Area/City'}</Label>
                       <Select 
                         value={formData.country === 'israel' ? formData.region : formData.sub_region} 
                         onValueChange={(v) => handleChange(formData.country === 'israel' ? 'region' : 'sub_region', v)}
@@ -1068,7 +1068,7 @@ export default function CreateTrip() {
                 {formData.has_guide && (
                   <div className="space-y-4 pl-6 pr-6">
                     <div className="space-y-2">
-                      <Label>{language === 'he' ? 'שם המדריך' : language === 'ru' ? 'Имя гида' : 'Guide Name'}
+                      <Label>{language === 'he' ? 'שם המדריך' : language === 'ru' ? 'Имя гида' : 'Guide Name'}</Label>
                       <Input
                         value={formData.guide_name || ''}
                         onChange={(e) => handleChange('guide_name', e.target.value)}
@@ -1078,7 +1078,7 @@ export default function CreateTrip() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>{language === 'he' ? 'נושא ההדרכה' : language === 'ru' ? 'Тема экскурсии' : 'Guide Topic'}
+                      <Label>{language === 'he' ? 'נושא ההדרכה' : language === 'ru' ? 'Тема экскурсии' : 'Guide Topic'}</Label>
                       <Textarea
                         value={formData.guide_topic || ''}
                         onChange={(e) => handleChange('guide_topic', e.target.value)}
@@ -1116,7 +1116,7 @@ export default function CreateTrip() {
               </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-3">
-                <Label>{language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : 'Parent Age Ranges'}
+                <Label>{language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : 'Parent Age Ranges'}</Label>
                 <div className="flex flex-wrap gap-2">
                   {['20-30', '30-40', '40-50', '50-60', '60+'].map(range => (
                     <Badge
@@ -1136,7 +1136,7 @@ export default function CreateTrip() {
               </div>
 
               <div className="space-y-3">
-                <Label>{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : 'Children Age Ranges'}
+                <Label>{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : 'Children Age Ranges'}</Label>
                 <div className="flex flex-wrap gap-2">
                   {['0-2', '3-6', '7-10', '11-14', '15-18', '18-21', '21+'].map(range => (
                     <Badge
