@@ -138,19 +138,49 @@ export default function CreateTrip() {
                 }
               } catch (error) {
                 console.error('Error detecting country:', error);
-                setFormData(prev => ({ ...prev, country: 'israel' }));
-                await fetchRegionsForCountry('israel');
+                // Set default country based on selected language
+                const languageToCountry = {
+                  'he': 'israel',
+                  'en': 'uk',
+                  'fr': 'france',
+                  'es': 'spain',
+                  'de': 'germany',
+                  'it': 'italy'
+                };
+                const defaultCountry = languageToCountry[language] || 'israel';
+                setFormData(prev => ({ ...prev, country: defaultCountry }));
+                await fetchRegionsForCountry(defaultCountry);
               }
             },
             async (error) => {
               console.log('Geolocation not available, using default');
-              setFormData(prev => ({ ...prev, country: 'israel' }));
-              await fetchRegionsForCountry('israel');
+              // Set default country based on selected language
+              const languageToCountry = {
+                'he': 'israel',
+                'en': 'uk',
+                'fr': 'france',
+                'es': 'spain',
+                'de': 'germany',
+                'it': 'italy'
+              };
+              const defaultCountry = languageToCountry[language] || 'israel';
+              setFormData(prev => ({ ...prev, country: defaultCountry }));
+              await fetchRegionsForCountry(defaultCountry);
             }
           );
         } else {
-          setFormData(prev => ({ ...prev, country: 'israel' }));
-          await fetchRegionsForCountry('israel');
+          // Set default country based on selected language
+          const languageToCountry = {
+            'he': 'israel',
+            'en': 'uk',
+            'fr': 'france',
+            'es': 'spain',
+            'de': 'germany',
+            'it': 'italy'
+          };
+          const defaultCountry = languageToCountry[language] || 'israel';
+          setFormData(prev => ({ ...prev, country: defaultCountry }));
+          await fetchRegionsForCountry(defaultCountry);
         }
       } catch (e) {
         toast.error(language === 'he' ? 'יש להתחבר' : 'Please login');
