@@ -566,69 +566,16 @@ export default function CreateTrip() {
               </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4">
-                <div className="space-y-2 relative">
-                  <Label className="flex items-center gap-2">
-                    <Globe className="w-4 h-4" />
-                    {t('country')}
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      value={countrySearchValue}
-                      onChange={(e) => {
-                        setCountrySearchValue(e.target.value);
-                        setShowCountryDropdown(true);
-                      }}
-                      onFocus={() => {
-                        if (!countrySearchValue && formData.country) {
-                          setCountrySearchValue(t(formData.country));
-                        }
-                        setShowCountryDropdown(true);
-                      }}
-                      placeholder={language === 'he' ? 'חפש מדינה...' : 'Search country...'}
-                      dir={isRTL ? 'rtl' : 'ltr'}
-                      className="w-full"
-                    />
-                    {formData.country && !showCountryDropdown && !countrySearchValue && (
-                      <div className="absolute inset-0 flex items-center px-3 pointer-events-none text-gray-900">
-                        {t(formData.country)}
-                      </div>
-                    )}
+                <div className="flex items-center gap-3 px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <Globe className="w-5 h-5 text-blue-600" />
+                  <div>
+                    <p className="text-xs text-blue-600 font-medium">
+                      {language === 'he' ? 'מדינה מזוהה' : 'Detected Country'}
+                    </p>
+                    <p className="text-base font-semibold text-blue-900">
+                      {formData.country ? t(formData.country) : (language === 'he' ? 'מזהה...' : 'Detecting...')}
+                    </p>
                   </div>
-                  {showCountryDropdown && (
-                    <div className="absolute z-50 w-full mt-1 max-h-60 overflow-auto bg-white border border-gray-200 rounded-lg shadow-xl">
-                      {countries
-                        .filter(c => {
-                          const translated = t(c).toLowerCase();
-                          const search = countrySearchValue.toLowerCase();
-                          return !countrySearchValue || translated.includes(search) || c.includes(search);
-                        })
-                        .slice(0, 10)
-                        .map(c => (
-                          <div
-                            key={c}
-                            className={`px-4 py-2 cursor-pointer hover:bg-blue-50 transition-colors ${
-                              formData.country === c ? 'bg-blue-100 font-semibold' : ''
-                            }`}
-                            onClick={() => {
-                              handleChange('country', c);
-                              setCountrySearchValue(t(c));
-                              setShowCountryDropdown(false);
-                            }}
-                          >
-                            {t(c)}
-                          </div>
-                        ))}
-                      {countries.filter(c => {
-                        const translated = t(c).toLowerCase();
-                        const search = countrySearchValue.toLowerCase();
-                        return !countrySearchValue || translated.includes(search) || c.includes(search);
-                      }).length === 0 && (
-                        <div className="px-4 py-2 text-gray-500 text-center">
-                          {language === 'he' ? 'לא נמצאו תוצאות' : 'No results'}
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </div>
 
                 <div className="space-y-4">
