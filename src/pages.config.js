@@ -7,6 +7,7 @@ import Onboarding from './pages/Onboarding';
 import CreateTrip from './pages/CreateTrip';
 import EditTrip from './pages/EditTrip';
 import Community from './pages/Community';
+import TermsOfService from './pages/TermsOfService';
 import __Layout from './Layout.jsx';
 
 
@@ -20,6 +21,7 @@ export const PAGES = {
     "CreateTrip": CreateTrip,
     "EditTrip": EditTrip,
     "Community": Community,
+    "TermsOfService": TermsOfService,
 }
 
 export const pagesConfig = {
