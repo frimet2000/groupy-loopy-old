@@ -74,12 +74,17 @@ export default function ItineraryCreator({ itinerary, setItinerary }) {
               {language === 'he' ? 'לוח זמנים יומי' : 'Daily Schedule'}
             </CardTitle>
             <Button type="button" size="sm" onClick={() => {
-              setEditingDayIndex(null);
-              setDayData({ day: itinerary.length + 1, title: '', activities: [] });
-              setShowDayDialog(true);
+              if (itinerary.length === 0) {
+                toast.error(language === 'he' ? 'יש ליצור יום קודם' : 'Please create a day first');
+                return;
+              }
+              setSelectedDayIndex(itinerary.length - 1);
+              setEditingActivityIndex(null);
+              setActivityData({ time: '', activity: '', notes: '' });
+              setShowActivityDialog(true);
             }}>
               <Plus className="w-4 h-4 mr-1" />
-              {language === 'he' ? 'יום' : 'Day'}
+              {language === 'he' ? 'הוסף פעילות' : 'Add Activity'}
             </Button>
           </div>
         </CardHeader>
