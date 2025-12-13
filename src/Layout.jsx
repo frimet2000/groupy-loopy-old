@@ -99,16 +99,24 @@ function LayoutContent({ children, currentPageName }) {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden md:flex items-center gap-2">
               {navItems.map(item => (
                 <Link key={item.name} to={createPageUrl(item.name)}>
-                  <Button
-                    variant={isActive(item.name) ? "secondary" : "ghost"}
-                    className={`gap-2 ${isActive(item.name) ? 'bg-emerald-50 text-emerald-700' : 'text-gray-600 hover:text-emerald-700 hover:bg-emerald-50'}`}
-                  >
-                    <item.icon className={`w-4 h-4 ${isActive(item.name) ? item.color : ''}`} />
-                    {item.label}
-                  </Button>
+                  <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                    <Button
+                      variant={isActive(item.name) ? "secondary" : "ghost"}
+                      className={`gap-2 transition-all duration-300 ${
+                        isActive(item.name) 
+                          ? 'bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 font-semibold shadow-sm' 
+                          : 'text-gray-600 hover:text-emerald-700 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50'
+                      }`}
+                    >
+                      <div className={`p-1 rounded-lg ${isActive(item.name) ? 'bg-emerald-100' : ''}`}>
+                        <item.icon className={`w-4 h-4 ${item.color}`} />
+                      </div>
+                      {item.label}
+                    </Button>
+                  </motion.div>
                 </Link>
               ))}
             </nav>
@@ -121,17 +129,26 @@ function LayoutContent({ children, currentPageName }) {
                 <>
                   {/* Pending Requests Notification */}
                   {pendingCount > 0 && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="relative"
-                      onClick={() => navigate(createPageUrl('MyTrips'))}
-                    >
-                      <Bell className="w-5 h-5 text-gray-600" />
-                      <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500">
-                        {pendingCount}
-                      </Badge>
-                    </Button>
+                    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="relative hover:bg-red-50 transition-all duration-300"
+                        onClick={() => navigate(createPageUrl('MyTrips'))}
+                      >
+                        <div className="p-1.5 bg-red-100 rounded-lg">
+                          <Bell className="w-5 h-5 text-red-600" />
+                        </div>
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        >
+                          <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-gradient-to-r from-red-500 to-rose-600 text-white font-bold shadow-lg">
+                            {pendingCount}
+                          </Badge>
+                        </motion.div>
+                      </Button>
+                    </motion.div>
                   )}
 
                   <DropdownMenu>
@@ -167,32 +184,46 @@ function LayoutContent({ children, currentPageName }) {
                   </DropdownMenu>
                   </>
                   ) : (
-                <Button 
-                  onClick={() => base44.auth.redirectToLogin()}
-                  className="bg-emerald-600 hover:bg-emerald-700"
-                >
-                  Login
-                </Button>
-              )}
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button 
+                        onClick={() => base44.auth.redirectToLogin()}
+                        className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                      >
+                        Login
+                      </Button>
+                    </motion.div>
+                  )}
 
               {/* Mobile Menu */}
               <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                 <SheetTrigger asChild className="md:hidden">
-                  <Button variant="ghost" size="icon">
-                    <Menu className="w-5 h-5" />
-                  </Button>
+                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <Button variant="ghost" size="icon" className="hover:bg-emerald-50">
+                      <div className="p-1 rounded-lg">
+                        <Menu className="w-5 h-5 text-gray-700" />
+                      </div>
+                    </Button>
+                  </motion.div>
                 </SheetTrigger>
-                <SheetContent side={isRTL ? "right" : "left"} className="w-72">
+                <SheetContent side={isRTL ? "right" : "left"} className="w-72 bg-gradient-to-b from-white to-gray-50">
                   <nav className="flex flex-col gap-2 mt-8">
                     {navItems.map(item => (
                       <Link key={item.name} to={createPageUrl(item.name)} onClick={() => setMobileMenuOpen(false)}>
-                        <Button
-                          variant={isActive(item.name) ? "secondary" : "ghost"}
-                          className={`w-full justify-start gap-3 h-12 ${isActive(item.name) ? 'bg-emerald-50 text-emerald-700' : ''}`}
-                        >
-                          <item.icon className={`w-5 h-5 ${isActive(item.name) ? item.color : ''}`} />
-                          {item.label}
-                        </Button>
+                        <motion.div whileHover={{ x: isRTL ? -5 : 5 }} whileTap={{ scale: 0.98 }}>
+                          <Button
+                            variant={isActive(item.name) ? "secondary" : "ghost"}
+                            className={`w-full justify-start gap-3 h-12 transition-all duration-300 ${
+                              isActive(item.name) 
+                                ? 'bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 font-semibold shadow-sm' 
+                                : 'hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50'
+                            }`}
+                          >
+                            <div className={`p-1.5 rounded-lg ${isActive(item.name) ? 'bg-emerald-100' : ''}`}>
+                              <item.icon className={`w-5 h-5 ${item.color}`} />
+                            </div>
+                            {item.label}
+                          </Button>
+                        </motion.div>
                       </Link>
                     ))}
                   </nav>
@@ -209,18 +240,38 @@ function LayoutContent({ children, currentPageName }) {
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 safe-area-inset-bottom z-50">
-        <div className="flex items-center justify-around h-16">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 safe-area-inset-bottom z-50 shadow-2xl">
+        <div className="flex items-center justify-around h-16 px-2">
           {navItems.slice(0, 4).map(item => (
             <Link 
               key={item.name} 
               to={createPageUrl(item.name)}
-              className={`flex flex-col items-center gap-1 px-3 py-2 ${
-                isActive(item.name) ? 'text-emerald-600' : 'text-gray-500'
-              }`}
+              className="relative flex-1"
             >
-              <item.icon className={`w-5 h-5 ${isActive(item.name) ? item.color : ''}`} />
-              <span className="text-xs">{item.label}</span>
+              <motion.div
+                whileTap={{ scale: 0.9 }}
+                className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-300 ${
+                  isActive(item.name) 
+                    ? 'text-emerald-600 bg-gradient-to-br from-emerald-50 to-teal-50' 
+                    : 'text-gray-500 hover:text-emerald-600'
+                }`}
+              >
+                <div className={`p-1.5 rounded-lg transition-all ${
+                  isActive(item.name) ? 'bg-emerald-100' : ''
+                }`}>
+                  <item.icon className={`w-5 h-5 ${isActive(item.name) ? item.color : ''}`} />
+                </div>
+                <span className={`text-xs font-medium ${isActive(item.name) ? 'font-semibold' : ''}`}>
+                  {item.label}
+                </span>
+                {isActive(item.name) && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+              </motion.div>
             </Link>
           ))}
         </div>
