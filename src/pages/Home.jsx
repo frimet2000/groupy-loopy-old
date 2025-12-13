@@ -10,9 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar } from 'lucide-react';
+import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, Share2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format, isPast, isToday, isTomorrow } from 'date-fns';
+import { toast } from "sonner";
 
 export default function Home() {
   const { t, isRTL, language } = useLanguage();
@@ -114,6 +115,30 @@ export default function Home() {
     { icon: Users, value: uniqueParticipants.size, label: language === 'he' ? 'משתתפים' : 'Participants', color: 'text-blue-300' },
     { icon: MapPin, value: new Set(openTrips.map(t => t.region)).size, label: language === 'he' ? 'אזורים' : 'Regions', color: 'text-purple-300' },
   ];
+
+  const handleShare = async () => {
+    const shareData = {
+      title: 'The Group Loop',
+      text: language === 'he' 
+        ? 'מצא שותפים לטיול הבא שלך!' 
+        : 'Find partners for your next trip!',
+      url: window.location.origin
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.origin);
+        toast.success(language === 'he' ? 'הקישור הועתק ללוח' : 'Link copied to clipboard');
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        await navigator.clipboard.writeText(window.location.origin);
+        toast.success(language === 'he' ? 'הקישור הועתק ללוח' : 'Link copied to clipboard');
+      }
+    }
+  };
 
   return (
     <div className="pb-8">
@@ -235,6 +260,19 @@ export default function Home() {
                   </Button>
                 </motion.div>
               </Link>
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button 
+                  size="lg" 
+                  onClick={handleShare}
+                  className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600 h-16 px-10 text-lg font-bold shadow-2xl shadow-orange-500/30 border-2 border-yellow-300/30"
+                >
+                  <Share2 className="w-6 h-6 mr-2" />
+                  {language === 'he' ? 'שתף עם חברים' : 'Share with Friends'}
+                </Button>
+              </motion.div>
             </motion.div>
           </motion.div>
 
