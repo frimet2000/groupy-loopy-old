@@ -164,7 +164,7 @@ export default function CreateTrip() {
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: isIsrael
           ? (language === 'he'
-            ? `צור רשימה של 10-15 אזורים וערים מרכזיים בישראל. החזר רק את שמות האזורים/ערים באנגלית (lowercase), מופרדים בפסיקים. לדוגמה: "tel aviv, jerusalem, haifa, eilat". השתמש בשמות פשוטים וקצרים.`
+            ? `צור רשימה של 10-15 אזורים וערים מרכזיים בישראל. החזר רק את שמות האזורים/ערים בעברית, מופרדים בפסיקים. לדוגמה: "תל אביב, ירושלים, חיפה, אילת, באר שבע". השתמש בשמות הרשמיים בעברית.`
             : `Create a list of 10-15 main regions and cities in Israel. Return only the region/city names in English (lowercase), separated by commas. For example: "tel aviv, jerusalem, haifa, eilat". Use simple, short names.`)
           : (language === 'he'
             ? `צור רשימה של 8-12 מחוזות או מדינות עיקריים ב-${t(country)}. החזר רק את שמות המחוזות/מדינות באנגלית (lowercase), מופרדים בפסיקים. לדוגמה: "california, texas, florida". השתמש בשמות פשוטים וקצרים.`
@@ -654,7 +654,7 @@ export default function CreateTrip() {
                         <SelectContent>
                           {(formData.country === 'israel' ? dynamicRegions : dynamicSubRegions).map(item => (
                             <SelectItem key={item} value={item}>
-                              {item.charAt(0).toUpperCase() + item.slice(1)}
+                              {item}
                             </SelectItem>
                           ))}
                         </SelectContent>
