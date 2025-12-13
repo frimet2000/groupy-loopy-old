@@ -165,10 +165,10 @@ export default function Profile() {
       setUser(updatedUser);
       setViewingUser(updatedUser);
       
-      toast.success(language === 'he' ? 'התמונה צולמה והועלתה' : language === 'ru' ? 'Фото сделано и загружено' : language === 'es' ? 'Foto capturada y cargada' : language === 'fr' ? 'Photo capturée et téléchargée' : language === 'de' ? 'Foto aufgenommen und hochgeladen' : language === 'it' ? 'Foto catturata e caricata' : 'Photo captured and uploaded');
+      toast.success(language === 'he' ? 'התמונה צולמה והועלתה' : language === 'ru' ? 'Фото сделано и загружено' : language === 'es' ? 'Foto capturada y cargada' : language === 'fr' ? 'Photo capturée et téléchargée' : language === 'de' ? 'Foto aufgenommen und hochgeladen' : language === 'it' ? 'Foto scattata e caricata' : 'Photo captured and uploaded');
     } catch (error) {
       console.error('Camera capture error:', error);
-      toast.error(language === 'he' ? 'שגיאה בצילום התמונה' : language === 'ru' ? 'Ошибка при съемке фото' : language === 'es' ? 'Error al capturar foto' : language === 'fr' ? 'Erreur lors de la capture de la photo' : language === 'de' ? 'Fehler beim Aufnehmen des Fotos' : language === 'it' ? 'Errore durante la cattura della foto' : 'Error capturing photo');
+      toast.error(language === 'he' ? 'שגיאה בצילום התמונה' : language === 'ru' ? 'Ошибка при съёмке фото' : language === 'es' ? 'Error al capturar foto' : language === 'fr' ? 'Erreur lors de la capture de la photo' : language === 'de' ? 'Fehler beim Aufnehmen des Fotos' : language === 'it' ? 'Errore durante lo scatto della foto' : 'Error capturing photo');
     }
     setImageUploading(false);
     e.target.value = '';
@@ -176,7 +176,7 @@ export default function Profile() {
 
   const handleSave = async () => {
     if (!formData.first_name || !formData.last_name) {
-      toast.error(language === 'he' ? 'נא למלא שם פרטי ושם משפחה' : language === 'ru' ? 'Пожалуйста, заполните имя и фамилию' : language === 'es' ? 'Por favor, completa nombre y apellido' : language === 'fr' ? 'Veuillez remplir le prénom et le nom' : language === 'de' ? 'Bitte Vor- und Nachname eingeben' : language === 'it' ? 'Compila nome e cognome' : 'Please fill in first and last name');
+      toast.error(language === 'he' ? 'נא למלא שם פרטי ושם משפחה' : language === 'ru' ? 'Пожалуйста, заполните имя и фамилию' : language === 'es' ? 'Por favor, completa nombre y apellido' : language === 'fr' ? 'Veuillez remplir le prénom et le nom' : language === 'de' ? 'Bitte Vor- und Nachname ausfüllen' : language === 'it' ? 'Compila nome e cognome' : 'Please fill in first and last name');
       return;
     }
 
@@ -191,7 +191,7 @@ export default function Profile() {
       const updatedUser = await base44.auth.me();
       setUser(updatedUser);
       setEditMode(false);
-      toast.success(language === 'he' ? 'הפרופיל עודכן בהצלחה' : language === 'ru' ? 'Профиль успешно обновлен' : language === 'es' ? 'Perfil actualizado exitosamente' : language === 'fr' ? 'Profil mis à jour avec succès' : language === 'de' ? 'Profil erfolgreich aktualisiert' : language === 'it' ? 'Profilo aggiornato con successo' : 'Profile updated successfully');
+      toast.success(language === 'he' ? 'הפרופיל עודכן בהצלחה' : language === 'ru' ? 'Профиль успешно обновлён' : language === 'es' ? 'Perfil actualizado exitosamente' : language === 'fr' ? 'Profil mis à jour avec succès' : language === 'de' ? 'Profil erfolgreich aktualisiert' : language === 'it' ? 'Profilo aggiornato con successo' : 'Profile updated successfully');
     } catch (error) {
       toast.error(language === 'he' ? 'שגיאה בעדכון הפרופיל' : language === 'ru' ? 'Ошибка обновления профиля' : language === 'es' ? 'Error al actualizar perfil' : language === 'fr' ? 'Erreur de mise à jour du profil' : language === 'de' ? 'Fehler beim Aktualisieren des Profils' : language === 'it' ? 'Errore nell\'aggiornamento del profilo' : 'Error updating profile');
     }
@@ -210,12 +210,12 @@ export default function Profile() {
       // Delete user account
       await base44.entities.User.delete(user.id);
       
-      toast.success(language === 'he' ? 'החשבון נמחק בהצלחה' : language === 'ru' ? 'Аккаунт успешно удален' : language === 'es' ? 'Cuenta eliminada exitosamente' : language === 'fr' ? 'Compte supprimé avec succès' : language === 'de' ? 'Konto erfolgreich gelöscht' : language === 'it' ? 'Account eliminato con successo' : 'Account deleted successfully');
+      toast.success(language === 'he' ? 'החשבון נמחק בהצלחה' : language === 'ru' ? 'Аккаунт успешно удалён' : language === 'es' ? 'Cuenta eliminada exitosamente' : language === 'fr' ? 'Compte supprimé avec succès' : language === 'de' ? 'Konto erfolgreich gelöscht' : language === 'it' ? 'Account eliminato con successo' : 'Account deleted successfully');
       
       // Logout and redirect
       await base44.auth.logout();
     } catch (error) {
-      toast.error(language === 'he' ? 'שגיאה במחיקת החשבון' : language === 'ru' ? 'Ошибка удаления аккаунта' : language === 'es' ? 'Error al eliminar cuenta' : language === 'fr' ? 'Erreur lors de la suppression du compte' : language === 'de' ? 'Fehler beim Löschen des Kontos' : language === 'it' ? 'Errore nell\'eliminazione dell\'account' : 'Error deleting account');
+      toast.error(language === 'he' ? 'שגיאה במחיקת החשבון' : language === 'ru' ? 'Ошибка при удалении аккаунта' : language === 'es' ? 'Error al eliminar cuenta' : language === 'fr' ? 'Erreur lors de la suppression du compte' : language === 'de' ? 'Fehler beim Löschen des Kontos' : language === 'it' ? 'Errore nell\'eliminazione dell\'account' : 'Error deleting account');
       setDeleting(false);
     }
   };
@@ -372,10 +372,10 @@ export default function Profile() {
                     )}
                     {viewingUser.fitness_level && (
                       <div className="flex items-center gap-2 text-gray-600">
-                        <span className="font-medium">{language === 'he' ? 'רמת כושר:' : language === 'ru' ? 'Уровень фитнеса:' : language === 'es' ? 'Nivel de forma física:' : language === 'fr' ? 'Niveau de forme :' : language === 'de' ? 'Fitness-Level:' : language === 'it' ? 'Livello di fitness:' : 'Fitness Level:'}</span>
+                        <span className="font-medium">{language === 'he' ? 'רמת כושר:' : language === 'ru' ? 'Уровень физической подготовки:' : language === 'es' ? 'Nivel de condición física:' : language === 'fr' ? 'Niveau de forme :' : language === 'de' ? 'Fitnesslevel:' : language === 'it' ? 'Livello di forma fisica:' : 'Fitness Level:'}</span>
                         <Badge variant="outline">
                           {viewingUser.fitness_level === 'low' ? (language === 'he' ? 'נמוכה' : language === 'ru' ? 'Низкий' : language === 'es' ? 'Bajo' : language === 'fr' ? 'Faible' : language === 'de' ? 'Niedrig' : language === 'it' ? 'Basso' : 'Low') :
-                           viewingUser.fitness_level === 'moderate' ? (language === 'he' ? 'בינונית' : language === 'ru' ? 'Средний' : language === 'es' ? 'Moderado' : language === 'fr' ? 'Modéré' : language === 'de' ? 'Mäßig' : language === 'it' ? 'Moderato' : 'Moderate') :
+                           viewingUser.fitness_level === 'moderate' ? (language === 'he' ? 'בינונית' : language === 'ru' ? 'Средний' : language === 'es' ? 'Moderado' : language === 'fr' ? 'Modéré' : language === 'de' ? 'Mittel' : language === 'it' ? 'Moderato' : 'Moderate') :
                            viewingUser.fitness_level === 'high' ? (language === 'he' ? 'גבוהה' : language === 'ru' ? 'Высокий' : language === 'es' ? 'Alto' : language === 'fr' ? 'Élevé' : language === 'de' ? 'Hoch' : language === 'it' ? 'Alto' : 'High') :
                            (language === 'he' ? 'גבוהה מאוד' : language === 'ru' ? 'Очень высокий' : language === 'es' ? 'Muy alto' : language === 'fr' ? 'Très élevé' : language === 'de' ? 'Sehr hoch' : language === 'it' ? 'Molto alto' : 'Very High')}
                         </Badge>
@@ -386,14 +386,14 @@ export default function Profile() {
                         <span className="font-medium">{language === 'he' ? 'סוג רכב:' : language === 'ru' ? 'Транспорт:' : language === 'es' ? 'Vehículo:' : language === 'fr' ? 'Véhicule :' : language === 'de' ? 'Fahrzeug:' : language === 'it' ? 'Veicolo:' : 'Vehicle:'}</span>
                         <Badge variant="outline">
                           {viewingUser.vehicle_type === 'regular' ? (language === 'he' ? 'רכב רגיל' : language === 'ru' ? 'Обычный' : language === 'es' ? 'Regular' : language === 'fr' ? 'Ordinaire' : language === 'de' ? 'Normal' : language === 'it' ? 'Normale' : 'Regular') :
-                           (language === 'he' ? 'רכב שטח (4X4)' : '4X4')}
+                           (language === 'he' ? 'רכב שטח (4X4)' : language === 'ru' ? '4X4' : language === 'es' ? '4X4' : language === 'fr' ? '4X4' : language === 'de' ? '4X4' : language === 'it' ? '4X4' : '4X4')}
                         </Badge>
                       </div>
                     )}
                     {viewingUser.travels_with_dog && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <Dog className="w-4 h-4" />
-                        <span className="font-medium">{language === 'he' ? 'מטייל עם כלב' : language === 'ru' ? 'Путешествует с собакой' : language === 'es' ? 'Viaja con perro' : language === 'fr' ? 'Voyage avec un chien' : language === 'de' ? 'Reist mit Hund' : language === 'it' ? 'Viaggia con un cane' : 'Travels with dog'}</span>
+                        <span className="font-medium">{language === 'he' ? 'מטייל עם כלב' : language === 'ru' ? 'Путешествует с собакой' : language === 'es' ? 'Viaja con perro' : language === 'fr' ? 'Voyage avec un chien' : language === 'de' ? 'Reist mit Hund' : language === 'it' ? 'Viaggia con cane' : 'Travels with dog'}
                       </div>
                     )}
                   </CardContent>
@@ -444,7 +444,7 @@ export default function Profile() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Settings className="w-5 h-5 text-emerald-600" />
-                      {language === 'he' ? 'העדפות טיולים' : language === 'ru' ? 'Предпочтения поездок' : language === 'es' ? 'Preferencias de viaje' : language === 'fr' ? 'Préférences de voyage' : language === 'de' ? 'Reise-Präferenzen' : language === 'it' ? 'Preferenze di viaggio' : 'Trip Preferences'}
+                      {language === 'he' ? 'העדפות טיולים' : language === 'ru' ? 'Предпочтения поездок' : language === 'es' ? 'Preferencias de viaje' : language === 'fr' ? 'Préférences de voyage' : language === 'de' ? 'Reisepräferenzen' : language === 'it' ? 'Preferenze di viaggio' : 'Trip Preferences'}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
@@ -468,7 +468,7 @@ export default function Profile() {
                       <div className="space-y-3">
                         <Label className="flex items-center gap-2">
                           <Heart className="w-4 h-4 text-rose-600" />
-                          {language === 'he' ? 'תחומי עניין' : language === 'ru' ? 'Интересы' : language === 'es' ? 'Intereses' : language === 'fr' ? 'Centres d\'intérêt' : language === 'de' ? 'Interessen' : language === 'it' ? 'Interessi' : 'Interests'}
+                          {language === 'he' ? 'תחומי עניין' : language === 'ru' ? 'Интересы' : language === 'es' ? 'Intereses' : language === 'fr' ? 'Intérêts' : language === 'de' ? 'Interessen' : language === 'it' ? 'Interessi' : 'Interests'}
                         </Label>
                         <div className="flex flex-wrap gap-2">
                           {viewingUser.preferred_interests.map(interest => (
@@ -505,7 +505,7 @@ export default function Profile() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>{language === 'he' ? 'שם משפחה' : language === 'ru' ? 'Фамилия' : language === 'es' ? 'Apellido' : language === 'fr' ? 'Nom' : language === 'de' ? 'Nachname' : language === 'it' ? 'Cognome' : 'Last Name'} *</Label>
+                    <Label>{language === 'he' ? 'שם משפחה' : language === 'ru' ? 'Фамилия' : language === 'es' ? 'Apellido' : language === 'fr' ? 'Nom de famille' : language === 'de' ? 'Nachname' : language === 'it' ? 'Cognome' : 'Last Name'} *</Label>
                     <Input
                       value={formData.last_name}
                       onChange={(e) => handleChange('last_name', e.target.value)}
@@ -525,7 +525,7 @@ export default function Profile() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>{language === 'he' ? 'אודותיי' : language === 'ru' ? 'О себе' : language === 'es' ? 'Biografía' : language === 'fr' ? 'Biographie' : language === 'de' ? 'Über mich' : language === 'it' ? 'Biografia' : 'Bio'}</Label>
+                  <Label>{language === 'he' ? 'אודותיי' : language === 'ru' ? 'О себе' : language === 'es' ? 'Biografía' : language === 'fr' ? 'Bio' : language === 'de' ? 'Über mich' : language === 'it' ? 'Bio' : 'Bio'}</Label>
                   <Textarea
                     value={formData.bio}
                     onChange={(e) => handleChange('bio', e.target.value)}
@@ -534,13 +534,13 @@ export default function Profile() {
                       : language === 'ru'
                       ? 'Расскажите о себе, что вы любите в походах...'
                       : language === 'es'
-                      ? 'Cuéntanos sobre ti, qué amas de las excursiones...'
+                      ? 'Cuéntanos sobre ti, qué te gusta del senderismo...'
                       : language === 'fr'
                       ? 'Parlez-nous de vous, ce que vous aimez dans la randonnée...'
                       : language === 'de'
-                      ? 'Erzählen Sie uns von sich, was Sie am Wandern lieben...'
+                      ? 'Erzählen Sie uns über sich, was Sie am Wandern lieben...'
                       : language === 'it'
-                      ? 'Raccontaci di te, cosa ami dell\'escursionismo...'
+                      ? 'Parlaci di te, cosa ami dell\'escursionismo...'
                       : 'Tell us about yourself, what you love about hiking...'}
                     rows={3}
                     dir={language === 'he' ? 'rtl' : 'ltr'}
@@ -563,7 +563,7 @@ export default function Profile() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>{language === 'he' ? 'רמת כושר' : language === 'ru' ? 'Уровень фитнеса' : language === 'es' ? 'Nivel de forma física' : language === 'fr' ? 'Niveau de forme' : language === 'de' ? 'Fitness-Level' : language === 'it' ? 'Livello di fitness' : 'Fitness Level'}</Label>
+                    <Label>{language === 'he' ? 'רמת כושר' : language === 'ru' ? 'Уровень физической подготовки' : language === 'es' ? 'Nivel de condición física' : language === 'fr' ? 'Niveau de forme' : language === 'de' ? 'Fitnesslevel' : language === 'it' ? 'Livello di forma fisica' : 'Fitness Level'}</Label>
                     <Select value={formData.fitness_level} onValueChange={(v) => handleChange('fitness_level', v)}>
                       <SelectTrigger>
                         <SelectValue />
@@ -573,7 +573,7 @@ export default function Profile() {
                           {language === 'he' ? 'נמוכה' : language === 'ru' ? 'Низкий' : language === 'es' ? 'Bajo' : language === 'fr' ? 'Faible' : language === 'de' ? 'Niedrig' : language === 'it' ? 'Basso' : 'Low'}
                         </SelectItem>
                         <SelectItem value="moderate">
-                          {language === 'he' ? 'בינונית' : language === 'ru' ? 'Средний' : language === 'es' ? 'Moderado' : language === 'fr' ? 'Modéré' : language === 'de' ? 'Mäßig' : language === 'it' ? 'Moderato' : 'Moderate'}
+                          {language === 'he' ? 'בינונית' : language === 'ru' ? 'Средний' : language === 'es' ? 'Moderado' : language === 'fr' ? 'Modéré' : language === 'de' ? 'Mittel' : language === 'it' ? 'Moderato' : 'Moderate'}
                         </SelectItem>
                         <SelectItem value="high">
                           {language === 'he' ? 'גבוהה' : language === 'ru' ? 'Высокий' : language === 'es' ? 'Alto' : language === 'fr' ? 'Élevé' : language === 'de' ? 'Hoch' : language === 'it' ? 'Alto' : 'High'}
@@ -594,13 +594,13 @@ export default function Profile() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">
-                        {language === 'he' ? 'אין רכב' : language === 'ru' ? 'Без транспорта' : language === 'es' ? 'Sin vehículo' : language === 'fr' ? 'Pas de véhicule' : language === 'de' ? 'Kein Fahrzeug' : language === 'it' ? 'Nessun veicolo' : 'No vehicle'}
+                        {language === 'he' ? 'אין רכב' : language === 'ru' ? 'Нет транспорта' : language === 'es' ? 'Sin vehículo' : language === 'fr' ? 'Pas de véhicule' : language === 'de' ? 'Kein Fahrzeug' : language === 'it' ? 'Nessun veicolo' : 'No vehicle'}
                       </SelectItem>
                       <SelectItem value="regular">
                         {language === 'he' ? 'רכב רגיל' : language === 'ru' ? 'Обычный автомобиль' : language === 'es' ? 'Vehículo regular' : language === 'fr' ? 'Véhicule ordinaire' : language === 'de' ? 'Normales Fahrzeug' : language === 'it' ? 'Veicolo normale' : 'Regular vehicle'}
                       </SelectItem>
                       <SelectItem value="4x4">
-                        {language === 'he' ? 'רכב שטח (4X4)' : language === 'ru' ? 'Внедорожник (4X4)' : language === 'es' ? 'Vehículo 4X4' : language === 'fr' ? 'Véhicule 4X4' : language === 'de' ? '4X4-Fahrzeug' : language === 'it' ? 'Veicolo 4X4' : '4X4 vehicle'}
+                        {language === 'he' ? 'רכב שטח (4X4)' : language === 'ru' ? 'Внедорожник 4X4' : language === 'es' ? 'Vehículo 4X4' : language === 'fr' ? 'Véhicule 4X4' : language === 'de' ? '4X4-Fahrzeug' : language === 'it' ? 'Veicolo 4X4' : '4X4 vehicle'}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -610,7 +610,7 @@ export default function Profile() {
                   <div className="flex items-center gap-2">
                     <Dog className="w-5 h-5 text-blue-600" />
                     <Label className="cursor-pointer mb-0">
-                      {language === 'he' ? 'מטייל עם כלב' : language === 'ru' ? 'Путешествует с собакой' : language === 'es' ? 'Viaja con perro' : language === 'fr' ? 'Voyage avec un chien' : language === 'de' ? 'Reist mit Hund' : language === 'it' ? 'Viaggia con un cane' : 'Travels with dog'}
+                      {language === 'he' ? 'מטייל עם כלב' : language === 'ru' ? 'Путешествует с собакой' : language === 'es' ? 'Viaja con perro' : language === 'fr' ? 'Voyage avec un chien' : language === 'de' ? 'Reist mit Hund' : language === 'it' ? 'Viaggia con cane' : 'Travels with dog'}
                     </Label>
                   </div>
                   <Switch
@@ -634,15 +634,15 @@ export default function Profile() {
                   {language === 'he' 
                     ? 'הגדר את טווחי הגילאים של בני המשפחה המטיילים איתך'
                     : language === 'ru'
-                    ? 'Установите возрастные диапазоны для членов семьи, путешествующих с вами'
+                    ? 'Укажите возрастные группы членов семьи, путешествующих с вами'
                     : language === 'es'
-                    ? 'Establece los rangos de edad de los miembros de la familia que viajan contigo'
+                    ? 'Establece rangos de edad de familiares que viajan contigo'
                     : language === 'fr'
-                    ? 'Définissez les tranches d\'âge des membres de la famille qui voyagent avec vous'
+                    ? 'Définissez les tranches d\'âge des membres de la famille voyageant avec vous'
                     : language === 'de'
-                    ? 'Legen Sie Altersgruppen für Familienmitglieder fest, die mit Ihnen reisen'
+                    ? 'Legen Sie Altersgruppen für mitreisende Familienmitglieder fest'
                     : language === 'it'
-                    ? 'Imposta le fasce d\'età dei membri della famiglia che viaggiano con te'
+                    ? 'Imposta le fasce d\'età dei familiari che viaggiano con te'
                     : 'Set age ranges for family members traveling with you'}
                 </CardDescription>
               </CardHeader>
@@ -698,15 +698,15 @@ export default function Profile() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Settings className="w-5 h-5 text-emerald-600" />
-                  {language === 'he' ? 'העדפות טיולים' : language === 'ru' ? 'Предпочтения поездок' : language === 'es' ? 'Preferencias de viaje' : language === 'fr' ? 'Préférences de voyage' : language === 'de' ? 'Reise-Präferenzen' : language === 'it' ? 'Preferenze di viaggio' : 'Trip Preferences'}
+                  {language === 'he' ? 'העדפות טיולים' : language === 'ru' ? 'Предпочтения поездок' : language === 'es' ? 'Preferencias de viaje' : language === 'fr' ? 'Préférences de voyage' : language === 'de' ? 'Reisepräferenzen' : language === 'it' ? 'Preferenze di viaggio' : 'Trip Preferences'}
                 </CardTitle>
                 <CardDescription>
                   {language === 'he' 
                     ? 'הגדר את ההעדפות שלך לקבלת המלצות מותאמות אישית'
                     : language === 'ru'
-                    ? 'Установите свои предпочтения для персонализированных рекомендаций'
+                    ? 'Установите предпочтения для персональных рекомендаций'
                     : language === 'es'
-                    ? 'Configura tus preferencias para recomendaciones personalizadas'
+                    ? 'Establece tus preferencias para recomendaciones personalizadas'
                     : language === 'fr'
                     ? 'Définissez vos préférences pour des recommandations personnalisées'
                     : language === 'de'
@@ -747,7 +747,7 @@ export default function Profile() {
                 <div className="space-y-3">
                   <Label className="flex items-center gap-2">
                     <Heart className="w-4 h-4 text-rose-600" />
-                    {language === 'he' ? 'תחומי עניין' : language === 'ru' ? 'Интересы' : language === 'es' ? 'Intereses' : language === 'fr' ? 'Centres d\'intérêt' : language === 'de' ? 'Interessen' : language === 'it' ? 'Interessi' : 'Interests'}
+                    {language === 'he' ? 'תחומי עניין' : language === 'ru' ? 'Интересы' : language === 'es' ? 'Intereses' : language === 'fr' ? 'Intérêts' : language === 'de' ? 'Interessen' : language === 'it' ? 'Interessi' : 'Interests'}
                   </Label>
                   <div className="flex flex-wrap gap-2">
                     {interests.map(interest => (
@@ -828,7 +828,7 @@ export default function Profile() {
                 <CardHeader>
                   <CardTitle className="text-red-700 flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5" />
-                    {language === 'he' ? 'אזור מסוכן' : language === 'ru' ? 'Опасная зона' : language === 'es' ? 'Zona de peligro' : language === 'fr' ? 'Zone dangereuse' : language === 'de' ? 'Gefahrenzone' : language === 'it' ? 'Zona pericolosa' : 'Danger Zone'}
+                    {language === 'he' ? 'אזור מסוכן' : language === 'ru' ? 'Опасная зона' : language === 'es' ? 'Zona peligrosa' : language === 'fr' ? 'Zone dangereuse' : language === 'de' ? 'Gefahrenbereich' : language === 'it' ? 'Zona pericolosa' : 'Danger Zone'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -838,13 +838,13 @@ export default function Profile() {
                       : language === 'ru'
                       ? 'Удаление аккаунта необратимо. Все ваши данные, включая организованные поездки, будут удалены навсегда.'
                       : language === 'es'
-                      ? 'La eliminación de cuenta es irreversible. Todos tus datos, incluidos los viajes organizados, se eliminarán permanentemente.'
+                      ? 'La eliminación de cuenta es irreversible. Todos tus datos, incluidos viajes organizados, se eliminarán permanentemente.'
                       : language === 'fr'
-                      ? 'La suppression du compte est irréversible. Toutes vos données, y compris les voyages organisés, seront supprimées définitivement.'
+                      ? 'La suppression du compte est irréversible. Toutes vos données, y compris les voyages organisés, seront définitivement supprimées.'
                       : language === 'de'
                       ? 'Die Kontolöschung ist unwiderruflich. Alle Ihre Daten, einschließlich organisierter Reisen, werden dauerhaft gelöscht.'
                       : language === 'it'
-                      ? 'L\'eliminazione dell\'account è irreversibile. Tutti i tuoi dati, compresi i viaggi organizzati, saranno eliminati definitivamente.'
+                      ? 'L\'eliminazione dell\'account è irreversibile. Tutti i tuoi dati, compresi i viaggi organizzati, saranno eliminati permanentemente.'
                       : 'Account deletion is irreversible. All your data, including organized trips, will be permanently deleted.'}
                   </p>
                   <Button
@@ -873,21 +873,21 @@ export default function Profile() {
                 {language === 'he' 
                   ? 'פעולה זו תמחק את חשבונך לצמיתות ולא ניתן לבטל אותה. כל הנתונים שלך יימחקו, כולל:'
                   : language === 'ru'
-                  ? 'Это действие безвозвратно удалит ваш аккаунт. Все ваши данные будут удалены, включая:'
+                  ? 'Это действие навсегда удалит ваш аккаунт и не может быть отменено. Все ваши данные будут удалены, включая:'
                   : language === 'es'
-                  ? 'Esta acción eliminará permanentemente tu cuenta y no se puede deshacer. Todos tus datos se eliminarán, incluyendo:'
+                  ? 'Esta acción eliminará permanentemente tu cuenta y no se puede deshacer. Todos tus datos serán eliminados, incluyendo:'
                   : language === 'fr'
-                  ? 'Cette action supprimera définitivement votre compte et ne peut être annulée. Toutes vos données seront supprimées, y compris :'
+                  ? 'Cette action supprimera définitivement votre compte et ne peut pas être annulée. Toutes vos données seront supprimées, y compris :'
                   : language === 'de'
                   ? 'Diese Aktion wird Ihr Konto dauerhaft löschen und kann nicht rückgängig gemacht werden. Alle Ihre Daten werden gelöscht, einschließlich:'
                   : language === 'it'
-                  ? 'Questa azione eliminerà definitivamente il tuo account e non può essere annullata. Tutti i tuoi dati saranno eliminati, inclusi:'
+                  ? 'Questa azione eliminerà permanentemente il tuo account e non può essere annullata. Tutti i tuoi dati verranno eliminati, inclusi:'
                   : 'This action will permanently delete your account and cannot be undone. All your data will be deleted, including:'}
                 <ul className="list-disc list-inside mt-3 space-y-1 text-gray-700">
                   <li>{language === 'he' ? 'פרטים אישיים' : language === 'ru' ? 'Личная информация' : language === 'es' ? 'Información personal' : language === 'fr' ? 'Informations personnelles' : language === 'de' ? 'Persönliche Informationen' : language === 'it' ? 'Informazioni personali' : 'Personal information'}</li>
                   <li>{language === 'he' ? 'טיולים שארגנת' : language === 'ru' ? 'Организованные поездки' : language === 'es' ? 'Viajes organizados' : language === 'fr' ? 'Voyages organisés' : language === 'de' ? 'Organisierte Reisen' : language === 'it' ? 'Viaggi organizzati' : 'Organized trips'}</li>
-                  <li>{language === 'he' ? 'השתתפויות בטיולים' : language === 'ru' ? 'Участие в поездках' : language === 'es' ? 'Participaciones en viajes' : language === 'fr' ? 'Participations aux voyages' : language === 'de' ? 'Reise-Teilnahmen' : language === 'it' ? 'Partecipazioni ai viaggi' : 'Trip participations'}</li>
-                  <li>{language === 'he' ? 'טיולים שמורים' : language === 'ru' ? 'Сохраненные поездки' : language === 'es' ? 'Viajes guardados' : language === 'fr' ? 'Voyages sauvegardés' : language === 'de' ? 'Gespeicherte Reisen' : language === 'it' ? 'Viaggi salvati' : 'Saved trips'}</li>
+                  <li>{language === 'he' ? 'השתתפויות בטיולים' : language === 'ru' ? 'Участие в поездках' : language === 'es' ? 'Participaciones en viajes' : language === 'fr' ? 'Participations aux voyages' : language === 'de' ? 'Teilnahme an Reisen' : language === 'it' ? 'Partecipazioni a viaggi' : 'Trip participations'}</li>
+                  <li>{language === 'he' ? 'טיולים שמורים' : language === 'ru' ? 'Сохранённые поездки' : language === 'es' ? 'Viajes guardados' : language === 'fr' ? 'Voyages sauvegardés' : language === 'de' ? 'Gespeicherte Reisen' : language === 'it' ? 'Viaggi salvati' : 'Saved trips'}</li>
                 </ul>
               </AlertDialogDescription>
             </AlertDialogHeader>
