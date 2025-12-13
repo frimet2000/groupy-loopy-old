@@ -273,7 +273,7 @@ export default function Community() {
                 className="gap-2"
               >
                 <Send className="w-4 h-4" />
-                {language === 'he' ? 'הודעה' : 'Message'}
+                {language === 'he' ? 'הודעה' : language === 'ru' ? 'Сообщение' : language === 'es' ? 'Mensaje' : language === 'fr' ? 'Message' : language === 'de' ? 'Nachricht' : language === 'it' ? 'Messaggio' : 'Message'}
               </Button>
               <Button
                 size="sm"
@@ -623,7 +623,7 @@ export default function Community() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                {language === 'he' ? 'כותרת' : 'Title'}
+                {language === 'he' ? 'כותרת' : language === 'ru' ? 'Заголовок' : language === 'es' ? 'Título' : language === 'fr' ? 'Titre' : language === 'de' ? 'Titel' : language === 'it' ? 'Titolo' : 'Title'}
               </label>
               <Input
                 value={announcementData.title}
@@ -634,12 +634,12 @@ export default function Community() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                {language === 'he' ? 'הודעה' : 'Message'}
+                {language === 'he' ? 'הודעה' : language === 'ru' ? 'Сообщение' : language === 'es' ? 'Mensaje' : language === 'fr' ? 'Message' : language === 'de' ? 'Nachricht' : language === 'it' ? 'Messaggio' : 'Message'}
               </label>
               <Textarea
                 value={announcementData.message}
                 onChange={(e) => setAnnouncementData({ ...announcementData, message: e.target.value })}
-                placeholder={language === 'he' ? 'כתוב את ההודעה כאן...' : 'Write your message here...'}
+                placeholder={language === 'he' ? 'כתוב את ההודעה כאן...' : language === 'ru' ? 'Напишите ваше сообщение здесь...' : language === 'es' ? 'Escribe tu mensaje aquí...' : language === 'fr' ? 'Écrivez votre message ici...' : language === 'de' ? 'Schreiben Sie Ihre Nachricht hier...' : language === 'it' ? 'Scrivi il tuo messaggio qui...' : 'Write your message here...'}
                 rows={4}
                 dir={language === 'he' ? 'rtl' : 'ltr'}
               />
@@ -663,7 +663,7 @@ export default function Community() {
               onClick={() => setShowAnnouncementDialog(false)}
               disabled={sendAnnouncementMutation.isLoading}
             >
-              {language === 'he' ? 'ביטול' : 'Cancel'}
+              {language === 'he' ? 'ביטול' : language === 'ru' ? 'Отмена' : language === 'es' ? 'Cancelar' : language === 'fr' ? 'Annuler' : language === 'de' ? 'Abbrechen' : language === 'it' ? 'Annulla' : 'Cancel'}
             </Button>
             <Button
               onClick={() => sendAnnouncementMutation.mutate(announcementData)}
@@ -714,12 +714,12 @@ export default function Community() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                {language === 'he' ? 'הודעה' : 'Message'}
+                {language === 'he' ? 'הודעה' : language === 'ru' ? 'Сообщение' : language === 'es' ? 'Mensaje' : language === 'fr' ? 'Message' : language === 'de' ? 'Nachricht' : language === 'it' ? 'Messaggio' : 'Message'}
               </label>
               <Textarea
                 value={privateMessage.message}
                 onChange={(e) => setPrivateMessage({ ...privateMessage, message: e.target.value })}
-                placeholder={language === 'he' ? 'כתוב את ההודעה כאן...' : 'Write your message here...'}
+                placeholder={language === 'he' ? 'כתוב את ההודעה כאן...' : language === 'ru' ? 'Напишите ваше сообщение здесь...' : language === 'es' ? 'Escribe tu mensaje aquí...' : language === 'fr' ? 'Écrivez votre message ici...' : language === 'de' ? 'Schreiben Sie Ihre Nachricht hier...' : language === 'it' ? 'Scrivi il tuo messaggio qui...' : 'Write your message here...'}
                 rows={4}
                 dir={language === 'he' ? 'rtl' : 'ltr'}
               />
@@ -735,7 +735,7 @@ export default function Community() {
               }}
               disabled={sendPrivateMessageMutation.isLoading}
             >
-              {language === 'he' ? 'ביטול' : 'Cancel'}
+              {language === 'he' ? 'ביטול' : language === 'ru' ? 'Отмена' : language === 'es' ? 'Cancelar' : language === 'fr' ? 'Annuler' : language === 'de' ? 'Abbrechen' : language === 'it' ? 'Annulla' : 'Cancel'}
             </Button>
             <Button
               onClick={() => sendPrivateMessageMutation.mutate({
