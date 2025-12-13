@@ -39,6 +39,8 @@ export default function CreateTrip() {
   const [dynamicRegions, setDynamicRegions] = useState([]);
   const [loadingSubRegions, setLoadingSubRegions] = useState(false);
   const [dynamicSubRegions, setDynamicSubRegions] = useState([]);
+  const [countrySearch, setCountrySearch] = useState('');
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   
   const countries = getAllCountries();
   
@@ -70,6 +72,16 @@ export default function CreateTrip() {
     max_participants: 10,
     image_url: ''
   });
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (showCountryDropdown && !e.target.closest('.relative')) {
+        setShowCountryDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showCountryDropdown]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -457,21 +469,57 @@ export default function CreateTrip() {
               </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4">
-                <div className="space-y-2">
+                <div className="space-y-2 relative">
                   <Label className="flex items-center gap-2">
                     <Globe className="w-4 h-4" />
                     {t('country')}
                   </Label>
-                  <Select value={formData.country} onValueChange={(v) => handleChange('country', v)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {countries.map(c => (
-                        <SelectItem key={c} value={c}>{t(c)}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    value={countrySearch || (formData.country ? t(formData.country) : '')}
+                    onChange={(e) => {
+                      setCountrySearch(e.target.value);
+                      setShowCountryDropdown(true);
+                    }}
+                    onFocus={() => setShowCountryDropdown(true)}
+                    placeholder={language === 'he' ? 'חפש מדינה...' : 'Search country...'}
+                    dir={isRTL ? 'rtl' : 'ltr'}
+                    className="w-full"
+                  />
+                  {showCountryDropdown && (
+                    <div className="absolute z-50 w-full mt-1 max-h-60 overflow-auto bg-white border border-gray-200 rounded-lg shadow-xl">
+                      {countries
+                        .filter(c => {
+                          const translated = t(c).toLowerCase();
+                          const search = countrySearch.toLowerCase();
+                          return translated.includes(search) || c.includes(search);
+                        })
+                        .slice(0, 10)
+                        .map(c => (
+                          <div
+                            key={c}
+                            className={`px-4 py-2 cursor-pointer hover:bg-blue-50 transition-colors ${
+                              formData.country === c ? 'bg-blue-100 font-semibold' : ''
+                            }`}
+                            onClick={() => {
+                              handleChange('country', c);
+                              setCountrySearch('');
+                              setShowCountryDropdown(false);
+                            }}
+                          >
+                            {t(c)}
+                          </div>
+                        ))}
+                      {countries.filter(c => {
+                        const translated = t(c).toLowerCase();
+                        const search = countrySearch.toLowerCase();
+                        return translated.includes(search) || c.includes(search);
+                      }).length === 0 && (
+                        <div className="px-4 py-2 text-gray-500 text-center">
+                          {language === 'he' ? 'לא נמצאו תוצאות' : 'No results'}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-4">
