@@ -694,7 +694,7 @@ export default function EditTrip() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-3">
-                <Label>{language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : 'Parent Age Ranges'}
+                <Label>{language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : 'Parent Age Ranges'}</Label>
                 <div className="flex flex-wrap gap-2">
                   {['30-40', '40-50', '50-60', '60+'].map(range => (
                     <Badge
@@ -714,7 +714,7 @@ export default function EditTrip() {
               </div>
 
               <div className="space-y-3">
-                <Label>{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : 'Children Age Ranges'}
+                <Label>{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : 'Children Age Ranges'}</Label>
                 <div className="flex flex-wrap gap-2">
                   {['0-2', '3-6', '7-10', '11-14', '15-18', '18-21', '21+'].map(range => (
                     <Badge
