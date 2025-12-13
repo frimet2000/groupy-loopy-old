@@ -23,8 +23,9 @@ export default function OrganizerWaiver({ open, onAccept, onDecline }) {
 
   const handleScroll = (e) => {
     const element = e.target;
-    const isAtBottom = element.scrollHeight - element.scrollTop <= element.clientHeight + 10;
-    if (isAtBottom) {
+    // Enable checkbox when user scrolls to near the bottom (more lenient)
+    const scrollProgress = (element.scrollTop + element.clientHeight) / element.scrollHeight;
+    if (scrollProgress > 0.85) {
       setReadFully(true);
     }
   };
