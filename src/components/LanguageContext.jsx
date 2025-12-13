@@ -1523,7 +1523,7 @@ const translations = {
 
 const detectLanguageFromLocation = async () => {
   if (typeof window === 'undefined' || !navigator.geolocation) {
-    return 'en';
+    return 'he';
   }
 
   return new Promise((resolve) => {
@@ -1549,7 +1549,7 @@ const detectLanguageFromLocation = async () => {
           } else if (latitude >= 36 && latitude <= 48 && longitude >= 6 && longitude <= 19) {
             resolve('it'); // Italy
           } else {
-            resolve('en');
+            resolve('he');
           }
         } else if (latitude >= 36 && latitude <= 48 && longitude >= 6 && longitude <= 19) {
           resolve('it'); // Italy
@@ -1560,11 +1560,11 @@ const detectLanguageFromLocation = async () => {
         } else if (latitude >= 41 && latitude <= 51 && longitude >= -5 && longitude <= 6) {
           resolve('fr'); // France
         } else {
-          resolve('en'); // Default to English
+          resolve('he'); // Default to Hebrew
         }
       },
       () => {
-        resolve('en'); // Default to English if geolocation fails
+        resolve('he'); // Default to Hebrew if geolocation fails
       }
     );
   });
@@ -1579,11 +1579,11 @@ export function LanguageProvider({ children }) {
       // Check if this is first visit
       const firstVisit = !localStorage.getItem('language_detected');
       if (firstVisit) {
-        return 'en'; // Temporary, will be updated by useEffect
+        return 'he'; // Temporary, will be updated by useEffect
       }
-      return 'en';
+      return 'he';
     }
-    return 'en';
+    return 'he';
   });
 
   useEffect(() => {
