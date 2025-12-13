@@ -12,11 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Upload, MapPin, Mountain, Clock, Sparkles, Navigation } from 'lucide-react';
+import { Loader2, Upload, MapPin, Mountain, Clock, Sparkles, Navigation, Globe } from 'lucide-react';
 import { detectUserLocation, getRegionFromCoordinates } from '../components/utils/LocationDetector';
 import LocationPicker from '../components/maps/LocationPicker';
-
-const regions = ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'];
+import { getAllCountries } from '../components/utils/CountryRegions';
 const difficulties = ['easy', 'moderate', 'challenging', 'hard', 'extreme'];
 const durations = ['hours', 'half_day', 'full_day', 'overnight', 'multi_day'];
 const activityTypes = ['hiking', 'cycling', 'offroad'];
@@ -34,6 +33,10 @@ export default function CreateTrip() {
   const [saving, setSaving] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
   const [showMapPicker, setShowMapPicker] = useState(false);
+  const [loadingRegions, setLoadingRegions] = useState(false);
+  const [dynamicRegions, setDynamicRegions] = useState([]);
+  
+  const countries = getAllCountries();
   
   const [formData, setFormData] = useState({
     title_he: '',
@@ -41,6 +44,7 @@ export default function CreateTrip() {
     description_he: '',
     description_en: '',
     location: '',
+    country: 'israel',
     region: '',
     date: '',
     duration_type: 'full_day',
@@ -70,6 +74,9 @@ export default function CreateTrip() {
         const userData = await base44.auth.me();
         setUser(userData);
         
+        // Load regions for Israel by default
+        await fetchRegionsForCountry('israel');
+        
         if (userData.home_region) {
           setFormData(prev => ({ ...prev, region: userData.home_region }));
         } else {
@@ -87,6 +94,40 @@ export default function CreateTrip() {
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // When country changes, fetch regions dynamically via AI
+    if (field === 'country') {
+      fetchRegionsForCountry(value);
+      setFormData(prev => ({ ...prev, region: '' }));
+    }
+  };
+
+  const fetchRegionsForCountry = async (country) => {
+    setLoadingRegions(true);
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: language === 'he'
+          ? `צור רשימה של 8-12 אזורים גיאוגרפיים עיקריים במדינה ${t(country)}. החזר רק את שמות האזורים באנגלית (ללא תרגום), מופרדים בפסיקים. לדוגמה: "North, South, Center". השתמש בשמות פשוטים וקצרים.`
+          : `Create a list of 8-12 main geographical regions in ${t(country)}. Return only the region names in English (lowercase, no translation), separated by commas. For example: "north, south, center". Use simple, short names.`,
+        add_context_from_internet: true,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            regions: {
+              type: "array",
+              items: { type: "string" }
+            }
+          }
+        }
+      });
+      
+      setDynamicRegions(result.regions || []);
+    } catch (error) {
+      console.error('Error fetching regions:', error);
+      toast.error(language === 'he' ? 'שגיאה בטעינת אזורים' : 'Error loading regions');
+      setDynamicRegions([]);
+    }
+    setLoadingRegions(false);
   };
 
   const handleArrayToggle = (field, value) => {
@@ -121,10 +162,11 @@ export default function CreateTrip() {
 
     setImageUploading(true);
     try {
+      const countryName = t(formData.country);
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: language === 'he'
-          ? `מצא קואורדינטות GPS (latitude, longitude) עבור המיקום "${formData.location}" בישראל. חפש ב-Google Maps ותן קואורדינטות מדויקות.`
-          : `Find GPS coordinates (latitude, longitude) for the location "${formData.location}" in Israel. Search Google Maps and provide exact coordinates.`,
+          ? `מצא קואורדינטות GPS (latitude, longitude) עבור המיקום "${formData.location}" ב${countryName}. חפש ב-Google Maps ותן קואורדינטות מדויקות.`
+          : `Find GPS coordinates (latitude, longitude) for the location "${formData.location}" in ${countryName}. Search Google Maps and provide exact coordinates.`,
         add_context_from_internet: true,
         response_json_schema: {
           type: "object",
@@ -138,9 +180,13 @@ export default function CreateTrip() {
       handleChange('latitude', result.latitude);
       handleChange('longitude', result.longitude);
       
-      // Auto-detect region based on coordinates
-      const detectedRegion = getRegionFromCoordinates(result.latitude, result.longitude);
-      handleChange('region', detectedRegion);
+      // For Israel, auto-detect region using existing function
+      if (formData.country === 'israel') {
+        const detectedRegion = getRegionFromCoordinates(result.latitude, result.longitude);
+        if (detectedRegion) {
+          handleChange('region', detectedRegion);
+        }
+      }
       
       setImageUploading(false);
       
@@ -298,6 +344,23 @@ export default function CreateTrip() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Globe className="w-4 h-4" />
+                    {t('country')}
+                  </Label>
+                  <Select value={formData.country} onValueChange={(v) => handleChange('country', v)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countries.map(c => (
+                        <SelectItem key={c} value={c}>{t(c)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>{t('location')}</Label>
@@ -305,7 +368,7 @@ export default function CreateTrip() {
                       <Input
                         value={formData.location}
                         onChange={(e) => handleChange('location', e.target.value)}
-                        placeholder={language === 'he' ? 'נחל דוד, עין גדי' : 'Nahal David, Ein Gedi'}
+                        placeholder={language === 'he' ? 'שם המקום' : 'Location name'}
                         required
                         className="flex-1"
                       />
@@ -333,16 +396,28 @@ export default function CreateTrip() {
                   </div>
                   <div className="space-y-2">
                     <Label>{t('region')}</Label>
-                    <Select value={formData.region} onValueChange={(v) => handleChange('region', v)}>
+                    <Select 
+                      value={formData.region} 
+                      onValueChange={(v) => handleChange('region', v)}
+                      disabled={loadingRegions}
+                    >
                       <SelectTrigger>
-                        <SelectValue placeholder={t('selectRegion')} />
+                        <SelectValue placeholder={loadingRegions ? (language === 'he' ? 'טוען...' : 'Loading...') : t('selectRegion')} />
                       </SelectTrigger>
                       <SelectContent>
-                        {regions.map(r => (
-                          <SelectItem key={r} value={r}>{t(r)}</SelectItem>
+                        {dynamicRegions.map(r => (
+                          <SelectItem key={r} value={r}>
+                            {r.charAt(0).toUpperCase() + r.slice(1)}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
+                    {loadingRegions && (
+                      <p className="text-xs text-blue-600 flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 animate-pulse" />
+                        {language === 'he' ? 'AI יוצר רשימת אזורים...' : 'AI generating regions...'}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
