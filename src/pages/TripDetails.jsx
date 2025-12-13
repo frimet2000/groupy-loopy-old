@@ -1066,6 +1066,7 @@ export default function TripDetails() {
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-emerald-600 mt-0.5" />
                     <div className="flex-1">
+                      <p className="font-medium mb-2">{language === 'he' ? 'מיקום' : 'Location'}</p>
                       <p className="text-gray-600 mb-2">
                         {trip.location}
                         {trip.sub_region && `, ${trip.sub_region}`}
