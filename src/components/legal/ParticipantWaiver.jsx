@@ -198,36 +198,36 @@ I understand that the Platform serves solely as a technological intermediary and
           </Alert>
         )}
 
-        <div className="space-y-3">
-          <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+        <div className="space-y-2">
+          <div className="flex items-start gap-2 p-3 bg-gray-50 rounded-lg">
             <Checkbox 
               id="agree" 
               checked={agreed}
               onCheckedChange={setAgreed}
               disabled={!readFully}
-              className="mt-1"
+              className="mt-0.5 flex-shrink-0"
             />
             <label 
               htmlFor="agree" 
-              className={`text-sm font-medium leading-relaxed ${!readFully ? 'text-gray-400' : 'text-gray-900 cursor-pointer'}`}
+              className={`text-xs sm:text-sm font-medium leading-snug ${!readFully ? 'text-gray-400' : 'text-gray-900 cursor-pointer'}`}
             >
               {content.confirmation}
             </label>
           </div>
 
-          <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
             <Checkbox 
               id="health" 
               checked={healthConfirm}
               onCheckedChange={setHealthConfirm}
               disabled={!readFully}
-              className="mt-1"
+              className="mt-0.5 flex-shrink-0"
             />
             <label 
               htmlFor="health" 
-              className={`text-sm font-medium leading-relaxed ${!readFully ? 'text-gray-400' : 'text-blue-900 cursor-pointer'}`}
+              className={`text-xs sm:text-sm font-medium leading-snug ${!readFully ? 'text-gray-400' : 'text-blue-900 cursor-pointer'}`}
             >
-              <Heart className="w-4 h-4 inline mr-1" />
+              <Heart className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1" />
               {content.healthConfirmation}
             </label>
           </div>

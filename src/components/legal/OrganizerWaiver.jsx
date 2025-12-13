@@ -173,17 +173,17 @@ export default function OrganizerWaiver({ open, onAccept, onDecline }) {
           </Alert>
         )}
 
-        <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+        <div className="flex items-start gap-2 p-3 bg-gray-50 rounded-lg">
           <Checkbox 
             id="agree" 
             checked={agreed}
             onCheckedChange={setAgreed}
             disabled={!readFully}
-            className="mt-1"
+            className="mt-0.5 flex-shrink-0"
           />
           <label 
             htmlFor="agree" 
-            className={`text-sm font-medium leading-relaxed ${!readFully ? 'text-gray-400' : 'text-gray-900 cursor-pointer'}`}
+            className={`text-xs sm:text-sm font-medium leading-snug ${!readFully ? 'text-gray-400' : 'text-gray-900 cursor-pointer'}`}
           >
             {content.confirmation}
           </label>
