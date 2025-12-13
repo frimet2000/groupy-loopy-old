@@ -98,7 +98,7 @@ export default function MyTrips() {
                 className="gap-1 md:gap-2 data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 flex-col md:flex-row py-2 text-xs md:text-sm"
               >
                 <Calendar className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span className="hidden sm:inline">{language === 'he' ? 'קרובים' : 'Upcoming'}</span>
+                <span>{language === 'he' ? 'קרובים' : 'Upcoming'}</span>
                 {upcomingTrips.length > 0 && (
                   <span className="bg-emerald-600 text-white text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 rounded-full sm:ml-1">
                     {upcomingTrips.length}
@@ -110,21 +110,21 @@ export default function MyTrips() {
                 className="gap-1 md:gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 flex-col md:flex-row py-2 text-xs md:text-sm"
               >
                 <Compass className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span className="hidden sm:inline">{language === 'he' ? 'הצטרפתי' : 'Joined'}</span>
+                <span>{language === 'he' ? 'הצטרפתי' : 'Joined'}</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="organized" 
                 className="gap-1 md:gap-2 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700 flex-col md:flex-row py-2 text-xs md:text-sm"
               >
                 <UserCircle className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span className="hidden sm:inline">{language === 'he' ? 'ארגנתי' : 'Organized'}</span>
+                <span>{language === 'he' ? 'ארגנתי' : 'Organized'}</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="saved" 
                 className="gap-1 md:gap-2 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 flex-col md:flex-row py-2 text-xs md:text-sm"
               >
                 <Bookmark className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span className="hidden sm:inline">{language === 'he' ? 'שמורים' : 'Saved'}</span>
+                <span>{language === 'he' ? 'שמורים' : 'Saved'}</span>
                 {savedTrips.length > 0 && (
                   <span className="bg-amber-600 text-white text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 rounded-full sm:ml-1">
                     {savedTrips.length}
