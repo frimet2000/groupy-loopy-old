@@ -173,7 +173,7 @@ export default function Settings() {
               <Bell className="w-6 h-6 text-white" />
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-              {language === 'he' ? 'הגדרות התראות' : language === 'ru' ? 'Настройки уведомлений' : 'Notification Settings'}
+              {language === 'he' ? 'הגדרות התראות' : language === 'ru' ? 'Настройки уведомлений' : language === 'es' ? 'Configuración de notificaciones' : 'Notification Settings'}
             </h1>
           </div>
           <p className="text-gray-600">
@@ -181,6 +181,8 @@ export default function Settings() {
               ? 'נהל את העדפות ההתראות שלך ובחר איזה עדכונים תרצה לקבל' 
               : language === 'ru' 
               ? 'Управляйте настройками уведомлений и выбирайте, какие обновления получать'
+              : language === 'es'
+              ? 'Gestiona tus preferencias de notificaciones y elige qué actualizaciones quieres recibir'
               : 'Manage your notification preferences and choose which updates you want to receive'}
           </p>
         </motion.div>
@@ -189,13 +191,15 @@ export default function Settings() {
           <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50">
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-emerald-600" />
-              {language === 'he' ? 'העדפות התראות' : language === 'ru' ? 'Предпочтения уведомлений' : 'Notification Preferences'}
+              {language === 'he' ? 'העדפות התראות' : language === 'ru' ? 'Предпочтения уведомлений' : language === 'es' ? 'Preferencias de notificaciones' : 'Notification Preferences'}
             </CardTitle>
             <CardDescription>
               {language === 'he'
                 ? 'בחר איזה התראות תרצה לקבל'
                 : language === 'ru'
                 ? 'Выберите, какие уведомления вы хотите получать'
+                : language === 'es'
+                ? 'Elige qué notificaciones quieres recibir'
                 : 'Choose which notifications you want to receive'}
             </CardDescription>
           </CardHeader>
@@ -255,8 +259,8 @@ export default function Settings() {
               <Save className="w-5 h-5 mr-2" />
             )}
             {saving 
-              ? (language === 'he' ? 'שומר...' : language === 'ru' ? 'Сохранение...' : 'Saving...') 
-              : (language === 'he' ? 'שמור הגדרות' : language === 'ru' ? 'Сохранить настройки' : 'Save Settings')}
+              ? (language === 'he' ? 'שומר...' : language === 'ru' ? 'Сохранение...' : language === 'es' ? 'Guardando...' : 'Saving...') 
+              : (language === 'he' ? 'שמור הגדרות' : language === 'ru' ? 'Сохранить настройки' : language === 'es' ? 'Guardar configuración' : 'Save Settings')}
           </Button>
         </motion.div>
       </div>
