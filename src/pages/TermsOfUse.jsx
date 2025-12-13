@@ -10,8 +10,9 @@ export default function TermsOfUse() {
   const navigate = useNavigate();
 
   const getContent = () => {
-    if (language === 'he') return {
-    title: 'תקנון ותנאי שימוש',
+    if (language === 'he') {
+      return {
+        title: 'תקנון ותנאי שימוש',
     lastUpdated: 'עודכן לאחרונה: 13 בדצמבר 2025',
     intro: 'ברוכים הבאים ל-The Group Loop. השימוש באפליקציה ובשירותים שלנו כפוף לתנאי שימוש אלה. אנא קרא אותם בעיון לפני השימוש בשירות.',
     sections: [
@@ -101,13 +102,17 @@ export default function TermsOfUse() {
         title: 'סיום חשבון',
         text: 'אנו שומרים לעצמנו את הזכות להשעות או לסגור חשבונך בכל עת, עם או ללא הודעה מוקדמת, במקרה של הפרת תנאי השימוש או שימוש לרעה בשירות. אתה רשאי לסגור את חשבונך בכל עת דרך הגדרות הפרופיל.'
       }
-    ],
-    contact: 'לשאלות או בירורים בנוגע לתנאי השימוש, ניתן ליצור קשר בדוא"ל frimet@gmail.com'
-  } : {
-    title: 'Terms of Use',
-    lastUpdated: 'Last Updated: December 13, 2025',
-    intro: 'Welcome to The Group Loop. Use of our app and services is subject to these terms of use. Please read them carefully before using the service.',
-    sections: [
+      ],
+      contact: 'לשאלות או בירורים בנוגע לתנאי השימוש, ניתן ליצור קשר בדוא"ל frimet@gmail.com'
+      };
+    }
+    
+    if (language === 'ru') {
+      return {
+        title: 'Условия использования',
+        lastUpdated: 'Последнее обновление: 13 декабря 2025',
+        intro: 'Добро пожаловать в The Group Loop. Использование нашего приложения и услуг регулируется этими условиями использования. Пожалуйста, внимательно прочитайте их перед использованием сервиса.',
+        sections: [
       {
         icon: FileText,
         title: 'Acceptance of Terms',
@@ -201,192 +206,193 @@ export default function TermsOfUse() {
     if (language === 'ru') return {
     title: 'Условия использования',
     lastUpdated: 'Последнее обновление: 13 декабря 2025',
-    intro: 'Добро пожаловать в The Group Loop. Использование нашего приложения и услуг регулируется этими условиями использования. Пожалуйста, внимательно прочитайте их перед использованием сервиса.',
-    sections: [
-      {
-        icon: FileText,
-        title: 'Принятие условий',
-        text: 'Получая доступ к приложению или используя его, вы подтверждаете, что прочитали, поняли и соглашаетесь соблюдать эти условия использования. Если вы не согласны с условиями, пожалуйста, прекратите использование сервиса.'
-      },
-      {
-        icon: UserX,
-        title: 'Право на использование',
-        items: [
-          'Вам должно быть не менее 18 лет для использования сервиса',
-          'Вы должны предоставить точную и актуальную информацию при регистрации',
-          'Вы несете ответственность за сохранение конфиденциальности вашего пароля',
-          'Вы не можете передать свою учетную запись другому лицу'
-        ]
-      },
-      {
-        icon: Shield,
-        title: 'Разрешенное и запрещенное использование',
-        allowed: {
-          title: 'Разрешено:',
-          items: [
-            'Создавать и управлять поездками',
-            'Присоединяться к поездкам других',
-            'Общаться с другими пользователями',
-            'Делиться контентом, связанным с поездками'
-          ]
-        },
-        forbidden: {
-          title: 'Запрещено:',
-          items: [
-            'Нарушать какие-либо законы или нормативные акты',
-            'Преследовать, оскорблять или причинять вред другим пользователям',
-            'Публиковать оскорбительный, расистский или сексуальный контент',
-            'Делиться ложной или вводящей в заблуждение информацией',
-            'Пытаться взломать или нанести вред системе',
-            'Собирать информацию о пользователях без разрешения',
-            'Использовать сервис в коммерческих целях без одобрения',
-            'Создавать поддельные учетные записи или выдавать себя за других'
-          ]
-        }
-      },
-      {
-        icon: Copyright,
-        title: 'Интеллектуальная собственность',
-        text: 'Весь контент в приложении, включая дизайн, логотип, текст, графику и код, является нашей собственностью или собственностью наших лицензиаров и защищен авторским правом. Вы не можете копировать, воспроизводить, распространять или использовать контент без явного разрешения.',
-        userContent: {
-          title: 'Пользовательский контент:',
-          text: 'Вы сохраняете авторские права на контент, который публикуете. Однако вы предоставляете нам всемирную, неисключительную, безвозмездную лицензию на использование, отображение, воспроизведение и распространение вашего контента в рамках сервиса.'
-        }
-      },
-      {
-        icon: AlertTriangle,
-        title: 'Отказ от ответственности',
-        items: [
-          'Приложение предоставляется "как есть" без каких-либо гарантий',
-          'Мы не несем ответственности за действия, поведение или безопасность пользователей',
-          'Мы не несем ответственности за ущерб, возникший в результате участия в поездках',
-          'Мы не гарантируем, что сервис будет всегда доступен или без ошибок',
-          'Мы не несем ответственности за потерю информации или другой ущерб от использования'
-        ]
-      },
-      {
-        icon: Shield,
-        title: 'Ограничение ответственности',
-        text: 'В любом случае наша ответственность за любой ущерб, убытки или претензии к вам будет ограничена суммой, которую вы нам заплатили (если таковая имеется) за двенадцать месяцев, предшествующих претензии.'
-      },
-      {
-        icon: Shield,
-        title: 'Возмещение убытков',
-        text: 'Вы соглашаетесь возместить, защитить и оградить нас от любых претензий, убытков, ущерба, обязательств и расходов, возникающих в результате вашего использования приложения или нарушения условий использования.'
-      },
-      {
-        icon: Scale,
-        title: 'Применимое право и юрисдикция',
-        text: 'Эти условия использования регулируются законами Государства Израиль. Любой спор будет разрешен исключительно в компетентных судах.'
-      },
-      {
-        icon: FileText,
-        title: 'Изменения условий',
-        text: 'Мы оставляем за собой право изменять или обновлять условия использования в любое время. Мы уведомим вас о значительных изменениях через приложение или электронную почту. Продолжение использования после изменения означает принятие обновленных условий.'
-      },
-      {
-        icon: UserX,
-        title: 'Прекращение учетной записи',
-        text: 'Мы оставляем за собой право приостановить или закрыть вашу учетную запись в любое время, с предварительным уведомлением или без него, в случае нарушения условий использования или злоупотребления сервисом. Вы можете закрыть свою учетную запись в любое время через настройки профиля.'
-      }
-    ],
-    contact: 'По вопросам или уточнениям относительно условий использования вы можете связаться с нами по адресу frimet@gmail.com'
+        intro: 'Добро пожаловать в The Group Loop. Использование нашего приложения и услуг регулируется этими условиями использования. Пожалуйста, внимательно прочитайте их перед использованием сервиса.',
+        sections: [
+          {
+            icon: FileText,
+            title: 'Принятие условий',
+            text: 'Получая доступ к приложению или используя его, вы подтверждаете, что прочитали, поняли и соглашаетесь соблюдать эти условия использования. Если вы не согласны с условиями, пожалуйста, прекратите использование сервиса.'
+          },
+          {
+            icon: UserX,
+            title: 'Право на использование',
+            items: [
+              'Вам должно быть не менее 18 лет для использования сервиса',
+              'Вы должны предоставить точную и актуальную информацию при регистрации',
+              'Вы несете ответственность за сохранение конфиденциальности вашего пароля',
+              'Вы не можете передать свою учетную запись другому лицу'
+            ]
+          },
+          {
+            icon: Shield,
+            title: 'Разрешенное и запрещенное использование',
+            allowed: {
+              title: 'Разрешено:',
+              items: [
+                'Создавать и управлять поездками',
+                'Присоединяться к поездкам других',
+                'Общаться с другими пользователями',
+                'Делиться контентом, связанным с поездками'
+              ]
+            },
+            forbidden: {
+              title: 'Запрещено:',
+              items: [
+                'Нарушать какие-либо законы или нормативные акты',
+                'Преследовать, оскорблять или причинять вред другим пользователям',
+                'Публиковать оскорбительный, расистский или сексуальный контент',
+                'Делиться ложной или вводящей в заблуждение информацией',
+                'Пытаться взломать или нанести вред системе',
+                'Собирать информацию о пользователях без разрешения',
+                'Использовать сервис в коммерческих целях без одобрения',
+                'Создавать поддельные учетные записи или выдавать себя за других'
+              ]
+            }
+          },
+          {
+            icon: Copyright,
+            title: 'Интеллектуальная собственность',
+            text: 'Весь контент в приложении, включая дизайн, логотип, текст, графику и код, является нашей собственностью или собственностью наших лицензиаров и защищен авторским правом. Вы не можете копировать, воспроизводить, распространять или использовать контент без явного разрешения.',
+            userContent: {
+              title: 'Пользовательский контент:',
+              text: 'Вы сохраняете авторские права на контент, который публикуете. Однако вы предоставляете нам всемирную, неисключительную, безвозмездную лицензию на использование, отображение, воспроизведение и распространение вашего контента в рамках сервиса.'
+            }
+          },
+          {
+            icon: AlertTriangle,
+            title: 'Отказ от ответственности',
+            items: [
+              'Приложение предоставляется "как есть" без каких-либо гарантий',
+              'Мы не несем ответственности за действия, поведение или безопасность пользователей',
+              'Мы не несем ответственности за ущерб, возникший в результате участия в поездках',
+              'Мы не гарантируем, что сервис будет всегда доступен или без ошибок',
+              'Мы не несем ответственности за потерю информации или другой ущерб от использования'
+            ]
+          },
+          {
+            icon: Shield,
+            title: 'Ограничение ответственности',
+            text: 'В любом случае наша ответственность за любой ущерб, убытки или претензии к вам будет ограничена суммой, которую вы нам заплатили (если таковая имеется) за двенадцать месяцев, предшествующих претензии.'
+          },
+          {
+            icon: Shield,
+            title: 'Возмещение убытков',
+            text: 'Вы соглашаетесь возместить, защитить и оградить нас от любых претензий, убытков, ущерба, обязательств и расходов, возникающих в результате вашего использования приложения или нарушения условий использования.'
+          },
+          {
+            icon: Scale,
+            title: 'Применимое право и юрисдикция',
+            text: 'Эти условия использования регулируются законами Государства Израиль. Любой спор будет разрешен исключительно в компетентных судах.'
+          },
+          {
+            icon: FileText,
+            title: 'Изменения условий',
+            text: 'Мы оставляем за собой право изменять или обновлять условия использования в любое время. Мы уведомим вас о значительных изменениях через приложение или электронную почту. Продолжение использования после изменения означает принятие обновленных условий.'
+          },
+          {
+            icon: UserX,
+            title: 'Прекращение учетной записи',
+            text: 'Мы оставляем за собой право приостановить или закрыть вашу учетную запись в любое время, с предварительным уведомлением или без него, в случае нарушения условий использования или злоупотребления сервисом. Вы можете закрыть свою учетную запись в любое время через настройки профиля.'
+          }
+        ],
+        contact: 'По вопросам или уточнениям относительно условий использования вы можете связаться с нами по адресу frimet@gmail.com'
       };
     }
     
     return {
       title: 'Terms of Use',
       lastUpdated: 'Last Updated: December 13, 2025',
-      intro: 'Welcome to The Group Loop. Use of our app and services is subject to these terms of use. Please read them carefully before using the service.',
-      sections: [
-        {
-          icon: FileText,
-          title: 'Acceptance of Terms',
-          text: 'By accessing or using the app, you confirm that you have read, understood, and agree to be bound by these terms of use. If you do not agree to the terms, please stop using the service.'
-        },
-        {
-          icon: UserX,
-          title: 'Eligibility',
-          items: [
-            'You must be at least 18 years old to use the service',
-            'You must provide accurate and up-to-date information when registering',
-            'You are responsible for maintaining the confidentiality of your password',
-            'You may not transfer your account to another person'
-          ]
-        },
-        {
-          icon: Shield,
-          title: 'Permitted and Prohibited Uses',
-          allowed: {
-            title: 'Permitted:',
+        intro: 'Welcome to The Group Loop. Use of our app and services is subject to these terms of use. Please read them carefully before using the service.',
+        sections: [
+          {
+            icon: FileText,
+            title: 'Acceptance of Terms',
+            text: 'By accessing or using the app, you confirm that you have read, understood, and agree to be bound by these terms of use. If you do not agree to the terms, please stop using the service.'
+          },
+          {
+            icon: UserX,
+            title: 'Eligibility',
             items: [
-              'Create and manage trips',
-              'Join trips by others',
-              'Communicate with other users',
-              'Share trip-related content'
+              'You must be at least 18 years old to use the service',
+              'You must provide accurate and up-to-date information when registering',
+              'You are responsible for maintaining the confidentiality of your password',
+              'You may not transfer your account to another person'
             ]
           },
-          forbidden: {
-            title: 'Prohibited:',
+          {
+            icon: Shield,
+            title: 'Permitted and Prohibited Uses',
+            allowed: {
+              title: 'Permitted:',
+              items: [
+                'Create and manage trips',
+                'Join trips by others',
+                'Communicate with other users',
+                'Share trip-related content'
+              ]
+            },
+            forbidden: {
+              title: 'Prohibited:',
+              items: [
+                'Violate any laws or regulations',
+                'Harass, insult, or harm other users',
+                'Post offensive, racist, or sexual content',
+                'Share false or misleading information',
+                'Attempt to hack or damage the system',
+                'Collect user information without permission',
+                'Use the service for commercial purposes without approval',
+                'Create fake accounts or impersonate others'
+              ]
+            }
+          },
+          {
+            icon: Copyright,
+            title: 'Intellectual Property',
+            text: 'All content in the app, including design, logo, text, graphics, and code, is our property or that of our licensors and is protected by copyright. You may not copy, reproduce, distribute, or use the content without express permission.',
+            userContent: {
+              title: 'User Content:',
+              text: 'You retain copyright to content you post. However, you grant us a worldwide, non-exclusive, royalty-free license to use, display, reproduce, and distribute your content within the service.'
+            }
+          },
+          {
+            icon: AlertTriangle,
+            title: 'Disclaimer',
             items: [
-              'Violate any laws or regulations',
-              'Harass, insult, or harm other users',
-              'Post offensive, racist, or sexual content',
-              'Share false or misleading information',
-              'Attempt to hack or damage the system',
-              'Collect user information without permission',
-              'Use the service for commercial purposes without approval',
-              'Create fake accounts or impersonate others'
+              'The app is provided "as is" without warranty of any kind',
+              'We are not responsible for actions, conduct, or safety of users',
+              'We are not liable for damages resulting from trip participation',
+              'We do not guarantee the service will always be available or error-free',
+              'We are not responsible for loss of information or other damages from use'
             ]
+          },
+          {
+            icon: Shield,
+            title: 'Limitation of Liability',
+            text: 'In any event, our liability for any damage, loss, or claim against you shall be limited to the amount you paid us (if any) in the twelve months preceding the claim.'
+          },
+          {
+            icon: Shield,
+            title: 'Indemnification',
+            text: 'You agree to indemnify, defend, and hold us harmless from any claims, losses, damages, liabilities, and expenses arising from your use of the app or breach of terms of use.'
+          },
+          {
+            icon: Scale,
+            title: 'Governing Law and Jurisdiction',
+            text: 'These terms of use are governed by the laws of the State of Israel. Any dispute shall be resolved exclusively in the competent courts.'
+          },
+          {
+            icon: FileText,
+            title: 'Changes to Terms',
+            text: 'We reserve the right to change or update the terms of use at any time. We will notify you of significant changes through the app or email. Continued use after a change constitutes acceptance of the updated terms.'
+          },
+          {
+            icon: UserX,
+            title: 'Account Termination',
+            text: 'We reserve the right to suspend or close your account at any time, with or without prior notice, in case of violation of terms of use or misuse of service. You may close your account at any time through profile settings.'
           }
-        },
-        {
-          icon: Copyright,
-          title: 'Intellectual Property',
-          text: 'All content in the app, including design, logo, text, graphics, and code, is our property or that of our licensors and is protected by copyright. You may not copy, reproduce, distribute, or use the content without express permission.',
-          userContent: {
-            title: 'User Content:',
-            text: 'You retain copyright to content you post. However, you grant us a worldwide, non-exclusive, royalty-free license to use, display, reproduce, and distribute your content within the service.'
-          }
-        },
-        {
-          icon: AlertTriangle,
-          title: 'Disclaimer',
-          items: [
-            'The app is provided "as is" without warranty of any kind',
-            'We are not responsible for actions, conduct, or safety of users',
-            'We are not liable for damages resulting from trip participation',
-            'We do not guarantee the service will always be available or error-free',
-            'We are not responsible for loss of information or other damages from use'
-          ]
-        },
-        {
-          icon: Shield,
-          title: 'Limitation of Liability',
-          text: 'In any event, our liability for any damage, loss, or claim against you shall be limited to the amount you paid us (if any) in the twelve months preceding the claim.'
-        },
-        {
-          icon: Shield,
-          title: 'Indemnification',
-          text: 'You agree to indemnify, defend, and hold us harmless from any claims, losses, damages, liabilities, and expenses arising from your use of the app or breach of terms of use.'
-        },
-        {
-          icon: Scale,
-          title: 'Governing Law and Jurisdiction',
-          text: 'These terms of use are governed by the laws of the State of Israel. Any dispute shall be resolved exclusively in the competent courts.'
-        },
-        {
-          icon: FileText,
-          title: 'Changes to Terms',
-          text: 'We reserve the right to change or update the terms of use at any time. We will notify you of significant changes through the app or email. Continued use after a change constitutes acceptance of the updated terms.'
-        },
-        {
-          icon: UserX,
-          title: 'Account Termination',
-          text: 'We reserve the right to suspend or close your account at any time, with or without prior notice, in case of violation of terms of use or misuse of service. You may close your account at any time through profile settings.'
-        }
-      ],
-      contact: 'For questions or clarifications regarding terms of use, you can contact us at frimet@gmail.com'
+        ],
+        contact: 'For questions or clarifications regarding terms of use, you can contact us at frimet@gmail.com'
+      };
     };
   };
 
