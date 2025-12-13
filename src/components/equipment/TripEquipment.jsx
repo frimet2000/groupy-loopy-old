@@ -36,32 +36,32 @@ export default function TripEquipment({ trip, isOrganizer, onUpdate }) {
   }, [trip.recommended_water_liters]);
 
   const popularEquipment = [
-    { id: 'water', item_he: 'מים', item_en: 'Water' },
-    { id: 'hat', item_he: 'כובע', item_en: 'Hat' },
-    { id: 'sunscreen', item_he: 'קרם הגנה', item_en: 'Sunscreen' },
-    { id: 'shoes', item_he: 'נעלי הליכה', item_en: 'Hiking Shoes' },
-    { id: 'snacks', item_he: 'חטיפים', item_en: 'Snacks' },
-    { id: 'firstaid', item_he: 'ערכת עזרה ראשונה', item_en: 'First Aid Kit' },
-    { id: 'flashlight', item_he: 'פנס', item_en: 'Flashlight' },
-    { id: 'map', item_he: 'מפה', item_en: 'Map' },
-    { id: 'jacket', item_he: 'ג\'קט', item_en: 'Jacket' },
-    { id: 'backpack', item_he: 'תיק גב', item_en: 'Backpack' },
+    { id: 'water', item_he: 'מים', item_en: 'Water', item_ru: 'Вода', item_es: 'Agua', item_fr: 'Eau', item_de: 'Wasser', item_it: 'Acqua' },
+    { id: 'hat', item_he: 'כובע', item_en: 'Hat', item_ru: 'Шляпа', item_es: 'Sombrero', item_fr: 'Chapeau', item_de: 'Hut', item_it: 'Cappello' },
+    { id: 'sunscreen', item_he: 'קרם הגנה', item_en: 'Sunscreen', item_ru: 'Солнцезащитный крем', item_es: 'Protector solar', item_fr: 'Crème solaire', item_de: 'Sonnencreme', item_it: 'Crema solare' },
+    { id: 'shoes', item_he: 'נעלי הליכה', item_en: 'Hiking Shoes', item_ru: 'Походная обувь', item_es: 'Zapatos de senderismo', item_fr: 'Chaussures de randonnée', item_de: 'Wanderschuhe', item_it: 'Scarpe da trekking' },
+    { id: 'snacks', item_he: 'חטיפים', item_en: 'Snacks', item_ru: 'Закуски', item_es: 'Bocadillos', item_fr: 'Collations', item_de: 'Snacks', item_it: 'Snack' },
+    { id: 'firstaid', item_he: 'ערכת עזרה ראשונה', item_en: 'First Aid Kit', item_ru: 'Аптечка', item_es: 'Botiquín', item_fr: 'Trousse de premiers secours', item_de: 'Erste-Hilfe-Set', item_it: 'Kit primo soccorso' },
+    { id: 'flashlight', item_he: 'פנס', item_en: 'Flashlight', item_ru: 'Фонарик', item_es: 'Linterna', item_fr: 'Lampe torche', item_de: 'Taschenlampe', item_it: 'Torcia' },
+    { id: 'map', item_he: 'מפה', item_en: 'Map', item_ru: 'Карта', item_es: 'Mapa', item_fr: 'Carte', item_de: 'Karte', item_it: 'Mappa' },
+    { id: 'jacket', item_he: 'ג\'קט', item_en: 'Jacket', item_ru: 'Куртка', item_es: 'Chaqueta', item_fr: 'Veste', item_de: 'Jacke', item_it: 'Giacca' },
+    { id: 'backpack', item_he: 'תיק גב', item_en: 'Backpack', item_ru: 'Рюкзак', item_es: 'Mochila', item_fr: 'Sac à dos', item_de: 'Rucksack', item_it: 'Zaino' },
   ];
 
   const allergensList = [
-    { id: 'gluten', name_he: 'גלוטן', name_en: 'Gluten' },
-    { id: 'dairy', name_he: 'חלב', name_en: 'Dairy' },
-    { id: 'eggs', name_he: 'ביצים', name_en: 'Eggs' },
-    { id: 'nuts', name_he: 'אגוזים', name_en: 'Nuts' },
-    { id: 'peanuts', name_he: 'בוטנים', name_en: 'Peanuts' },
-    { id: 'soy', name_he: 'סויה', name_en: 'Soy' },
-    { id: 'fish', name_he: 'דגים', name_en: 'Fish' },
-    { id: 'shellfish', name_he: 'פירות ים', name_en: 'Shellfish' },
-    { id: 'sesame', name_he: 'שומשום', name_en: 'Sesame' },
+    { id: 'gluten', name_he: 'גלוטן', name_en: 'Gluten', name_ru: 'Глютен', name_es: 'Gluten', name_fr: 'Gluten', name_de: 'Gluten', name_it: 'Glutine' },
+    { id: 'dairy', name_he: 'חלב', name_en: 'Dairy', name_ru: 'Молочные продукты', name_es: 'Lácteos', name_fr: 'Produits laitiers', name_de: 'Milchprodukte', name_it: 'Latticini' },
+    { id: 'eggs', name_he: 'ביצים', name_en: 'Eggs', name_ru: 'Яйца', name_es: 'Huevos', name_fr: 'Œufs', name_de: 'Eier', name_it: 'Uova' },
+    { id: 'nuts', name_he: 'אגוזים', name_en: 'Nuts', name_ru: 'Орехи', name_es: 'Frutos secos', name_fr: 'Noix', name_de: 'Nüsse', name_it: 'Noci' },
+    { id: 'peanuts', name_he: 'בוטנים', name_en: 'Peanuts', name_ru: 'Арахис', name_es: 'Cacahuetes', name_fr: 'Cacahuètes', name_de: 'Erdnüsse', name_it: 'Arachidi' },
+    { id: 'soy', name_he: 'סויה', name_en: 'Soy', name_ru: 'Соя', name_es: 'Soja', name_fr: 'Soja', name_de: 'Soja', name_it: 'Soia' },
+    { id: 'fish', name_he: 'דגים', name_en: 'Fish', name_ru: 'Рыба', name_es: 'Pescado', name_fr: 'Poisson', name_de: 'Fisch', name_it: 'Pesce' },
+    { id: 'shellfish', name_he: 'פירות ים', name_en: 'Shellfish', name_ru: 'Моллюски', name_es: 'Mariscos', name_fr: 'Fruits de mer', name_de: 'Meeresfrüchte', name_it: 'Frutti di mare' },
+    { id: 'sesame', name_he: 'שומשום', name_en: 'Sesame', name_ru: 'Кунжут', name_es: 'Sésamo', name_fr: 'Sésame', name_de: 'Sesam', name_it: 'Sesamo' },
   ];
 
   const handleAddPopularEquipment = async (popularItem) => {
-    const itemName = language === 'he' ? popularItem.item_he : popularItem.item_en;
+    const itemName = language === 'he' ? popularItem.item_he : language === 'ru' ? popularItem.item_ru : language === 'es' ? popularItem.item_es : language === 'fr' ? popularItem.item_fr : language === 'de' ? popularItem.item_de : language === 'it' ? popularItem.item_it : popularItem.item_en;
     
     if (equipmentChecklist.some(item => item.item === itemName)) {
       toast.error(language === 'he' ? 'הפריט כבר קיים' : language === 'ru' ? 'Элемент уже существует' : language === 'es' ? 'El elemento ya existe' : language === 'fr' ? 'L\'élément existe déjà' : language === 'de' ? 'Artikel existiert bereits' : language === 'it' ? 'L\'elemento esiste già' : 'Item already exists');
@@ -219,7 +219,7 @@ export default function TripEquipment({ trip, isOrganizer, onUpdate }) {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {popularEquipment.filter(item => item.id !== 'water').map((item) => {
-                    const itemName = language === 'he' ? item.item_he : item.item_en;
+                    const itemName = language === 'he' ? item.item_he : language === 'ru' ? item.item_ru : language === 'es' ? item.item_es : language === 'fr' ? item.item_fr : language === 'de' ? item.item_de : language === 'it' ? item.item_it : item.item_en;
                     const alreadyAdded = equipmentChecklist.some(e => e.item === itemName);
                     return (
                       <Button
@@ -270,7 +270,7 @@ export default function TripEquipment({ trip, isOrganizer, onUpdate }) {
               </p>
               <div className="flex flex-wrap gap-2">
                 {allergensList.map((allergen) => {
-                  const allergenName = language === 'he' ? allergen.name_he : allergen.name_en;
+                  const allergenName = language === 'he' ? allergen.name_he : language === 'ru' ? allergen.name_ru : language === 'es' ? allergen.name_es : language === 'fr' ? allergen.name_fr : language === 'de' ? allergen.name_de : language === 'it' ? allergen.name_it : allergen.name_en;
                   const isSelected = (trip.allergens || []).includes(allergen.id);
                   return (
                     <button
