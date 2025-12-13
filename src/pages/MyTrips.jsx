@@ -15,7 +15,7 @@ export default function MyTrips() {
   const { t, language, isRTL } = useLanguage();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [activeTab, setActiveTab] = useState('joined');
+  const [activeTab, setActiveTab] = useState('upcoming');
 
   useEffect(() => {
     const fetchUser = async () => {
