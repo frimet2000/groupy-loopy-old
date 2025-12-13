@@ -12,7 +12,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Sparkles, MapPin, Compass, Loader2, RefreshCw, Lightbulb, Target } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getAllCountries, getCountryRegions } from '../components/utils/CountryRegions';
-const difficulties = ['easy', 'moderate', 'challenging', 'hard'];
+const difficulties = ['easy', 'moderate', 'challenging', 'hard', 'extreme'];
+const durations = ['hours', 'half_day', 'full_day', 'overnight', 'multi_day'];
 const interests = ['nature', 'history', 'photography', 'birdwatching', 'archaeology', 'geology', 'botany', 'extreme_sports', 'family_friendly', 'romantic'];
 
 export default function AIRecommendations() {
@@ -21,6 +22,7 @@ export default function AIRecommendations() {
     country: 'israel',
     region: '',
     difficulty: '',
+    duration: '',
     interests: [],
   });
   
@@ -79,6 +81,9 @@ export default function AIRecommendations() {
     if (preferences.difficulty) {
       filteredTrips = filteredTrips.filter(trip => trip.difficulty === preferences.difficulty);
     }
+    if (preferences.duration) {
+      filteredTrips = filteredTrips.filter(trip => trip.duration_type === preferences.duration);
+    }
     if (preferences.interests.length > 0) {
       filteredTrips = filteredTrips.filter(trip => 
         trip.interests?.some(i => preferences.interests.includes(i))
@@ -92,18 +97,27 @@ export default function AIRecommendations() {
       const countryName = t(preferences.country);
       const regionText = preferences.region ? `in the ${t(preferences.region)} region` : '';
       
+      const durationText = preferences.duration ? t(preferences.duration) : '';
+      const difficultyText = preferences.difficulty ? t(preferences.difficulty) : '';
+      
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Based on the following preferences, suggest 3 outdoor trips ${regionText} in ${countryName}:
-- Preferred region: ${preferences.region ? t(preferences.region) : 'any region'}
-- Difficulty level: ${preferences.difficulty || 'any difficulty'}
+        prompt: `You are an expert travel planner. Based on these detailed preferences, suggest 3 highly personalized outdoor trips ${regionText} in ${countryName}:
+
+**User Preferences:**
+- Region: ${preferences.region ? t(preferences.region) : 'any region in ' + countryName}
+- Difficulty: ${difficultyText || 'any difficulty level'}
+- Duration: ${durationText || 'any duration'}
 - Interests: ${preferences.interests.length > 0 ? preferences.interests.map(i => t(i)).join(', ') : 'general outdoor activities'}
 
-For each trip suggestion, provide:
-1. A specific location name in ${countryName}
-2. Why this trip matches the preferences
-3. Best time to visit
-4. What to expect (trail conditions, scenery, difficulty)
-5. Any special tips
+**Requirements for each suggestion:**
+1. Specific location name with exact coordinates if possible
+2. Detailed explanation of why this trip perfectly matches ALL the user's preferences (difficulty, duration, interests)
+3. Best season/months to visit and why
+4. Comprehensive description including: trail conditions, scenery, key highlights, what makes it unique
+5. Practical tips: equipment needed, fitness level required, best starting time, parking, permits, safety considerations
+6. Approximate duration in hours or days
+
+Make suggestions specific, actionable, and perfectly tailored to the user's criteria. Use local knowledge and real place names.
 
 Please respond in ${language === 'he' ? 'Hebrew' : 'English'}.`,
         add_context_from_internet: true,
@@ -195,7 +209,7 @@ Please respond in ${language === 'he' ? 'Hebrew' : 'English'}.`,
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {regions.length > 0 && (
                   <div className="space-y-2">
                     <Label>{t('region')}</Label>
@@ -228,6 +242,24 @@ Please respond in ${language === 'he' ? 'Hebrew' : 'English'}.`,
                     <SelectContent>
                       <SelectItem value={null}>{t('allDifficulties')}</SelectItem>
                       {difficulties.map(d => (
+                        <SelectItem key={d} value={d}>{t(d)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{t('duration')}</Label>
+                  <Select 
+                    value={preferences.duration} 
+                    onValueChange={(v) => handlePreferenceChange('duration', v)}
+                  >
+                    <SelectTrigger className="h-12">
+                      <SelectValue placeholder={t('allDurations')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={null}>{t('allDurations')}</SelectItem>
+                      {durations.map(d => (
                         <SelectItem key={d} value={d}>{t(d)}</SelectItem>
                       ))}
                     </SelectContent>
