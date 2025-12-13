@@ -186,7 +186,7 @@ export default function CreateTrip() {
           await fetchRegionsForCountry(defaultCountry);
         }
       } catch (e) {
-        toast.error(language === 'he' ? 'יש להתחבר' : language === 'ru' ? 'Пожалуйста, войдите' : 'Please login');
+        toast.error(language === 'he' ? 'יש להתחבר' : 'Please login');
         navigate(createPageUrl('Home'));
       }
     };
@@ -238,7 +238,7 @@ export default function CreateTrip() {
       setDynamicRegions(result.regions || []);
     } catch (error) {
       console.error('Error fetching regions:', error);
-      toast.error(language === 'he' ? 'שגיאה בטעינת מחוזות' : language === 'ru' ? 'Ошибка загрузки регионов' : 'Error loading states');
+      toast.error(language === 'he' ? 'שגיאה בטעינת מחוזות' : 'Error loading states');
       setDynamicRegions([]);
     }
     setLoadingRegions(false);
@@ -266,7 +266,7 @@ export default function CreateTrip() {
       setDynamicSubRegions(result.sub_regions || []);
     } catch (error) {
       console.error('Error fetching sub-regions:', error);
-      toast.error(language === 'he' ? 'שגיאה בטעינת אזורים' : language === 'ru' ? 'Ошибка загрузки подрегионов' : 'Error loading sub-regions');
+      toast.error(language === 'he' ? 'שגיאה בטעינת אזורים' : 'Error loading sub-regions');
       setDynamicSubRegions([]);
     }
     setLoadingSubRegions(false);
@@ -289,9 +289,9 @@ export default function CreateTrip() {
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       handleChange('image_url', file_url);
-      toast.success(language === 'he' ? 'התמונה הועלתה' : language === 'ru' ? 'Изображение загружено' : 'Image uploaded');
+      toast.success(language === 'he' ? 'התמונה הועלתה' : 'Image uploaded');
     } catch (error) {
-      toast.error(language === 'he' ? 'שגיאה בהעלאת התמונה' : language === 'ru' ? 'Ошибка загрузки изображения' : 'Error uploading image');
+      toast.error(language === 'he' ? 'שגיאה בהעלאת התמונה' : 'Error uploading image');
     }
     setImageUploading(false);
   };
@@ -300,7 +300,7 @@ export default function CreateTrip() {
     const searchQuery = formData.location || formData.sub_region || formData.region;
     
     if (!searchQuery) {
-      toast.error(language === 'he' ? 'נא לבחור אזור או להזין מיקום' : language === 'ru' ? 'Пожалуйста, выберите регион или введите местоположение' : 'Please select area or enter location');
+      toast.error(language === 'he' ? 'נא לבחור אזור או להזין מיקום' : 'Please select area or enter location');
       return;
     }
 
@@ -344,7 +344,7 @@ export default function CreateTrip() {
       // Open map picker to confirm/adjust location
       setShowMapPicker(true);
     } catch (error) {
-      toast.error(language === 'he' ? 'לא ניתן למצוא את המיקום' : language === 'ru' ? 'Не удалось найти местоположение' : 'Could not find location');
+      toast.error(language === 'he' ? 'לא ניתן למצוא את המיקום' : 'Could not find location');
       setSearchingLocation(false);
     }
   };
@@ -406,9 +406,9 @@ export default function CreateTrip() {
           country: result.country || prev.country
         }));
         
-        toast.success(language === 'he' ? `מיקום מלא נשמר: ${result.location_name}` : language === 'ru' ? `Полное местоположение сохранено: ${result.location_name}` : `Full location saved: ${result.location_name}`);
+        toast.success(language === 'he' ? `מיקום מלא נשמר: ${result.location_name}` : `Full location saved: ${result.location_name}`);
       } else {
-        toast.success(language === 'he' ? 'מיקום נשמר' : language === 'ru' ? 'Местоположение сохранено' : 'Location saved');
+        toast.success(language === 'he' ? 'מיקום נשמר' : 'Location saved');
       }
     } catch (error) {
       console.error('Error getting location details:', error);
@@ -463,12 +463,12 @@ export default function CreateTrip() {
       };
 
       const createdTrip = await base44.entities.Trip.create(tripData);
-      toast.success(language === 'he' ? 'הטיול נשמר בהצלחה!' : language === 'ru' ? 'Поездка успешно создана!' : 'Trip created successfully!');
+      toast.success(language === 'he' ? 'הטיול נשמר בהצלחה!' : 'Trip created successfully!');
       setShowWaiver(false);
       navigate(createPageUrl('TripDetails') + '?id=' + createdTrip.id);
     } catch (error) {
       console.error('Error:', error);
-      toast.error(language === 'he' ? 'שגיאה בשמירה' : language === 'ru' ? 'Ошибка сохранения' : 'Error saving trip');
+      toast.error(language === 'he' ? 'שגיאה בשמירה' : 'Error saving trip');
     } finally {
       setSaving(false);
     }
@@ -511,8 +511,8 @@ export default function CreateTrip() {
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
             {language === 'he' 
               ? 'שתף את חוויית הטיול שלך ומצא שותפים להרפתקה הבאה' 
-              : language === 'ru'
-              ? 'Поделитесь своим опытом поездки и найдите партнеров для следующего приключения'
+              : language === 'ru' 
+              ? 'Поделитесь своим опытом путешествий и найдите партнеров для следующего приключения'
               : 'Share your trip experience and find partners for the next adventure'}
           </p>
         </motion.div>
@@ -537,7 +537,7 @@ export default function CreateTrip() {
               </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>{language === 'he' ? 'כותרת' : language === 'ru' ? 'Название' : 'Title'}</Label>
+                <Label>{language === 'he' ? 'כותרת' : language === 'ru' ? 'Название' : 'Title'}
                 <Input
                   value={formData.title}
                   onChange={(e) => handleChange('title', e.target.value)}
@@ -548,7 +548,7 @@ export default function CreateTrip() {
               </div>
 
               <div className="space-y-2">
-                <Label>{language === 'he' ? 'תיאור' : language === 'ru' ? 'Описание' : 'Description'}</Label>
+                <Label>{language === 'he' ? 'תיאור' : language === 'ru' ? 'Описание' : 'Description'}
                 <Textarea
                   value={formData.description}
                   onChange={(e) => handleChange('description', e.target.value)}
@@ -609,7 +609,7 @@ export default function CreateTrip() {
                     <MapPin className="w-5 h-5 text-white" />
                   </div>
                   <span className="bg-gradient-to-r from-blue-700 to-cyan-700 bg-clip-text text-transparent font-bold">
-                    {language === 'he' ? 'מיקום וזמן' : language === 'ru' ? 'Место и время' : 'Location & Time'}
+                    {language === 'he' ? 'מיקום וזמן' : language === 'ru' ? 'Местоположение и время' : 'Location & Time'}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -641,7 +641,7 @@ export default function CreateTrip() {
                   <div className={`grid grid-cols-1 ${formData.country === 'israel' ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-4`}>
                     {formData.country !== 'israel' && (
                       <div className="space-y-2">
-                        <Label>{language === 'he' ? 'מחוז/מדינה' : language === 'ru' ? 'Штат/Область' : 'State/Province'}</Label>
+                        <Label>{language === 'he' ? 'מחוז/מדינה' : language === 'ru' ? 'Штат/Провинция' : 'State/Province'}
                         <Select 
                           value={formData.region} 
                           onValueChange={(v) => handleChange('region', v)}
@@ -668,7 +668,7 @@ export default function CreateTrip() {
                     )}
 
                     <div className="space-y-2">
-                      <Label>{language === 'he' ? 'אזור/עיר' : language === 'ru' ? 'Район/Город' : 'Area/City'}</Label>
+                      <Label>{language === 'he' ? 'אזור/עיר' : language === 'ru' ? 'Район/Город' : 'Area/City'}
                       <Select 
                         value={formData.country === 'israel' ? formData.region : formData.sub_region} 
                         onValueChange={(v) => handleChange(formData.country === 'israel' ? 'region' : 'sub_region', v)}
@@ -1068,7 +1068,7 @@ export default function CreateTrip() {
                 {formData.has_guide && (
                   <div className="space-y-4 pl-6 pr-6">
                     <div className="space-y-2">
-                      <Label>{language === 'he' ? 'שם המדריך' : language === 'ru' ? 'Имя гида' : 'Guide Name'}</Label>
+                      <Label>{language === 'he' ? 'שם המדריך' : language === 'ru' ? 'Имя гида' : 'Guide Name'}
                       <Input
                         value={formData.guide_name || ''}
                         onChange={(e) => handleChange('guide_name', e.target.value)}
@@ -1078,11 +1078,11 @@ export default function CreateTrip() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>{language === 'he' ? 'נושא ההדרכה' : language === 'ru' ? 'Тема экскурсии' : 'Guide Topic'}</Label>
+                      <Label>{language === 'he' ? 'נושא ההדרכה' : language === 'ru' ? 'Тема экскурсии' : 'Guide Topic'}
                       <Textarea
                         value={formData.guide_topic || ''}
                         onChange={(e) => handleChange('guide_topic', e.target.value)}
-                        placeholder={language === 'he' ? 'למשל: צמחיה, היסטוריה, ציפורים...' : language === 'ru' ? 'например: Флора, История, Птицы...' : 'e.g., Flora, History, Birds...'}
+                        placeholder={language === 'he' ? 'למשל: צמחיה, היסטוריה, ציפורים...' : language === 'ru' ? 'напр., Флора, История, Птицы...' : 'e.g., Flora, History, Birds...'}
                         rows={3}
                         dir={isRTL ? 'rtl' : 'ltr'}
                       />
@@ -1116,7 +1116,7 @@ export default function CreateTrip() {
               </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-3">
-                <Label>{language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : 'Parent Age Ranges'}</Label>
+                <Label>{language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : 'Parent Age Ranges'}
                 <div className="flex flex-wrap gap-2">
                   {['20-30', '30-40', '40-50', '50-60', '60+'].map(range => (
                     <Badge
@@ -1136,7 +1136,7 @@ export default function CreateTrip() {
               </div>
 
               <div className="space-y-3">
-                <Label>{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : 'Children Age Ranges'}</Label>
+                <Label>{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : 'Children Age Ranges'}
                 <div className="flex flex-wrap gap-2">
                   {['0-2', '3-6', '7-10', '11-14', '15-18', '18-21', '21+'].map(range => (
                     <Badge
