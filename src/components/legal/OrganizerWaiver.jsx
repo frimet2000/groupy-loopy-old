@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../LanguageContext';
 import {
   Dialog,
@@ -20,15 +20,31 @@ export default function OrganizerWaiver({ open, onAccept, onDecline }) {
   const { language, isRTL } = useLanguage();
   const [agreed, setAgreed] = useState(false);
   const [readFully, setReadFully] = useState(false);
+  const scrollRef = useRef(null);
 
-  const handleScroll = (e) => {
-    const element = e.target;
-    // Enable checkbox when user scrolls to near the bottom (more lenient)
-    const scrollProgress = (element.scrollTop + element.clientHeight) / element.scrollHeight;
-    if (scrollProgress > 0.85) {
-      setReadFully(true);
+  useEffect(() => {
+    if (!open) {
+      setReadFully(false);
+      setAgreed(false);
+      return;
     }
-  };
+
+    const scrollArea = scrollRef.current;
+    if (!scrollArea) return;
+
+    const viewport = scrollArea.querySelector('[data-radix-scroll-area-viewport]');
+    if (!viewport) return;
+
+    const handleScroll = () => {
+      const scrollProgress = (viewport.scrollTop + viewport.clientHeight) / viewport.scrollHeight;
+      if (scrollProgress > 0.85) {
+        setReadFully(true);
+      }
+    };
+
+    viewport.addEventListener('scroll', handleScroll);
+    return () => viewport.removeEventListener('scroll', handleScroll);
+  }, [open]);
 
   const content = language === 'he' ? {
     title: 'כתב ויתור למארגן טיול',
@@ -154,7 +170,7 @@ export default function OrganizerWaiver({ open, onAccept, onDecline }) {
           </AlertDescription>
         </Alert>
 
-        <ScrollArea className="h-[250px] border rounded-lg p-4" onScroll={handleScroll}>
+        <ScrollArea ref={scrollRef} className="h-[250px] border rounded-lg p-4">
           <div className="space-y-6">
             {content.sections.map((section, index) => (
               <div key={index}>
