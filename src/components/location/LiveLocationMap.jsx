@@ -65,10 +65,21 @@ export default function LiveLocationMap({ trip, currentUserEmail, onUpdate }) {
       return;
     }
 
+    // Request permission first
+    navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+      if (result.state === 'denied') {
+        toast.error(language === 'he' ? 'אין הרשאת מיקום. אנא אפשר גישה להגדרות הדפדפן' : 'Location permission denied. Please enable in browser settings');
+        return;
+      }
+    }).catch(() => {
+      // If permissions API not supported, continue anyway
+    });
+
     const id = navigator.geolocation.watchPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
         setCurrentLocation({ latitude, longitude });
+        setMapCenter([latitude, longitude]);
 
         // Update location in database
         const updatedLocations = liveLocations.filter(loc => loc.email !== currentUserEmail);
@@ -81,21 +92,32 @@ export default function LiveLocationMap({ trip, currentUserEmail, onUpdate }) {
           sharing_enabled: true
         });
 
-        try {
-          await base44.entities.Trip.update(trip.id, { live_locations: updatedLocations });
-          onUpdate();
-        } catch (error) {
-          console.error('Error updating location', error);
-        }
+        await base44.entities.Trip.update(trip.id, { live_locations: updatedLocations });
+        onUpdate();
       },
       (error) => {
         console.error('Location error:', error);
-        toast.error(language === 'he' ? 'שגיאה בקבלת מיקום' : 'Error getting location');
+        let errorMessage = language === 'he' ? 'שגיאה בקבלת מיקום' : 'Error getting location';
+        
+        if (error.code === 1) {
+          errorMessage = language === 'he' ? 'אין הרשאה לגשת למיקום. אנא אפשר גישה בהגדרות הדפדפן' : 'Location permission denied. Please enable location access in browser settings';
+        } else if (error.code === 2) {
+          errorMessage = language === 'he' ? 'לא ניתן לקבל את המיקום. נסה שוב מאוחר יותר' : 'Location unavailable. Please try again later';
+        } else if (error.code === 3) {
+          errorMessage = language === 'he' ? 'תם הזמן לקבלת מיקום. נסה שוב' : 'Location timeout. Please try again';
+        }
+        
+        toast.error(errorMessage);
+        setSharingEnabled(false);
+        if (watchId) {
+          navigator.geolocation.clearWatch(watchId);
+          setWatchId(null);
+        }
       },
       {
         enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
+        timeout: 10000,
+        maximumAge: 5000
       }
     );
 
