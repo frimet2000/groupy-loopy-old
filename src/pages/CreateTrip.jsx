@@ -999,7 +999,7 @@ export default function CreateTrip() {
               <div className="space-y-3">
                 <Label>{language === 'he' ? 'טווחי גילאי הורים' : 'Parent Age Ranges'}</Label>
                 <div className="flex flex-wrap gap-2">
-                  {['30-40', '40-50', '50-60', '60+'].map(range => (
+                  {['20-30', '30-40', '40-50', '50-60', '60+'].map(range => (
                     <Badge
                       key={range}
                       variant={formData.parent_age_ranges.includes(range) ? 'default' : 'outline'}
