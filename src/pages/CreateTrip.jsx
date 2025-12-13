@@ -17,6 +17,10 @@ import { motion } from 'framer-motion';
 import { detectUserLocation, getRegionFromCoordinates } from '../components/utils/LocationDetector';
 import LocationPicker from '../components/maps/LocationPicker';
 import { getAllCountries } from '../components/utils/CountryRegions';
+import WaypointsCreator from '../components/creation/WaypointsCreator';
+import EquipmentCreator from '../components/creation/EquipmentCreator';
+import ItineraryCreator from '../components/creation/ItineraryCreator';
+import BudgetCreator from '../components/creation/BudgetCreator';
 const difficulties = ['easy', 'moderate', 'challenging', 'hard', 'extreme'];
 const durations = ['hours', 'half_day', 'full_day', 'overnight', 'multi_day'];
 const activityTypes = ['hiking', 'cycling', 'offroad'];
@@ -71,6 +75,18 @@ export default function CreateTrip() {
     camping_available: false,
     max_participants: 10,
     image_url: ''
+  });
+
+  const [waypoints, setWaypoints] = useState([]);
+  const [equipment, setEquipment] = useState([]);
+  const [itinerary, setItinerary] = useState([]);
+  const [budget, setBudget] = useState({
+    solo_min: 0,
+    solo_max: 0,
+    family_min: 0,
+    family_max: 0,
+    currency: 'ILS',
+    notes: ''
   });
 
   useEffect(() => {
@@ -388,6 +404,10 @@ export default function CreateTrip() {
           joined_at: new Date().toISOString(),
           accessibility_needs: []
         }],
+        waypoints,
+        equipment_checklist: equipment,
+        daily_itinerary: itinerary,
+        budget,
         // Clean up empty numeric fields
         cycling_distance: formData.cycling_distance || undefined,
         cycling_elevation: formData.cycling_elevation || undefined,
@@ -1039,11 +1059,42 @@ export default function CreateTrip() {
             </Card>
           </motion.div>
 
-          {/* Submit */}
+          {/* Planning Tools */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+          >
+            <WaypointsCreator
+              waypoints={waypoints}
+              setWaypoints={setWaypoints}
+              startLat={formData.latitude}
+              startLng={formData.longitude}
+              locationName={formData.location}
+            />
+
+            <EquipmentCreator
+              equipment={equipment}
+              setEquipment={setEquipment}
+            />
+
+            <ItineraryCreator
+              itinerary={itinerary}
+              setItinerary={setItinerary}
+            />
+
+            <BudgetCreator
+              budget={budget}
+              setBudget={setBudget}
+            />
+          </motion.div>
+
+          {/* Submit */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
             className="flex gap-4 justify-end pt-4"
           >
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
