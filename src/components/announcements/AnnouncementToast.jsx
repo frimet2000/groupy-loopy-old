@@ -87,9 +87,13 @@ export default function AnnouncementToast() {
     ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600'
     : 'bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600';
   
-  const messageTitle = currentMessage.title || '';
-  const messageBody = currentMessage.message || currentMessage.body || '';
-  const messageSender = currentMessage.sent_by_name || '';
+  const messageTitle = currentMessage.title || 'הודעה';
+  const messageBody = currentMessage.message || currentMessage.body || 'אין תוכן';
+  const messageSender = currentMessage.sent_by_name || 'מנהל';
+
+  console.log('Current message:', currentMessage);
+  console.log('Message title:', messageTitle);
+  console.log('Message body:', messageBody);
 
   return (
     <AnimatePresence>
@@ -120,11 +124,11 @@ export default function AnnouncementToast() {
               </motion.div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2 mb-1">
-                  <div>
-                    <h3 className="font-bold text-lg leading-tight text-white">
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg leading-tight text-white" style={{ color: 'white' }}>
                       {messageTitle}
                     </h3>
-                    <p className="text-xs text-white/80 mt-0.5">
+                    <p className="text-xs mt-0.5" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
                       {isPrivate 
                         ? (language === 'he' ? 'הודעה מהמנהל' : 'Message from Admin')
                         : `${language === 'he' ? 'מאת' : 'From'} ${messageSender}`}
@@ -139,7 +143,7 @@ export default function AnnouncementToast() {
                     <X className="w-4 h-4" />
                   </Button>
                 </div>
-                <p className="text-sm text-white/90 leading-relaxed whitespace-pre-wrap">
+                <p className="text-sm leading-relaxed whitespace-pre-wrap mt-2" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
                   {messageBody}
                 </p>
               </div>
