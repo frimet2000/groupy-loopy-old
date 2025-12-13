@@ -206,7 +206,7 @@ export default function MyTrips() {
                 <EmptyState 
                   icon={UserCircle}
                   title={t('noOrganizedTrips')}
-                  description={language === 'he' ? 'עדיין לא יצרת טיולים' : "You haven't organized any trips yet"}
+                  description={language === 'he' ? 'עדיין לא ארגנת טיולים' : "You haven't organized any trips yet"}
                 />
               )}
             </TabsContent>
