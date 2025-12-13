@@ -144,27 +144,29 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
                 <User className="w-4 h-4 text-blue-600" />
                 {language === 'he' ? 'תקציב לבודד' : 'Solo Budget'}
               </Label>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label className="text-xs text-gray-500">{language === 'he' ? 'מינימום' : 'Min'}</Label>
-                  <Input
-                    type="number"
-                    value={budgetData.solo_min}
-                    onChange={(e) => setBudgetData({ ...budgetData, solo_min: parseFloat(e.target.value) || 0 })}
-                    min="0"
-                    placeholder="0"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs text-gray-500">{language === 'he' ? 'מקסימום' : 'Max'}</Label>
-                  <Input
-                    type="number"
-                    value={budgetData.solo_max}
-                    onChange={(e) => setBudgetData({ ...budgetData, solo_max: parseFloat(e.target.value) || 0 })}
-                    min="0"
-                    placeholder="0"
-                  />
-                </div>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { min: 50, max: 100, label: '50-100' },
+                  { min: 100, max: 200, label: '100-200' },
+                  { min: 200, max: 500, label: '200-500' },
+                  { min: 500, max: 999999, label: language === 'he' ? '500+' : '500+' },
+                ].map((range) => {
+                  const isSelected = budgetData.solo_min === range.min && budgetData.solo_max === range.max;
+                  return (
+                    <button
+                      key={range.label}
+                      type="button"
+                      onClick={() => setBudgetData({ ...budgetData, solo_min: range.min, solo_max: range.max })}
+                      className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                        isSelected
+                          ? 'bg-blue-600 text-white shadow-md'
+                          : 'bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100'
+                      }`}
+                    >
+                      {range.label} ₪
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -174,27 +176,29 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
                 <Users className="w-4 h-4 text-purple-600" />
                 {language === 'he' ? 'תקציב למשפחה' : 'Family Budget'}
               </Label>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label className="text-xs text-gray-500">{language === 'he' ? 'מינימום' : 'Min'}</Label>
-                  <Input
-                    type="number"
-                    value={budgetData.family_min}
-                    onChange={(e) => setBudgetData({ ...budgetData, family_min: parseFloat(e.target.value) || 0 })}
-                    min="0"
-                    placeholder="0"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs text-gray-500">{language === 'he' ? 'מקסימום' : 'Max'}</Label>
-                  <Input
-                    type="number"
-                    value={budgetData.family_max}
-                    onChange={(e) => setBudgetData({ ...budgetData, family_max: parseFloat(e.target.value) || 0 })}
-                    min="0"
-                    placeholder="0"
-                  />
-                </div>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { min: 100, max: 200, label: '100-200' },
+                  { min: 200, max: 400, label: '200-400' },
+                  { min: 400, max: 800, label: '400-800' },
+                  { min: 800, max: 999999, label: language === 'he' ? '800+' : '800+' },
+                ].map((range) => {
+                  const isSelected = budgetData.family_min === range.min && budgetData.family_max === range.max;
+                  return (
+                    <button
+                      key={range.label}
+                      type="button"
+                      onClick={() => setBudgetData({ ...budgetData, family_min: range.min, family_max: range.max })}
+                      className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                        isSelected
+                          ? 'bg-purple-600 text-white shadow-md'
+                          : 'bg-purple-50 text-purple-600 border border-purple-200 hover:bg-purple-100'
+                      }`}
+                    >
+                      {range.label} ₪
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
