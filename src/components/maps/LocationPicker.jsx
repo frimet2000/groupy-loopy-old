@@ -6,6 +6,7 @@ import { useLanguage } from '../LanguageContext';
 import { Loader2 } from 'lucide-react';
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+const LIBRARIES = ['places'];
 
 export default function LocationPicker({ isOpen, onClose, initialLat, initialLng, locationName, onConfirm }) {
   const { language } = useLanguage();
@@ -16,7 +17,8 @@ export default function LocationPicker({ isOpen, onClose, initialLat, initialLng
 
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-    libraries: ['places'],
+    libraries: LIBRARIES,
+    preventGoogleFontsLoading: true,
   });
 
   useEffect(() => {
