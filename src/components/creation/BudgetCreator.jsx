@@ -18,14 +18,14 @@ export default function BudgetCreator({ budget, setBudget }) {
       <CardHeader className="bg-gradient-to-r from-amber-50 to-yellow-50 border-b">
         <CardTitle className="flex items-center gap-2 text-amber-700">
           <DollarSign className="w-5 h-5" />
-          {language === 'he' ? 'תקציב משוער' : 'Estimated Budget'}
+          {language === 'he' ? 'תקציב משוער' : language === 'ru' ? 'Примерный бюджет' : language === 'es' ? 'Presupuesto estimado' : language === 'fr' ? 'Budget estimé' : language === 'de' ? 'Geschätztes Budget' : language === 'it' ? 'Budget stimato' : 'Estimated Budget'}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-4">
         <div className="space-y-3">
           <Label className="flex items-center gap-2 text-base font-semibold">
             <User className="w-4 h-4 text-blue-600" />
-            {language === 'he' ? 'לבודד' : 'Solo'}
+            {language === 'he' ? 'לבודד' : language === 'ru' ? 'Соло' : language === 'es' ? 'Solo' : language === 'fr' ? 'Solo' : language === 'de' ? 'Allein' : language === 'it' ? 'Solo' : 'Solo'}
           </Label>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -54,7 +54,7 @@ export default function BudgetCreator({ budget, setBudget }) {
         <div className="space-y-3">
           <Label className="flex items-center gap-2 text-base font-semibold">
             <Users className="w-4 h-4 text-purple-600" />
-            {language === 'he' ? 'למשפחה' : 'Family'}
+            {language === 'he' ? 'למשפחה' : language === 'ru' ? 'Семья' : language === 'es' ? 'Familia' : language === 'fr' ? 'Famille' : language === 'de' ? 'Familie' : language === 'it' ? 'Famiglia' : 'Family'}
           </Label>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -81,11 +81,11 @@ export default function BudgetCreator({ budget, setBudget }) {
         </div>
 
         <div className="space-y-2">
-          <Label>{language === 'he' ? 'הערות' : 'Notes'}</Label>
+          <Label>{language === 'he' ? 'הערות' : language === 'ru' ? 'Примечания' : language === 'es' ? 'Notas' : language === 'fr' ? 'Notes' : language === 'de' ? 'Notizen' : language === 'it' ? 'Note' : 'Notes'}
           <Textarea
             value={budget.notes}
             onChange={(e) => handleChange('notes', e.target.value)}
-            placeholder={language === 'he' ? 'הערות על התקציב...' : 'Budget notes...'}
+            placeholder={language === 'he' ? 'הערות על התקציב...' : language === 'ru' ? 'Заметки о бюджете...' : language === 'es' ? 'Notas del presupuesto...' : language === 'fr' ? 'Notes sur le budget...' : language === 'de' ? 'Budget-Notizen...' : language === 'it' ? 'Note sul budget...' : 'Budget notes...'}
             rows={3}
             dir={language === 'he' ? 'rtl' : 'ltr'}
           />
