@@ -3,10 +3,14 @@ import { GoogleMap, useJsApiLoader, Marker, Polyline } from '@react-google-maps/
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.GOOGLE_MAPS_API_KEY || '';
 
+if (!GOOGLE_MAPS_API_KEY) {
+  console.error('⚠️ GOOGLE_MAPS_API_KEY is not set! Please set it in the app secrets.');
+}
+
 export function useGoogleMaps() {
   return useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-    libraries: ['places']
+    libraries: ['places'],
   });
 }
 
