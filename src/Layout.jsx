@@ -302,7 +302,7 @@ function LayoutContent({ children, currentPageName }) {
                 }`}>
                   <item.icon className={`w-5 h-5 ${isActive(item.name) ? item.color : ''}`} />
                 </div>
-                <span className={`text-xs font-medium ${isActive(item.name) ? 'font-semibold' : ''}`}>
+                <span className={`text-xs font-medium text-center ${isActive(item.name) ? 'font-semibold' : ''}`}>
                   {item.label}
                 </span>
                 {isActive(item.name) && (
