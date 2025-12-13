@@ -675,7 +675,7 @@ export default function Community() {
               ) : (
                 <Send className="w-4 h-4" />
               )}
-              {language === 'he' ? 'שלח' : 'Send'}
+              {language === 'he' ? 'שלח' : language === 'ru' ? 'Отправить' : language === 'es' ? 'Enviar' : language === 'fr' ? 'Envoyer' : language === 'de' ? 'Senden' : language === 'it' ? 'Invia' : 'Send'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -751,7 +751,7 @@ export default function Community() {
               ) : (
                 <Send className="w-4 h-4" />
               )}
-              {language === 'he' ? 'שלח' : 'Send'}
+              {language === 'he' ? 'שלח' : language === 'ru' ? 'Отправить' : language === 'es' ? 'Enviar' : language === 'fr' ? 'Envoyer' : language === 'de' ? 'Senden' : language === 'it' ? 'Invia' : 'Send'}
             </Button>
           </DialogFooter>
         </DialogContent>

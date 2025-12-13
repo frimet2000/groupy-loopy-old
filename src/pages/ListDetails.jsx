@@ -116,12 +116,12 @@ export default function ListDetails() {
               {list.is_public ? (
                 <Badge className="bg-white/20 text-white border-white/30">
                   <Unlock className="w-3 h-3 mr-1" />
-                  {language === 'he' ? 'ציבורי' : 'Public'}
+                  {language === 'he' ? 'ציבורי' : language === 'ru' ? 'Публичный' : language === 'es' ? 'Público' : language === 'fr' ? 'Public' : language === 'de' ? 'Öffentlich' : language === 'it' ? 'Pubblico' : 'Public'}
                 </Badge>
               ) : (
                 <Badge className="bg-white/20 text-white border-white/30">
                   <Lock className="w-3 h-3 mr-1" />
-                  {language === 'he' ? 'פרטי' : 'Private'}
+                  {language === 'he' ? 'פרטי' : language === 'ru' ? 'Личный' : language === 'es' ? 'Privado' : language === 'fr' ? 'Privé' : language === 'de' ? 'Privat' : language === 'it' ? 'Privato' : 'Private'}
                 </Badge>
               )}
             </div>
@@ -141,7 +141,7 @@ export default function ListDetails() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600">
-                  {listTrips.length} {language === 'he' ? 'טיולים ברשימה' : 'trips in this list'}
+                  {listTrips.length} {language === 'he' ? 'טיולים ברשימה' : language === 'ru' ? 'поездок в этом списке' : language === 'es' ? 'viajes en esta lista' : language === 'fr' ? 'voyages dans cette liste' : language === 'de' ? 'Reisen in dieser Liste' : language === 'it' ? 'viaggi in questa lista' : 'trips in this list'}
                 </p>
               </div>
               {user?.email === list.user_email && (
@@ -149,14 +149,14 @@ export default function ListDetails() {
                   <PopoverTrigger asChild>
                     <Button className="bg-emerald-600 hover:bg-emerald-700 gap-2">
                       <Plus className="w-4 h-4" />
-                      {language === 'he' ? 'הוסף טיול' : 'Add Trip'}
+                      {language === 'he' ? 'הוסף טיול' : language === 'ru' ? 'Добавить поездку' : language === 'es' ? 'Agregar viaje' : language === 'fr' ? 'Ajouter voyage' : language === 'de' ? 'Reise hinzufügen' : language === 'it' ? 'Aggiungi viaggio' : 'Add Trip'}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-80 p-0" align="end">
                     <Command>
-                      <CommandInput placeholder={language === 'he' ? 'חפש טיול...' : 'Search trip...'} />
+                      <CommandInput placeholder={language === 'he' ? 'חפש טיול...' : language === 'ru' ? 'Поиск поездки...' : language === 'es' ? 'Buscar viaje...' : language === 'fr' ? 'Rechercher voyage...' : language === 'de' ? 'Reise suchen...' : language === 'it' ? 'Cerca viaggio...' : 'Search trip...'} />
                       <CommandEmpty>
-                        {language === 'he' ? 'לא נמצאו טיולים' : 'No trips found'}
+                        {language === 'he' ? 'לא נמצאו טיולים' : language === 'ru' ? 'Поездки не найдены' : language === 'es' ? 'No se encontraron viajes' : language === 'fr' ? 'Aucun voyage trouvé' : language === 'de' ? 'Keine Reisen gefunden' : language === 'it' ? 'Nessun viaggio trovato' : 'No trips found'}
                       </CommandEmpty>
                       <CommandGroup className="max-h-64 overflow-y-auto">
                         {availableTrips.map(trip => {
@@ -209,7 +209,7 @@ export default function ListDetails() {
         ) : (
           <Card className="p-12 text-center">
             <p className="text-gray-500">
-              {language === 'he' ? 'הרשימה ריקה. הוסף טיולים כדי להתחיל!' : 'List is empty. Add trips to get started!'}
+              {language === 'he' ? 'הרשימה ריקה. הוסף טיולים כדי להתחיל!' : language === 'ru' ? 'Список пуст. Добавьте поездки для начала!' : language === 'es' ? 'La lista está vacía. ¡Agrega viajes para comenzar!' : language === 'fr' ? 'La liste est vide. Ajoutez des voyages pour commencer !' : language === 'de' ? 'Liste ist leer. Fügen Sie Reisen hinzu, um zu beginnen!' : language === 'it' ? 'La lista è vuota. Aggiungi viaggi per iniziare!' : 'List is empty. Add trips to get started!'}
             </p>
           </Card>
         )}
