@@ -69,6 +69,14 @@ export default function Home() {
     }
     if (filters.date_from && new Date(trip.date) < new Date(filters.date_from)) return false;
     if (filters.date_to && new Date(trip.date) > new Date(filters.date_to)) return false;
+
+    // Filter by available spots
+    if (filters.available_spots) {
+      const hasSpots = !trip.max_participants || 
+        (trip.current_participants || 1) < trip.max_participants;
+      if (!hasSpots) return false;
+    }
+
     if (trip.status !== 'open') return false;
 
     // Privacy filtering

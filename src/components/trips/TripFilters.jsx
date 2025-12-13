@@ -286,6 +286,18 @@ export default function TripFilters({ filters, setFilters, onSearch }) {
                   />
                   <Label htmlFor="camping" className="cursor-pointer">{t('campingAvailable')}</Label>
                 </div>
+
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="available_spots"
+                    checked={filters.available_spots || false}
+                    onCheckedChange={(checked) => handleFilterChange('available_spots', checked)}
+                    className="data-[state=checked]:bg-emerald-600"
+                  />
+                  <Label htmlFor="available_spots" className="cursor-pointer">
+                    {language === 'he' ? 'רק טיולים עם מקומות פנויים' : 'Only trips with available spots'}
+                  </Label>
+                </div>
               </div>
 
               <Button 
