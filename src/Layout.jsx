@@ -8,6 +8,7 @@ import NotificationBell from './components/notifications/NotificationBell';
 import LanguageSelection from './components/LanguageSelection';
 import CookieConsent from './components/legal/CookieConsent';
 import AccessibilityButton from './components/accessibility/AccessibilityButton';
+import InstallPrompt from './components/pwa/InstallPrompt';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -377,6 +378,9 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* Accessibility Button */}
       <AccessibilityButton />
+
+      {/* PWA Install Prompt */}
+      <InstallPrompt />
       </div>
       );
       }
