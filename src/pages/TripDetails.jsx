@@ -241,7 +241,7 @@ export default function TripDetails() {
       setJoinMessage('');
       setAccessibilityNeeds([]);
       setShowJoinDialog(false);
-      toast.success(language === 'he' ? 'הבקשה נשלחה למארגן' : 'Request sent to organizer');
+      toast.success(language === 'he' ? 'הבקשה נשלחה למארגן' : language === 'ru' ? 'Запрос отправлен организатору' : language === 'es' ? 'Solicitud enviada al organizador' : language === 'fr' ? 'Demande envoyée à l\'organisateur' : language === 'de' ? 'Anfrage an Organisator gesendet' : language === 'it' ? 'Richiesta inviata all\'organizzatore' : 'Request sent to organizer');
     },
   });
 
@@ -311,7 +311,7 @@ export default function TripDetails() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['trip', tripId]);
-      toast.success(language === 'he' ? 'הבקשה אושרה' : 'Request approved');
+      toast.success(language === 'he' ? 'הבקשה אושרה' : language === 'ru' ? 'Запрос одобрен' : language === 'es' ? 'Solicitud aprobada' : language === 'fr' ? 'Demande approuvée' : language === 'de' ? 'Anfrage genehmigt' : language === 'it' ? 'Richiesta approvata' : 'Request approved');
       
       // Show next request if exists
       if (currentRequestIndex < trip.pending_requests.length - 1) {
@@ -345,7 +345,7 @@ export default function TripDetails() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['trip', tripId]);
-      toast.success(language === 'he' ? 'הבקשה נדחתה' : 'Request declined');
+      toast.success(language === 'he' ? 'הבקשה נדחתה' : language === 'ru' ? 'Запрос отклонен' : language === 'es' ? 'Solicitud rechazada' : language === 'fr' ? 'Demande rejetée' : language === 'de' ? 'Anfrage abgelehnt' : language === 'it' ? 'Richiesta rifiutata' : 'Request declined');
       
       // Show next request if exists
       if (currentRequestIndex < trip.pending_requests.length - 1) {
@@ -371,14 +371,14 @@ export default function TripDetails() {
     if (hasSaved) {
       const updatedSaves = trip.saves.filter(s => s.email !== user.email);
       await base44.entities.Trip.update(trip.id, { saves: updatedSaves });
-      toast.success(language === 'he' ? 'הוסר מהשמורים' : 'Removed from saved');
+      toast.success(language === 'he' ? 'הוסר מהשמורים' : language === 'ru' ? 'Удалено из сохраненных' : language === 'es' ? 'Eliminado de guardados' : language === 'fr' ? 'Retiré des enregistrés' : language === 'de' ? 'Von Gespeicherten entfernt' : language === 'it' ? 'Rimosso dai salvati' : 'Removed from saved');
     } else {
       const updatedSaves = [
         ...(trip.saves || []),
         { email: user.email, timestamp: new Date().toISOString() }
       ];
       await base44.entities.Trip.update(trip.id, { saves: updatedSaves });
-      toast.success(language === 'he' ? 'נשמר בהצלחה' : 'Saved successfully');
+      toast.success(language === 'he' ? 'נשמר בהצלחה' : language === 'ru' ? 'Успешно сохранено' : language === 'es' ? 'Guardado exitosamente' : language === 'fr' ? 'Enregistré avec succès' : language === 'de' ? 'Erfolgreich gespeichert' : language === 'it' ? 'Salvato con successo' : 'Saved successfully');
     }
     
     queryClient.invalidateQueries(['trip', tripId]);
@@ -427,15 +427,15 @@ export default function TripDetails() {
   const handleSaveEdit = async () => {
     try {
       if (!editData.title || editData.title.trim() === '') {
-        toast.error(language === 'he' ? 'חובה למלא כותרת' : 'Title is required');
+        toast.error(language === 'he' ? 'חובה למלא כותרת' : language === 'ru' ? 'Необходимо название' : language === 'es' ? 'Se requiere título' : language === 'fr' ? 'Le titre est requis' : language === 'de' ? 'Titel erforderlich' : language === 'it' ? 'Titolo richiesto' : 'Title is required');
         return;
       }
       await base44.entities.Trip.update(tripId, editData);
       queryClient.invalidateQueries(['trip', tripId]);
       setIsEditing(false);
-      toast.success(language === 'he' ? 'הטיול עודכן בהצלחה' : 'Trip updated successfully');
+      toast.success(language === 'he' ? 'הטיול עודכן בהצלחה' : language === 'ru' ? 'Поездка успешно обновлена' : language === 'es' ? 'Viaje actualizado exitosamente' : language === 'fr' ? 'Voyage mis à jour avec succès' : language === 'de' ? 'Reise erfolgreich aktualisiert' : language === 'it' ? 'Viaggio aggiornato con successo' : 'Trip updated successfully');
     } catch (error) {
-      toast.error(language === 'he' ? 'שגיאה בעדכון' : 'Error updating');
+      toast.error(language === 'he' ? 'שגיאה בעדכון' : language === 'ru' ? 'Ошибка обновления' : language === 'es' ? 'Error al actualizar' : language === 'fr' ? 'Erreur de mise à jour' : language === 'de' ? 'Fehler beim Aktualisieren' : language === 'it' ? 'Errore nell\'aggiornare' : 'Error updating');
     }
   };
 
@@ -449,10 +449,10 @@ export default function TripDetails() {
       await base44.entities.Trip.update(tripId, { image_url: file_url });
       await queryClient.invalidateQueries(['trip', tripId]);
       await queryClient.refetchQueries(['trip', tripId]);
-      toast.success(language === 'he' ? 'התמונה הוחלפה בהצלחה' : 'Image updated successfully');
+      toast.success(language === 'he' ? 'התמונה הוחלפה בהצלחה' : language === 'ru' ? 'Изображение успешно обновлено' : language === 'es' ? 'Imagen actualizada exitosamente' : language === 'fr' ? 'Image mise à jour avec succès' : language === 'de' ? 'Bild erfolgreich aktualisiert' : language === 'it' ? 'Immagine aggiornata con successo' : 'Image updated successfully');
     } catch (error) {
       console.error('Image upload error:', error);
-      toast.error(language === 'he' ? 'שגיאה בהעלאת התמונה' : 'Error uploading image');
+      toast.error(language === 'he' ? 'שגיאה בהעלאת התמונה' : language === 'ru' ? 'Ошибка загрузки изображения' : language === 'es' ? 'Error al subir imagen' : language === 'fr' ? 'Erreur de téléchargement d\'image' : language === 'de' ? 'Fehler beim Hochladen des Bildes' : language === 'it' ? 'Errore nel caricamento dell\'immagine' : 'Error uploading image');
     }
     setUploadingImage(false);
     // Reset file input
@@ -520,7 +520,7 @@ export default function TripDetails() {
         }
       });
     } catch (error) {
-      toast.error(language === 'he' ? 'שגיאה בשליחת ההודעה' : 'Error sending message');
+      toast.error(language === 'he' ? 'שגיאה בשליחת ההודעה' : language === 'ru' ? 'Ошибка отправки сообщения' : language === 'es' ? 'Error al enviar mensaje' : language === 'fr' ? 'Erreur d\'envoi du message' : language === 'de' ? 'Fehler beim Senden der Nachricht' : language === 'it' ? 'Errore nell\'invio del messaggio' : 'Error sending message');
     }
     setSendingMessage(false);
   };
@@ -544,7 +544,7 @@ export default function TripDetails() {
     return (
       <div className="max-w-5xl mx-auto px-4 py-16 text-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          {language === 'he' ? 'הטיול לא נמצא' : 'Trip not found'}
+          {language === 'he' ? 'הטיול לא נמצא' : language === 'ru' ? 'Поездка не найдена' : language === 'es' ? 'Viaje no encontrado' : language === 'fr' ? 'Voyage non trouvé' : language === 'de' ? 'Reise nicht gefunden' : language === 'it' ? 'Viaggio non trovato' : 'Trip not found'}
         </h2>
         <Button onClick={() => navigate(createPageUrl('Home'))}>
           {t('home')}
@@ -593,7 +593,7 @@ export default function TripDetails() {
                   className="rounded-full bg-white/90 hover:bg-white relative w-10 h-10 sm:w-auto sm:h-auto"
                   disabled={uploadingImage}
                   onClick={() => document.getElementById('trip-image-gallery').click()}
-                  title={language === 'he' ? 'בחר מהגלריה' : 'Choose from gallery'}
+                  title={language === 'he' ? 'בחר מהגלריה' : language === 'ru' ? 'Выбрать из галереи' : language === 'es' ? 'Elegir de la galería' : language === 'fr' ? 'Choisir de la galerie' : language === 'de' ? 'Aus Galerie wählen' : language === 'it' ? 'Scegli dalla galleria' : 'Choose from gallery'}
                 >
                   {uploadingImage ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -607,7 +607,7 @@ export default function TripDetails() {
                   className="rounded-full bg-white/90 hover:bg-white relative w-10 h-10 sm:w-auto sm:h-auto"
                   disabled={uploadingImage}
                   onClick={() => document.getElementById('trip-image-camera').click()}
-                  title={language === 'he' ? 'צלם תמונה' : 'Take photo'}
+                  title={language === 'he' ? 'צלם תמונה' : language === 'ru' ? 'Сделать фото' : language === 'es' ? 'Tomar foto' : language === 'fr' ? 'Prendre photo' : language === 'de' ? 'Foto aufnehmen' : language === 'it' ? 'Scatta foto' : 'Take photo'}
                 >
                   {uploadingImage ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -640,14 +640,14 @@ export default function TripDetails() {
                   onClick={handleCancelEdit}
                 >
                   <X className="w-4 h-4 mr-1" />
-                  {language === 'he' ? 'ביטול' : 'Cancel'}
+                  {language === 'he' ? 'ביטול' : language === 'ru' ? 'Отмена' : language === 'es' ? 'Cancelar' : language === 'fr' ? 'Annuler' : language === 'de' ? 'Abbrechen' : language === 'it' ? 'Annulla' : 'Cancel'}
                 </Button>
                 <Button 
                   className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white"
                   onClick={handleSaveEdit}
                 >
                   <Check className="w-4 h-4 mr-1" />
-                  {language === 'he' ? 'שמור' : 'Save'}
+                  {language === 'he' ? 'שמור' : language === 'ru' ? 'Сохранить' : language === 'es' ? 'Guardar' : language === 'fr' ? 'Enregistrer' : language === 'de' ? 'Speichern' : language === 'it' ? 'Salva' : 'Save'}
                 </Button>
               </div>
             )}
@@ -712,7 +712,7 @@ export default function TripDetails() {
               {isEditing ? (
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label>{language === 'he' ? 'כותרת' : 'Title'}</Label>
+                    <Label>{language === 'he' ? 'כותרת' : language === 'ru' ? 'Название' : language === 'es' ? 'Título' : language === 'fr' ? 'Titre' : language === 'de' ? 'Titel' : language === 'it' ? 'Titolo' : 'Title'}</Label>
                     <Input
                       value={editData.title}
                       onChange={(e) => setEditData({...editData, title: e.target.value})}
@@ -720,7 +720,7 @@ export default function TripDetails() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>{language === 'he' ? 'תיאור' : 'Description'}</Label>
+                    <Label>{language === 'he' ? 'תיאור' : language === 'ru' ? 'Описание' : language === 'es' ? 'Descripción' : language === 'fr' ? 'Description' : language === 'de' ? 'Beschreibung' : language === 'it' ? 'Descrizione' : 'Description'}</Label>
                     <Textarea
                       value={editData.description || ''}
                       onChange={(e) => setEditData({...editData, description: e.target.value})}
@@ -743,17 +743,17 @@ export default function TripDetails() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>{language === 'he' ? 'אזור' : 'Region'}</Label>
+                      <Label>{language === 'he' ? 'אזור' : language === 'ru' ? 'Регион' : language === 'es' ? 'Región' : language === 'fr' ? 'Région' : language === 'de' ? 'Region' : language === 'it' ? 'Regione' : 'Region'}</Label>
                       <Input
                         value={editData.region}
                         onChange={(e) => setEditData({...editData, region: e.target.value})}
-                        placeholder={language === 'he' ? 'אזור/מחוז' : 'Region/State'}
+                        placeholder={language === 'he' ? 'אזור/מחוז' : language === 'ru' ? 'Регион/Штат' : language === 'es' ? 'Región/Estado' : language === 'fr' ? 'Région/État' : language === 'de' ? 'Region/Bundesland' : language === 'it' ? 'Regione/Stato' : 'Region/State'}
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label>{language === 'he' ? 'תאריך' : 'Date'}</Label>
+                      <Label>{language === 'he' ? 'תאריך' : language === 'ru' ? 'Дата' : language === 'es' ? 'Fecha' : language === 'fr' ? 'Date' : language === 'de' ? 'Datum' : language === 'it' ? 'Data' : 'Date'}</Label>
                       <Input
                         type="date"
                         value={editData.date}
@@ -761,7 +761,7 @@ export default function TripDetails() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>{language === 'he' ? 'שעת התכנסות' : 'Meeting Time'}</Label>
+                      <Label>{language === 'he' ? 'שעת התכנסות' : language === 'ru' ? 'Время встречи' : language === 'es' ? 'Hora de encuentro' : language === 'fr' ? 'Heure de rendez-vous' : language === 'de' ? 'Treffpunkt Zeit' : language === 'it' ? 'Orario ritrovo' : 'Meeting Time'}</Label>
                       <Input
                         type="time"
                         value={editData.meeting_time || ''}
@@ -769,7 +769,7 @@ export default function TripDetails() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>{language === 'he' ? 'מיקום' : 'Location'}</Label>
+                      <Label>{language === 'he' ? 'מיקום' : language === 'ru' ? 'Местоположение' : language === 'es' ? 'Ubicación' : language === 'fr' ? 'Emplacement' : language === 'de' ? 'Standort' : language === 'it' ? 'Posizione' : 'Location'}</Label>
                       <Input
                         value={editData.location}
                         onChange={(e) => setEditData({...editData, location: e.target.value})}
@@ -810,7 +810,7 @@ export default function TripDetails() {
                     <>
                       <Separator />
                       <div className="space-y-4">
-                        <Label className="text-base font-semibold">{language === 'he' ? 'פרטי רכיבה' : 'Cycling Details'}</Label>
+                        <Label className="text-base font-semibold">{language === 'he' ? 'פרטי רכיבה' : language === 'ru' ? 'Детали велосипеда' : language === 'es' ? 'Detalles de ciclismo' : language === 'fr' ? 'Détails du cyclisme' : language === 'de' ? 'Radfahren Details' : language === 'it' ? 'Dettagli ciclismo' : 'Cycling Details'}</Label>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div className="space-y-2">
                             <Label>{t('cyclingType')}</Label>
@@ -852,7 +852,7 @@ export default function TripDetails() {
                     <>
                       <Separator />
                       <div className="space-y-4">
-                        <Label className="text-base font-semibold">{language === 'he' ? 'פרטי שטח' : 'Off-road Details'}</Label>
+                        <Label className="text-base font-semibold">{language === 'he' ? 'פרטי שטח' : language === 'ru' ? 'Детали бездорожья' : language === 'es' ? 'Detalles todo terreno' : language === 'fr' ? 'Détails tout-terrain' : language === 'de' ? 'Offroad-Details' : language === 'it' ? 'Dettagli fuoristrada' : 'Off-road Details'}</Label>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label>{t('offroadVehicleType')}</Label>
@@ -908,7 +908,7 @@ export default function TripDetails() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>{language === 'he' ? 'סוג משך' : 'Duration Type'}</Label>
+                      <Label>{language === 'he' ? 'סוג משך' : language === 'ru' ? 'Тип продолжительности' : language === 'es' ? 'Tipo de duración' : language === 'fr' ? 'Type de durée' : language === 'de' ? 'Dauertyp' : language === 'it' ? 'Tipo di durata' : 'Duration Type'}</Label>
                       <Select value={editData.duration_type} onValueChange={(v) => setEditData({...editData, duration_type: v})}>
                         <SelectTrigger>
                           <SelectValue />
@@ -921,7 +921,7 @@ export default function TripDetails() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>{language === 'he' ? 'משך זמן' : 'Duration Value'}</Label>
+                      <Label>{language === 'he' ? 'משך זמן' : language === 'ru' ? 'Значение продолжительности' : language === 'es' ? 'Valor de duración' : language === 'fr' ? 'Valeur de durée' : language === 'de' ? 'Dauerwert' : language === 'it' ? 'Valore durata' : 'Duration Value'}</Label>
                       <Input
                         type="number"
                         value={editData.duration_value}
@@ -931,7 +931,7 @@ export default function TripDetails() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>{language === 'he' ? 'מקסימום משתתפים' : 'Max Participants'}</Label>
+                    <Label>{language === 'he' ? 'מקסימום משתתפים' : language === 'ru' ? 'Макс. участники' : language === 'es' ? 'Máximo de participantes' : language === 'fr' ? 'Participants max' : language === 'de' ? 'Max. Teilnehmer' : language === 'it' ? 'Massimo partecipanti' : 'Max Participants'}</Label>
                     <Input
                       type="number"
                       value={editData.max_participants}
@@ -943,7 +943,7 @@ export default function TripDetails() {
                   <Separator />
                   
                   <div className="space-y-2">
-                    <Label>{language === 'he' ? 'סוגי שביל' : 'Trail Types'}</Label>
+                    <Label>{language === 'he' ? 'סוגי שביל' : language === 'ru' ? 'Типы тропы' : language === 'es' ? 'Tipos de sendero' : language === 'fr' ? 'Types de sentier' : language === 'de' ? 'Wegtypen' : language === 'it' ? 'Tipi di sentiero' : 'Trail Types'}</Label>
                     <div className="flex flex-wrap gap-2">
                       {trailTypes.map(type => (
                         <Badge
@@ -1037,7 +1037,7 @@ export default function TripDetails() {
 
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <Label>{language === 'he' ? 'מדריך מקצועי' : 'Professional Guide'}</Label>
+                      <Label>{language === 'he' ? 'מדריך מקצועי' : language === 'ru' ? 'Профессиональный гид' : language === 'es' ? 'Guía profesional' : language === 'fr' ? 'Guide professionnel' : language === 'de' ? 'Professioneller Führer' : language === 'it' ? 'Guida professionale' : 'Professional Guide'}</Label>
                       <Switch
                         checked={editData.has_guide}
                         onCheckedChange={(checked) => setEditData({...editData, has_guide: checked})}
@@ -1046,7 +1046,7 @@ export default function TripDetails() {
                     {editData.has_guide && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label>{language === 'he' ? 'שם המדריך' : 'Guide Name'}</Label>
+                          <Label>{language === 'he' ? 'שם המדריך' : language === 'ru' ? 'Имя гида' : language === 'es' ? 'Nombre del guía' : language === 'fr' ? 'Nom du guide' : language === 'de' ? 'Name des Führers' : language === 'it' ? 'Nome della guida' : 'Guide Name'}</Label>
                           <Input
                             value={editData.guide_name}
                             onChange={(e) => setEditData({...editData, guide_name: e.target.value})}
@@ -1054,7 +1054,7 @@ export default function TripDetails() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>{language === 'he' ? 'נושא ההדרכה' : 'Guide Topic'}</Label>
+                          <Label>{language === 'he' ? 'נושא ההדרכה' : language === 'ru' ? 'Тема гида' : language === 'es' ? 'Tema del guía' : language === 'fr' ? 'Sujet du guide' : language === 'de' ? 'Thema des Führers' : language === 'it' ? 'Argomento della guida' : 'Guide Topic'}</Label>
                           <Input
                             value={editData.guide_topic}
                             onChange={(e) => setEditData({...editData, guide_topic: e.target.value})}
@@ -1069,7 +1069,7 @@ export default function TripDetails() {
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label>{language === 'he' ? 'טווחי גילאי הורים' : 'Parent Age Ranges'}</Label>
+                      <Label>{language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : language === 'es' ? 'Rangos de edad de padres' : language === 'fr' ? 'Tranches d\'âge des parents' : language === 'de' ? 'Altersgruppen Eltern' : language === 'it' ? 'Fasce d\'età genitori' : 'Parent Age Ranges'}</Label>
                       <div className="flex flex-wrap gap-2">
                         {['20-30', '30-40', '40-50', '50-60', '60+'].map(range => (
                           <Badge
@@ -1093,7 +1093,7 @@ export default function TripDetails() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>{language === 'he' ? 'טווחי גילאי ילדים' : 'Children Age Ranges'}</Label>
+                      <Label>{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : language === 'es' ? 'Rangos de edad de niños' : language === 'fr' ? 'Tranches d\'âge des enfants' : language === 'de' ? 'Altersgruppen Kinder' : language === 'it' ? 'Fasce d\'età bambini' : 'Children Age Ranges'}</Label>
                       <div className="flex flex-wrap gap-2">
                         {['0-2', '3-6', '7-10', '11-14', '15-18', '18-21', '21+'].map(range => (
                           <Badge
@@ -1132,7 +1132,7 @@ export default function TripDetails() {
                         {trip.meeting_time && (
                           <span className="text-sm text-blue-600 flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            {language === 'he' ? 'התכנסות:' : 'Meeting:'} {trip.meeting_time}
+                            {language === 'he' ? 'התכנסות:' : language === 'ru' ? 'Встреча:' : language === 'es' ? 'Encuentro:' : language === 'fr' ? 'Rendez-vous :' : language === 'de' ? 'Treffpunkt:' : language === 'it' ? 'Ritrovo:' : 'Meeting:'} {trip.meeting_time}
                           </span>
                         )}
                       </div>
@@ -1192,7 +1192,7 @@ export default function TripDetails() {
                       </Button>
                     ) : hasPendingRequest ? (
                       <Badge variant="outline" className="border-yellow-300 text-yellow-700 bg-yellow-50">
-                        {language === 'he' ? 'הבקשה ממתינה לאישור' : 'Request pending approval'}
+                        {language === 'he' ? 'הבקשה ממתינה לאישור' : language === 'ru' ? 'Запрос ожидает подтверждения' : language === 'es' ? 'Solicitud pendiente de aprobación' : language === 'fr' ? 'Demande en attente d\'approbation' : language === 'de' ? 'Anfrage wartet auf Genehmigung' : language === 'it' ? 'Richiesta in attesa di approvazione' : 'Request pending approval'}
                       </Badge>
                     ) : (
                       <Button 
@@ -1201,7 +1201,7 @@ export default function TripDetails() {
                         className="bg-emerald-600 hover:bg-emerald-700"
                       >
                         <Check className="w-4 h-4 mr-2" />
-                        {isFull ? t('tripFull') : (language === 'he' ? 'בקש להצטרף' : 'Request to Join')}
+                        {isFull ? t('tripFull') : (language === 'he' ? 'בקש להצטרף' : language === 'ru' ? 'Запросить присоединение' : language === 'es' ? 'Solicitar unirse' : language === 'fr' ? 'Demander à rejoindre' : language === 'de' ? 'Beitritt anfragen' : language === 'it' ? 'Richiedi di unirti' : 'Request to Join')}
                       </Button>
                     )
                   )}
@@ -1211,13 +1211,13 @@ export default function TripDetails() {
                       onClick={() => base44.auth.redirectToLogin(window.location.href)}
                       className="bg-emerald-600 hover:bg-emerald-700"
                     >
-                      {language === 'he' ? 'התחבר להצטרפות' : 'Login to Join'}
+                      {language === 'he' ? 'התחבר להצטרפות' : language === 'ru' ? 'Войти для присоединения' : language === 'es' ? 'Iniciar sesión para unirse' : language === 'fr' ? 'Se connecter pour rejoindre' : language === 'de' ? 'Anmelden zum Beitreten' : language === 'it' ? 'Accedi per unirti' : 'Login to Join'}
                     </Button>
                   )}
 
                   {isOrganizer && (
                     <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">
-                      {language === 'he' ? 'אתה המארגן' : "You're the organizer"}
+                      {language === 'he' ? 'אתה המארגן' : language === 'ru' ? 'Вы организатор' : language === 'es' ? 'Eres el organizador' : language === 'fr' ? 'Vous êtes l\'organisateur' : language === 'de' ? 'Sie sind der Organisator' : language === 'it' ? 'Sei l\'organizzatore' : "You're the organizer"}
                     </Badge>
                   )}
                 </div>
@@ -1346,16 +1346,16 @@ export default function TripDetails() {
                 <CardContent className="space-y-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
                   {trip.activity_type === 'cycling' && (trip.cycling_distance || trip.cycling_elevation) && (
                     <div>
-                      <p className="font-medium mb-2">{t('cycling')} {language === 'he' ? 'פרטים' : 'Details'}</p>
+                      <p className="font-medium mb-2">{t('cycling')} {language === 'he' ? 'פרטים' : language === 'ru' ? 'Детали' : language === 'es' ? 'Detalles' : language === 'fr' ? 'Détails' : language === 'de' ? 'Details' : language === 'it' ? 'Dettagli' : 'Details'}</p>
                       <div className="flex flex-wrap gap-3">
                         {trip.cycling_distance && (
                           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                            {trip.cycling_distance} {language === 'he' ? 'ק"מ' : 'km'}
+                            {trip.cycling_distance} {language === 'he' ? 'ק"מ' : language === 'ru' ? 'км' : language === 'es' ? 'km' : language === 'fr' ? 'km' : language === 'de' ? 'km' : language === 'it' ? 'km' : 'km'}
                           </Badge>
                         )}
                         {trip.cycling_elevation && (
                           <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
-                            ↗ {trip.cycling_elevation} {language === 'he' ? 'מ\'' : 'm'}
+                            ↗ {trip.cycling_elevation} {language === 'he' ? 'מ\'' : language === 'ru' ? 'м' : language === 'es' ? 'm' : language === 'fr' ? 'm' : language === 'de' ? 'm' : language === 'it' ? 'm' : 'm'}
                           </Badge>
                         )}
                       </div>
@@ -1364,11 +1364,11 @@ export default function TripDetails() {
 
                   {trip.activity_type === 'offroad' && (
                     <div>
-                      <p className="font-medium mb-2">{t('offroad')} {language === 'he' ? 'פרטים' : 'Details'}</p>
+                      <p className="font-medium mb-2">{t('offroad')} {language === 'he' ? 'פרטים' : language === 'ru' ? 'Детали' : language === 'es' ? 'Detalles' : language === 'fr' ? 'Détails' : language === 'de' ? 'Details' : language === 'it' ? 'Dettagli' : 'Details'}</p>
                       <div className="space-y-2">
                         {trip.offroad_distance && (
                           <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
-                            {trip.offroad_distance} {language === 'he' ? 'ק"מ' : 'km'}
+                            {trip.offroad_distance} {language === 'he' ? 'ק"מ' : language === 'ru' ? 'км' : language === 'es' ? 'km' : language === 'fr' ? 'km' : language === 'de' ? 'km' : language === 'it' ? 'km' : 'km'}
                           </Badge>
                         )}
                         {trip.offroad_terrain_type && trip.offroad_terrain_type.length > 0 && (
@@ -1438,16 +1438,16 @@ export default function TripDetails() {
                         </div>
                         <div className="flex-1">
                           <p className="font-semibold text-blue-900 mb-1">
-                            {language === 'he' ? 'מדריך מקצועי' : 'Professional Guide'}
+                            {language === 'he' ? 'מדריך מקצועי' : language === 'ru' ? 'Профессиональный гид' : language === 'es' ? 'Guía profesional' : language === 'fr' ? 'Guide professionnel' : language === 'de' ? 'Professioneller Führer' : language === 'it' ? 'Guida professionale' : 'Professional Guide'}
                           </p>
                           {trip.guide_name && (
                             <p className="text-sm text-blue-700 mb-1">
-                              <span className="font-medium">{language === 'he' ? 'שם:' : 'Name:'}</span> {trip.guide_name}
+                              <span className="font-medium">{language === 'he' ? 'שם:' : language === 'ru' ? 'Имя:' : language === 'es' ? 'Nombre:' : language === 'fr' ? 'Nom :' : language === 'de' ? 'Name:' : language === 'it' ? 'Nome:' : 'Name:'}</span> {trip.guide_name}
                             </p>
                           )}
                           {trip.guide_topic && (
                             <p className="text-sm text-blue-700">
-                              <span className="font-medium">{language === 'he' ? 'נושא:' : 'Topic:'}</span> {trip.guide_topic}
+                              <span className="font-medium">{language === 'he' ? 'נושא:' : language === 'ru' ? 'Тема:' : language === 'es' ? 'Tema:' : language === 'fr' ? 'Sujet :' : language === 'de' ? 'Thema:' : language === 'it' ? 'Argomento:' : 'Topic:'}</span> {trip.guide_topic}
                             </p>
                           )}
                         </div>
@@ -1461,7 +1461,7 @@ export default function TripDetails() {
                     <div className="space-y-4">
                       {trip.parent_age_ranges?.length > 0 && (
                         <div>
-                          <p className="text-gray-500 mb-2">{language === 'he' ? 'טווחי גילאי הורים' : 'Parent Age Ranges'}</p>
+                          <p className="text-gray-500 mb-2">{language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : language === 'es' ? 'Rangos de edad de padres' : language === 'fr' ? 'Tranches d\'âge des parents' : language === 'de' ? 'Altersgruppen Eltern' : language === 'it' ? 'Fasce d\'età genitori' : 'Parent Age Ranges'}</p>
                           <div className="flex flex-wrap gap-2">
                             {trip.parent_age_ranges.map(range => (
                               <Badge key={range} variant="outline" className="border-purple-300 text-purple-700">
@@ -1473,7 +1473,7 @@ export default function TripDetails() {
                       )}
                       {trip.children_age_ranges?.length > 0 && (
                         <div>
-                          <p className="text-gray-500 mb-2">{language === 'he' ? 'טווחי גילאי ילדים' : 'Children Age Ranges'}</p>
+                          <p className="text-gray-500 mb-2">{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : language === 'es' ? 'Rangos de edad de niños' : language === 'fr' ? 'Tranches d\'âge des enfants' : language === 'de' ? 'Altersgruppen Kinder' : language === 'it' ? 'Fasce d\'età bambini' : 'Children Age Ranges'}</p>
                           <div className="flex flex-wrap gap-2">
                             {trip.children_age_ranges.map(range => (
                               <Badge key={range} variant="outline" className="border-pink-300 text-pink-700">
@@ -1633,11 +1633,16 @@ export default function TripDetails() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {language === 'he' ? 'בקשה להצטרפות לטיול' : 'Request to Join Trip'}
+              {language === 'he' ? 'בקשה להצטרפות לטיול' : language === 'ru' ? 'Запрос на присоединение к поездке' : language === 'es' ? 'Solicitud para unirse al viaje' : language === 'fr' ? 'Demande pour rejoindre le voyage' : language === 'de' ? 'Anfrage zur Teilnahme an der Reise' : language === 'it' ? 'Richiesta di unirsi al viaggio' : 'Request to Join Trip'}
             </DialogTitle>
             <DialogDescription>
               {language === 'he' 
                 ? 'ספר למארגן מעט על עצמך או שאל שאלות על הטיול'
+                : language === 'ru' ? 'Расскажите организатору о себе или задайте вопросы о поездке'
+                : language === 'es' ? 'Cuéntale al organizador sobre ti o haz preguntas sobre el viaje'
+                : language === 'fr' ? 'Parlez de vous à l\'organisateur ou posez des questions sur le voyage'
+                : language === 'de' ? 'Erzählen Sie dem Organisator über sich oder stellen Sie Fragen zur Reise'
+                : language === 'it' ? 'Racconta all\'organizzatore di te o fai domande sul viaggio'
                 : 'Tell the organizer about yourself or ask questions about the trip'}
             </DialogDescription>
           </DialogHeader>
@@ -1645,13 +1650,18 @@ export default function TripDetails() {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>
-                {language === 'he' ? 'הודעה למארגן (אופציונלי)' : 'Message to organizer (optional)'}
+                {language === 'he' ? 'הודעה למארגן (אופציונלי)' : language === 'ru' ? 'Сообщение организатору (необязательно)' : language === 'es' ? 'Mensaje al organizador (opcional)' : language === 'fr' ? 'Message à l\'organisateur (optionnel)' : language === 'de' ? 'Nachricht an Organisator (optional)' : language === 'it' ? 'Messaggio all\'organizzatore (opzionale)' : 'Message to organizer (optional)'}
               </Label>
               <Textarea
                 value={joinMessage}
                 onChange={(e) => setJoinMessage(e.target.value)}
                 placeholder={language === 'he' 
                   ? 'לדוגמה: שלום, אני בעל ניסיון בטיולים בדרום. יש לכם עוד מקום לאדם נוסף?'
+                  : language === 'ru' ? 'напр., Привет, у меня есть опыт походов на юге. Есть место для ещё одного?'
+                  : language === 'es' ? 'ej., Hola, tengo experiencia haciendo senderismo en el sur. ¿Tienen espacio para uno más?'
+                  : language === 'fr' ? 'ex., Salut, j\'ai de l\'expérience en randonnée dans le sud. Avez-vous de la place pour une personne de plus?'
+                  : language === 'de' ? 'z.B. Hallo, ich habe Erfahrung im Wandern im Süden. Haben Sie noch Platz für eine Person?'
+                  : language === 'it' ? 'es., Ciao, ho esperienza in escursioni al sud. Avete spazio per un\'altra persona?'
                   : 'e.g., Hi, I have experience hiking in the south. Do you have room for one more?'}
                 rows={4}
                 dir={language === 'he' ? 'rtl' : 'ltr'}
@@ -1660,7 +1670,7 @@ export default function TripDetails() {
 
             <div className="space-y-2">
               <Label>
-                {t('myAccessibilityNeeds')} ({language === 'he' ? 'אופציונלי' : 'optional'})
+                {t('myAccessibilityNeeds')} ({language === 'he' ? 'אופציונלי' : language === 'ru' ? 'необязательно' : language === 'es' ? 'opcional' : language === 'fr' ? 'optionnel' : language === 'de' ? 'optional' : language === 'it' ? 'opzionale' : 'optional'})
               </Label>
               <div className="flex flex-wrap gap-2">
                 {accessibilityTypes.map(type => (
@@ -1708,7 +1718,7 @@ export default function TripDetails() {
               ) : (
                 <Check className="w-4 h-4 mr-2" />
               )}
-              {language === 'he' ? 'שלח בקשה' : 'Send Request'}
+              {language === 'he' ? 'שלח בקשה' : language === 'ru' ? 'Отправить запрос' : language === 'es' ? 'Enviar solicitud' : language === 'fr' ? 'Envoyer demande' : language === 'de' ? 'Anfrage senden' : language === 'it' ? 'Invia richiesta' : 'Send Request'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1720,11 +1730,16 @@ export default function TripDetails() {
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>
-                {language === 'he' ? 'בקשה להצטרפות לטיול' : 'Trip Join Request'}
+                {language === 'he' ? 'בקשה להצטרפות לטיול' : language === 'ru' ? 'Запрос на присоединение' : language === 'es' ? 'Solicitud de unión' : language === 'fr' ? 'Demande de rejoindre' : language === 'de' ? 'Beitrittsanfrage' : language === 'it' ? 'Richiesta di unirsi' : 'Trip Join Request'}
               </DialogTitle>
               <DialogDescription>
                 {language === 'he' 
                   ? `בקשה ${currentRequestIndex + 1} מתוך ${trip.pending_requests.length}`
+                  : language === 'ru' ? `Запрос ${currentRequestIndex + 1} из ${trip.pending_requests.length}`
+                  : language === 'es' ? `Solicitud ${currentRequestIndex + 1} de ${trip.pending_requests.length}`
+                  : language === 'fr' ? `Demande ${currentRequestIndex + 1} sur ${trip.pending_requests.length}`
+                  : language === 'de' ? `Anfrage ${currentRequestIndex + 1} von ${trip.pending_requests.length}`
+                  : language === 'it' ? `Richiesta ${currentRequestIndex + 1} di ${trip.pending_requests.length}`
                   : `Request ${currentRequestIndex + 1} of ${trip.pending_requests.length}`}
               </DialogDescription>
             </DialogHeader>
@@ -1752,7 +1767,7 @@ export default function TripDetails() {
                     className="gap-2"
                   >
                     <User className="w-4 h-4" />
-                    {language === 'he' ? 'פרופיל' : 'Profile'}
+                    {language === 'he' ? 'פרופיל' : language === 'ru' ? 'Профиль' : language === 'es' ? 'Perfil' : language === 'fr' ? 'Profil' : language === 'de' ? 'Profil' : language === 'it' ? 'Profilo' : 'Profile'}
                   </Button>
                 </div>
 
@@ -1761,7 +1776,7 @@ export default function TripDetails() {
                     <div className="flex items-start gap-2 mb-1">
                       <MessageCircle className="w-4 h-4 text-gray-500 mt-0.5" />
                       <span className="text-sm font-medium text-gray-700">
-                        {language === 'he' ? 'הודעה' : 'Message'}
+                        {language === 'he' ? 'הודעה' : language === 'ru' ? 'Сообщение' : language === 'es' ? 'Mensaje' : language === 'fr' ? 'Message' : language === 'de' ? 'Nachricht' : language === 'it' ? 'Messaggio' : 'Message'}
                       </span>
                     </div>
                     <p className="text-sm text-gray-700 italic">
@@ -1794,7 +1809,7 @@ export default function TripDetails() {
                 onClick={() => setShowRequestDialog(false)}
                 disabled={approveMutation.isLoading || rejectMutation.isLoading}
               >
-                {language === 'he' ? 'סגור' : 'Close'}
+                {language === 'he' ? 'סגור' : language === 'ru' ? 'Закрыть' : language === 'es' ? 'Cerrar' : language === 'fr' ? 'Fermer' : language === 'de' ? 'Schließen' : language === 'it' ? 'Chiudi' : 'Close'}
               </Button>
               <div className="flex gap-2">
                 <Button
@@ -1804,7 +1819,7 @@ export default function TripDetails() {
                   className="text-red-600 border-red-200 hover:bg-red-50"
                 >
                   <X className="w-4 h-4 mr-2" />
-                  {language === 'he' ? 'דחה' : 'Reject'}
+                  {language === 'he' ? 'דחה' : language === 'ru' ? 'Отклонить' : language === 'es' ? 'Rechazar' : language === 'fr' ? 'Rejeter' : language === 'de' ? 'Ablehnen' : language === 'it' ? 'Rifiuta' : 'Reject'}
                 </Button>
                 <Button
                   onClick={() => approveMutation.mutate(trip.pending_requests[currentRequestIndex].email)}
@@ -1812,7 +1827,7 @@ export default function TripDetails() {
                   className="bg-emerald-600 hover:bg-emerald-700"
                 >
                   <Check className="w-4 h-4 mr-2" />
-                  {language === 'he' ? 'אשר' : 'Approve'}
+                  {language === 'he' ? 'אשר' : language === 'ru' ? 'Одобрить' : language === 'es' ? 'Aprobar' : language === 'fr' ? 'Approuver' : language === 'de' ? 'Genehmigen' : language === 'it' ? 'Approva' : 'Approve'}
                 </Button>
               </div>
             </DialogFooter>

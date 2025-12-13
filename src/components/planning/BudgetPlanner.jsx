@@ -18,11 +18,11 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
     solo_max: trip.budget?.solo_max || 0,
     family_min: trip.budget?.family_min || 0,
     family_max: trip.budget?.family_max || 0,
-    currency: trip.budget?.currency || 'ILS',
+    currency: trip.budget?.currency || (language === 'he' ? 'ILS' : 'EUR'),
     notes: trip.budget?.notes || ''
   });
 
-  const budget = trip.budget || { solo_min: 0, solo_max: 0, family_min: 0, family_max: 0, currency: 'ILS', notes: '' };
+  const budget = trip.budget || { solo_min: 0, solo_max: 0, family_min: 0, family_max: 0, currency: language === 'he' ? 'ILS' : 'EUR', notes: '' };
 
   const handleSaveBudget = async () => {
     await base44.entities.Trip.update(trip.id, {
@@ -30,19 +30,21 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
     });
     setShowEditDialog(false);
     onUpdate();
-    toast.success(language === 'he' ? 'התקציב עודכן' : 'Budget updated');
+    toast.success(language === 'he' ? 'התקציב עודכן' : language === 'ru' ? 'Бюджет обновлен' : language === 'es' ? 'Presupuesto actualizado' : language === 'fr' ? 'Budget mis à jour' : language === 'de' ? 'Budget aktualisiert' : language === 'it' ? 'Budget aggiornato' : 'Budget updated');
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('he-IL', {
+    const currency = budget.currency || (language === 'he' ? 'ILS' : 'EUR');
+    const locale = language === 'he' ? 'he-IL' : language === 'ru' ? 'ru-RU' : language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : language === 'de' ? 'de-DE' : language === 'it' ? 'it-IT' : 'en-US';
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency: budget.currency || 'ILS'
+      currency: currency
     }).format(amount);
   };
 
   const formatRange = (min, max) => {
     if (min === 0 && max === 0) {
-      return language === 'he' ? 'לא הוגדר' : 'Not set';
+      return language === 'he' ? 'לא הוגדר' : language === 'ru' ? 'Не установлено' : language === 'es' ? 'No definido' : language === 'fr' ? 'Non défini' : language === 'de' ? 'Nicht festgelegt' : language === 'it' ? 'Non impostato' : 'Not set';
     }
     if (min === max) {
       return formatCurrency(min);
@@ -56,7 +58,7 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <DollarSign className="w-5 h-5 text-emerald-600" />
-            {language === 'he' ? 'תקציב משוער' : 'Estimated Budget'}
+            {language === 'he' ? 'תקציב משוער' : language === 'ru' ? 'Примерный бюджет' : language === 'es' ? 'Presupuesto estimado' : language === 'fr' ? 'Budget estimé' : language === 'de' ? 'Geschätztes Budget' : language === 'it' ? 'Budget stimato' : 'Estimated Budget'}
           </CardTitle>
           {isOrganizer && (
             <Button
@@ -75,7 +77,7 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
               }}
             >
               <Edit className="w-4 h-4 mr-2" />
-              {language === 'he' ? 'עריכה' : 'Edit'}
+              {language === 'he' ? 'עריכה' : language === 'ru' ? 'Редактировать' : language === 'es' ? 'Editar' : language === 'fr' ? 'Modifier' : language === 'de' ? 'Bearbeiten' : language === 'it' ? 'Modifica' : 'Edit'}
             </Button>
           )}
         </div>
@@ -88,7 +90,7 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
               <div className="flex items-center gap-2 mb-2">
                 <User className="w-5 h-5 text-blue-600" />
                 <h3 className="font-semibold text-blue-700">
-                  {language === 'he' ? 'לבודד' : 'Solo Traveler'}
+                  {language === 'he' ? 'לבודד' : language === 'ru' ? 'Одиночный путешественник' : language === 'es' ? 'Viajero solo' : language === 'fr' ? 'Voyageur solo' : language === 'de' ? 'Einzelreisender' : language === 'it' ? 'Viaggiatore singolo' : 'Solo Traveler'}
                 </h3>
               </div>
               <p className="text-2xl font-bold text-blue-700">
@@ -102,7 +104,7 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
               <div className="flex items-center gap-2 mb-2">
                 <Users className="w-5 h-5 text-purple-600" />
                 <h3 className="font-semibold text-purple-700">
-                  {language === 'he' ? 'למשפחה' : 'Family'}
+                  {language === 'he' ? 'למשפחה' : language === 'ru' ? 'Семья' : language === 'es' ? 'Familia' : language === 'fr' ? 'Famille' : language === 'de' ? 'Familie' : language === 'it' ? 'Famiglia' : 'Family'}
                 </h3>
               </div>
               <p className="text-2xl font-bold text-purple-700">
@@ -117,7 +119,7 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
           <Card className="bg-gray-50">
             <CardContent className="p-4">
               <h3 className="font-semibold mb-2 text-gray-700">
-                {language === 'he' ? 'הערות' : 'Notes'}
+                {language === 'he' ? 'הערות' : language === 'ru' ? 'Заметки' : language === 'es' ? 'Notas' : language === 'fr' ? 'Notes' : language === 'de' ? 'Notizen' : language === 'it' ? 'Note' : 'Notes'}
               </h3>
               <p className="text-gray-600 whitespace-pre-wrap">{budget.notes}</p>
             </CardContent>
@@ -126,7 +128,7 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
 
         {!budget.notes && budget.solo_min === 0 && budget.solo_max === 0 && budget.family_min === 0 && budget.family_max === 0 && (
           <div className="text-center py-8 text-gray-500">
-            {language === 'he' ? 'לא הוגדר תקציב עדיין' : 'No budget information yet'}
+            {language === 'he' ? 'לא הוגדר תקציב עדיין' : language === 'ru' ? 'Информации о бюджете пока нет' : language === 'es' ? 'Aún no hay información de presupuesto' : language === 'fr' ? 'Pas encore d\'information budgétaire' : language === 'de' ? 'Noch keine Budgetinformationen' : language === 'it' ? 'Nessuna informazione sul budget ancora' : 'No budget information yet'}
           </div>
         )}
       </CardContent>
@@ -135,14 +137,14 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{language === 'he' ? 'עריכת תקציב' : 'Edit Budget'}</DialogTitle>
+            <DialogTitle>{language === 'he' ? 'עריכת תקציב' : language === 'ru' ? 'Редактировать бюджет' : language === 'es' ? 'Editar presupuesto' : language === 'fr' ? 'Modifier le budget' : language === 'de' ? 'Budget bearbeiten' : language === 'it' ? 'Modifica budget' : 'Edit Budget'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-6">
             {/* Solo Budget */}
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-base font-semibold">
                 <User className="w-4 h-4 text-blue-600" />
-                {language === 'he' ? 'תקציב לבודד' : 'Solo Budget'}
+                {language === 'he' ? 'תקציב לבודד' : language === 'ru' ? 'Бюджет для одного' : language === 'es' ? 'Presupuesto individual' : language === 'fr' ? 'Budget solo' : language === 'de' ? 'Einzelbudget' : language === 'it' ? 'Budget individuale' : 'Solo Budget'}
               </Label>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -163,7 +165,7 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
                           : 'bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100'
                       }`}
                     >
-                      {range.label} ₪
+                      {range.label} {budgetData.currency === 'ILS' ? '₪' : budgetData.currency === 'EUR' ? '€' : budgetData.currency === 'USD' ? '$' : '£'}
                     </button>
                   );
                 })}
@@ -174,7 +176,7 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-base font-semibold">
                 <Users className="w-4 h-4 text-purple-600" />
-                {language === 'he' ? 'תקציב למשפחה' : 'Family Budget'}
+                {language === 'he' ? 'תקציב למשפחה' : language === 'ru' ? 'Семейный бюджет' : language === 'es' ? 'Presupuesto familiar' : language === 'fr' ? 'Budget familial' : language === 'de' ? 'Familienbudget' : language === 'it' ? 'Budget familiare' : 'Family Budget'}
               </Label>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -195,7 +197,7 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
                           : 'bg-purple-50 text-purple-600 border border-purple-200 hover:bg-purple-100'
                       }`}
                     >
-                      {range.label} ₪
+                      {range.label} {budgetData.currency === 'ILS' ? '₪' : budgetData.currency === 'EUR' ? '€' : budgetData.currency === 'USD' ? '$' : '£'}
                     </button>
                   );
                 })}
@@ -204,11 +206,26 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
 
             {/* Notes */}
             <div className="space-y-2">
-              <Label>{language === 'he' ? 'הערות' : 'Notes'}</Label>
+              <Label>{language === 'he' ? 'מטבע' : language === 'ru' ? 'Валюта' : language === 'es' ? 'Moneda' : language === 'fr' ? 'Devise' : language === 'de' ? 'Währung' : language === 'it' ? 'Valuta' : 'Currency'}</Label>
+              <select
+                value={budgetData.currency}
+                onChange={(e) => setBudgetData({ ...budgetData, currency: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              >
+                <option value="ILS">₪ (ILS)</option>
+                <option value="EUR">€ (EUR)</option>
+                <option value="USD">$ (USD)</option>
+                <option value="GBP">£ (GBP)</option>
+              </select>
+            </div>
+
+            {/* Notes */}
+            <div className="space-y-2">
+              <Label>{language === 'he' ? 'הערות' : language === 'ru' ? 'Заметки' : language === 'es' ? 'Notas' : language === 'fr' ? 'Notes' : language === 'de' ? 'Notizen' : language === 'it' ? 'Note' : 'Notes'}</Label>
               <Textarea
                 value={budgetData.notes}
                 onChange={(e) => setBudgetData({ ...budgetData, notes: e.target.value })}
-                placeholder={language === 'he' ? 'הערות על התקציב...' : 'Notes about the budget...'}
+                placeholder={language === 'he' ? 'הערות על התקציב...' : language === 'ru' ? 'Заметки о бюджете...' : language === 'es' ? 'Notas sobre el presupuesto...' : language === 'fr' ? 'Notes sur le budget...' : language === 'de' ? 'Notizen zum Budget...' : language === 'it' ? 'Note sul budget...' : 'Notes about the budget...'}
                 rows={4}
                 dir={language === 'he' ? 'rtl' : 'ltr'}
               />
@@ -216,10 +233,10 @@ export default function BudgetPlanner({ trip, isOrganizer, onUpdate }) {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowEditDialog(false)}>
-              {language === 'he' ? 'ביטול' : 'Cancel'}
+              {language === 'he' ? 'ביטול' : language === 'ru' ? 'Отмена' : language === 'es' ? 'Cancelar' : language === 'fr' ? 'Annuler' : language === 'de' ? 'Abbrechen' : language === 'it' ? 'Annulla' : 'Cancel'}
             </Button>
             <Button onClick={handleSaveBudget} className="bg-emerald-600 hover:bg-emerald-700">
-              {language === 'he' ? 'שמור' : 'Save'}
+              {language === 'he' ? 'שמור' : language === 'ru' ? 'Сохранить' : language === 'es' ? 'Guardar' : language === 'fr' ? 'Enregistrer' : language === 'de' ? 'Speichern' : language === 'it' ? 'Salva' : 'Save'}
             </Button>
           </DialogFooter>
         </DialogContent>
