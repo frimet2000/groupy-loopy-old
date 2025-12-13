@@ -159,10 +159,16 @@ export default function CreateTrip() {
   const fetchRegionsForCountry = async (country) => {
     setLoadingRegions(true);
     try {
+      // For Israel, fetch cities/areas directly instead of states
+      const isIsrael = country === 'israel';
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: language === 'he'
-          ? `צור רשימה של 8-12 מחוזות או מדינות עיקריים ב-${t(country)}. החזר רק את שמות המחוזות/מדינות באנגלית (lowercase), מופרדים בפסיקים. לדוגמה: "california, texas, florida". השתמש בשמות פשוטים וקצרים.`
-          : `Create a list of 8-12 main states or provinces in ${t(country)}. Return only the state/province names in English (lowercase), separated by commas. For example: "california, texas, florida". Use simple, short names.`,
+        prompt: isIsrael
+          ? (language === 'he'
+            ? `צור רשימה של 10-15 אזורים וערים מרכזיים בישראל. החזר רק את שמות האזורים/ערים באנגלית (lowercase), מופרדים בפסיקים. לדוגמה: "tel aviv, jerusalem, haifa, eilat". השתמש בשמות פשוטים וקצרים.`
+            : `Create a list of 10-15 main regions and cities in Israel. Return only the region/city names in English (lowercase), separated by commas. For example: "tel aviv, jerusalem, haifa, eilat". Use simple, short names.`)
+          : (language === 'he'
+            ? `צור רשימה של 8-12 מחוזות או מדינות עיקריים ב-${t(country)}. החזר רק את שמות המחוזות/מדינות באנגלית (lowercase), מופרדים בפסיקים. לדוגמה: "california, texas, florida". השתמש בשמות פשוטים וקצרים.`
+            : `Create a list of 8-12 main states or provinces in ${t(country)}. Return only the state/province names in English (lowercase), separated by commas. For example: "california, texas, florida". Use simple, short names.`),
         add_context_from_internet: true,
         response_json_schema: {
           type: "object",
@@ -596,43 +602,49 @@ export default function CreateTrip() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label>{language === 'he' ? 'מחוז/מדינה' : 'State/Province'}</Label>
-                      <Select 
-                        value={formData.region} 
-                        onValueChange={(v) => handleChange('region', v)}
-                        disabled={loadingRegions}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder={loadingRegions ? (language === 'he' ? 'טוען...' : 'Loading...') : (language === 'he' ? 'בחר מחוז' : 'Select state')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {dynamicRegions.map(r => (
-                            <SelectItem key={r} value={r}>
-                              {r.charAt(0).toUpperCase() + r.slice(1)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {loadingRegions && (
-                        <p className="text-xs text-blue-600 flex items-center gap-1">
-                          <Sparkles className="w-3 h-3 animate-pulse" />
-                          {language === 'he' ? 'AI יוצר מחוזות...' : 'AI generating states...'}
-                        </p>
-                      )}
-                    </div>
+                  <div className={`grid grid-cols-1 ${formData.country === 'israel' ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-4`}>
+                    {formData.country !== 'israel' && (
+                      <div className="space-y-2">
+                        <Label>{language === 'he' ? 'מחוז/מדינה' : 'State/Province'}</Label>
+                        <Select 
+                          value={formData.region} 
+                          onValueChange={(v) => handleChange('region', v)}
+                          disabled={loadingRegions}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder={loadingRegions ? (language === 'he' ? 'טוען...' : 'Loading...') : (language === 'he' ? 'בחר מחוז' : 'Select state')} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {dynamicRegions.map(r => (
+                              <SelectItem key={r} value={r}>
+                                {r.charAt(0).toUpperCase() + r.slice(1)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {loadingRegions && (
+                          <p className="text-xs text-blue-600 flex items-center gap-1">
+                            <Sparkles className="w-3 h-3 animate-pulse" />
+                            {language === 'he' ? 'AI יוצר מחוזות...' : 'AI generating states...'}
+                          </p>
+                        )}
+                      </div>
+                    )}
 
                     <div className="space-y-2">
                       <Label>{language === 'he' ? 'אזור/עיר' : 'Area/City'}</Label>
                       <Select 
-                        value={formData.sub_region} 
-                        onValueChange={(v) => handleChange('sub_region', v)}
-                        disabled={loadingSubRegions || !formData.region}
+                        value={formData.country === 'israel' ? formData.region : formData.sub_region} 
+                        onValueChange={(v) => handleChange(formData.country === 'israel' ? 'region' : 'sub_region', v)}
+                        disabled={formData.country === 'israel' ? loadingRegions : (loadingSubRegions || !formData.region)}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder={
-                            !formData.region 
+                            formData.country === 'israel'
+                              ? loadingRegions
+                                ? (language === 'he' ? 'טוען...' : 'Loading...')
+                                : (language === 'he' ? 'בחר אזור' : 'Select area')
+                              : !formData.region 
                               ? (language === 'he' ? 'בחר מחוז תחילה' : 'Select state first')
                               : loadingSubRegions 
                               ? (language === 'he' ? 'טוען...' : 'Loading...') 
@@ -640,14 +652,14 @@ export default function CreateTrip() {
                           } />
                         </SelectTrigger>
                         <SelectContent>
-                          {dynamicSubRegions.map(sr => (
-                            <SelectItem key={sr} value={sr}>
-                              {sr.charAt(0).toUpperCase() + sr.slice(1)}
+                          {(formData.country === 'israel' ? dynamicRegions : dynamicSubRegions).map(item => (
+                            <SelectItem key={item} value={item}>
+                              {item.charAt(0).toUpperCase() + item.slice(1)}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      {loadingSubRegions && (
+                      {(formData.country === 'israel' ? loadingRegions : loadingSubRegions) && (
                         <p className="text-xs text-blue-600 flex items-center gap-1">
                           <Sparkles className="w-3 h-3 animate-pulse" />
                           {language === 'he' ? 'AI יוצר אזורים...' : 'AI generating areas...'}
