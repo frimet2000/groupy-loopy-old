@@ -79,6 +79,23 @@ export default function Community() {
       await base44.entities.User.update(targetUser.id, {
         friend_requests: updatedRequests
       });
+      
+      // Send notification to target user
+      try {
+        const userName = (user.first_name && user.last_name) 
+          ? `${user.first_name} ${user.last_name}` 
+          : user.full_name;
+        await base44.functions.invoke('sendPushNotification', {
+          recipient_email: targetEmail,
+          notification_type: 'friend_requests',
+          title: language === 'he' ? 'בקשת חברות חדשה' : 'New Friend Request',
+          body: language === 'he' 
+            ? `${userName} שלח/ה לך בקשת חברות`
+            : `${userName} sent you a friend request`
+        });
+      } catch (error) {
+        console.log('Notification error:', error);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['users']);
