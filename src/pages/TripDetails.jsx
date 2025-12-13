@@ -25,6 +25,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
+import { getAllCountries } from '../components/utils/CountryRegions';
 import {
   Dialog,
   DialogContent,
@@ -60,6 +62,15 @@ const trailIcons = {
   historical: History,
   urban: Building,
 };
+
+const difficulties = ['easy', 'moderate', 'challenging', 'hard', 'extreme'];
+const durations = ['hours', 'half_day', 'full_day', 'overnight', 'multi_day'];
+const activityTypes = ['hiking', 'cycling', 'offroad'];
+const cyclingTypes = ['road', 'mountain', 'gravel', 'hybrid', 'bmx', 'electric'];
+const offroadVehicleTypes = ['jeep', 'atv', 'dirt_bike', 'side_by_side', 'buggy', 'truck'];
+const offroadTerrainTypes = ['sand', 'rocks', 'mud', 'hills', 'desert', 'forest_trails', 'river_crossing'];
+const trailTypes = ['water', 'full_shade', 'partial_shade', 'desert', 'forest', 'coastal', 'mountain', 'historical', 'urban'];
+const accessibilityTypes = ['wheelchair', 'visual_impairment', 'hearing_impairment', 'mobility_aid', 'stroller_friendly', 'elderly_friendly'];
 
 export default function TripDetails() {
   const { t, language, isRTL } = useLanguage();
@@ -380,9 +391,19 @@ export default function TripDetails() {
       date: trip.date,
       meeting_time: trip.meeting_time || '',
       location: trip.location,
+      country: trip.country || 'israel',
+      region: trip.region || '',
+      sub_region: trip.sub_region || '',
       difficulty: trip.difficulty,
       duration_type: trip.duration_type,
       duration_value: trip.duration_value,
+      activity_type: trip.activity_type || 'hiking',
+      cycling_type: trip.cycling_type || '',
+      cycling_distance: trip.cycling_distance || null,
+      cycling_elevation: trip.cycling_elevation || null,
+      offroad_vehicle_type: trip.offroad_vehicle_type || '',
+      offroad_distance: trip.offroad_distance || null,
+      offroad_terrain_type: trip.offroad_terrain_type || [],
       trail_type: trip.trail_type || [],
       interests: trip.interests || [],
       accessibility_types: trip.accessibility_types || [],
@@ -662,6 +683,29 @@ export default function TripDetails() {
                       rows={3}
                     />
                   </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>{t('country')}</Label>
+                      <Select value={editData.country} onValueChange={(v) => setEditData({...editData, country: v, region: '', sub_region: ''})}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {getAllCountries().map(c => (
+                            <SelectItem key={c} value={c}>{t(c)}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{language === 'he' ? 'אזור' : 'Region'}</Label>
+                      <Input
+                        value={editData.region}
+                        onChange={(e) => setEditData({...editData, region: e.target.value})}
+                        placeholder={language === 'he' ? 'אזור/מחוז' : 'Region/State'}
+                      />
+                    </div>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label>{language === 'he' ? 'תאריך' : 'Date'}</Label>
@@ -688,7 +732,20 @@ export default function TripDetails() {
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>{t('activityType')}</Label>
+                      <Select value={editData.activity_type} onValueChange={(v) => setEditData({...editData, activity_type: v})}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {activityTypes.map(type => (
+                            <SelectItem key={type} value={type}>{t(type)}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                     <div className="space-y-2">
                       <Label>{language === 'he' ? 'רמת קושי' : 'Difficulty'}</Label>
                       <Select value={editData.difficulty} onValueChange={(v) => setEditData({...editData, difficulty: v})}>
@@ -696,14 +753,115 @@ export default function TripDetails() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="easy">{t('easy')}</SelectItem>
-                          <SelectItem value="moderate">{t('moderate')}</SelectItem>
-                          <SelectItem value="challenging">{t('challenging')}</SelectItem>
-                          <SelectItem value="hard">{t('hard')}</SelectItem>
-                          <SelectItem value="extreme">{t('extreme')}</SelectItem>
+                          {difficulties.map(d => (
+                            <SelectItem key={d} value={d}>{t(d)}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
+                  </div>
+
+                  {editData.activity_type === 'cycling' && (
+                    <>
+                      <Separator />
+                      <div className="space-y-4">
+                        <Label className="text-base font-semibold">{language === 'he' ? 'פרטי רכיבה' : 'Cycling Details'}</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="space-y-2">
+                            <Label>{t('cyclingType')}</Label>
+                            <Select value={editData.cycling_type} onValueChange={(v) => setEditData({...editData, cycling_type: v})}>
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {cyclingTypes.map(type => (
+                                  <SelectItem key={type} value={type}>{t(type)}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label>{t('cyclingDistance')}</Label>
+                            <Input
+                              type="number"
+                              value={editData.cycling_distance || ''}
+                              onChange={(e) => setEditData({...editData, cycling_distance: parseInt(e.target.value) || null})}
+                              placeholder="50"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>{t('cyclingElevation')}</Label>
+                            <Input
+                              type="number"
+                              value={editData.cycling_elevation || ''}
+                              onChange={(e) => setEditData({...editData, cycling_elevation: parseInt(e.target.value) || null})}
+                              placeholder="500"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {editData.activity_type === 'offroad' && (
+                    <>
+                      <Separator />
+                      <div className="space-y-4">
+                        <Label className="text-base font-semibold">{language === 'he' ? 'פרטי שטח' : 'Off-road Details'}</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>{t('offroadVehicleType')}</Label>
+                            <Select value={editData.offroad_vehicle_type} onValueChange={(v) => setEditData({...editData, offroad_vehicle_type: v})}>
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {offroadVehicleTypes.map(type => (
+                                  <SelectItem key={type} value={type}>{t(type)}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label>{t('offroadDistance')}</Label>
+                            <Input
+                              type="number"
+                              value={editData.offroad_distance || ''}
+                              onChange={(e) => setEditData({...editData, offroad_distance: parseInt(e.target.value) || null})}
+                              placeholder="80"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>{t('offroadTerrainType')}</Label>
+                          <div className="flex flex-wrap gap-2">
+                            {offroadTerrainTypes.map(type => (
+                              <Badge
+                                key={type}
+                                variant={editData.offroad_terrain_type?.includes(type) ? 'default' : 'outline'}
+                                className="cursor-pointer"
+                                onClick={() => {
+                                  const current = editData.offroad_terrain_type || [];
+                                  setEditData({
+                                    ...editData,
+                                    offroad_terrain_type: current.includes(type)
+                                      ? current.filter(t => t !== type)
+                                      : [...current, type]
+                                  });
+                                }}
+                              >
+                                {t(type)}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  <Separator />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>{language === 'he' ? 'סוג משך' : 'Duration Type'}</Label>
                       <Select value={editData.duration_type} onValueChange={(v) => setEditData({...editData, duration_type: v})}>
@@ -711,11 +869,9 @@ export default function TripDetails() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="hours">{t('hours')}</SelectItem>
-                          <SelectItem value="half_day">{t('half_day')}</SelectItem>
-                          <SelectItem value="full_day">{t('full_day')}</SelectItem>
-                          <SelectItem value="overnight">{t('overnight')}</SelectItem>
-                          <SelectItem value="multi_day">{t('multi_day')}</SelectItem>
+                          {durations.map(d => (
+                            <SelectItem key={d} value={d}>{t(d)}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -744,7 +900,7 @@ export default function TripDetails() {
                   <div className="space-y-2">
                     <Label>{language === 'he' ? 'סוגי שביל' : 'Trail Types'}</Label>
                     <div className="flex flex-wrap gap-2">
-                      {['water', 'full_shade', 'partial_shade', 'desert', 'forest', 'coastal', 'mountain', 'historical', 'urban'].map(type => (
+                      {trailTypes.map(type => (
                         <Badge
                           key={type}
                           variant={editData.trail_type?.includes(type) ? 'default' : 'outline'}
