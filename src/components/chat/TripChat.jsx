@@ -155,37 +155,33 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
 
   return (
     <>
-      <div className="p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <MessageCircle className="w-4 h-4 text-white" />
-            </div>
-            <h3 className="font-semibold text-gray-900">
-              {language === 'he' ? 'צ\'אט' : 'Chat'}
-            </h3>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <MessageCircle className="w-5 h-5 text-blue-600" />
+              {language === 'he' ? 'צ\'אט הטיול' : 'Trip Chat'}
+            </CardTitle>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowVideoCall(true)}
+              className="gap-2 text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+            >
+              <Video className="w-4 h-4" />
+              {language === 'he' ? 'שיחת וידאו' : 'Video Call'}
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowVideoCall(true)}
-            className="gap-1.5 text-emerald-600 hover:bg-emerald-50 h-8"
-          >
-            <Video className="w-3.5 h-3.5" />
-            <span className="text-xs font-medium">{language === 'he' ? 'וידאו' : 'Video'}</span>
-          </Button>
-        </div>
-      </div>
-
-      <div className="p-4">
+        </CardHeader>
+        <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 mb-3 p-1 bg-gray-100">
-            <TabsTrigger value="group" className="gap-1.5 text-sm data-[state=active]:bg-white">
-              <Users className="w-3.5 h-3.5" />
-              {language === 'he' ? 'קבוצה' : 'Group'}
+          <TabsList className="grid w-full grid-cols-2 mb-4">
+            <TabsTrigger value="group" className="gap-2">
+              <Users className="w-4 h-4" />
+              {language === 'he' ? 'קבוצתי' : 'Group'}
             </TabsTrigger>
-            <TabsTrigger value="private" className="gap-1.5 text-sm data-[state=active]:bg-white">
-              <Lock className="w-3.5 h-3.5" />
+            <TabsTrigger value="private" className="gap-2">
+              <Lock className="w-4 h-4" />
               {language === 'he' ? 'פרטי' : 'Private'}
             </TabsTrigger>
           </TabsList>
@@ -219,55 +215,45 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
               </div>
             )}
 
-            <ScrollArea className="h-[350px]" ref={scrollRef}>
+            <ScrollArea className="h-[400px] pr-4" ref={scrollRef}>
               {groupMessages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-center py-12 px-4">
-                  <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mb-3">
-                    <MessageCircle className="w-7 h-7 text-blue-600" />
-                  </div>
-                  <p className="text-gray-900 font-medium mb-1">
-                    {language === 'he' ? 'אין הודעות' : 'No messages'}
-                  </p>
-                  <p className="text-sm text-gray-500">
+                <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                  <MessageCircle className="w-12 h-12 text-gray-300 mb-3" />
+                  <p className="text-gray-500">
                     {language === 'he' 
-                      ? 'התחל שיחה עם הקבוצה'
-                      : 'Start a conversation'}
+                      ? 'אין הודעות עדיין. התחל את השיחה!'
+                      : 'No messages yet. Start the conversation!'}
                   </p>
                 </div>
               ) : (
-                <div className="px-3 py-2">
-                  {groupMessages.map(msg => renderMessage(msg))}
-                </div>
+                groupMessages.map(msg => renderMessage(msg))
               )}
             </ScrollArea>
 
-            <div className="space-y-2 pt-3 border-t">{activeInvite && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowVideoCall(true)}
-                  className="w-full gap-1.5 text-emerald-600 border-emerald-200 hover:bg-emerald-50 h-8"
-                >
-                  <Video className="w-3.5 h-3.5" />
-                  <span className="text-xs">{language === 'he' ? 'הצטרף לשיחה' : 'Join Call'}</span>
-                </Button>
-              )}
+            <div className="space-y-2 pt-4 border-t">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowScheduleDialog(true)}
+                className="w-full gap-2 text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+              >
+                <Calendar className="w-4 h-4" />
+                {language === 'he' ? 'קבע שיחת וידאו' : 'Schedule Video Call'}
+              </Button>
               
               <div className="flex gap-2">
                 <Input
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && !sending && handleSend()}
-                  placeholder={language === 'he' ? 'הודעה...' : 'Message...'}
+                  placeholder={language === 'he' ? 'כתוב הודעה...' : 'Type a message...'}
                   disabled={sending}
                   dir={language === 'he' ? 'rtl' : 'ltr'}
-                  className="h-9 text-sm"
                 />
                 <Button 
                   onClick={handleSend} 
                   disabled={!message.trim() || sending}
-                  size="sm"
-                  className="bg-emerald-600 hover:bg-emerald-700 h-9 w-9 p-0"
+                  className="bg-emerald-600 hover:bg-emerald-700"
                 >
                   {sending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -312,43 +298,34 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
 
                 {selectedRecipient && (
                   <>
-                    <ScrollArea className="h-[300px]" ref={scrollRef}>
+                    <ScrollArea className="h-[300px] pr-4" ref={scrollRef}>
                       {privateConversations[selectedRecipient]?.length > 0 ? (
-                        <div className="px-3 py-2">
-                          {privateConversations[selectedRecipient].map(msg => renderMessage(msg, true))}
-                        </div>
+                        privateConversations[selectedRecipient].map(msg => renderMessage(msg, true))
                       ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-center py-12 px-4">
-                          <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mb-3">
-                            <Lock className="w-7 h-7 text-blue-600" />
-                          </div>
-                          <p className="text-gray-900 font-medium mb-1">
-                            {language === 'he' ? 'אין הודעות' : 'No messages'}
-                          </p>
-                          <p className="text-sm text-gray-500">
+                        <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                          <MessageCircle className="w-12 h-12 text-gray-300 mb-3" />
+                          <p className="text-gray-500">
                             {language === 'he' 
-                              ? 'התחל שיחה פרטית'
-                              : 'Start private chat'}
+                              ? 'אין הודעות עדיין'
+                              : 'No messages yet'}
                           </p>
                         </div>
                       )}
                     </ScrollArea>
 
-                    <div className="flex gap-2 pt-3 border-t">
+                    <div className="flex gap-2 pt-4 border-t">
                       <Input
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && !sending && handleSend()}
-                        placeholder={language === 'he' ? 'הודעה פרטית...' : 'Private message...'}
+                        placeholder={language === 'he' ? 'כתוב הודעה פרטית...' : 'Type a private message...'}
                         disabled={sending}
                         dir={language === 'he' ? 'rtl' : 'ltr'}
-                        className="h-9 text-sm"
                       />
                       <Button 
                         onClick={handleSend} 
                         disabled={!message.trim() || sending}
-                        size="sm"
-                        className="bg-blue-600 hover:bg-blue-700 h-9 w-9 p-0"
+                        className="bg-blue-600 hover:bg-blue-700"
                       >
                         {sending ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
@@ -363,10 +340,11 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
             )}
           </TabsContent>
         </Tabs>
-      </div>
+      </CardContent>
+    </Card>
 
-      {/* Schedule Video Call Dialog */}
-      <Dialog open={showScheduleDialog} onOpenChange={setShowScheduleDialog}>
+    {/* Schedule Video Call Dialog */}
+    <Dialog open={showScheduleDialog} onOpenChange={setShowScheduleDialog}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -410,10 +388,10 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
           </Button>
         </div>
       </DialogContent>
-      </Dialog>
+    </Dialog>
 
-      {/* Video Call Dialog */}
-      <Dialog open={showVideoCall} onOpenChange={setShowVideoCall}>
+    {/* Video Call Dialog */}
+    <Dialog open={showVideoCall} onOpenChange={setShowVideoCall}>
       <DialogContent className="max-w-5xl h-[90vh] p-0">
         <DialogHeader className="p-6 pb-0">
           <div className="flex items-center justify-between">
@@ -446,7 +424,7 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
           />
         </div>
       </DialogContent>
-      </Dialog>
+    </Dialog>
     </>
   );
 }

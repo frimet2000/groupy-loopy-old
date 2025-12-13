@@ -18,7 +18,6 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -34,8 +33,7 @@ import { motion } from 'framer-motion';
 import {
   Calendar, MapPin, Clock, Users, Mountain, Dog, Tent,
   Share2, ArrowLeft, ArrowRight, Check, X, User,
-  Droplets, TreePine, Sun, History, Building, Navigation, Edit, MessageCircle, Bike, Truck,
-  Route, Image, Heart, CloudSun, Radio
+  Droplets, TreePine, Sun, History, Building, Navigation, Edit, MessageCircle, Bike, Truck
 } from 'lucide-react';
 
 const difficultyColors = {
@@ -507,7 +505,7 @@ export default function TripDetails() {
           </Card>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Main Content - Left Column */}
+            {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
               {/* Description */}
               {(description || isEditing) && (
@@ -734,19 +732,7 @@ export default function TripDetails() {
                       </Avatar>
                       <div className="flex-1">
                         <p className="font-medium">
-                          {(() => {
-                            const organizerParticipant = trip.participants?.find(p => p.email === trip.organizer_email);
-                            if (organizerParticipant?.name) return organizerParticipant.name;
-                            
-                            // Get organizer's user data
-                            if (user?.email === trip.organizer_email) {
-                              return user.first_name && user.last_name 
-                                ? `${user.first_name} ${user.last_name}` 
-                                : user.full_name;
-                            }
-                            
-                            return trip.organizer_name;
-                          })()}
+                          {trip.participants?.find(p => p.email === trip.organizer_email)?.name || trip.organizer_name}
                         </p>
                         <p className="text-sm text-emerald-600">{t('organizer')}</p>
                       </div>
@@ -771,114 +757,55 @@ export default function TripDetails() {
                   </div>
                 </CardContent>
               </Card>
-            </div>
+              </div>
 
-            {/* Sidebar - Right Column with Tabs */}
-            <div className="lg:sticky lg:top-20 lg:self-start">
-              <Card className="overflow-hidden">
-                <Tabs defaultValue="map" dir={isRTL ? 'rtl' : 'ltr'} className="lg:flex">
-                  {/* Desktop & Mobile Tabs List */}
-                  <TabsList className="w-full grid grid-cols-3 gap-1 bg-gray-100 p-1 lg:flex lg:flex-col lg:w-16 lg:gap-0 lg:p-0 lg:bg-gradient-to-b lg:from-gray-50 lg:to-white lg:border-l lg:border-gray-200">
-                    <TabsTrigger 
-                      value="map" 
-                      className="gap-1.5 data-[state=active]:bg-white lg:flex-col lg:py-4 lg:px-2 lg:border-b lg:border-gray-100 lg:rounded-none lg:data-[state=active]:bg-emerald-50 lg:hover:bg-emerald-50"
-                    >
-                      <Route className="w-4 h-4 lg:w-5 lg:h-5" />
-                      <span className="hidden sm:inline lg:text-[10px]">{language === 'he' ? 'מסלול' : 'Route'}</span>
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="weather" 
-                      className="gap-1.5 data-[state=active]:bg-white lg:flex-col lg:py-4 lg:px-2 lg:border-b lg:border-gray-100 lg:rounded-none lg:data-[state=active]:bg-blue-50 lg:hover:bg-blue-50"
-                    >
-                      <CloudSun className="w-4 h-4 lg:w-5 lg:h-5" />
-                      <span className="hidden sm:inline lg:text-[10px]">{language === 'he' ? 'מזג' : 'Weather'}</span>
-                    </TabsTrigger>
-                    {hasJoined && (
-                      <>
-                        <TabsTrigger 
-                          value="location" 
-                          className="gap-1.5 data-[state=active]:bg-white lg:flex-col lg:py-4 lg:px-2 lg:border-b lg:border-gray-100 lg:rounded-none lg:data-[state=active]:bg-red-50 lg:hover:bg-red-50"
-                        >
-                          <Radio className="w-4 h-4 lg:w-5 lg:h-5" />
-                          <span className="hidden sm:inline lg:text-[10px]">{language === 'he' ? 'מיקום' : 'Live'}</span>
-                        </TabsTrigger>
-                        <TabsTrigger 
-                          value="gallery" 
-                          className="gap-1.5 data-[state=active]:bg-white lg:flex-col lg:py-4 lg:px-2 lg:border-b lg:border-gray-100 lg:rounded-none lg:data-[state=active]:bg-purple-50 lg:hover:bg-purple-50"
-                        >
-                          <Image className="w-4 h-4 lg:w-5 lg:h-5" />
-                          <span className="hidden sm:inline lg:text-[10px]">{language === 'he' ? 'גלריה' : 'Gallery'}</span>
-                        </TabsTrigger>
-                        <TabsTrigger 
-                          value="experiences" 
-                          className="gap-1.5 data-[state=active]:bg-white lg:flex-col lg:py-4 lg:px-2 lg:border-b lg:border-gray-100 lg:rounded-none lg:data-[state=active]:bg-pink-50 lg:hover:bg-pink-50"
-                        >
-                          <Heart className="w-4 h-4 lg:w-5 lg:h-5" />
-                          <span className="hidden sm:inline lg:text-[10px]">{language === 'he' ? 'חוויות' : 'Stories'}</span>
-                        </TabsTrigger>
-                        <TabsTrigger 
-                          value="chat" 
-                          className="gap-1.5 data-[state=active]:bg-white lg:flex-col lg:py-4 lg:px-2 lg:border-b lg:border-gray-100 lg:rounded-none lg:data-[state=active]:bg-indigo-50 lg:hover:bg-indigo-50"
-                        >
-                          <MessageCircle className="w-4 h-4 lg:w-5 lg:h-5" />
-                          <span className="hidden sm:inline lg:text-[10px]">{language === 'he' ? 'צ\'אט' : 'Chat'}</span>
-                        </TabsTrigger>
-                      </>
-                    )}
-                  </TabsList>
+              {/* Sidebar */}
+              <div className="space-y-6">
+              {/* Live Location Sharing - visible to participants */}
+              {hasJoined && (
+                <LiveLocationMap 
+                  trip={trip}
+                  currentUserEmail={user?.email}
+                  onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
+                />
+              )}
 
-                  <div className="lg:flex-1">
-                    <TabsContent value="map" className="mt-0">
-                      <MapSidebar 
-                        trip={trip}
-                        isOrganizer={isOrganizer}
-                        onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
-                      />
-                    </TabsContent>
+              {/* Gallery - visible to participants */}
+              {hasJoined && (
+                <TripGallery 
+                  trip={trip}
+                  currentUserEmail={user?.email}
+                  onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
+                />
+              )}
 
-                    <TabsContent value="weather" className="mt-4 px-4 pb-4 lg:mt-0">
-                      <WeatherWidget location={trip.location} date={trip.date} />
-                    </TabsContent>
+              {/* Experiences - visible to participants */}
+              {hasJoined && (
+                <TripExperiences 
+                  trip={trip}
+                  currentUserEmail={user?.email}
+                  onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
+                />
+              )}
 
-                    {hasJoined && (
-                      <>
-                        <TabsContent value="location" className="mt-0">
-                          <LiveLocationMap 
-                            trip={trip}
-                            currentUserEmail={user?.email}
-                            onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
-                          />
-                        </TabsContent>
+              {/* Map Sidebar */}
+              <MapSidebar 
+                trip={trip}
+                isOrganizer={isOrganizer}
+                onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
+              />
 
-                        <TabsContent value="gallery" className="mt-0">
-                          <TripGallery 
-                            trip={trip}
-                            currentUserEmail={user?.email}
-                            onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
-                          />
-                        </TabsContent>
+              <WeatherWidget location={trip.location} date={trip.date} />
 
-                        <TabsContent value="experiences" className="mt-0">
-                          <TripExperiences 
-                            trip={trip}
-                            currentUserEmail={user?.email}
-                            onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
-                          />
-                        </TabsContent>
-
-                        <TabsContent value="chat" className="mt-0">
-                          <TripChat 
-                            trip={trip}
-                            currentUserEmail={user?.email}
-                            onSendMessage={handleSendChatMessage}
-                            sending={sendingMessage}
-                          />
-                        </TabsContent>
-                      </>
-                    )}
-                  </div>
-                </Tabs>
-              </Card>
+              {/* Chat - visible only to participants */}
+              {hasJoined && (
+                <TripChat 
+                  trip={trip}
+                  currentUserEmail={user?.email}
+                  onSendMessage={handleSendChatMessage}
+                  sending={sendingMessage}
+                />
+              )}
             </div>
           </div>
         </motion.div>

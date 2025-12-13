@@ -231,11 +231,7 @@ export default function Profile() {
                   )}
                 </div>
                 <div className="text-center sm:text-start flex-1">
-                  <h1 className="text-2xl font-bold text-gray-900">
-                    {user.first_name && user.last_name 
-                      ? `${user.first_name} ${user.last_name}` 
-                      : user.full_name}
-                  </h1>
+                  <h1 className="text-2xl font-bold text-gray-900">{user.full_name}</h1>
                   <p className="text-gray-500 flex items-center justify-center sm:justify-start gap-2">
                     <Mail className="w-4 h-4" />
                     {user.email}
