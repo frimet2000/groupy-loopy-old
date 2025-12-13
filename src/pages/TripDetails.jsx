@@ -446,12 +446,16 @@ export default function TripDetails() {
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       await base44.entities.Trip.update(tripId, { image_url: file_url });
-      queryClient.invalidateQueries(['trip', tripId]);
+      await queryClient.invalidateQueries(['trip', tripId]);
+      await queryClient.refetchQueries(['trip', tripId]);
       toast.success(language === 'he' ? 'התמונה הוחלפה בהצלחה' : 'Image updated successfully');
     } catch (error) {
+      console.error('Image upload error:', error);
       toast.error(language === 'he' ? 'שגיאה בהעלאת התמונה' : 'Error uploading image');
     }
     setUploadingImage(false);
+    // Reset file input
+    e.target.value = '';
   };
 
   const handleSendChatMessage = async ({ content, type, recipient_email }) => {
