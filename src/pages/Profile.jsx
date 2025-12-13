@@ -393,7 +393,7 @@ export default function Profile() {
                     {viewingUser.travels_with_dog && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <Dog className="w-4 h-4" />
-                        <span className="font-medium">{language === 'he' ? 'מטייל עם כלב' : language === 'ru' ? 'Путешествует с собакой' : language === 'es' ? 'Viaja con perro' : language === 'fr' ? 'Voyage avec un chien' : language === 'de' ? 'Reist mit Hund' : language === 'it' ? 'Viaggia con cane' : 'Travels with dog'}
+                        <span className="font-medium">{language === 'he' ? 'מטייל עם כלב' : language === 'ru' ? 'Путешествует с собакой' : language === 'es' ? 'Viaja con perro' : language === 'fr' ? 'Voyage avec un chien' : language === 'de' ? 'Reist mit Hund' : language === 'it' ? 'Viaggia con cane' : 'Travels with dog'}</span>
                       </div>
                     )}
                   </CardContent>
