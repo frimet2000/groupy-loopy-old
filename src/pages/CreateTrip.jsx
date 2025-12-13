@@ -394,9 +394,9 @@ export default function CreateTrip() {
         offroad_distance: formData.offroad_distance || undefined,
       };
 
-      await base44.entities.Trip.create(tripData);
+      const createdTrip = await base44.entities.Trip.create(tripData);
       toast.success(language === 'he' ? 'הטיול נשמר בהצלחה!' : 'Trip created successfully!');
-      navigate(createPageUrl('MyTrips'));
+      navigate(createPageUrl('TripDetails') + '?id=' + createdTrip.id);
     } catch (error) {
       console.error('Error:', error);
       toast.error(language === 'he' ? 'שגיאה בשמירה' : 'Error saving trip');
