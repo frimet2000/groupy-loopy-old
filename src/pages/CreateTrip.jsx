@@ -289,7 +289,7 @@ export default function CreateTrip() {
     }
   };
 
-  const handleMapConfirm = (lat, lng) => {
+  const handleMapConfirm = async (lat, lng) => {
     setFormData(prev => ({
       ...prev,
       latitude: lat,
@@ -297,7 +297,35 @@ export default function CreateTrip() {
     }));
     
     setShowMapPicker(false);
-    toast.success(language === 'he' ? 'מיקום נשמר' : 'Location saved');
+    
+    // Get location name from coordinates
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: language === 'he'
+          ? `מהו שם המיקום המדויק של הקואורדינטות ${lat}, ${lng}? תן רק את שם המיקום (עיר/אתר/שכונה) ללא מידע נוסף.`
+          : `What is the exact location name for coordinates ${lat}, ${lng}? Provide only the location name (city/site/neighborhood) without additional information.`,
+        add_context_from_internet: true,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            location_name: { type: "string" }
+          }
+        }
+      });
+      
+      if (result.location_name) {
+        setFormData(prev => ({
+          ...prev,
+          location: result.location_name
+        }));
+        toast.success(language === 'he' ? `מיקום נשמר: ${result.location_name}` : `Location saved: ${result.location_name}`);
+      } else {
+        toast.success(language === 'he' ? 'מיקום נשמר' : 'Location saved');
+      }
+    } catch (error) {
+      console.error('Error getting location name:', error);
+      toast.success(language === 'he' ? 'מיקום נשמר' : 'Location saved');
+    }
   };
 
   const saveTrip = async (e) => {
