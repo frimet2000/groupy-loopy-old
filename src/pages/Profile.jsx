@@ -11,11 +11,21 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { User, Mail, Save, Loader2, Settings, MapPin, Heart, Edit2, Upload, Camera, X, Dog, Users } from 'lucide-react';
+import { User, Mail, Save, Loader2, Settings, MapPin, Heart, Edit2, Upload, Camera, X, Dog, Users, AlertTriangle, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const interests = ['nature', 'history', 'photography', 'birdwatching', 'archaeology', 'geology', 'botany', 'extreme_sports', 'family_friendly', 'romantic'];
 const regions = ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'];
@@ -30,6 +40,8 @@ export default function Profile() {
   const [loading, setLoading] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -166,6 +178,28 @@ export default function Profile() {
       toast.error(language === 'he' ? 'שגיאה בעדכון הפרופיל' : 'Error updating profile');
     }
     setLoading(false);
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      // Delete user's trips first
+      const userTrips = await base44.entities.Trip.filter({ organizer_email: user.email });
+      for (const trip of userTrips) {
+        await base44.entities.Trip.delete(trip.id);
+      }
+      
+      // Delete user account
+      await base44.entities.User.delete(user.id);
+      
+      toast.success(language === 'he' ? 'החשבון נמחק בהצלחה' : 'Account deleted successfully');
+      
+      // Logout and redirect
+      await base44.auth.logout();
+    } catch (error) {
+      toast.error(language === 'he' ? 'שגיאה במחיקת החשבון' : 'Error deleting account');
+      setDeleting(false);
+    }
   };
 
   if (!user || !viewingUser) {
@@ -733,7 +767,86 @@ export default function Profile() {
               </Button>
             </div>
           )}
+
+          {/* Delete Account Section */}
+          {isOwnProfile && !editMode && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-6"
+            >
+              <Card className="border-red-200 bg-red-50/50">
+                <CardHeader>
+                  <CardTitle className="text-red-700 flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5" />
+                    {language === 'he' ? 'אזור מסוכן' : 'Danger Zone'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-4" dir={language === 'he' ? 'rtl' : 'ltr'}>
+                    {language === 'he' 
+                      ? 'מחיקת החשבון היא פעולה בלתי הפיכה. כל הנתונים שלך, כולל טיולים שארגנת, יימחקו לצמיתות.'
+                      : 'Account deletion is irreversible. All your data, including organized trips, will be permanently deleted.'}
+                  </p>
+                  <Button
+                    variant="destructive"
+                    onClick={() => setShowDeleteDialog(true)}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    {language === 'he' ? 'מחק את החשבון שלי' : 'Delete My Account'}
+                  </Button>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
         </motion.div>
+
+        {/* Delete Account Confirmation Dialog */}
+        <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <AlertDialogContent dir={language === 'he' ? 'rtl' : 'ltr'}>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2 text-red-700">
+                <AlertTriangle className="w-6 h-6" />
+                {language === 'he' ? 'האם אתה בטוח?' : 'Are you sure?'}
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-base" dir={language === 'he' ? 'rtl' : 'ltr'}>
+                {language === 'he' 
+                  ? 'פעולה זו תמחק את חשבונך לצמיתות ולא ניתן לבטל אותה. כל הנתונים שלך יימחקו, כולל:'
+                  : 'This action will permanently delete your account and cannot be undone. All your data will be deleted, including:'}
+                <ul className="list-disc list-inside mt-3 space-y-1 text-gray-700">
+                  <li>{language === 'he' ? 'פרטים אישיים' : 'Personal information'}</li>
+                  <li>{language === 'he' ? 'טיולים שארגנת' : 'Organized trips'}</li>
+                  <li>{language === 'he' ? 'השתתפויות בטיולים' : 'Trip participations'}</li>
+                  <li>{language === 'he' ? 'טיולים שמורים' : 'Saved trips'}</li>
+                </ul>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={deleting}>
+                {language === 'he' ? 'ביטול' : 'Cancel'}
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteAccount}
+                disabled={deleting}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                {deleting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    {language === 'he' ? 'מוחק...' : 'Deleting...'}
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    {language === 'he' ? 'כן, מחק את החשבון' : 'Yes, delete account'}
+                  </>
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
