@@ -33,7 +33,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 
 function LayoutContent({ children, currentPageName }) {
-  const { t, isRTL, setLanguage } = useLanguage();
+  const { t, isRTL, setLanguage, language } = useLanguage();
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showLanguageSelection, setShowLanguageSelection] = useState(false);
