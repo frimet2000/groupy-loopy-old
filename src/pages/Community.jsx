@@ -5,9 +5,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { 
@@ -20,7 +29,9 @@ import {
   Search,
   X,
   Loader2,
-  TrendingUp
+  TrendingUp,
+  Megaphone,
+  Send
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -31,6 +42,12 @@ export default function Community() {
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showAnnouncementDialog, setShowAnnouncementDialog] = useState(false);
+  const [announcementData, setAnnouncementData] = useState({
+    title: '',
+    message: '',
+    expires_in_days: 7
+  });
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -56,6 +73,33 @@ export default function Community() {
     queryKey: ['trips'],
     queryFn: () => base44.entities.Trip.list('-created_date'),
     enabled: !!user,
+  });
+
+  // Send announcement mutation
+  const sendAnnouncementMutation = useMutation({
+    mutationFn: async (data) => {
+      const userName = (user.first_name && user.last_name) 
+        ? `${user.first_name} ${user.last_name}` 
+        : user.full_name;
+      
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + data.expires_in_days);
+      
+      return base44.entities.CommunityAnnouncement.create({
+        title: data.title,
+        message: data.message,
+        sent_by: user.email,
+        sent_by_name: userName,
+        expires_at: expiresAt.toISOString(),
+        active: true
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['announcements']);
+      setShowAnnouncementDialog(false);
+      setAnnouncementData({ title: '', message: '', expires_in_days: 7 });
+      toast.success(language === 'he' ? 'ההודעה נשלחה לכל המשתמשים' : 'Announcement sent to all users');
+    },
   });
 
   const myFriends = user?.friends || [];
@@ -229,14 +273,25 @@ export default function Community() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-          {language === 'he' ? 'קהילה' : 'Community'}
-        </h1>
-        <p className="text-gray-600">
-          {language === 'he' 
-            ? 'התחבר עם משתמשים אחרים וגלה פעילויות'
-            : 'Connect with other users and discover activities'}
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+              {language === 'he' ? 'קהילה' : 'Community'}
+            </h1>
+            <p className="text-gray-600">
+              {language === 'he' 
+                ? 'התחבר עם משתמשים אחרים וגלה פעילויות'
+                : 'Connect with other users and discover activities'}
+            </p>
+          </div>
+          <Button
+            onClick={() => setShowAnnouncementDialog(true)}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 gap-2"
+          >
+            <Megaphone className="w-4 h-4" />
+            {language === 'he' ? 'שלח הודעה לקהילה' : 'Send Announcement'}
+          </Button>
+        </div>
       </div>
 
       <Tabs defaultValue="feed" className="w-full">
@@ -470,6 +525,81 @@ export default function Community() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Send Announcement Dialog */}
+      <Dialog open={showAnnouncementDialog} onOpenChange={setShowAnnouncementDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Megaphone className="w-5 h-5 text-purple-600" />
+              {language === 'he' ? 'שלח הודעה לכל הקהילה' : 'Send Community Announcement'}
+            </DialogTitle>
+            <DialogDescription>
+              {language === 'he' 
+                ? 'הודעה זו תופיע לכל המשתמשים בדף הבית'
+                : 'This message will appear to all users on the home page'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                {language === 'he' ? 'כותרת' : 'Title'}
+              </label>
+              <Input
+                value={announcementData.title}
+                onChange={(e) => setAnnouncementData({ ...announcementData, title: e.target.value })}
+                placeholder={language === 'he' ? 'לדוגמה: עדכון חשוב' : 'e.g., Important Update'}
+                dir={language === 'he' ? 'rtl' : 'ltr'}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                {language === 'he' ? 'הודעה' : 'Message'}
+              </label>
+              <Textarea
+                value={announcementData.message}
+                onChange={(e) => setAnnouncementData({ ...announcementData, message: e.target.value })}
+                placeholder={language === 'he' ? 'כתוב את ההודעה כאן...' : 'Write your message here...'}
+                rows={4}
+                dir={language === 'he' ? 'rtl' : 'ltr'}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                {language === 'he' ? 'תוקף (ימים)' : 'Validity (days)'}
+              </label>
+              <Input
+                type="number"
+                min={1}
+                max={30}
+                value={announcementData.expires_in_days}
+                onChange={(e) => setAnnouncementData({ ...announcementData, expires_in_days: parseInt(e.target.value) })}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowAnnouncementDialog(false)}
+              disabled={sendAnnouncementMutation.isLoading}
+            >
+              {language === 'he' ? 'ביטול' : 'Cancel'}
+            </Button>
+            <Button
+              onClick={() => sendAnnouncementMutation.mutate(announcementData)}
+              disabled={!announcementData.title || !announcementData.message || sendAnnouncementMutation.isLoading}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 gap-2"
+            >
+              {sendAnnouncementMutation.isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+              {language === 'he' ? 'שלח' : 'Send'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -14,6 +14,7 @@ import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar,
 import { motion } from 'framer-motion';
 import { format, isPast, isToday, isTomorrow } from 'date-fns';
 import { toast } from "sonner";
+import AnnouncementToast from '../components/announcements/AnnouncementToast';
 
 export default function Home() {
   const { t, isRTL, language } = useLanguage();
@@ -175,6 +176,9 @@ export default function Home() {
 
   return (
     <div className="pb-8">
+      {/* Announcement Toast */}
+      <AnnouncementToast />
+      
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-teal-900 to-emerald-950 text-white min-h-[85vh] flex items-center">
         {/* Animated Background Elements */}
