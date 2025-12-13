@@ -36,7 +36,11 @@ export default function TripExperiences({ trip, currentUserEmail, onUpdate }) {
 
     setSaving(true);
     try {
-      const participant = trip.participants?.find(p => p.email === currentUserEmail);
+      const currentUser = await base44.auth.me();
+      const userName = (currentUser.first_name && currentUser.last_name) 
+        ? `${currentUser.first_name} ${currentUser.last_name}` 
+        : currentUser.full_name || 'Unknown';
+      
       let updatedExperiences;
 
       if (editingExperience) {
@@ -50,7 +54,7 @@ export default function TripExperiences({ trip, currentUserEmail, onUpdate }) {
           id: Date.now().toString(),
           content: content.trim(),
           author_email: currentUserEmail,
-          author_name: participant?.name || 'Unknown',
+          author_name: userName,
           timestamp: new Date().toISOString()
         };
         updatedExperiences = [...experiences, newExperience];
