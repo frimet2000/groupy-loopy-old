@@ -281,7 +281,7 @@ export default function Community() {
                 disabled={sendRequestMutation.isLoading}
               >
                 <UserPlus className="w-4 h-4 mr-2" />
-                {language === 'he' ? 'הוסף' : 'Add'}
+                {language === 'he' ? 'הוסף' : language === 'ru' ? 'Добавить' : language === 'es' ? 'Agregar' : language === 'fr' ? 'Ajouter' : language === 'de' ? 'Hinzufügen' : language === 'it' ? 'Aggiungi' : 'Add'}
               </Button>
             </div>
           </div>
@@ -306,11 +306,16 @@ export default function Community() {
           <CardContent className="p-8 text-center">
             <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h2 className="text-xl font-bold text-gray-900 mb-2">
-              {language === 'he' ? 'גישה מוגבלת' : 'Access Restricted'}
+              {language === 'he' ? 'גישה מוגבלת' : language === 'ru' ? 'Доступ ограничен' : language === 'es' ? 'Acceso restringido' : language === 'fr' ? 'Accès restreint' : language === 'de' ? 'Zugriff beschränkt' : language === 'it' ? 'Accesso limitato' : 'Access Restricted'}
             </h2>
             <p className="text-gray-600">
               {language === 'he' 
                 ? 'דף זה זמין רק למנהלי מערכת'
+                : language === 'ru' ? 'Эта страница доступна только для администраторов'
+                : language === 'es' ? 'Esta página solo está disponible para administradores'
+                : language === 'fr' ? 'Cette page est uniquement disponible pour les administrateurs'
+                : language === 'de' ? 'Diese Seite ist nur für Administratoren verfügbar'
+                : language === 'it' ? 'Questa pagina è disponibile solo per gli amministratori'
                 : 'This page is only available for administrators'}
             </p>
           </CardContent>
@@ -325,11 +330,16 @@ export default function Community() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-              {language === 'he' ? 'קהילה' : 'Community'}
+              {language === 'he' ? 'קהילה' : language === 'ru' ? 'Сообщество' : language === 'es' ? 'Comunidad' : language === 'fr' ? 'Communauté' : language === 'de' ? 'Gemeinschaft' : language === 'it' ? 'Comunità' : 'Community'}
             </h1>
             <p className="text-gray-600">
               {language === 'he' 
                 ? 'התחבר עם משתמשים אחרים וגלה פעילויות'
+                : language === 'ru' ? 'Общайтесь с другими пользователями и открывайте новые активности'
+                : language === 'es' ? 'Conéctate con otros usuarios y descubre actividades'
+                : language === 'fr' ? 'Connectez-vous avec d\'autres utilisateurs et découvrez des activités'
+                : language === 'de' ? 'Verbinden Sie sich mit anderen Benutzern und entdecken Sie Aktivitäten'
+                : language === 'it' ? 'Connettiti con altri utenti e scopri attività'
                 : 'Connect with other users and discover activities'}
             </p>
           </div>
@@ -338,7 +348,7 @@ export default function Community() {
             className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 gap-2"
           >
             <Megaphone className="w-4 h-4" />
-            {language === 'he' ? 'שלח הודעה לקהילה' : 'Send Announcement'}
+            {language === 'he' ? 'שלח הודעה לקהילה' : language === 'ru' ? 'Отправить объявление' : language === 'es' ? 'Enviar anuncio' : language === 'fr' ? 'Envoyer une annonce' : language === 'de' ? 'Ankündigung senden' : language === 'it' ? 'Invia annuncio' : 'Send Announcement'}
           </Button>
         </div>
       </div>
@@ -347,15 +357,15 @@ export default function Community() {
         <TabsList className="grid w-full grid-cols-3 mb-6">
           <TabsTrigger value="feed" className="gap-2">
             <TrendingUp className="w-4 h-4" />
-            {language === 'he' ? 'פיד' : 'Feed'}
+            {language === 'he' ? 'פיד' : language === 'ru' ? 'Лента' : language === 'es' ? 'Feed' : language === 'fr' ? 'Fil' : language === 'de' ? 'Feed' : language === 'it' ? 'Feed' : 'Feed'}
           </TabsTrigger>
           <TabsTrigger value="friends" className="gap-2">
             <Users className="w-4 h-4" />
-            {language === 'he' ? 'חברים' : 'Friends'} ({myFriends.length})
+            {language === 'he' ? 'חברים' : language === 'ru' ? 'Друзья' : language === 'es' ? 'Amigos' : language === 'fr' ? 'Amis' : language === 'de' ? 'Freunde' : language === 'it' ? 'Amici' : 'Friends'} ({myFriends.length})
           </TabsTrigger>
           <TabsTrigger value="discover" className="gap-2">
             <Search className="w-4 h-4" />
-            {language === 'he' ? 'גלה' : 'Discover'}
+            {language === 'he' ? 'גלה' : language === 'ru' ? 'Открыть' : language === 'es' ? 'Descubrir' : language === 'fr' ? 'Découvrir' : language === 'de' ? 'Entdecken' : language === 'it' ? 'Scoprire' : 'Discover'}
           </TabsTrigger>
         </TabsList>
 
@@ -366,7 +376,7 @@ export default function Community() {
             <Card className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
               <CardHeader>
                 <CardTitle className="text-blue-900">
-                  {language === 'he' ? 'בקשות חברות' : 'Friend Requests'} ({myFriendRequests.length})
+                  {language === 'he' ? 'בקשות חברות' : language === 'ru' ? 'Заявки в друзья' : language === 'es' ? 'Solicitudes de amistad' : language === 'fr' ? 'Demandes d\'amis' : language === 'de' ? 'Freundschaftsanfragen' : language === 'it' ? 'Richieste di amicizia' : 'Friend Requests'} ({myFriendRequests.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -400,7 +410,7 @@ export default function Community() {
                             className="bg-emerald-600 hover:bg-emerald-700"
                           >
                             <UserCheck className="w-4 h-4 mr-2" />
-                            {language === 'he' ? 'אשר' : 'Accept'}
+                            {language === 'he' ? 'אשר' : language === 'ru' ? 'Принять' : language === 'es' ? 'Aceptar' : language === 'fr' ? 'Accepter' : language === 'de' ? 'Akzeptieren' : language === 'it' ? 'Accetta' : 'Accept'}
                           </Button>
                           <Button
                             size="sm"
@@ -422,7 +432,7 @@ export default function Community() {
           <Card>
             <CardHeader>
               <CardTitle>
-                {language === 'he' ? 'פעילות חברים' : "Friends' Activity"}
+                {language === 'he' ? 'פעילות חברים' : language === 'ru' ? 'Активность друзей' : language === 'es' ? 'Actividad de amigos' : language === 'fr' ? 'Activité des amis' : language === 'de' ? 'Freundesaktivität' : language === 'it' ? 'Attività degli amici' : "Friends' Activity"}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -430,6 +440,11 @@ export default function Community() {
                 <p className="text-center py-8 text-gray-500">
                   {language === 'he' 
                     ? 'אין פעילות עדיין. הוסף חברים כדי לראות את הפעילות שלהם!'
+                    : language === 'ru' ? 'Нет активности. Добавьте друзей, чтобы видеть их активность!'
+                    : language === 'es' ? 'Sin actividad aún. ¡Agrega amigos para ver su actividad!'
+                    : language === 'fr' ? 'Aucune activité pour le moment. Ajoutez des amis pour voir leur activité !'
+                    : language === 'de' ? 'Noch keine Aktivität. Fügen Sie Freunde hinzu, um deren Aktivität zu sehen!'
+                    : language === 'it' ? 'Nessuna attività ancora. Aggiungi amici per vedere la loro attività!'
                     : 'No activity yet. Add friends to see their activity!'}
                 </p>
               ) : (
@@ -461,7 +476,7 @@ export default function Community() {
                                 <div className="flex-1">
                                   <p className="text-sm text-gray-600 mb-1">
                                     <span className="font-semibold text-gray-900">{organizerName}</span>
-                                    {' '}{language === 'he' ? 'יצר טיול חדש' : 'created a new trip'}
+                                    {' '}{language === 'he' ? 'יצר טיול חדש' : language === 'ru' ? 'создал новую поездку' : language === 'es' ? 'creó un nuevo viaje' : language === 'fr' ? 'a créé un nouveau voyage' : language === 'de' ? 'hat eine neue Reise erstellt' : language === 'it' ? 'ha creato un nuovo viaggio' : 'created a new trip'}
                                   </p>
                                   <div className="flex items-center gap-2 mb-2">
                                     <Calendar className="w-4 h-4 text-blue-600" />
@@ -499,13 +514,13 @@ export default function Community() {
           <Card>
             <CardHeader>
               <CardTitle>
-                {language === 'he' ? 'החברים שלי' : 'My Friends'} ({myFriends.length})
+                {language === 'he' ? 'החברים שלי' : language === 'ru' ? 'Мои друзья' : language === 'es' ? 'Mis amigos' : language === 'fr' ? 'Mes amis' : language === 'de' ? 'Meine Freunde' : language === 'it' ? 'I miei amici' : 'My Friends'} ({myFriends.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
               {myFriends.length === 0 ? (
                 <p className="text-center py-8 text-gray-500">
-                  {language === 'he' ? 'עדיין אין לך חברים' : 'You have no friends yet'}
+                  {language === 'he' ? 'עדיין אין לך חברים' : language === 'ru' ? 'У вас пока нет друзей' : language === 'es' ? 'Aún no tienes amigos' : language === 'fr' ? 'Vous n\'avez pas encore d\'amis' : language === 'de' ? 'Sie haben noch keine Freunde' : language === 'it' ? 'Non hai ancora amici' : 'You have no friends yet'}
                 </p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -558,11 +573,11 @@ export default function Community() {
           <Card>
             <CardHeader>
               <CardTitle>
-                {language === 'he' ? 'גלה משתמשים חדשים' : 'Discover New Users'}
+                {language === 'he' ? 'גלה משתמשים חדשים' : language === 'ru' ? 'Открыть новых пользователей' : language === 'es' ? 'Descubrir nuevos usuarios' : language === 'fr' ? 'Découvrir de nouveaux utilisateurs' : language === 'de' ? 'Neue Benutzer entdecken' : language === 'it' ? 'Scopri nuovi utenti' : 'Discover New Users'}
               </CardTitle>
               <div className="mt-4">
                 <Input
-                  placeholder={language === 'he' ? 'חפש משתמשים...' : 'Search users...'}
+                  placeholder={language === 'he' ? 'חפש משתמשים...' : language === 'ru' ? 'Поиск пользователей...' : language === 'es' ? 'Buscar usuarios...' : language === 'fr' ? 'Rechercher des utilisateurs...' : language === 'de' ? 'Benutzer suchen...' : language === 'it' ? 'Cerca utenti...' : 'Search users...'}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="max-w-md"
@@ -572,7 +587,7 @@ export default function Community() {
             <CardContent>
               {filteredUsers.length === 0 ? (
                 <p className="text-center py-8 text-gray-500">
-                  {language === 'he' ? 'לא נמצאו משתמשים' : 'No users found'}
+                  {language === 'he' ? 'לא נמצאו משתמשים' : language === 'ru' ? 'Пользователи не найдены' : language === 'es' ? 'No se encontraron usuarios' : language === 'fr' ? 'Aucun utilisateur trouvé' : language === 'de' ? 'Keine Benutzer gefunden' : language === 'it' ? 'Nessun utente trovato' : 'No users found'}
                 </p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -592,11 +607,16 @@ export default function Community() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Megaphone className="w-5 h-5 text-purple-600" />
-              {language === 'he' ? 'שלח הודעה לכל הקהילה' : 'Send Community Announcement'}
+              {language === 'he' ? 'שלח הודעה לכל הקהילה' : language === 'ru' ? 'Отправить объявление сообществу' : language === 'es' ? 'Enviar anuncio a la comunidad' : language === 'fr' ? 'Envoyer une annonce à la communauté' : language === 'de' ? 'Community-Ankündigung senden' : language === 'it' ? 'Invia annuncio alla comunità' : 'Send Community Announcement'}
             </DialogTitle>
             <DialogDescription>
               {language === 'he' 
                 ? 'הודעה זו תופיע לכל המשתמשים בדף הבית'
+                : language === 'ru' ? 'Это сообщение появится у всех пользователей на главной странице'
+                : language === 'es' ? 'Este mensaje aparecerá a todos los usuarios en la página de inicio'
+                : language === 'fr' ? 'Ce message apparaîtra à tous les utilisateurs sur la page d\'accueil'
+                : language === 'de' ? 'Diese Nachricht wird allen Benutzern auf der Startseite angezeigt'
+                : language === 'it' ? 'Questo messaggio apparirà a tutti gli utenti nella home page'
                 : 'This message will appear to all users on the home page'}
             </DialogDescription>
           </DialogHeader>
@@ -608,7 +628,7 @@ export default function Community() {
               <Input
                 value={announcementData.title}
                 onChange={(e) => setAnnouncementData({ ...announcementData, title: e.target.value })}
-                placeholder={language === 'he' ? 'לדוגמה: עדכון חשוב' : 'e.g., Important Update'}
+                placeholder={language === 'he' ? 'לדוגמה: עדכון חשוב' : language === 'ru' ? 'напр., Важное обновление' : language === 'es' ? 'ej., Actualización importante' : language === 'fr' ? 'ex., Mise à jour importante' : language === 'de' ? 'z.B. Wichtiges Update' : language === 'it' ? 'es., Aggiornamento importante' : 'e.g., Important Update'}
                 dir={language === 'he' ? 'rtl' : 'ltr'}
               />
             </div>
@@ -626,7 +646,7 @@ export default function Community() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                {language === 'he' ? 'תוקף (ימים)' : 'Validity (days)'}
+                {language === 'he' ? 'תוקף (ימים)' : language === 'ru' ? 'Срок действия (дни)' : language === 'es' ? 'Validez (días)' : language === 'fr' ? 'Validité (jours)' : language === 'de' ? 'Gültigkeit (Tage)' : language === 'it' ? 'Validità (giorni)' : 'Validity (days)'}
               </label>
               <Input
                 type="number"
@@ -667,12 +687,12 @@ export default function Community() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Send className="w-5 h-5 text-blue-600" />
-              {language === 'he' ? 'שלח הודעה פרטית' : 'Send Private Message'}
+              {language === 'he' ? 'שלח הודעה פרטית' : language === 'ru' ? 'Отправить личное сообщение' : language === 'es' ? 'Enviar mensaje privado' : language === 'fr' ? 'Envoyer un message privé' : language === 'de' ? 'Private Nachricht senden' : language === 'it' ? 'Invia messaggio privato' : 'Send Private Message'}
             </DialogTitle>
             <DialogDescription>
               {selectedUser && (
                 <span>
-                  {language === 'he' ? 'שלח הודעה ל-' : 'Send message to '}
+                  {language === 'he' ? 'שלח הודעה ל-' : language === 'ru' ? 'Отправить сообщение ' : language === 'es' ? 'Enviar mensaje a ' : language === 'fr' ? 'Envoyer un message à ' : language === 'de' ? 'Nachricht senden an ' : language === 'it' ? 'Invia messaggio a ' : 'Send message to '}
                   {(selectedUser.first_name && selectedUser.last_name) 
                     ? `${selectedUser.first_name} ${selectedUser.last_name}` 
                     : selectedUser.full_name || selectedUser.email}
@@ -688,7 +708,7 @@ export default function Community() {
               <Input
                 value={privateMessage.title}
                 onChange={(e) => setPrivateMessage({ ...privateMessage, title: e.target.value })}
-                placeholder={language === 'he' ? 'לדוגמה: הודעה חשובה' : 'e.g., Important Message'}
+                placeholder={language === 'he' ? 'לדוגמה: הודעה חשובה' : language === 'ru' ? 'напр., Важное сообщение' : language === 'es' ? 'ej., Mensaje importante' : language === 'fr' ? 'ex., Message important' : language === 'de' ? 'z.B. Wichtige Nachricht' : language === 'it' ? 'es., Messaggio importante' : 'e.g., Important Message'}
                 dir={language === 'he' ? 'rtl' : 'ltr'}
               />
             </div>
