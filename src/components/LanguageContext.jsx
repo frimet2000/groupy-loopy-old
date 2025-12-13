@@ -117,13 +117,171 @@ const translations = {
     family_friendly: "Family Friendly",
     romantic: "Romantic",
     
-    // Regions
+    // Countries
+    country: "Country",
+    selectCountry: "Select Country",
+    israel: "Israel",
+    usa: "United States",
+    italy: "Italy",
+    spain: "Spain",
+    france: "France",
+    germany: "Germany",
+    uk: "United Kingdom",
+    japan: "Japan",
+    australia: "Australia",
+    canada: "Canada",
+    switzerland: "Switzerland",
+    austria: "Austria",
+    new_zealand: "New Zealand",
+    norway: "Norway",
+    sweden: "Sweden",
+
+    // Regions - Israel
     north: "North",
     center: "Center",
     south: "South",
     jerusalem: "Jerusalem Area",
     negev: "Negev",
     eilat: "Eilat Area",
+
+    // Regions - USA
+    northeast: "Northeast",
+    southeast: "Southeast",
+    midwest: "Midwest",
+    southwest: "Southwest",
+    west: "West",
+    pacific_northwest: "Pacific Northwest",
+    rocky_mountains: "Rocky Mountains",
+    great_plains: "Great Plains",
+
+    // Regions - Italy
+    northern: "Northern Italy",
+    central: "Central Italy",
+    southern: "Southern Italy",
+    sicily: "Sicily",
+    sardinia: "Sardinia",
+    tuscany: "Tuscany",
+    lombardy: "Lombardy",
+    veneto: "Veneto",
+
+    // Regions - Spain
+    andalusia: "Andalusia",
+    catalonia: "Catalonia",
+    madrid: "Madrid",
+    valencia: "Valencia",
+    basque_country: "Basque Country",
+    galicia: "Galicia",
+    canary_islands: "Canary Islands",
+    balearic_islands: "Balearic Islands",
+
+    // Regions - France
+    ile_de_france: "Île-de-France",
+    provence: "Provence",
+    brittany: "Brittany",
+    normandy: "Normandy",
+    alps: "Alps",
+    pyrenees: "Pyrenees",
+    corsica: "Corsica",
+    burgundy: "Burgundy",
+
+    // Regions - Germany
+    bavaria: "Bavaria",
+    berlin: "Berlin",
+    baden_wurttemberg: "Baden-Württemberg",
+    north_rhine_westphalia: "North Rhine-Westphalia",
+    saxony: "Saxony",
+    hesse: "Hesse",
+    rhineland_palatinate: "Rhineland-Palatinate",
+    lower_saxony: "Lower Saxony",
+
+    // Regions - UK
+    england_south: "South England",
+    england_north: "North England",
+    scotland: "Scotland",
+    wales: "Wales",
+    northern_ireland: "Northern Ireland",
+    london: "London",
+    lake_district: "Lake District",
+    peak_district: "Peak District",
+
+    // Regions - Japan
+    hokkaido: "Hokkaido",
+    tohoku: "Tohoku",
+    kanto: "Kanto",
+    chubu: "Chubu",
+    kansai: "Kansai",
+    chugoku: "Chugoku",
+    shikoku: "Shikoku",
+    kyushu: "Kyushu",
+
+    // Regions - Australia
+    new_south_wales: "New South Wales",
+    victoria: "Victoria",
+    queensland: "Queensland",
+    western_australia: "Western Australia",
+    south_australia: "South Australia",
+    tasmania: "Tasmania",
+    northern_territory: "Northern Territory",
+
+    // Regions - Canada
+    british_columbia: "British Columbia",
+    alberta: "Alberta",
+    ontario: "Ontario",
+    quebec: "Quebec",
+    maritime_provinces: "Maritime Provinces",
+    yukon: "Yukon",
+    northwest_territories: "Northwest Territories",
+    nunavut: "Nunavut",
+
+    // Regions - Switzerland
+    valais: "Valais",
+    graubunden: "Graubünden",
+    bern: "Bern",
+    zurich: "Zürich",
+    ticino: "Ticino",
+    central_switzerland: "Central Switzerland",
+    eastern_switzerland: "Eastern Switzerland",
+    western_switzerland: "Western Switzerland",
+
+    // Regions - Austria
+    tyrol: "Tyrol",
+    salzburg: "Salzburg",
+    vienna: "Vienna",
+    upper_austria: "Upper Austria",
+    lower_austria: "Lower Austria",
+    styria: "Styria",
+    carinthia: "Carinthia",
+    vorarlberg: "Vorarlberg",
+
+    // Regions - New Zealand
+    north_island: "North Island",
+    south_island: "South Island",
+    auckland: "Auckland",
+    canterbury: "Canterbury",
+    otago: "Otago",
+    wellington: "Wellington",
+    marlborough: "Marlborough",
+    west_coast: "West Coast",
+
+    // Regions - Norway
+    eastern: "Eastern Norway",
+    western: "Western Norway",
+    southern: "Southern Norway",
+    central: "Central Norway",
+    northern: "Northern Norway",
+    lofoten: "Lofoten",
+    fjord_norway: "Fjord Norway",
+    nordland: "Nordland",
+
+    // Regions - Sweden
+    stockholm: "Stockholm",
+    goteborg: "Göteborg",
+    malmo: "Malmö",
+    norrland: "Norrland",
+    svealand: "Svealand",
+    gotaland: "Götaland",
+    lapland: "Lapland",
+    dalarna: "Dalarna",
     
     // Status
     open: "Open",
@@ -314,13 +472,171 @@ const translations = {
     family_friendly: "מתאים למשפחות",
     romantic: "רומנטי",
     
-    // Regions
+    // Countries
+    country: "מדינה",
+    selectCountry: "בחר מדינה",
+    israel: "ישראל",
+    usa: "ארצות הברית",
+    italy: "איטליה",
+    spain: "ספרד",
+    france: "צרפת",
+    germany: "גרמניה",
+    uk: "בריטניה",
+    japan: "יפן",
+    australia: "אוסטרליה",
+    canada: "קנדה",
+    switzerland: "שוויץ",
+    austria: "אוסטריה",
+    new_zealand: "ניו זילנד",
+    norway: "נורווגיה",
+    sweden: "שוודיה",
+
+    // Regions - Israel
     north: "צפון",
     center: "מרכז",
     south: "דרום",
     jerusalem: "אזור ירושלים",
     negev: "נגב",
     eilat: "אזור אילת",
+
+    // Regions - USA
+    northeast: "צפון-מזרח",
+    southeast: "דרום-מזרח",
+    midwest: "מערב התיכון",
+    southwest: "דרום-מערב",
+    west: "מערב",
+    pacific_northwest: "צפון-מערב השקט",
+    rocky_mountains: "הרי הרוקי",
+    great_plains: "המישורים הגדולים",
+
+    // Regions - Italy
+    northern: "צפון איטליה",
+    central: "מרכז איטליה",
+    southern: "דרום איטליה",
+    sicily: "סיציליה",
+    sardinia: "סרדיניה",
+    tuscany: "טוסקנה",
+    lombardy: "לומברדיה",
+    veneto: "ונטו",
+
+    // Regions - Spain
+    andalusia: "אנדלוסיה",
+    catalonia: "קטלוניה",
+    madrid: "מדריד",
+    valencia: "ולנסיה",
+    basque_country: "חבל הבאסקים",
+    galicia: "גליציה",
+    canary_islands: "האיים הקנריים",
+    balearic_islands: "האיים הבלאריים",
+
+    // Regions - France
+    ile_de_france: "איל דה פראנס",
+    provence: "פרובאנס",
+    brittany: "בריטני",
+    normandy: "נורמנדי",
+    alps: "האלפים",
+    pyrenees: "הפירנאים",
+    corsica: "קורסיקה",
+    burgundy: "בורגונדי",
+
+    // Regions - Germany
+    bavaria: "בוואריה",
+    berlin: "ברלין",
+    baden_wurttemberg: "באדן-וירטמברג",
+    north_rhine_westphalia: "נורדריין-וסטפאליה",
+    saxony: "סקסוניה",
+    hesse: "הסה",
+    rhineland_palatinate: "ריינלנד-פאלץ",
+    lower_saxony: "סקסוניה התחתונה",
+
+    // Regions - UK
+    england_south: "דרום אנגליה",
+    england_north: "צפון אנגליה",
+    scotland: "סקוטלנד",
+    wales: "ויילס",
+    northern_ireland: "צפון אירלנד",
+    london: "לונדון",
+    lake_district: "אזור האגמים",
+    peak_district: "אזור הפיקס",
+
+    // Regions - Japan
+    hokkaido: "הוקאידו",
+    tohoku: "טוהוקו",
+    kanto: "קנטו",
+    chubu: "צ'ובו",
+    kansai: "קנסאי",
+    chugoku: "צ'וגוקו",
+    shikoku: "שיקוקו",
+    kyushu: "קיושו",
+
+    // Regions - Australia
+    new_south_wales: "ניו סאות' ויילס",
+    victoria: "ויקטוריה",
+    queensland: "קווינסלנד",
+    western_australia: "מערב אוסטרליה",
+    south_australia: "דרום אוסטרליה",
+    tasmania: "טסמניה",
+    northern_territory: "הטריטוריה הצפונית",
+
+    // Regions - Canada
+    british_columbia: "קולומביה הבריטית",
+    alberta: "אלברטה",
+    ontario: "אונטריו",
+    quebec: "קוויבק",
+    maritime_provinces: "המחוזות הימיים",
+    yukon: "יוקון",
+    northwest_territories: "הטריטוריות הצפון-מערביות",
+    nunavut: "נונאווט",
+
+    // Regions - Switzerland
+    valais: "ואלה",
+    graubunden: "גראובינדן",
+    bern: "ברן",
+    zurich: "ציריך",
+    ticino: "טיצ'ינו",
+    central_switzerland: "מרכז שוויץ",
+    eastern_switzerland: "מזרח שוויץ",
+    western_switzerland: "מערב שוויץ",
+
+    // Regions - Austria
+    tyrol: "טירול",
+    salzburg: "זלצבורג",
+    vienna: "וינה",
+    upper_austria: "אוסטריה העליונה",
+    lower_austria: "אוסטריה התחתונה",
+    styria: "שטיריה",
+    carinthia: "קרינתיה",
+    vorarlberg: "פוראלברג",
+
+    // Regions - New Zealand
+    north_island: "האי הצפוני",
+    south_island: "האי הדרומי",
+    auckland: "אוקלנד",
+    canterbury: "קנטרברי",
+    otago: "אוטאגו",
+    wellington: "וולינגטון",
+    marlborough: "מרלבורו",
+    west_coast: "החוף המערבי",
+
+    // Regions - Norway
+    eastern: "מזרח נורווגיה",
+    western: "מערב נורווגיה",
+    southern: "דרום נורווגיה",
+    central: "מרכז נורווגיה",
+    northern: "צפון נורווגיה",
+    lofoten: "לופוטן",
+    fjord_norway: "נורווגיית הפיורדים",
+    nordland: "נורדלנד",
+
+    // Regions - Sweden
+    stockholm: "סטוקהולם",
+    goteborg: "גטבורג",
+    malmo: "מלמו",
+    norrland: "נורלנד",
+    svealand: "סוואלנד",
+    gotaland: "גטאלנד",
+    lapland: "לפלנד",
+    dalarna: "דלרנה",
     
     // Status
     open: "פתוח",
