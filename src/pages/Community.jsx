@@ -48,6 +48,9 @@ export default function Community() {
     message: '',
     expires_in_days: 7
   });
+  const [showPrivateMessageDialog, setShowPrivateMessageDialog] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [privateMessage, setPrivateMessage] = useState({ title: '', message: '' });
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -99,6 +102,38 @@ export default function Community() {
       setShowAnnouncementDialog(false);
       setAnnouncementData({ title: '', message: '', expires_in_days: 7 });
       toast.success(language === 'he' ? 'ההודעה נשלחה לכל המשתמשים' : 'Announcement sent to all users');
+    },
+  });
+
+  // Send private message mutation
+  const sendPrivateMessageMutation = useMutation({
+    mutationFn: async ({ targetEmail, title, message }) => {
+      const userName = (user.first_name && user.last_name) 
+        ? `${user.first_name} ${user.last_name}` 
+        : user.full_name;
+      
+      // Create notification
+      await base44.entities.Notification.create({
+        recipient_email: targetEmail,
+        notification_type: 'admin_message',
+        title,
+        body: message,
+        sent_at: new Date().toISOString()
+      });
+
+      // Send push notification
+      await base44.functions.invoke('sendPushNotification', {
+        recipient_email: targetEmail,
+        notification_type: 'admin_message',
+        title: language === 'he' ? `הודעה מהמנהל: ${title}` : `Admin Message: ${title}`,
+        body: message
+      });
+    },
+    onSuccess: () => {
+      setShowPrivateMessageDialog(false);
+      setSelectedUser(null);
+      setPrivateMessage({ title: '', message: '' });
+      toast.success(language === 'he' ? 'ההודעה נשלחה' : 'Message sent');
     },
   });
 
@@ -227,14 +262,28 @@ export default function Community() {
               <p className="font-semibold">{userName}</p>
               <p className="text-sm text-gray-500">{targetUser.email}</p>
             </div>
-            <Button
-              size="sm"
-              onClick={() => sendRequestMutation.mutate(targetUser.email)}
-              disabled={sendRequestMutation.isLoading}
-            >
-              <UserPlus className="w-4 h-4 mr-2" />
-              {language === 'he' ? 'הוסף' : 'Add'}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setSelectedUser(targetUser);
+                  setShowPrivateMessageDialog(true);
+                }}
+                className="gap-2"
+              >
+                <Send className="w-4 h-4" />
+                {language === 'he' ? 'הודעה' : 'Message'}
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => sendRequestMutation.mutate(targetUser.email)}
+                disabled={sendRequestMutation.isLoading}
+              >
+                <UserPlus className="w-4 h-4 mr-2" />
+                {language === 'he' ? 'הוסף' : 'Add'}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -470,8 +519,8 @@ export default function Community() {
                     return (
                       <Card key={friendEmail} className="hover:shadow-lg transition-all">
                         <CardContent className="p-4">
-                          <Link to={createPageUrl('Profile') + '?email=' + friendEmail}>
-                            <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3">
+                            <Link to={createPageUrl('Profile') + '?email=' + friendEmail} className="flex items-center gap-3 flex-1">
                               <Avatar className="h-12 w-12">
                                 <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-700 text-white">
                                   {name.charAt(0).toUpperCase()}
@@ -481,8 +530,19 @@ export default function Community() {
                                 <p className="font-semibold">{name}</p>
                                 <p className="text-sm text-gray-500">{friend.email}</p>
                               </div>
-                            </div>
-                          </Link>
+                            </Link>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setSelectedUser(friend);
+                                setShowPrivateMessageDialog(true);
+                              }}
+                              className="gap-2"
+                            >
+                              <Send className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </CardContent>
                       </Card>
                     );
@@ -591,6 +651,82 @@ export default function Community() {
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 gap-2"
             >
               {sendAnnouncementMutation.isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+              {language === 'he' ? 'שלח' : 'Send'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Send Private Message Dialog */}
+      <Dialog open={showPrivateMessageDialog} onOpenChange={setShowPrivateMessageDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Send className="w-5 h-5 text-blue-600" />
+              {language === 'he' ? 'שלח הודעה פרטית' : 'Send Private Message'}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedUser && (
+                <span>
+                  {language === 'he' ? 'שלח הודעה ל-' : 'Send message to '}
+                  {(selectedUser.first_name && selectedUser.last_name) 
+                    ? `${selectedUser.first_name} ${selectedUser.last_name}` 
+                    : selectedUser.full_name || selectedUser.email}
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                {language === 'he' ? 'כותרת' : 'Title'}
+              </label>
+              <Input
+                value={privateMessage.title}
+                onChange={(e) => setPrivateMessage({ ...privateMessage, title: e.target.value })}
+                placeholder={language === 'he' ? 'לדוגמה: הודעה חשובה' : 'e.g., Important Message'}
+                dir={language === 'he' ? 'rtl' : 'ltr'}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                {language === 'he' ? 'הודעה' : 'Message'}
+              </label>
+              <Textarea
+                value={privateMessage.message}
+                onChange={(e) => setPrivateMessage({ ...privateMessage, message: e.target.value })}
+                placeholder={language === 'he' ? 'כתוב את ההודעה כאן...' : 'Write your message here...'}
+                rows={4}
+                dir={language === 'he' ? 'rtl' : 'ltr'}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowPrivateMessageDialog(false);
+                setSelectedUser(null);
+                setPrivateMessage({ title: '', message: '' });
+              }}
+              disabled={sendPrivateMessageMutation.isLoading}
+            >
+              {language === 'he' ? 'ביטול' : 'Cancel'}
+            </Button>
+            <Button
+              onClick={() => sendPrivateMessageMutation.mutate({
+                targetEmail: selectedUser.email,
+                title: privateMessage.title,
+                message: privateMessage.message
+              })}
+              disabled={!privateMessage.title || !privateMessage.message || sendPrivateMessageMutation.isLoading}
+              className="bg-blue-600 hover:bg-blue-700 gap-2"
+            >
+              {sendPrivateMessageMutation.isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <Send className="w-4 h-4" />
