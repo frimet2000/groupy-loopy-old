@@ -81,7 +81,7 @@ export default function BudgetCreator({ budget, setBudget }) {
         </div>
 
         <div className="space-y-2">
-          <Label>{language === 'he' ? 'הערות' : language === 'ru' ? 'Примечания' : language === 'es' ? 'Notas' : language === 'fr' ? 'Notes' : language === 'de' ? 'Notizen' : language === 'it' ? 'Note' : 'Notes'}
+          <Label>{language === 'he' ? 'הערות' : language === 'ru' ? 'Примечания' : language === 'es' ? 'Notas' : language === 'fr' ? 'Notes' : language === 'de' ? 'Notizen' : language === 'it' ? 'Note' : 'Notes'}</Label>
           <Textarea
             value={budget.notes}
             onChange={(e) => handleChange('notes', e.target.value)}
