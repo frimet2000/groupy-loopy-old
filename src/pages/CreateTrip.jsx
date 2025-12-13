@@ -12,7 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Upload, MapPin, Mountain, Clock, Sparkles, Navigation, Globe } from 'lucide-react';
+import { Loader2, Upload, MapPin, Mountain, Clock, Sparkles, Navigation, Globe, Calendar, Users, Compass } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { detectUserLocation, getRegionFromCoordinates } from '../components/utils/LocationDetector';
 import LocationPicker from '../components/maps/LocationPicker';
 import { getAllCountries } from '../components/utils/CountryRegions';
@@ -259,21 +260,47 @@ export default function CreateTrip() {
         onConfirm={handleMapConfirm}
       />
       
-      <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/40 py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-          {t('createTrip')}
-        </h1>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-10"
+        >
+          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-6 py-3 rounded-2xl shadow-2xl mb-6">
+            <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+              <Compass className="w-7 h-7" />
+            </div>
+            <h1 className="text-3xl font-bold">
+              {t('createTrip')}
+            </h1>
+          </div>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            {language === 'he' 
+              ? 'שתף את חוויית הטיול שלך ומצא שותפים להרפתקה הבאה' 
+              : 'Share your trip experience and find partners for the next adventure'}
+          </p>
+        </motion.div>
 
         <form onSubmit={saveTrip} className="space-y-6">
           {/* Basic Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-emerald-600" />
-                {language === 'he' ? 'פרטים בסיסיים' : 'Basic Details'}
-              </CardTitle>
-            </CardHeader>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <Card className="border-2 border-emerald-100 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 border-b border-emerald-100">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl shadow-lg">
+                    <Sparkles className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent font-bold">
+                    {language === 'he' ? 'פרטים בסיסיים' : 'Basic Details'}
+                  </span>
+                </CardTitle>
+              </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label>{t('titleHe')}</Label>
@@ -332,16 +359,26 @@ export default function CreateTrip() {
                 </div>
               </div>
             </CardContent>
-          </Card>
+            </Card>
+          </motion.div>
 
           {/* Location & Time */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-blue-600" />
-                {language === 'he' ? 'מיקום וזמן' : 'Location & Time'}
-              </CardTitle>
-            </CardHeader>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <Card className="border-2 border-blue-100 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-blue-100">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-lg">
+                    <MapPin className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-blue-700 to-cyan-700 bg-clip-text text-transparent font-bold">
+                    {language === 'he' ? 'מיקום וזמן' : 'Location & Time'}
+                  </span>
+                </CardTitle>
+              </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -456,16 +493,26 @@ export default function CreateTrip() {
                 </div>
               </div>
             </CardContent>
-          </Card>
+            </Card>
+          </motion.div>
 
           {/* Trail Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Mountain className="w-5 h-5 text-amber-600" />
-                {language === 'he' ? 'פרטי המסלול' : 'Trail Details'}
-              </CardTitle>
-            </CardHeader>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Card className="border-2 border-amber-100 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-100">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl shadow-lg">
+                    <Mountain className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-amber-700 to-orange-700 bg-clip-text text-transparent font-bold">
+                    {language === 'he' ? 'פרטי המסלול' : 'Trail Details'}
+                  </span>
+                </CardTitle>
+              </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -679,19 +726,29 @@ export default function CreateTrip() {
                 </div>
               </div>
             </CardContent>
-          </Card>
+            </Card>
+          </motion.div>
 
           {/* Age Ranges */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-purple-600" />
-                {language === 'he' ? 'גילאים' : 'Age Ranges'}
-              </CardTitle>
-              <CardDescription>
-                {language === 'he' ? 'בחר טווחי גילאים מתאימים לטיול' : 'Select appropriate age ranges for the trip'}
-              </CardDescription>
-            </CardHeader>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <Card className="border-2 border-purple-100 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-purple-100">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-lg">
+                    <Users className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-purple-700 to-pink-700 bg-clip-text text-transparent font-bold">
+                    {language === 'he' ? 'גילאים' : 'Age Ranges'}
+                  </span>
+                </CardTitle>
+                <CardDescription>
+                  {language === 'he' ? 'בחר טווחי גילאים מתאימים לטיול' : 'Select appropriate age ranges for the trip'}
+                </CardDescription>
+              </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-3">
                 <Label>{language === 'he' ? 'טווחי גילאי הורים' : 'Parent Age Ranges'}</Label>
@@ -733,33 +790,47 @@ export default function CreateTrip() {
                 </div>
               </div>
             </CardContent>
-          </Card>
+            </Card>
+          </motion.div>
 
           {/* Submit */}
-          <div className="flex gap-4 justify-end">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => navigate(createPageUrl('Home'))}
-              disabled={saving}
-            >
-              {t('cancel')}
-            </Button>
-            <Button 
-              type="submit"
-              className="bg-emerald-600 hover:bg-emerald-700 min-w-[140px]"
-              disabled={saving}
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  {language === 'he' ? 'שומר...' : 'Saving...'}
-                </>
-              ) : (
-                t('save')
-              )}
-            </Button>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="flex gap-4 justify-end pt-4"
+          >
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => navigate(createPageUrl('Home'))}
+                disabled={saving}
+                className="border-2 hover:bg-gray-50 transition-all duration-300 px-8 py-6 text-base font-semibold"
+              >
+                {t('cancel')}
+              </Button>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button 
+                type="submit"
+                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 min-w-[160px] px-8 py-6 text-base font-bold shadow-2xl hover:shadow-3xl transition-all duration-300"
+                disabled={saving}
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                    {language === 'he' ? 'שומר...' : 'Saving...'}
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    {t('save')}
+                  </>
+                )}
+              </Button>
+            </motion.div>
+          </motion.div>
         </form>
       </div>
     </div>
