@@ -6,41 +6,24 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import { base44 } from '@/api/base44Client';
 import { toast } from "sonner";
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 import { MapPin, Radio, Users, Clock, AlertCircle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { he, enUS } from 'date-fns/locale';
-
-// Fix Leaflet default marker icon
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
-
-// Custom marker icons for different users
-const createCustomIcon = (color) => {
-  return L.divIcon({
-    className: 'custom-marker',
-    html: `<div style="background-color: ${color}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>`,
-    iconSize: [24, 24],
-    iconAnchor: [12, 12],
-  });
-};
+import { GoogleMap, Marker, Circle } from '@react-google-maps/api';
+import { useGoogleMaps } from '../maps/GoogleMapWrapper';
 
 const colors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'];
 
 export default function LiveLocationMap({ trip, currentUserEmail, onUpdate }) {
   const { language } = useLanguage();
+  const { isLoaded } = useGoogleMaps();
   const [sharingEnabled, setSharingEnabled] = useState(false);
   const [watchId, setWatchId] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
-  const [mapCenter, setMapCenter] = useState([trip.latitude || 31.5, trip.longitude || 34.75]);
+  const [mapCenter, setMapCenter] = useState({ lat: trip.latitude || 31.5, lng: trip.longitude || 34.75 });
+  const [map, setMap] = useState(null);
 
   const liveLocations = trip.live_locations || [];
   const myLocation = liveLocations.find(loc => loc.email === currentUserEmail);
@@ -137,6 +120,16 @@ export default function LiveLocationMap({ trip, currentUserEmail, onUpdate }) {
 
   const activeLocations = liveLocations.filter(loc => loc.sharing_enabled);
 
+  if (!isLoaded) {
+    return (
+      <Card>
+        <CardContent className="p-8 text-center text-gray-500">
+          {language === 'he' ? 'טוען מפה...' : 'Loading map...'}
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="border-0 shadow-lg">
       <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-t-xl">
@@ -205,59 +198,68 @@ export default function LiveLocationMap({ trip, currentUserEmail, onUpdate }) {
           <>
             {/* Map */}
             <div className="h-80 rounded-lg overflow-hidden border-2 border-blue-200">
-              <MapContainer
+              <GoogleMap
+                mapContainerClassName="h-full w-full"
                 center={mapCenter}
                 zoom={13}
-                style={{ height: '100%', width: '100%' }}
+                onLoad={setMap}
+                options={{
+                  streetViewControl: false,
+                  mapTypeControl: true,
+                }}
               >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-
                 {/* Trip starting point */}
-                <Marker position={[trip.latitude || 31.5, trip.longitude || 34.75]}>
-                  <Popup>
-                    <div className="text-center">
-                      <p className="font-bold text-emerald-700">
-                        {language === 'he' ? 'נקודת התחלה' : 'Starting Point'}
-                      </p>
-                      <p className="text-sm">{trip.location}</p>
-                    </div>
-                  </Popup>
-                </Marker>
+                <Marker
+                  position={{ lat: trip.latitude || 31.5, lng: trip.longitude || 34.75 }}
+                  icon={{
+                    path: window.google.maps.SymbolPath.CIRCLE,
+                    scale: 12,
+                    fillColor: '#10b981',
+                    fillOpacity: 1,
+                    strokeColor: 'white',
+                    strokeWeight: 3,
+                  }}
+                  title={trip.location}
+                />
+                <Circle
+                  center={{ lat: trip.latitude || 31.5, lng: trip.longitude || 34.75 }}
+                  radius={50}
+                  options={{
+                    strokeColor: '#10b981',
+                    strokeOpacity: 0.8,
+                    fillColor: '#10b981',
+                    fillOpacity: 0.1,
+                  }}
+                />
 
                 {/* User locations */}
                 {activeLocations.map((loc, index) => (
                   <React.Fragment key={loc.email}>
-                    <Marker 
-                      position={[loc.latitude, loc.longitude]}
-                      icon={createCustomIcon(colors[index % colors.length])}
-                    >
-                      <Popup>
-                        <div className="text-center">
-                          <p className="font-bold">{loc.name}</p>
-                          <p className="text-xs text-gray-600">
-                            {formatDistanceToNow(new Date(loc.timestamp), { 
-                              addSuffix: true,
-                              locale: language === 'he' ? he : enUS 
-                            })}
-                          </p>
-                        </div>
-                      </Popup>
-                    </Marker>
-                    <Circle
-                      center={[loc.latitude, loc.longitude]}
-                      radius={50}
-                      pathOptions={{ 
-                        color: colors[index % colors.length],
+                    <Marker
+                      position={{ lat: loc.latitude, lng: loc.longitude }}
+                      icon={{
+                        path: window.google.maps.SymbolPath.CIRCLE,
+                        scale: 12,
                         fillColor: colors[index % colors.length],
-                        fillOpacity: 0.1 
+                        fillOpacity: 1,
+                        strokeColor: 'white',
+                        strokeWeight: 3,
+                      }}
+                      title={loc.name}
+                    />
+                    <Circle
+                      center={{ lat: loc.latitude, lng: loc.longitude }}
+                      radius={50}
+                      options={{
+                        strokeColor: colors[index % colors.length],
+                        strokeOpacity: 0.8,
+                        fillColor: colors[index % colors.length],
+                        fillOpacity: 0.1,
                       }}
                     />
                   </React.Fragment>
                 ))}
-              </MapContainer>
+              </GoogleMap>
             </div>
 
             {/* Location List */}
