@@ -344,7 +344,7 @@ export default function PrivacyPolicy() {
           className="mb-6"
         >
           {isRTL ? <ArrowRight className="w-4 h-4 mr-2" /> : <ArrowLeft className="w-4 h-4 mr-2" />}
-          {language === 'he' ? 'חזרה' : 'Back'}
+          {language === 'he' ? 'חזרה' : language === 'ru' ? 'Назад' : 'Back'}
         </Button>
 
         <Card className="shadow-xl border-0 mb-8">
