@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Backpack, Plus, Trash2, Check } from 'lucide-react';
+import { Backpack, Plus, Trash2, Check, AlertTriangle } from 'lucide-react';
 import { toast } from "sonner";
 
 export default function EquipmentCreator({ equipment, setEquipment }) {
@@ -15,7 +15,7 @@ export default function EquipmentCreator({ equipment, setEquipment }) {
   const [newItem, setNewItem] = useState('');
 
   const popularItems = [
-    { id: 'water', he: 'מים', en: 'Water' },
+    { id: 'water', he: 'מים', en: 'Water', critical: true },
     { id: 'hat', he: 'כובע', en: 'Hat' },
     { id: 'sunscreen', he: 'קרם הגנה', en: 'Sunscreen' },
     { id: 'shoes', he: 'נעלי הליכה', en: 'Hiking Shoes' },
@@ -70,8 +70,13 @@ export default function EquipmentCreator({ equipment, setEquipment }) {
                   variant={added ? "secondary" : "outline"}
                   onClick={() => !added && handleAddPopular(item)}
                   disabled={added}
-                  className="gap-1"
+                  className={`gap-1 relative ${item.critical ? 'border-red-400 hover:border-red-500' : ''}`}
                 >
+                  {item.critical && (
+                    <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
+                      <AlertTriangle className="w-2.5 h-2.5" />
+                    </div>
+                  )}
                   {added && <Check className="w-3 h-3" />}
                   {itemName}
                 </Button>
