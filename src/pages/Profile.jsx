@@ -337,15 +337,16 @@ export default function Profile() {
                            (language === 'he' ? 'רכב שטח (4X4)' : '4X4')}
                         </Badge>
                       </div>
-                      {viewingUser.travels_with_dog && (
-                        <div className="flex items-center gap-2 text-gray-600">
-                          <Dog className="w-4 h-4" />
-                          <span className="font-medium">{language === 'he' ? 'מטייל עם כלב' : 'Travels with dog'}</span>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                )}
+                    )}
+                    {viewingUser.travels_with_dog && (
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <Dog className="w-4 h-4" />
+                        <span className="font-medium">{language === 'he' ? 'מטייל עם כלב' : 'Travels with dog'}</span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
 
                 {((viewingUser.parent_age_ranges && viewingUser.parent_age_ranges.length > 0) ||
                   (viewingUser.children_age_ranges && viewingUser.children_age_ranges.length > 0)) && (
