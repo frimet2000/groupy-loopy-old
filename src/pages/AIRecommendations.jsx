@@ -169,7 +169,7 @@ Please respond in ${language === 'he' ? 'Hebrew' : 'English'}.`,
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -177,33 +177,64 @@ Please respond in ${language === 'he' ? 'Hebrew' : 'English'}.`,
           transition={{ duration: 0.5 }}
         >
           {/* Header */}
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl mb-4 shadow-lg shadow-purple-500/30">
-              <Sparkles className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-              {t('aiRecommendations')}
-            </h1>
-            <p className="text-gray-500 text-lg max-w-2xl mx-auto">
+          <div className="text-center mb-12">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 via-indigo-500 to-purple-600 rounded-3xl mb-6 shadow-2xl shadow-purple-500/40 relative"
+            >
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 rounded-3xl bg-gradient-to-r from-pink-400/30 to-purple-400/30 blur-xl"
+              />
+              <Sparkles className="w-10 h-10 text-white relative z-10" />
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-4xl md:text-5xl font-bold mb-4"
+            >
+              <span className="bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 bg-clip-text text-transparent">
+                {t('aiRecommendations')}
+              </span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-gray-600 text-lg max-w-2xl mx-auto"
+            >
               {language === 'he' 
                 ? 'תן לנו לעזור לך למצוא את הטיול המושלם לפי ההעדפות שלך'
                 : 'Let us help you find the perfect trip based on your preferences'}
-            </p>
+            </motion.p>
           </div>
 
           {/* Preferences Card */}
-          <Card className="mb-8 border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-indigo-600" />
-                {language === 'he' ? 'העדפות' : 'Preferences'}
-              </CardTitle>
-              <CardDescription>
-                {language === 'he' 
-                  ? 'בחר את ההעדפות שלך לקבלת המלצות מותאמות אישית'
-                  : 'Select your preferences to get personalized recommendations'}
-              </CardDescription>
-            </CardHeader>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <Card className="mb-8 border-2 border-purple-100 shadow-2xl bg-white/90 backdrop-blur-sm hover:shadow-3xl transition-all duration-300">
+              <CardHeader className="bg-gradient-to-r from-purple-50 via-indigo-50 to-pink-50 border-b border-purple-100">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg">
+                    <Target className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent font-bold">
+                    {language === 'he' ? 'העדפות' : 'Preferences'}
+                  </span>
+                </CardTitle>
+                <CardDescription className="text-base">
+                  {language === 'he' 
+                    ? 'בחר את ההעדפות שלך לקבלת המלצות מותאמות אישית'
+                    : 'Select your preferences to get personalized recommendations'}
+                </CardDescription>
+              </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-3">
                 <Label>{t('country')}</Label>
@@ -392,20 +423,28 @@ Please respond in ${language === 'he' ? 'Hebrew' : 'English'}.`,
                 </div>
               )}
 
-              <Button 
-                onClick={getRecommendations}
-                disabled={loading}
-                className="w-full h-14 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-lg"
-              >
-                {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                ) : (
-                  <Sparkles className="w-5 h-5 mr-2" />
-                )}
-                {t('getRecommendations')}
-              </Button>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button 
+                  onClick={getRecommendations}
+                  disabled={loading}
+                  className="w-full h-16 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 text-lg font-bold shadow-2xl hover:shadow-3xl transition-all duration-300"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-6 h-6 animate-spin mr-3" />
+                      <span>{language === 'he' ? 'מחפש המלצות מושלמות...' : 'Finding perfect recommendations...'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-6 h-6 mr-3" />
+                      <span>{t('getRecommendations')}</span>
+                    </>
+                  )}
+                </Button>
+              </motion.div>
             </CardContent>
-          </Card>
+            </Card>
+          </motion.div>
 
           {/* Results */}
           <AnimatePresence>
@@ -418,17 +457,30 @@ Please respond in ${language === 'he' ? 'Hebrew' : 'English'}.`,
               >
                 {/* Existing Trips */}
                 {recommendations && recommendations.length > 0 && (
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                      <Compass className="w-6 h-6 text-emerald-600" />
-                      {t('recommendedTrips')}
-                    </h2>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <div className="flex items-center gap-3 mb-8 bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-6 py-4 rounded-2xl shadow-2xl">
+                      <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                        <Compass className="w-6 h-6" />
+                      </div>
+                      <h2 className="text-2xl font-bold">{t('recommendedTrips')}</h2>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {recommendations.map(trip => (
-                        <TripCard key={trip.id} trip={trip} />
+                      {recommendations.map((trip, index) => (
+                        <motion.div
+                          key={trip.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                        >
+                          <TripCard trip={trip} />
+                        </motion.div>
                       ))}
                     </div>
-                  </div>
+                  </motion.div>
                 )}
 
                 {recommendations && recommendations.length === 0 && (
@@ -449,59 +501,80 @@ Please respond in ${language === 'he' ? 'Hebrew' : 'English'}.`,
 
                 {/* AI Suggestions */}
                 {aiSuggestions && aiSuggestions.length > 0 && (
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                      <Lightbulb className="w-6 h-6 text-amber-500" />
-                      {language === 'he' ? 'הצעות מותאמות אישית' : 'Personalized Suggestions'}
-                    </h2>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <div className="flex items-center gap-3 mb-8 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-4 rounded-2xl shadow-2xl">
+                      <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                        <Lightbulb className="w-6 h-6" />
+                      </div>
+                      <h2 className="text-2xl font-bold">
+                        {language === 'he' ? 'הצעות מותאמות אישית' : 'Personalized Suggestions'}
+                      </h2>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       {aiSuggestions.map((suggestion, index) => (
                         <motion.div
                           key={index}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.5 + index * 0.1 }}
+                          whileHover={{ scale: 1.03, y: -5 }}
                         >
-                          <Card className="h-full hover:shadow-lg transition-shadow border-0 bg-gradient-to-br from-white to-gray-50">
+                          <Card className="h-full border-2 border-amber-100 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-white via-amber-50/30 to-orange-50/30 backdrop-blur-sm">
                             <CardHeader>
                               <div className="flex items-start gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold shadow-lg shadow-amber-500/30">
+                                <motion.div 
+                                  className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 via-orange-400 to-orange-500 flex items-center justify-center text-white font-bold shadow-2xl shadow-amber-500/40"
+                                  whileHover={{ rotate: 360 }}
+                                  transition={{ duration: 0.6 }}
+                                >
                                   {index + 1}
-                                </div>
-                                <div>
-                                  <CardTitle className="text-lg">{suggestion.location}</CardTitle>
-                                  <Badge variant="outline" className="mt-1">
+                                </motion.div>
+                                <div className="flex-1">
+                                  <CardTitle className="text-lg bg-gradient-to-r from-amber-700 to-orange-700 bg-clip-text text-transparent font-bold">
+                                    {suggestion.location}
+                                  </CardTitle>
+                                  <Badge className="mt-2 bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 border-amber-200">
                                     {suggestion.best_time}
                                   </Badge>
                                 </div>
                               </div>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                              <div>
-                                <p className="text-sm text-gray-500 mb-1">
+                              <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-100">
+                                <p className="text-xs font-semibold text-purple-700 mb-2 flex items-center gap-1">
+                                  <Sparkles className="w-3 h-3" />
                                   {language === 'he' ? 'למה מתאים לך' : 'Why it suits you'}
                                 </p>
-                                <p className="text-gray-700">{suggestion.reason}</p>
+                                <p className="text-gray-700 leading-relaxed">{suggestion.reason}</p>
                               </div>
-                              <div>
-                                <p className="text-sm text-gray-500 mb-1">
+                              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-4 rounded-xl border border-blue-100">
+                                <p className="text-xs font-semibold text-blue-700 mb-2 flex items-center gap-1">
+                                  <Compass className="w-3 h-3" />
                                   {language === 'he' ? 'מה לצפות' : 'What to expect'}
                                 </p>
-                                <p className="text-gray-700">{suggestion.description}</p>
+                                <p className="text-gray-700 leading-relaxed">{suggestion.description}</p>
                               </div>
                               {suggestion.tips && (
-                                <div className="bg-amber-50 p-3 rounded-lg">
-                                  <p className="text-sm text-amber-800">
-                                    💡 {suggestion.tips}
+                                <motion.div 
+                                  className="bg-gradient-to-r from-amber-100 to-orange-100 p-4 rounded-xl border-2 border-amber-200"
+                                  whileHover={{ scale: 1.02 }}
+                                >
+                                  <p className="text-sm text-amber-900 font-medium flex items-start gap-2">
+                                    <span className="text-xl">💡</span>
+                                    <span>{suggestion.tips}</span>
                                   </p>
-                                </div>
+                                </motion.div>
                               )}
                             </CardContent>
                           </Card>
                         </motion.div>
                       ))}
                     </div>
-                  </div>
+                  </motion.div>
                 )}
               </motion.div>
             )}
