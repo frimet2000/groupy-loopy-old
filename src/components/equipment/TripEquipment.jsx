@@ -166,6 +166,34 @@ export default function TripEquipment({ trip, isOrganizer, onUpdate }) {
         <CardContent className="p-4 space-y-4">
 
 
+          {/* Water Recommendation */}
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-gray-700 flex items-center gap-2">
+              💧 {language === 'he' ? 'כמות מים מומלצת' : 'Recommended Water'}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {[1, 1.5, 2, 3, 4].map(liters => {
+                const isSelected = recommendedWater === liters;
+                return (
+                  <button
+                    key={liters}
+                    onClick={() => isOrganizer && handleWaterRecommendationChange(liters)}
+                    disabled={!isOrganizer}
+                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                      isSelected
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : isOrganizer 
+                          ? 'bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100'
+                          : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    {liters}L
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {isOrganizer && (
             <>
               {/* Popular Equipment */}
