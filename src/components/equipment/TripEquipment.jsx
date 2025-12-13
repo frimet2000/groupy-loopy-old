@@ -164,62 +164,7 @@ export default function TripEquipment({ trip, isOrganizer, onUpdate }) {
     <>
       <Card>
         <CardContent className="p-4 space-y-4">
-          {/* Water Recommendation Section */}
-          <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 border-0 shadow-xl">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">💧</span>
-                </div>
-                <div>
-                  <p className="font-bold text-white text-lg">
-                    {language === 'he' ? 'כמות מים מומלצת' : 'Recommended Water'}
-                  </p>
-                  <p className="text-xs text-white/80">
-                    {language === 'he' ? 'להביא לטיול' : 'Bring for the trip'}
-                  </p>
-                </div>
-              </div>
 
-              {isOrganizer ? (
-                <div className="space-y-3">
-                  <p className="text-sm text-white/90 font-medium">
-                    {language === 'he' ? 'בחר כמה ליטרים להמליץ:' : 'Select liters to recommend:'}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {[1, 1.5, 2, 3, 4].map(liters => (
-                      <button
-                        key={liters}
-                        onClick={() => handleWaterRecommendationChange(liters)}
-                        className={`px-4 py-2.5 rounded-lg text-base font-bold transition-all ${
-                          recommendedWater === liters
-                            ? 'bg-white text-blue-600 shadow-lg scale-105'
-                            : 'bg-white/20 text-white border-2 border-white/30 hover:bg-white/30 hover:scale-105'
-                        }`}
-                      >
-                        {liters}L
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-2">
-                  {recommendedWater ? (
-                    <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
-                      <p className="text-4xl font-bold text-white mb-1">{recommendedWater}L</p>
-                      <p className="text-sm text-white/90">
-                        {language === 'he' ? 'מומלץ ע"י המארגן' : 'Recommended by organizer'}
-                      </p>
-                    </div>
-                  ) : (
-                    <p className="text-white/80 text-sm italic">
-                      {language === 'he' ? 'המארגן טרם הגדיר המלצה' : 'No recommendation set yet'}
-                    </p>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
 
           {isOrganizer && (
             <>
