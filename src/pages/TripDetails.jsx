@@ -16,6 +16,7 @@ import BudgetPlanner from '../components/planning/BudgetPlanner';
 import ShareDialog from '../components/sharing/ShareDialog';
 import TripComments from '../components/social/TripComments';
 import ParticipantWaiver from '../components/legal/ParticipantWaiver';
+import TripReminders from '../components/reminders/TripReminders';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -45,7 +46,7 @@ import {
   Calendar, MapPin, Clock, Users, Mountain, Dog, Tent,
   Share2, ArrowLeft, ArrowRight, Check, X, User,
   Droplets, TreePine, Sun, History, Building, Navigation, Edit, MessageCircle, Bike, Truck,
-  Info, GalleryHorizontal, Heart, MessageSquare, Radio, Backpack, Bookmark, DollarSign, Image, Loader2, Camera, Upload
+  Info, GalleryHorizontal, Heart, MessageSquare, Radio, Backpack, Bookmark, DollarSign, Image, Loader2, Camera, Upload, Bell
 } from 'lucide-react';
 
 const difficultyColors = {
@@ -1292,9 +1293,15 @@ export default function TripDetails() {
                     <Radio className="w-4 h-4 text-teal-600 hidden sm:block" />
                     <span className="hidden sm:inline">{language === 'he' ? 'מיקום חי' : 'Live'}</span>
                   </TabsTrigger>
-                </>
-              )}
-            </TabsList>
+                  <TabsTrigger value="reminders" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-yellow-50 data-[state=active]:text-yellow-700 py-3">
+                    <Bell className="w-4 h-4 text-yellow-600 sm:hidden" />
+                    <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'תזכורות' : 'Reminders'}</span>
+                    <Bell className="w-4 h-4 text-yellow-600 hidden sm:block" />
+                    <span className="hidden sm:inline">{language === 'he' ? 'תזכורות' : 'Reminders'}</span>
+                  </TabsTrigger>
+                  </>
+                  )}
+                  </TabsList>
 
             <TabsContent value="social" className="mt-0">
               <TripComments 
@@ -1592,9 +1599,15 @@ export default function TripDetails() {
                     onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
                   />
                 </TabsContent>
-              </>
-            )}
-          </Tabs>
+                <TabsContent value="reminders" className="mt-0">
+                  <TripReminders 
+                    trip={trip}
+                    currentUserEmail={user?.email}
+                  />
+                </TabsContent>
+                </>
+                )}
+                </Tabs>
         </motion.div>
       </div>
 

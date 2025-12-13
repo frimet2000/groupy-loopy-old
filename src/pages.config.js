@@ -16,7 +16,6 @@ import Admin from './pages/Admin';
 import Settings from './pages/Settings';
 import MyLists from './pages/MyLists';
 import ListDetails from './pages/ListDetails';
-import Notifications from './pages/Notifications';
 import __Layout from './Layout.jsx';
 
 
@@ -39,7 +38,6 @@ export const PAGES = {
     "Settings": Settings,
     "MyLists": MyLists,
     "ListDetails": ListDetails,
-    "Notifications": Notifications,
 }
 
 export const pagesConfig = {
