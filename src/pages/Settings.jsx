@@ -44,7 +44,7 @@ export default function Settings() {
         }
       } catch (error) {
         console.error('Error fetching user:', error);
-        toast.error(language === 'he' ? 'שגיאה בטעינת נתונים' : language === 'ru' ? 'Ошибка загрузки данных' : 'Error loading data');
+        toast.error(language === 'he' ? 'שגיאה בטעינת נתונים' : 'Error loading data');
       }
       setLoading(false);
     };
@@ -64,9 +64,9 @@ export default function Settings() {
       await base44.auth.updateMe({
         notification_preferences: preferences
       });
-      toast.success(language === 'he' ? 'ההגדרות נשמרו בהצלחה' : language === 'ru' ? 'Настройки успешно сохранены' : 'Settings saved successfully');
+      toast.success(language === 'he' ? 'ההגדרות נשמרו בהצלחה' : 'Settings saved successfully');
     } catch (error) {
-      toast.error(language === 'he' ? 'שגיאה בשמירת הגדרות' : language === 'ru' ? 'Ошибка сохранения настроек' : 'Error saving settings');
+      toast.error(language === 'he' ? 'שגיאה בשמירת הגדרות' : 'Error saving settings');
     }
     setSaving(false);
   };
@@ -127,7 +127,7 @@ export default function Settings() {
     {
       key: 'trip_invitations',
       icon: Bell,
-      title: language === 'he' ? 'הזמנות לטיולים' : language === 'ru' ? 'Приглашения в поездки' : 'Trip Invitations',
+      title: language === 'he' ? 'הזמנות לטיולים' : language === 'ru' ? 'Приглашения на поездки' : 'Trip Invitations',
       description: language === 'he' 
         ? 'קבל התראות כאשר מוזמנים אותך לטיול פרטי' 
         : language === 'ru'
@@ -138,11 +138,11 @@ export default function Settings() {
     {
       key: 'join_requests',
       icon: Users,
-      title: language === 'he' ? 'בקשות הצטרפות' : language === 'ru' ? 'Запросы на присоединение' : 'Join Requests',
+      title: language === 'he' ? 'בקשות הצטרפות' : language === 'ru' ? 'Запросы на участие' : 'Join Requests',
       description: language === 'he' 
         ? 'קבל התראות על בקשות להצטרף לטיולים שארגנת' 
         : language === 'ru'
-        ? 'Получать уведомления о запросах на присоединение к вашим поездкам'
+        ? 'Получать уведомления о запросах на участие в ваших поездках'
         : 'Get notified about join requests for trips you organize',
       color: 'from-cyan-500 to-blue-600'
     }
@@ -167,8 +167,8 @@ export default function Settings() {
           <p className="text-gray-600">
             {language === 'he' 
               ? 'נהל את העדפות ההתראות שלך ובחר איזה עדכונים תרצה לקבל' 
-              : language === 'ru'
-              ? 'Управляйте своими настройками уведомлений и выбирайте, какие обновления вы хотите получать'
+              : language === 'ru' 
+              ? 'Управляйте настройками уведомлений и выбирайте, какие обновления получать'
               : 'Manage your notification preferences and choose which updates you want to receive'}
           </p>
         </motion.div>
@@ -177,7 +177,7 @@ export default function Settings() {
           <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50">
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-emerald-600" />
-              {language === 'he' ? 'העדפות התראות' : language === 'ru' ? 'Настройки уведомлений' : 'Notification Preferences'}
+              {language === 'he' ? 'העדפות התראות' : language === 'ru' ? 'Предпочтения уведомлений' : 'Notification Preferences'}
             </CardTitle>
             <CardDescription>
               {language === 'he'
