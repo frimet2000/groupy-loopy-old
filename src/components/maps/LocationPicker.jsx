@@ -17,13 +17,17 @@ L.Icon.Default.mergeOptions({
 function LocationMarker({ position, setPosition }) {
   const map = useMapEvents({
     click(e) {
-      setPosition([e.latlng.lat, e.latlng.lng]);
+      // Use exact coordinates without any rounding
+      const exactLat = e.latlng.lat;
+      const exactLng = e.latlng.lng;
+      setPosition([exactLat, exactLng]);
     },
   });
 
   useEffect(() => {
     if (position) {
-      map.flyTo(position, map.getZoom());
+      // Pan to position smoothly without changing zoom
+      map.panTo(position, { animate: false });
     }
   }, [position, map]);
 
@@ -43,7 +47,10 @@ export default function LocationPicker({ isOpen, onClose, initialLat, initialLng
   }, [initialLat, initialLng]);
 
   const handleConfirm = () => {
-    onConfirm(position[0], position[1]);
+    // Return exact coordinates without any modifications
+    const exactLat = position[0];
+    const exactLng = position[1];
+    onConfirm(exactLat, exactLng);
     onClose();
   };
 
@@ -75,8 +82,8 @@ export default function LocationPicker({ isOpen, onClose, initialLat, initialLng
           </MapContainer>
         </div>
 
-        <div className="text-sm text-gray-600">
-          {language === 'he' ? 'קואורדינטות:' : 'Coordinates:'} {position[0].toFixed(6)}, {position[1].toFixed(6)}
+        <div className="text-sm text-gray-600 font-mono">
+          {language === 'he' ? 'קואורדינטות:' : 'Coordinates:'} {position[0].toFixed(8)}, {position[1].toFixed(8)}
         </div>
 
         <DialogFooter>
