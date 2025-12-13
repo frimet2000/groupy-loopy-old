@@ -148,7 +148,7 @@ export default function TripDetails() {
       });
 
       // Send email to organizer
-      const title = language === 'he' ? trip.title_he : trip.title_en;
+      const title = trip.title || trip.title_he || trip.title_en;
       const fullUserName = (user.first_name && user.last_name) 
         ? `${user.first_name} ${user.last_name}` 
         : user.full_name;
@@ -210,7 +210,7 @@ export default function TripDetails() {
       });
 
       // Send approval email
-      const title = language === 'he' ? trip.title_he : trip.title_en;
+      const title = trip.title || trip.title_he || trip.title_en;
       await base44.integrations.Core.SendEmail({
         to: requestEmail,
         subject: language === 'he' 
@@ -244,7 +244,7 @@ export default function TripDetails() {
       });
 
       // Send rejection email
-      const title = language === 'he' ? trip.title_he : trip.title_en;
+      const title = trip.title || trip.title_he || trip.title_en;
       await base44.integrations.Core.SendEmail({
         to: requestEmail,
         subject: language === 'he' 
@@ -271,7 +271,7 @@ export default function TripDetails() {
   const handleShare = async () => {
     try {
       await navigator.share({
-        title: language === 'he' ? trip.title_he : trip.title_en,
+        title: trip.title || trip.title_he || trip.title_en,
         url: window.location.href,
       });
     } catch (e) {
@@ -282,10 +282,8 @@ export default function TripDetails() {
 
   const handleStartEdit = () => {
     setEditData({
-      title_he: trip.title_he,
-      title_en: trip.title_en,
-      description_he: trip.description_he,
-      description_en: trip.description_en,
+      title: trip.title || trip.title_he,
+      description: trip.description || trip.description_he,
       max_participants: trip.max_participants,
     });
     setIsEditing(true);
@@ -363,8 +361,8 @@ export default function TripDetails() {
     );
   }
 
-  const title = language === 'he' ? trip.title_he : trip.title_en;
-  const description = language === 'he' ? trip.description_he : trip.description_en;
+  const title = trip.title || trip.title_he || trip.title_en;
+  const description = trip.description || trip.description_he || trip.description_en;
 
   return (
     <div className="min-h-screen bg-gray-50 pb-8">
@@ -607,19 +605,19 @@ export default function TripDetails() {
                     {isEditing ? (
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <label className="text-sm font-medium">{language === 'he' ? 'כותרת (עברית)' : 'Title (Hebrew)'}</label>
+                          <label className="text-sm font-medium">{language === 'he' ? 'כותרת' : 'Title'}</label>
                           <Input
-                            value={editData.title_he}
-                            onChange={(e) => setEditData({...editData, title_he: e.target.value})}
-                            dir="rtl"
+                            value={editData.title}
+                            onChange={(e) => setEditData({...editData, title: e.target.value})}
+                            dir={isRTL ? 'rtl' : 'ltr'}
                           />
                         </div>
                         <div className="space-y-2">
-                          <label className="text-sm font-medium">{language === 'he' ? 'תיאור (עברית)' : 'Description (Hebrew)'}</label>
+                          <label className="text-sm font-medium">{language === 'he' ? 'תיאור' : 'Description'}</label>
                           <Textarea
-                            value={editData.description_he || ''}
-                            onChange={(e) => setEditData({...editData, description_he: e.target.value})}
-                            dir="rtl"
+                            value={editData.description || ''}
+                            onChange={(e) => setEditData({...editData, description: e.target.value})}
+                            dir={isRTL ? 'rtl' : 'ltr'}
                             rows={4}
                           />
                         </div>
@@ -643,7 +641,7 @@ export default function TripDetails() {
                         </div>
                       </div>
                     ) : (
-                      <p className="text-gray-700 leading-relaxed whitespace-pre-wrap" dir={language === 'he' ? 'rtl' : 'ltr'}>{description}</p>
+                      <p className="text-gray-700 leading-relaxed whitespace-pre-wrap" dir={isRTL ? 'rtl' : 'ltr'}>{description}</p>
                     )}
                   </CardContent>
                 </Card>

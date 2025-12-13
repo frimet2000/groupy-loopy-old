@@ -41,8 +41,8 @@ export default function TripCard({ trip }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleting, setDeleting] = useState(false);
   
-  const title = language === 'he' ? trip.title_he : trip.title_en;
-  const description = language === 'he' ? trip.description_he : trip.description_en;
+  const title = trip.title || trip.title_he || trip.title_en;
+  const description = trip.description || trip.description_he || trip.description_en;
 
   useEffect(() => {
     const fetchUser = async () => {

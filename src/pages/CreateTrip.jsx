@@ -28,7 +28,7 @@ const interests = ['nature', 'history', 'photography', 'birdwatching', 'archaeol
 const accessibilityTypes = ['wheelchair', 'visual_impairment', 'hearing_impairment', 'mobility_aid', 'stroller_friendly', 'elderly_friendly'];
 
 export default function CreateTrip() {
-  const { t, language } = useLanguage();
+  const { t, language, isRTL } = useLanguage();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -40,10 +40,8 @@ export default function CreateTrip() {
   const countries = getAllCountries();
   
   const [formData, setFormData] = useState({
-    title_he: '',
-    title_en: '',
-    description_he: '',
-    description_en: '',
+    title: '',
+    description: '',
     location: '',
     country: 'israel',
     region: '',
@@ -213,7 +211,7 @@ export default function CreateTrip() {
   const saveTrip = async (e) => {
     e.preventDefault();
     
-    if (!formData.title_he || !formData.location || !formData.date) {
+    if (!formData.title || !formData.location || !formData.date) {
       toast.error(language === 'he' ? 'נא למלא את כל השדות' : 'Please fill all fields');
       return;
     }
@@ -222,8 +220,6 @@ export default function CreateTrip() {
     try {
       const tripData = {
         ...formData,
-        title_en: formData.title_en || formData.title_he,
-        description_en: formData.description_en || formData.description_he,
         current_participants: 1,
         status: 'open',
         organizer_name: user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : (user?.full_name || user?.email || ''),
@@ -303,23 +299,23 @@ export default function CreateTrip() {
               </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>{t('titleHe')}</Label>
+                <Label>{language === 'he' ? 'כותרת' : 'Title'}</Label>
                 <Input
-                  value={formData.title_he}
-                  onChange={(e) => handleChange('title_he', e.target.value)}
-                  placeholder="כותרת"
-                  dir="rtl"
+                  value={formData.title}
+                  onChange={(e) => handleChange('title', e.target.value)}
+                  placeholder={language === 'he' ? 'כותרת הטיול' : 'Trip title'}
+                  dir={isRTL ? 'rtl' : 'ltr'}
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>{t('descriptionHe')}</Label>
+                <Label>{language === 'he' ? 'תיאור' : 'Description'}</Label>
                 <Textarea
-                  value={formData.description_he}
-                  onChange={(e) => handleChange('description_he', e.target.value)}
-                  placeholder="תיאור"
-                  dir="rtl"
+                  value={formData.description}
+                  onChange={(e) => handleChange('description', e.target.value)}
+                  placeholder={language === 'he' ? 'תיאור הטיול' : 'Trip description'}
+                  dir={isRTL ? 'rtl' : 'ltr'}
                   rows={4}
                 />
               </div>

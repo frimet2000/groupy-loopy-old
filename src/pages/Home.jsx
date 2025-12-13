@@ -41,8 +41,8 @@ export default function Home() {
   const filteredTrips = trips.filter(trip => {
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
-      const title = language === 'he' ? trip.title_he : trip.title_en;
-      const desc = language === 'he' ? trip.description_he : trip.description_en;
+      const title = trip.title || trip.title_he || trip.title_en;
+      const desc = trip.description || trip.description_he || trip.description_en;
       if (!title?.toLowerCase().includes(searchLower) && 
           !desc?.toLowerCase().includes(searchLower) &&
           !trip.location?.toLowerCase().includes(searchLower)) {
@@ -78,8 +78,8 @@ export default function Home() {
       case 'popularity':
         return (b.current_participants || 0) - (a.current_participants || 0);
       case 'title':
-        const titleA = language === 'he' ? a.title_he : a.title_en;
-        const titleB = language === 'he' ? b.title_he : b.title_en;
+        const titleA = a.title || a.title_he || a.title_en;
+        const titleB = b.title || b.title_he || b.title_en;
         return titleA.localeCompare(titleB);
       default:
         return 0;
@@ -303,7 +303,7 @@ export default function Home() {
                 </div>
                 <div className="space-y-3">
                   {myActiveInvites.map(({ trip, invite }) => {
-                    const title = language === 'he' ? trip.title_he : trip.title_en;
+                    const title = trip.title || trip.title_he || trip.title_en;
                     const scheduledDate = new Date(invite.scheduled_time);
                     const timeLabel = isToday(scheduledDate) 
                       ? (language === 'he' ? 'היום' : 'Today')
