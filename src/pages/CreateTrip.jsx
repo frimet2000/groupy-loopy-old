@@ -8,11 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Upload, MapPin, Mountain, Clock, Sparkles, Navigation, Globe, Calendar, Users, Compass } from 'lucide-react';
+import { Loader2, Upload, MapPin, Mountain, Clock, Sparkles, Navigation, Globe, Calendar, Users, Compass, Flag, Plus, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { detectUserLocation, getRegionFromCoordinates } from '../components/utils/LocationDetector';
 import LocationPicker from '../components/maps/LocationPicker';
@@ -70,8 +71,18 @@ export default function CreateTrip() {
     pets_allowed: false,
     camping_available: false,
     max_participants: 10,
-    image_url: ''
+    image_url: '',
+    waypoints: []
   });
+
+  const [waypointForm, setWaypointForm] = useState({
+    name: '',
+    description: '',
+    latitude: null,
+    longitude: null
+  });
+  const [showWaypointDialog, setShowWaypointDialog] = useState(false);
+  const [editingWaypointIndex, setEditingWaypointIndex] = useState(null);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -225,6 +236,106 @@ export default function CreateTrip() {
         ? prev[field].filter(v => v !== value)
         : [...prev[field], value]
     }));
+  };
+
+  const handleAddWaypoint = () => {
+    setWaypointForm({
+      name: '',
+      description: '',
+      latitude: formData.latitude || null,
+      longitude: formData.longitude || null
+    });
+    setEditingWaypointIndex(null);
+    setShowWaypointDialog(true);
+  };
+
+  const handleEditWaypoint = (index) => {
+    const waypoint = formData.waypoints[index];
+    setWaypointForm({
+      name: waypoint.name,
+      description: waypoint.description || '',
+      latitude: waypoint.latitude,
+      longitude: waypoint.longitude
+    });
+    setEditingWaypointIndex(index);
+    setShowWaypointDialog(true);
+  };
+
+  const handleSaveWaypoint = () => {
+    if (!waypointForm.name) {
+      toast.error(language === 'he' ? 'יש להזין שם לנקודת הציון' : 'Please enter waypoint name');
+      return;
+    }
+
+    const newWaypoint = {
+      id: Date.now().toString(),
+      name: waypointForm.name,
+      description: waypointForm.description,
+      latitude: waypointForm.latitude,
+      longitude: waypointForm.longitude,
+      order: editingWaypointIndex !== null ? formData.waypoints[editingWaypointIndex].order : formData.waypoints.length
+    };
+
+    if (editingWaypointIndex !== null) {
+      const updatedWaypoints = [...formData.waypoints];
+      updatedWaypoints[editingWaypointIndex] = { ...newWaypoint, order: formData.waypoints[editingWaypointIndex].order };
+      setFormData(prev => ({ ...prev, waypoints: updatedWaypoints }));
+    } else {
+      setFormData(prev => ({ ...prev, waypoints: [...prev.waypoints, newWaypoint] }));
+    }
+
+    setShowWaypointDialog(false);
+    setWaypointForm({ name: '', description: '', latitude: null, longitude: null });
+  };
+
+  const handleDeleteWaypoint = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      waypoints: prev.waypoints.filter((_, i) => i !== index)
+    }));
+    toast.success(language === 'he' ? 'נקודת ציון נמחקה' : 'Waypoint deleted');
+  };
+
+  const handleWaypointLocationSearch = async () => {
+    if (!waypointForm.name) {
+      toast.error(language === 'he' ? 'יש להזין שם לנקודת הציון' : 'Please enter waypoint name');
+      return;
+    }
+
+    setSearchingLocation(true);
+    try {
+      const countryName = t(formData.country);
+      const locationQuery = formData.sub_region 
+        ? `${waypointForm.name}, ${formData.sub_region}, ${formData.region}, ${countryName}`
+        : formData.region
+        ? `${waypointForm.name}, ${formData.region}, ${countryName}`
+        : `${waypointForm.name}, ${countryName}`;
+        
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: language === 'he'
+          ? `מצא קואורדינטות GPS (latitude, longitude) עבור המיקום "${locationQuery}". חפש ב-Google Maps ותן קואורדינטות מדויקות.`
+          : `Find GPS coordinates (latitude, longitude) for the location "${locationQuery}". Search Google Maps and provide exact coordinates.`,
+        add_context_from_internet: true,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            latitude: { type: "number" },
+            longitude: { type: "number" }
+          }
+        }
+      });
+      
+      setWaypointForm(prev => ({
+        ...prev,
+        latitude: result.latitude,
+        longitude: result.longitude
+      }));
+      
+      toast.success(language === 'he' ? 'מיקום נמצא' : 'Location found');
+    } catch (error) {
+      toast.error(language === 'he' ? 'לא ניתן למצוא את המיקום' : 'Could not find location');
+    }
+    setSearchingLocation(false);
   };
 
   const handleImageUpload = async (e) => {
@@ -975,6 +1086,88 @@ export default function CreateTrip() {
             </Card>
           </motion.div>
 
+          {/* Waypoints */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.35 }}
+          >
+            <Card className="border-2 border-teal-100 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-teal-50 to-cyan-50 border-b border-teal-100">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-xl shadow-lg">
+                    <Flag className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-teal-700 to-cyan-700 bg-clip-text text-transparent font-bold">
+                    {language === 'he' ? 'נקודות ציון' : 'Waypoints'}
+                  </span>
+                </CardTitle>
+                <CardDescription>
+                  {language === 'he' ? 'הוסף נקודות עניין לאורך המסלול' : 'Add points of interest along the route'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleAddWaypoint}
+                  className="w-full border-2 border-teal-300 hover:bg-teal-50 transition-all"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  {language === 'he' ? 'הוסף נקודת ציון' : 'Add Waypoint'}
+                </Button>
+
+                {formData.waypoints.length > 0 && (
+                  <div className="space-y-2">
+                    {formData.waypoints.map((waypoint, index) => (
+                      <div
+                        key={waypoint.id}
+                        className="flex items-center justify-between p-3 bg-teal-50 rounded-lg border border-teal-200"
+                      >
+                        <div className="flex items-center gap-3 flex-1">
+                          <div className="w-8 h-8 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                            {index + 1}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-900">{waypoint.name}</p>
+                            {waypoint.description && (
+                              <p className="text-sm text-gray-600">{waypoint.description}</p>
+                            )}
+                            {waypoint.latitude && waypoint.longitude && (
+                              <p className="text-xs text-teal-600">
+                                {waypoint.latitude.toFixed(4)}, {waypoint.longitude.toFixed(4)}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleEditWaypoint(index)}
+                            className="text-teal-600 hover:text-teal-700 hover:bg-teal-100"
+                          >
+                            {language === 'he' ? 'ערוך' : 'Edit'}
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleDeleteWaypoint(index)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+
           {/* Age Ranges */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1079,6 +1272,84 @@ export default function CreateTrip() {
           </motion.div>
         </form>
       </div>
+
+      {/* Waypoint Dialog */}
+      <Dialog open={showWaypointDialog} onOpenChange={setShowWaypointDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>
+              {editingWaypointIndex !== null 
+                ? (language === 'he' ? 'ערוך נקודת ציון' : 'Edit Waypoint')
+                : (language === 'he' ? 'הוסף נקודת ציון' : 'Add Waypoint')}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>{language === 'he' ? 'שם' : 'Name'} *</Label>
+              <Input
+                value={waypointForm.name}
+                onChange={(e) => setWaypointForm(prev => ({ ...prev, name: e.target.value }))}
+                placeholder={language === 'he' ? 'שם נקודת הציון' : 'Waypoint name'}
+                dir={isRTL ? 'rtl' : 'ltr'}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>{language === 'he' ? 'תיאור' : 'Description'}</Label>
+              <Textarea
+                value={waypointForm.description}
+                onChange={(e) => setWaypointForm(prev => ({ ...prev, description: e.target.value }))}
+                placeholder={language === 'he' ? 'תיאור נקודת הציון' : 'Waypoint description'}
+                dir={isRTL ? 'rtl' : 'ltr'}
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>{language === 'he' ? 'קואורדינטות' : 'Coordinates'}</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleWaypointLocationSearch}
+                  disabled={searchingLocation || !waypointForm.name}
+                  className="flex-1"
+                >
+                  {searchingLocation ? (
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  ) : (
+                    <Navigation className="w-4 h-4 mr-2" />
+                  )}
+                  {language === 'he' ? 'חפש מיקום' : 'Search Location'}
+                </Button>
+              </div>
+              {waypointForm.latitude && waypointForm.longitude && (
+                <p className="text-xs text-green-600 flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  {waypointForm.latitude.toFixed(4)}, {waypointForm.longitude.toFixed(4)}
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-3 justify-end pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowWaypointDialog(false)}
+              >
+                {t('cancel')}
+              </Button>
+              <Button
+                type="button"
+                onClick={handleSaveWaypoint}
+                className="bg-teal-600 hover:bg-teal-700"
+              >
+                {t('save')}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
     </>
   );
