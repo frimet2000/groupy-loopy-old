@@ -91,7 +91,7 @@ export default function TripCard({ trip }) {
 
   return (
     <>
-      <Card className="group overflow-hidden hover:shadow-xl transition-all duration-500 bg-white border-0 shadow-md relative">
+      <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-white to-gray-50 border-2 border-transparent hover:border-emerald-200 shadow-lg relative">
         <Link to={createPageUrl('TripDetails') + `?id=${trip.id}`}>
           <div className="relative h-48 overflow-hidden">
             <img
@@ -99,7 +99,9 @@ export default function TripCard({ trip }) {
               alt={title}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
             
             <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} flex gap-2`}>
               <Badge className={`${difficultyColors[trip.difficulty]} border-0 font-medium`}>
@@ -156,30 +158,38 @@ export default function TripCard({ trip }) {
           )}
           
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-gray-600 text-sm">
+          <div className="flex items-center gap-2 text-gray-700 text-sm">
+            <div className="p-1.5 bg-emerald-100 rounded-lg">
               <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-              <span className="truncate">{trip.location}</span>
-              <Badge variant="outline" className="ml-auto text-xs">
-                {t(trip.region)}
-              </Badge>
             </div>
-            
-            <div className="flex items-center gap-4 text-gray-600 text-sm">
-              <div className="flex items-center gap-1.5">
-                <Calendar className="w-4 h-4 text-blue-500" />
-                <span>{format(new Date(trip.date), 'dd/MM/yyyy')}</span>
+            <span className="truncate font-medium">{trip.location}</span>
+            <Badge variant="outline" className="ml-auto text-xs bg-gradient-to-r from-gray-50 to-white">
+              {t(trip.region)}
+            </Badge>
+          </div>
+
+          <div className="flex items-center gap-4 text-gray-700 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 bg-blue-100 rounded-lg">
+                <Calendar className="w-4 h-4 text-blue-600" />
               </div>
-              <div className="flex items-center gap-1.5">
-                <Clock className="w-4 h-4 text-purple-500" />
-                <span>{trip.duration_value} {t(trip.duration_type)}</span>
-              </div>
+              <span className="font-medium">{format(new Date(trip.date), 'dd/MM/yyyy')}</span>
             </div>
-            
-            <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-3">
-              <div className="flex items-center gap-1.5 text-gray-600 text-sm">
-                <Users className="w-4 h-4 text-rose-500" />
-                <span>{trip.current_participants || 1}/{trip.max_participants || '∞'}</span>
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 bg-purple-100 rounded-lg">
+                <Clock className="w-4 h-4 text-purple-600" />
               </div>
+              <span className="font-medium">{trip.duration_value} {t(trip.duration_type)}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-3">
+            <div className="flex items-center gap-2 text-gray-700 text-sm">
+              <div className="p-1.5 bg-rose-100 rounded-lg">
+                <Users className="w-4 h-4 text-rose-600" />
+              </div>
+              <span className="font-medium">{trip.current_participants || 1}/{trip.max_participants || '∞'}</span>
+            </div>
               
               {trip.trail_type && trip.trail_type.length > 0 && (
                 <div className="flex gap-1">

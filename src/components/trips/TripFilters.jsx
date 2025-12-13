@@ -45,14 +45,16 @@ export default function TripFilters({ filters, setFilters, onSearch }) {
   return (
     <div className="space-y-4">
       {/* Search Bar */}
-      <form onSubmit={handleSearchSubmit} className="flex gap-2">
+      <form onSubmit={handleSearchSubmit} className="flex gap-3">
         <div className="relative flex-1">
-          <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400`} />
+          <div className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 p-2 bg-emerald-100 rounded-lg`}>
+            <Search className="w-5 h-5 text-emerald-600" />
+          </div>
           <Input
             placeholder={t('search') + '...'}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className={`${isRTL ? 'pr-10' : 'pl-10'} h-12 text-base bg-white border-gray-200 focus:border-emerald-500 focus:ring-emerald-500`}
+            className={`${isRTL ? 'pr-16' : 'pl-16'} h-14 text-base bg-white border-2 border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 rounded-xl shadow-sm hover:shadow-md transition-all`}
           />
         </div>
         
@@ -60,12 +62,14 @@ export default function TripFilters({ filters, setFilters, onSearch }) {
           <SheetTrigger asChild>
             <Button 
               variant="outline" 
-              className="h-12 px-4 border-gray-200 hover:border-emerald-500 hover:bg-emerald-50"
+              className="h-14 px-6 border-2 border-gray-200 hover:border-emerald-500 hover:bg-emerald-50 rounded-xl shadow-sm hover:shadow-md transition-all"
             >
-              <SlidersHorizontal className="w-5 h-5" />
-              <span className="hidden sm:inline ml-2">{t('filter')}</span>
+              <div className="p-1 bg-emerald-100 rounded">
+                <SlidersHorizontal className="w-5 h-5 text-emerald-600" />
+              </div>
+              <span className="hidden sm:inline ml-2 font-semibold">{t('filter')}</span>
               {activeFiltersCount > 0 && (
-                <Badge className="ml-2 bg-emerald-600 hover:bg-emerald-600">{activeFiltersCount}</Badge>
+                <Badge className="ml-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white">{activeFiltersCount}</Badge>
               )}
             </Button>
           </SheetTrigger>
