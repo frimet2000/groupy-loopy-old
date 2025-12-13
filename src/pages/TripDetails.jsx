@@ -572,7 +572,7 @@ export default function TripDetails() {
                 <Button 
                   variant="secondary" 
                   size="icon" 
-                  className="rounded-full bg-white/90 hover:bg-white relative"
+                  className="rounded-full bg-white/90 hover:bg-white relative w-10 h-10 sm:w-auto sm:h-auto"
                   disabled={uploadingImage}
                   onClick={() => document.getElementById('trip-image-upload').click()}
                 >
@@ -586,6 +586,7 @@ export default function TripDetails() {
                   id="trip-image-upload"
                   type="file"
                   accept="image/*"
+                  capture="environment"
                   className="hidden"
                   onChange={handleImageUpload}
                 />
