@@ -1530,8 +1530,298 @@ const translations = {
     boutique: "Boutique",
     resort: "Resort",
     vacation_rental: "Casa vacanze",
+  },
+  ru: {
+    // Navigation
+    home: "Главная",
+    myTrips: "Мои поездки",
+    createTrip: "Создать",
+    aiRecommendations: "AI",
+    profile: "Профиль",
+    logout: "Выйти",
+
+    // General
+    search: "Поиск",
+    filter: "Фильтр",
+    apply: "Применить",
+    clear: "Очистить",
+    save: "Сохранить",
+    cancel: "Отмена",
+    delete: "Удалить",
+    edit: "Редактировать",
+    join: "Присоединиться",
+    leave: "Покинуть",
+    share: "Поделиться",
+    loading: "Загрузка...",
+    noResults: "Нет результатов",
+
+    // Trip details
+    tripDetails: "Детали",
+    organizer: "Организатор",
+    participants: "Участники",
+    maxParticipants: "Макс",
+    date: "Дата",
+    duration: "Длительность",
+    difficulty: "Сложность",
+    trailType: "Тип",
+    interests: "Интересы",
+    petsAllowed: "Животные",
+    campingAvailable: "Кемпинг",
+    weather: "Погода",
+    location: "Место",
+    region: "Регион",
+
+    // Duration types
+    hours: "Часы",
+    half_day: "Полдня",
+    full_day: "День",
+    overnight: "Ночь",
+    multi_day: "Несколько дней",
+
+    // Difficulty levels
+    easy: "Легко",
+    moderate: "Средне",
+    challenging: "Сложно",
+    hard: "Трудно",
+    extreme: "Экстрим",
+
+    // Trail types
+    water: "Вода",
+    full_shade: "Тень",
+    partial_shade: "Полутень",
+    desert: "Пустыня",
+    forest: "Лес",
+    coastal: "Побережье",
+    mountain: "Горы",
+    historical: "Исторический",
+    urban: "Городской",
+
+    // Activity types
+    hiking: "Пеший",
+    cycling: "Велосипед",
+    offroad: "Внедорожник",
+    activityType: "Активность",
+
+    // Cycling types
+    road: "Шоссе",
+    gravel: "Гравий",
+    hybrid: "Гибрид",
+    bmx: "BMX",
+    electric: "Электро",
+    cyclingType: "Тип велосипеда",
+    cyclingDistance: "Расстояние",
+    cyclingElevation: "Набор высоты",
+
+    // Off-road types
+    jeep: "Джип",
+    atv: "Квадроцикл",
+    dirt_bike: "Мотокросс",
+    side_by_side: "UTV",
+    buggy: "Багги",
+    truck: "4x4",
+    offroadVehicleType: "Транспорт",
+    offroadDistance: "Расстояние",
+    offroadTerrainType: "Местность",
+
+    // Terrain types
+    sand: "Песок",
+    rocks: "Камни",
+    mud: "Грязь",
+    hills: "Холмы",
+    forest_trails: "Тропы",
+    river_crossing: "Река",
+
+    // Interests
+    nature: "Природа",
+    history: "История",
+    photography: "Фото",
+    birdwatching: "Птицы",
+    archaeology: "Археология",
+    geology: "Геология",
+    botany: "Ботаника",
+    extreme_sports: "Экстрим",
+    family_friendly: "Семья",
+    romantic: "Романтика",
+
+    // Countries
+    country: "Страна",
+    selectCountry: "Страна",
+    israel: "Израиль",
+    usa: "США",
+    italy: "Италия",
+    spain: "Испания",
+    france: "Франция",
+    germany: "Германия",
+    uk: "Великобритания",
+    japan: "Япония",
+    australia: "Австралия",
+    canada: "Канада",
+    switzerland: "Швейцария",
+    austria: "Австрия",
+    new_zealand: "Новая Зеландия",
+    norway: "Норвегия",
+    sweden: "Швеция",
+    greece: "Греция",
+    portugal: "Португалия",
+    netherlands: "Нидерланды",
+    belgium: "Бельгия",
+    denmark: "Дания",
+    ireland: "Ирландия",
+    iceland: "Исландия",
+    croatia: "Хорватия",
+    poland: "Польша",
+    czech_republic: "Чехия",
+    thailand: "Таиланд",
+    indonesia: "Индонезия",
+    malaysia: "Малайзия",
+    vietnam: "Вьетнам",
+    south_korea: "Южная Корея",
+    china: "Китай",
+    india: "Индия",
+    nepal: "Непал",
+    turkey: "Турция",
+    egypt: "Египет",
+    morocco: "Марокко",
+    south_africa: "ЮАР",
+    kenya: "Кения",
+    tanzania: "Танзания",
+    brazil: "Бразилия",
+    argentina: "Аргентина",
+    chile: "Чили",
+    peru: "Перу",
+    mexico: "Мексика",
+    costa_rica: "Коста-Рика",
+    finland: "Финляндия",
+    romania: "Румыния",
+    hungary: "Венгрия",
+    slovakia: "Словакия",
+    bulgaria: "Болгария",
+    serbia: "Сербия",
+    slovenia: "Словения",
+    montenegro: "Черногория",
+    bosnia_herzegovina: "Босния",
+    albania: "Албания",
+    north_macedonia: "Македония",
+    luxembourg: "Люксембург",
+    malta: "Мальта",
+    cyprus: "Кипр",
+    estonia: "Эстония",
+    latvia: "Латвия",
+    lithuania: "Литва",
+
+    // Regions - Israel
+    north: "Север",
+    center: "Центр",
+    south: "Юг",
+    jerusalem: "Иерусалим",
+    negev: "Негев",
+    eilat: "Эйлат",
+
+    // Status
+    open: "Открыто",
+    full: "Заполнено",
+    completed: "Завершено",
+    cancelled: "Отменено",
+
+    // Form labels
+    titleHe: "Название (HE)",
+    titleEn: "Название (EN)",
+    descriptionHe: "Описание (HE)",
+    descriptionEn: "Описание (EN)",
+    selectDate: "Дата",
+    selectRegion: "Регион",
+    selectDifficulty: "Сложность",
+    selectDuration: "Длительность",
+    durationValue: "Значение",
+    parentAgeRange: "Возраст родителей",
+    childrenAgeRange: "Возраст детей",
+    minAge: "Мин",
+    maxAge: "Макс",
+    uploadImage: "Загрузить",
+
+    // Messages
+    tripCreated: "Создано!",
+    tripUpdated: "Обновлено!",
+    joinedTrip: "Вы присоединились!",
+    leftTrip: "Вы покинули!",
+    tripFull: "Заполнено",
+    alreadyJoined: "Уже участвуете",
+
+    // AI
+    getRecommendations: "Рекомендации",
+    basedOnLocation: "По локации",
+    basedOnPreferences: "По предпочтениям",
+    recommendedTrips: "Рекомендации",
+
+    // Weather
+    temperature: "Температура",
+    humidity: "Влажность",
+    wind: "Ветер",
+    conditions: "Условия",
+
+    // Yes/No
+    yes: "Да",
+    no: "Нет",
+
+    // Filters
+    allRegions: "Все",
+    allDifficulties: "Все",
+    allDurations: "Все",
+    dateRange: "Даты",
+    from: "От",
+    to: "До",
+
+    // Accessibility
+    wheelchair: "Коляска",
+    visual_impairment: "Зрение",
+    hearing_impairment: "Слух",
+    mobility_aid: "Мобильность",
+    stroller_friendly: "Коляска",
+    elderly_friendly: "Пожилые",
+    accessibilityTypes: "Доступность",
+    myAccessibilityNeeds: "Мои потребности",
+
+    // Hero
+    heroTitle: "Партнеры",
+    heroSubtitle: "Присоединяйтесь или создайте",
+    exploreTrips: "Исследовать",
+    savedTrips: "Сохраненные",
+
+    // Empty states
+    noTripsFound: "Нет",
+    noSavedTrips: "Нет сохраненных",
+    createFirstTrip: "Создать",
+    noUpcomingTrips: "Нет",
+    noOrganizedTrips: "Нет",
+
+    // Budget
+    budget: "Бюджет",
+    comfortable: "Комфортно",
+    luxury: "Люкс",
+
+    // Travel companions
+    solo: "Соло",
+    couple: "Пара",
+    family_young_kids: "Семья",
+    family_teens: "Семья",
+    friends: "Друзья",
+    group: "Группа",
+
+    // Activity intensity
+    relaxed: "Спокойно",
+    active: "Активно",
+    very_active: "Очень активно",
+
+    // Accommodation
+    accommodation: "Жилье",
+    camping: "Кемпинг",
+    hostel: "Хостел",
+    hotel: "Отель",
+    boutique: "Бутик",
+    resort: "Курорт",
+    vacation_rental: "Аренда",
   }
-};
+  };
 
 const detectLanguageFromLocation = async () => {
   if (typeof window === 'undefined' || !navigator.geolocation) {
