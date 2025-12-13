@@ -1676,7 +1676,7 @@ export default function TripDetails() {
                     <div>
                       <p className="font-semibold text-lg">{trip.pending_requests[currentRequestIndex].name}</p>
                       <p className="text-sm text-gray-500">
-                        {format(new Date(trip.pending_requests[currentRequestIndex].requested_at), 'MMM d, HH:mm')}
+                        {formatDate(new Date(trip.pending_requests[currentRequestIndex].requested_at), 'MMM d, HH:mm', language)}
                       </p>
                     </div>
                   </div>
