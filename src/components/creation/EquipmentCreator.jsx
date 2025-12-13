@@ -15,7 +15,11 @@ export default function EquipmentCreator({ equipment, setEquipment }) {
   const [newItem, setNewItem] = useState('');
 
   const popularItems = [
-    { id: 'water', he: 'מים', en: 'Water', critical: true },
+    { id: 'water1', he: '1 ליטר מים', en: '1L Water', critical: true },
+    { id: 'water1.5', he: '1.5 ליטר מים', en: '1.5L Water', critical: true },
+    { id: 'water2', he: '2 ליטר מים', en: '2L Water', critical: true },
+    { id: 'water3', he: '3 ליטר מים', en: '3L Water', critical: true },
+    { id: 'water4', he: '4 ליטר מים', en: '4L Water', critical: true },
     { id: 'hat', he: 'כובע', en: 'Hat' },
     { id: 'sunscreen', he: 'קרם הגנה', en: 'Sunscreen' },
     { id: 'shoes', he: 'נעלי הליכה', en: 'Hiking Shoes' },
