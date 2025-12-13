@@ -47,23 +47,23 @@ export default function AboutUs() {
     intro: 'The Group Loop was developed by Perimat Computers - a professional team specializing in computing services and digital creation.',
     company: {
       name: 'Perimat Computers',
-      tagline: 'Computing Services & Digital Creation',
-      description: 'We provide advanced technological solutions, app development, interface design, and comprehensive computing services for businesses and organizations.'
+      tagline: 'Компьютерные услуги и цифровое творчество',
+      description: 'Мы предоставляем передовые технологические решения, разработку приложений, дизайн интерфейсов и комплексные компьютерные услуги для бизнеса и организаций.'
     },
     services: {
-      title: 'Our Services',
+      title: 'Наши услуги',
       items: [
-        'Web and mobile app development',
-        'User experience and interface design (UX/UI)',
-        'Technology consulting services',
-        'Cloud and hosting solutions',
-        'Technical support and maintenance',
-        'Digital content creation'
+        'Разработка веб и мобильных приложений',
+        'Дизайн пользовательского опыта и интерфейсов (UX/UI)',
+        'Услуги технологического консалтинга',
+        'Облачные решения и хостинг',
+        'Техническая поддержка и обслуживание',
+        'Создание цифрового контента'
       ]
     },
     mission: {
-      title: 'Our Mission',
-      text: 'We believe in the power of technology to connect people and improve quality of life. The Group Loop was born from the desire to create a platform that makes it easy for travelers to find trip partners and share experiences in nature.'
+      title: 'Наша миссия',
+      text: 'Мы верим в силу технологий для объединения людей и улучшения качества жизни. The Group Loop родилась из желания создать платформу, которая упрощает путешественникам поиск партнеров для поездок и обмен впечатлениями на природе.'
     },
     contact: {
       title: 'О нас',
@@ -96,7 +96,7 @@ export default function AboutUs() {
         text: 'We believe in the power of technology to connect people and improve quality of life. The Group Loop was born from the desire to create a platform that makes it easy for travelers to find trip partners and share experiences in nature.'
       },
       contact: {
-        title: 'Contact Us',
+        title: 'Свяжитесь с нами',
         email: 'frimet@gmail.com'
       }
     };
