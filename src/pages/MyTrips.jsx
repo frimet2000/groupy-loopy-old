@@ -180,7 +180,7 @@ export default function MyTrips() {
                 <EmptyState 
                   icon={Compass}
                   title={t('noTripsFound')}
-                  description={language === 'he' ? 'עדיין לא הצטרפת לטיולים' : "You haven't joined any trips yet"}
+                  description={language === 'he' ? 'עדיין לא יצרת טיול' : "You haven't created a trip yet"}
                 />
               )}
             </TabsContent>
