@@ -79,70 +79,74 @@ export default function AnnouncementToast() {
   };
 
   const currentMessage = allMessages[0];
+  
+  if (!currentMessage) return null;
 
-  const isPrivate = currentMessage?.type === 'private';
+  const isPrivate = currentMessage.type === 'private';
   const gradientClass = isPrivate 
     ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600'
     : 'bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600';
+  
+  const messageTitle = currentMessage.title || '';
+  const messageBody = currentMessage.message || currentMessage.body || '';
+  const messageSender = currentMessage.sent_by_name || '';
 
   return (
     <AnimatePresence>
-      {currentMessage && (
-        <motion.div
-          initial={{ opacity: 0, y: -100 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -100 }}
-          transition={{ type: "spring", stiffness: 200, damping: 25 }}
-          className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-4"
-        >
-          <Card className={`${gradientClass} text-white border-0 shadow-2xl overflow-hidden`}>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
-            <div className="relative p-4">
-              <div className="flex items-start gap-3">
-                <motion.div
-                  animate={{ 
-                    rotate: [0, -10, 10, -10, 0],
-                    scale: [1, 1.1, 1]
-                  }}
-                  transition={{ 
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatType: "reverse"
-                  }}
-                  className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"
-                >
-                  {isPrivate ? <Mail className="w-5 h-5" /> : <Megaphone className="w-5 h-5" />}
-                </motion.div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <div>
-                      <h3 className="font-bold text-lg leading-tight">
-                        {currentMessage.title}
-                      </h3>
-                      <p className="text-xs text-white/80 mt-0.5">
-                        {isPrivate 
-                          ? (language === 'he' ? 'הודעה מהמנהל' : 'Message from Admin')
-                          : `${language === 'he' ? 'מאת' : 'From'} ${currentMessage.sent_by_name}`}
-                      </p>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDismiss(currentMessage)}
-                      className="h-8 w-8 text-white hover:bg-white/20 flex-shrink-0"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
+      <motion.div
+        initial={{ opacity: 0, y: -100 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -100 }}
+        transition={{ type: "spring", stiffness: 200, damping: 25 }}
+        className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-4"
+      >
+        <Card className={`${gradientClass} text-white border-0 shadow-2xl overflow-hidden`}>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
+          <div className="relative p-4">
+            <div className="flex items-start gap-3">
+              <motion.div
+                animate={{ 
+                  rotate: [0, -10, 10, -10, 0],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{ 
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
+                className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"
+              >
+                {isPrivate ? <Mail className="w-5 h-5" /> : <Megaphone className="w-5 h-5" />}
+              </motion.div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2 mb-1">
+                  <div>
+                    <h3 className="font-bold text-lg leading-tight text-white">
+                      {messageTitle}
+                    </h3>
+                    <p className="text-xs text-white/80 mt-0.5">
+                      {isPrivate 
+                        ? (language === 'he' ? 'הודעה מהמנהל' : 'Message from Admin')
+                        : `${language === 'he' ? 'מאת' : 'From'} ${messageSender}`}
+                    </p>
                   </div>
-                  <p className="text-sm text-white/90 leading-relaxed whitespace-pre-wrap">
-                    {currentMessage.message || currentMessage.body}
-                  </p>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDismiss(currentMessage)}
+                    className="h-8 w-8 text-white hover:bg-white/20 flex-shrink-0"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
                 </div>
+                <p className="text-sm text-white/90 leading-relaxed whitespace-pre-wrap">
+                  {messageBody}
+                </p>
               </div>
             </div>
-          </Card>
-        </motion.div>
-      )}
+          </div>
+        </Card>
+      </motion.div>
     </AnimatePresence>
   );
 }
