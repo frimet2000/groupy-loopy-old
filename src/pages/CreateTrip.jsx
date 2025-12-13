@@ -57,10 +57,10 @@ export default function CreateTrip() {
     activity_type: 'hiking',
     difficulty: 'moderate',
     cycling_type: '',
-    cycling_distance: '',
-    cycling_elevation: '',
+    cycling_distance: null,
+    cycling_elevation: null,
     offroad_vehicle_type: '',
-    offroad_distance: '',
+    offroad_distance: null,
     offroad_terrain_type: [],
     trail_type: [],
     interests: [],
@@ -378,7 +378,11 @@ export default function CreateTrip() {
           name: user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : (user?.full_name || user?.email || ''),
           joined_at: new Date().toISOString(),
           accessibility_needs: []
-        }]
+        }],
+        // Clean up empty numeric fields
+        cycling_distance: formData.cycling_distance || undefined,
+        cycling_elevation: formData.cycling_elevation || undefined,
+        offroad_distance: formData.offroad_distance || undefined,
       };
 
       await base44.entities.Trip.create(tripData);
