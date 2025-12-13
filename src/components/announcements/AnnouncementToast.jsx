@@ -104,12 +104,12 @@ export default function AnnouncementToast() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -100 }}
           transition={{ type: "spring", stiffness: 200, damping: 25 }}
-          className="fixed top-20 left-1/2 -translate-x-1/2 z-[9999] w-full max-w-2xl px-4 pointer-events-auto"
+          className="fixed top-20 left-0 right-0 z-[9999] px-3 sm:px-4 sm:left-1/2 sm:-translate-x-1/2 sm:max-w-2xl pointer-events-auto"
         >
           <div className={`${gradientClass} rounded-xl shadow-2xl overflow-hidden`}>
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
-            <div className="relative p-6">
-              <div className="flex items-start gap-4">
+            <div className="relative p-4 sm:p-6">
+              <div className="flex items-start gap-3">
                 <motion.div
                   animate={{ 
                     rotate: [0, -10, 10, -10, 0],
@@ -120,17 +120,17 @@ export default function AnnouncementToast() {
                     repeat: Infinity,
                     repeatType: "reverse"
                   }}
-                  className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"
+                  className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0"
                 >
-                  {isPrivate ? <Mail className="w-6 h-6 text-white" /> : <Megaphone className="w-6 h-6 text-white" />}
+                  {isPrivate ? <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-white" /> : <Megaphone className="w-5 h-5 sm:w-6 sm:h-6 text-white" />}
                 </motion.div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <div className="flex-1">
-                      <h3 className="font-bold text-xl leading-tight mb-1" style={{ color: '#ffffff' }}>
+                <div className="flex-1 min-w-0 overflow-hidden">
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-base sm:text-xl leading-tight mb-1 text-white break-words">
                         {messageTitle}
                       </h3>
-                      <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                      <p className="text-xs sm:text-sm text-white/85">
                         {isPrivate 
                           ? (language === 'he' ? 'הודעה מהמנהל' : 'Message from Admin')
                           : `${language === 'he' ? 'מאת' : 'From'} ${messageSender}`}
@@ -140,12 +140,12 @@ export default function AnnouncementToast() {
                       variant="ghost"
                       size="icon"
                       onClick={() => handleDismiss(currentMessage)}
-                      className="h-9 w-9 text-white hover:bg-white/30 flex-shrink-0 transition-colors"
+                      className="h-8 w-8 sm:h-9 sm:w-9 text-white hover:bg-white/30 flex-shrink-0 transition-colors"
                     >
-                      <X className="w-5 h-5" />
+                      <X className="w-4 h-4 sm:w-5 sm:h-5" />
                     </Button>
                   </div>
-                  <p className="text-base leading-relaxed whitespace-pre-wrap" style={{ color: '#ffffff' }}>
+                  <p className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap text-white break-words">
                     {messageBody}
                   </p>
                 </div>
