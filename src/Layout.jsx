@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 
 function LayoutContent({ children, currentPageName }) {
   const { t, isRTL } = useLanguage();
