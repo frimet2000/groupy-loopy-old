@@ -424,7 +424,7 @@ export default function Profile() {
                       )}
                       {viewingUser.children_age_ranges && viewingUser.children_age_ranges.length > 0 && (
                         <div className="space-y-2">
-                          <Label>{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : language === 'es' ? 'Rangos de edad de niños' : language === 'fr' ? 'Tranches d\'âge des enfants' : language === 'de' ? 'Altersgruppen Kinder' : language === 'it' ? 'Fasce d\'età bambini' : 'Children Age Ranges'}
+                          <Label>{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : language === 'es' ? 'Rangos de edad de niños' : language === 'fr' ? 'Tranches d\'âge des enfants' : language === 'de' ? 'Altersgruppen Kinder' : language === 'it' ? 'Fasce d\'età bambini' : 'Children Age Ranges'}</Label>
                           <div className="flex flex-wrap gap-2">
                             {viewingUser.children_age_ranges.map(range => (
                               <Badge key={range} variant="outline" className="bg-pink-50 text-pink-700 border-pink-200">
@@ -491,7 +491,7 @@ export default function Profile() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="w-5 h-5 text-indigo-600" />
-                  {language === 'he' ? 'פרטים אישיים' : 'Personal Information'}
+                  {language === 'he' ? 'פרטים אישיים' : language === 'ru' ? 'Личная информация' : language === 'es' ? 'Información personal' : language === 'fr' ? 'Informations personnelles' : language === 'de' ? 'Persönliche Informationen' : language === 'it' ? 'Informazioni personali' : 'Personal Information'}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -648,7 +648,7 @@ export default function Profile() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-3">
-                  <Label>{language === 'he' ? 'טווחי גילאי הורים' : 'Parent Age Ranges'}</Label>
+                  <Label>{language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : language === 'es' ? 'Rangos de edad de padres' : language === 'fr' ? 'Tranches d\'âge des parents' : language === 'de' ? 'Altersgruppen Eltern' : language === 'it' ? 'Fasce d\'età genitori' : 'Parent Age Ranges'}</Label>
                   <div className="flex flex-wrap gap-2">
                     {parentAgeRanges.map(range => (
                       <Badge
@@ -670,7 +670,7 @@ export default function Profile() {
                 <Separator />
 
                 <div className="space-y-3">
-                  <Label>{language === 'he' ? 'טווחי גילאי ילדים' : 'Children Age Ranges'}</Label>
+                  <Label>{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : language === 'es' ? 'Rangos de edad de niños' : language === 'fr' ? 'Tranches d\'âge des enfants' : language === 'de' ? 'Altersgruppen Kinder' : language === 'it' ? 'Fasce d\'età bambini' : 'Children Age Ranges'}</Label>
                   <div className="flex flex-wrap gap-2">
                     {childrenAgeRanges.map(range => (
                       <Badge
@@ -698,7 +698,7 @@ export default function Profile() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Settings className="w-5 h-5 text-emerald-600" />
-                  {language === 'he' ? 'העדפות טיולים' : 'Trip Preferences'}
+                  {language === 'he' ? 'העדפות טיולים' : language === 'ru' ? 'Предпочтения поездок' : language === 'es' ? 'Preferencias de viaje' : language === 'fr' ? 'Préférences de voyage' : language === 'de' ? 'Reise-Präferenzen' : language === 'it' ? 'Preferenze di viaggio' : 'Trip Preferences'}
                 </CardTitle>
                 <CardDescription>
                   {language === 'he' 
@@ -721,7 +721,7 @@ export default function Profile() {
                 <div className="space-y-3">
                   <Label className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-blue-600" />
-                    {language === 'he' ? 'אזורים מועדפים' : 'Preferred Regions'}
+                    {language === 'he' ? 'אזורים מועדפים' : language === 'ru' ? 'Предпочитаемые регионы' : language === 'es' ? 'Regiones preferidas' : language === 'fr' ? 'Régions préférées' : language === 'de' ? 'Bevorzugte Regionen' : language === 'it' ? 'Regioni preferite' : 'Preferred Regions'}
                   </Label>
                   <div className="flex flex-wrap gap-2">
                     {regions.map(region => (
@@ -747,7 +747,7 @@ export default function Profile() {
                 <div className="space-y-3">
                   <Label className="flex items-center gap-2">
                     <Heart className="w-4 h-4 text-rose-600" />
-                    {language === 'he' ? 'תחומי עניין' : 'Interests'}
+                    {language === 'he' ? 'תחומי עניין' : language === 'ru' ? 'Интересы' : language === 'es' ? 'Intereses' : language === 'fr' ? 'Centres d\'intérêt' : language === 'de' ? 'Interessen' : language === 'it' ? 'Interessi' : 'Interests'}
                   </Label>
                   <div className="flex flex-wrap gap-2">
                     {interests.map(interest => (
