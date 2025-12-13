@@ -585,101 +585,191 @@ export default function TripDetails() {
           {/* Action Card */}
           <Card className="mb-6 shadow-lg border-0">
             <CardContent className="p-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex items-center gap-6 flex-wrap">
-                      <motion.div 
-                        className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        <div className="p-1 bg-blue-100 rounded">
-                          <Calendar className="w-5 h-5 text-blue-600" />
-                        </div>
-                        <span className="font-semibold text-gray-700">{format(new Date(trip.date), 'EEEE, MMMM d, yyyy')}</span>
-                      </motion.div>
-                      <motion.div 
-                        className="flex items-center gap-2 bg-purple-50 px-3 py-2 rounded-lg"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        <div className="p-1 bg-purple-100 rounded">
-                          <Clock className="w-5 h-5 text-purple-600" />
-                        </div>
-                        <span className="font-semibold text-gray-700">{trip.duration_value} {t(trip.duration_type)}</span>
-                      </motion.div>
-                      <motion.div 
-                        className="flex items-center gap-2 bg-rose-50 px-3 py-2 rounded-lg"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        <div className="p-1 bg-rose-100 rounded">
-                          <Users className="w-5 h-5 text-rose-600" />
-                        </div>
-                        <span className="font-semibold text-gray-700">{trip.current_participants || 1}/{trip.max_participants}</span>
-                      </motion.div>
-                      {trip.activity_type === 'cycling' && (
-                        <motion.div 
-                          className="flex items-center gap-2 bg-cyan-50 px-3 py-2 rounded-lg"
-                          whileHover={{ scale: 1.05 }}
-                        >
-                          <div className="p-1 bg-cyan-100 rounded">
-                            <Bike className="w-5 h-5 text-cyan-600" />
-                          </div>
-                          <span className="font-semibold text-gray-700">{t(trip.cycling_type || 'cycling')}</span>
-                        </motion.div>
-                      )}
-                      {trip.activity_type === 'offroad' && (
-                        <motion.div 
-                          className="flex items-center gap-2 bg-orange-50 px-3 py-2 rounded-lg"
-                          whileHover={{ scale: 1.05 }}
-                        >
-                          <div className="p-1 bg-orange-100 rounded">
-                            <Truck className="w-5 h-5 text-orange-600" />
-                          </div>
-                          <span className="font-semibold text-gray-700">{t(trip.offroad_vehicle_type || 'offroad')}</span>
-                        </motion.div>
-                      )}
-                      </div>
-
-                {user && !isOrganizer && (
-                  hasJoined ? (
-                    <Button 
-                      variant="outline" 
-                      onClick={() => leaveMutation.mutate()}
-                      disabled={leaveMutation.isLoading}
-                      className="text-red-600 border-red-200 hover:bg-red-50"
+              {isEditing ? (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>{language === 'he' ? 'כותרת' : 'Title'}</Label>
+                    <Input
+                      value={editData.title}
+                      onChange={(e) => setEditData({...editData, title: e.target.value})}
+                      dir={isRTL ? 'rtl' : 'ltr'}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{language === 'he' ? 'תיאור' : 'Description'}</Label>
+                    <Textarea
+                      value={editData.description || ''}
+                      onChange={(e) => setEditData({...editData, description: e.target.value})}
+                      dir={isRTL ? 'rtl' : 'ltr'}
+                      rows={3}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>{language === 'he' ? 'תאריך' : 'Date'}</Label>
+                      <Input
+                        type="date"
+                        value={editData.date}
+                        onChange={(e) => setEditData({...editData, date: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{language === 'he' ? 'מיקום' : 'Location'}</Label>
+                      <Input
+                        value={editData.location}
+                        onChange={(e) => setEditData({...editData, location: e.target.value})}
+                        dir={isRTL ? 'rtl' : 'ltr'}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label>{language === 'he' ? 'רמת קושי' : 'Difficulty'}</Label>
+                      <Select value={editData.difficulty} onValueChange={(v) => setEditData({...editData, difficulty: v})}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="easy">{t('easy')}</SelectItem>
+                          <SelectItem value="moderate">{t('moderate')}</SelectItem>
+                          <SelectItem value="challenging">{t('challenging')}</SelectItem>
+                          <SelectItem value="hard">{t('hard')}</SelectItem>
+                          <SelectItem value="extreme">{t('extreme')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{language === 'he' ? 'סוג משך' : 'Duration Type'}</Label>
+                      <Select value={editData.duration_type} onValueChange={(v) => setEditData({...editData, duration_type: v})}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="hours">{t('hours')}</SelectItem>
+                          <SelectItem value="half_day">{t('half_day')}</SelectItem>
+                          <SelectItem value="full_day">{t('full_day')}</SelectItem>
+                          <SelectItem value="overnight">{t('overnight')}</SelectItem>
+                          <SelectItem value="multi_day">{t('multi_day')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{language === 'he' ? 'משך זמן' : 'Duration Value'}</Label>
+                      <Input
+                        type="number"
+                        value={editData.duration_value}
+                        onChange={(e) => setEditData({...editData, duration_value: parseInt(e.target.value)})}
+                        min={1}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{language === 'he' ? 'מקסימום משתתפים' : 'Max Participants'}</Label>
+                    <Input
+                      type="number"
+                      value={editData.max_participants}
+                      onChange={(e) => setEditData({...editData, max_participants: parseInt(e.target.value)})}
+                      min={trip.current_participants}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex items-center gap-6 flex-wrap">
+                    <motion.div 
+                      className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg"
+                      whileHover={{ scale: 1.05 }}
                     >
-                      <X className="w-4 h-4 mr-2" />
-                      {t('leave')}
-                    </Button>
-                  ) : hasPendingRequest ? (
-                    <Badge variant="outline" className="border-yellow-300 text-yellow-700 bg-yellow-50">
-                      {language === 'he' ? 'הבקשה ממתינה לאישור' : 'Request pending approval'}
-                    </Badge>
-                  ) : (
+                      <div className="p-1 bg-blue-100 rounded">
+                        <Calendar className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <span className="font-semibold text-gray-700">{format(new Date(trip.date), 'EEEE, MMMM d, yyyy')}</span>
+                    </motion.div>
+                    <motion.div 
+                      className="flex items-center gap-2 bg-purple-50 px-3 py-2 rounded-lg"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <div className="p-1 bg-purple-100 rounded">
+                        <Clock className="w-5 h-5 text-purple-600" />
+                      </div>
+                      <span className="font-semibold text-gray-700">{trip.duration_value} {t(trip.duration_type)}</span>
+                    </motion.div>
+                    <motion.div 
+                      className="flex items-center gap-2 bg-rose-50 px-3 py-2 rounded-lg"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <div className="p-1 bg-rose-100 rounded">
+                        <Users className="w-5 h-5 text-rose-600" />
+                      </div>
+                      <span className="font-semibold text-gray-700">{trip.current_participants || 1}/{trip.max_participants}</span>
+                    </motion.div>
+                    {trip.activity_type === 'cycling' && (
+                      <motion.div 
+                        className="flex items-center gap-2 bg-cyan-50 px-3 py-2 rounded-lg"
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        <div className="p-1 bg-cyan-100 rounded">
+                          <Bike className="w-5 h-5 text-cyan-600" />
+                        </div>
+                        <span className="font-semibold text-gray-700">{t(trip.cycling_type || 'cycling')}</span>
+                      </motion.div>
+                    )}
+                    {trip.activity_type === 'offroad' && (
+                      <motion.div 
+                        className="flex items-center gap-2 bg-orange-50 px-3 py-2 rounded-lg"
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        <div className="p-1 bg-orange-100 rounded">
+                          <Truck className="w-5 h-5 text-orange-600" />
+                        </div>
+                        <span className="font-semibold text-gray-700">{t(trip.offroad_vehicle_type || 'offroad')}</span>
+                      </motion.div>
+                    )}
+                  </div>
+
+                  {user && !isOrganizer && (
+                    hasJoined ? (
+                      <Button 
+                        variant="outline" 
+                        onClick={() => leaveMutation.mutate()}
+                        disabled={leaveMutation.isLoading}
+                        className="text-red-600 border-red-200 hover:bg-red-50"
+                      >
+                        <X className="w-4 h-4 mr-2" />
+                        {t('leave')}
+                      </Button>
+                    ) : hasPendingRequest ? (
+                      <Badge variant="outline" className="border-yellow-300 text-yellow-700 bg-yellow-50">
+                        {language === 'he' ? 'הבקשה ממתינה לאישור' : 'Request pending approval'}
+                      </Badge>
+                    ) : (
+                      <Button 
+                        onClick={() => setShowJoinDialog(true)}
+                        disabled={joinMutation.isLoading || isFull}
+                        className="bg-emerald-600 hover:bg-emerald-700"
+                      >
+                        <Check className="w-4 h-4 mr-2" />
+                        {isFull ? t('tripFull') : (language === 'he' ? 'בקש להצטרף' : 'Request to Join')}
+                      </Button>
+                    )
+                  )}
+                  
+                  {!user && (
                     <Button 
-                      onClick={() => setShowJoinDialog(true)}
-                      disabled={joinMutation.isLoading || isFull}
+                      onClick={() => base44.auth.redirectToLogin(window.location.href)}
                       className="bg-emerald-600 hover:bg-emerald-700"
                     >
-                      <Check className="w-4 h-4 mr-2" />
-                      {isFull ? t('tripFull') : (language === 'he' ? 'בקש להצטרף' : 'Request to Join')}
+                      {language === 'he' ? 'התחבר להצטרפות' : 'Login to Join'}
                     </Button>
-                  )
-                )}
-                
-                {!user && (
-                  <Button 
-                    onClick={() => base44.auth.redirectToLogin(window.location.href)}
-                    className="bg-emerald-600 hover:bg-emerald-700"
-                  >
-                    {language === 'he' ? 'התחבר להצטרפות' : 'Login to Join'}
-                  </Button>
-                )}
+                  )}
 
-                {isOrganizer && (
-                  <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">
-                    {language === 'he' ? 'אתה המארגן' : "You're the organizer"}
-                  </Badge>
-                )}
-              </div>
+                  {isOrganizer && (
+                    <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">
+                      {language === 'he' ? 'אתה המארגן' : "You're the organizer"}
+                    </Badge>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -761,111 +851,20 @@ export default function TripDetails() {
               )}
             </TabsList>
 
+            <TabsContent value="social" className="mt-0">
+              <TripComments 
+                trip={trip}
+                currentUserEmail={user?.email}
+                onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
+              />
+            </TabsContent>
+
             <TabsContent value="details" className="space-y-6 mt-0">
               {/* Description */}
-              {(description || isEditing) && (
+              {description && !isEditing && (
                 <Card>
                   <CardContent className="p-6">
-                    {isEditing ? (
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">{language === 'he' ? 'כותרת' : 'Title'}</label>
-                          <Input
-                            value={editData.title}
-                            onChange={(e) => setEditData({...editData, title: e.target.value})}
-                            dir={isRTL ? 'rtl' : 'ltr'}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">{language === 'he' ? 'תיאור' : 'Description'}</label>
-                          <Textarea
-                            value={editData.description || ''}
-                            onChange={(e) => setEditData({...editData, description: e.target.value})}
-                            dir={isRTL ? 'rtl' : 'ltr'}
-                            rows={4}
-                          />
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium">{language === 'he' ? 'תאריך' : 'Date'}</label>
-                            <Input
-                              type="date"
-                              value={editData.date}
-                              onChange={(e) => setEditData({...editData, date: e.target.value})}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium">{language === 'he' ? 'מיקום' : 'Location'}</label>
-                            <Input
-                              value={editData.location}
-                              onChange={(e) => setEditData({...editData, location: e.target.value})}
-                              dir={isRTL ? 'rtl' : 'ltr'}
-                            />
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium">{language === 'he' ? 'רמת קושי' : 'Difficulty'}</label>
-                            <Select value={editData.difficulty} onValueChange={(v) => setEditData({...editData, difficulty: v})}>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="easy">{t('easy')}</SelectItem>
-                                <SelectItem value="moderate">{t('moderate')}</SelectItem>
-                                <SelectItem value="challenging">{t('challenging')}</SelectItem>
-                                <SelectItem value="hard">{t('hard')}</SelectItem>
-                                <SelectItem value="extreme">{t('extreme')}</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium">{language === 'he' ? 'סוג משך' : 'Duration Type'}</label>
-                            <Select value={editData.duration_type} onValueChange={(v) => setEditData({...editData, duration_type: v})}>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="hours">{t('hours')}</SelectItem>
-                                <SelectItem value="half_day">{t('half_day')}</SelectItem>
-                                <SelectItem value="full_day">{t('full_day')}</SelectItem>
-                                <SelectItem value="overnight">{t('overnight')}</SelectItem>
-                                <SelectItem value="multi_day">{t('multi_day')}</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium">{language === 'he' ? 'משך זמן' : 'Duration Value'}</label>
-                            <Input
-                              type="number"
-                              value={editData.duration_value}
-                              onChange={(e) => setEditData({...editData, duration_value: parseInt(e.target.value)})}
-                              min={1}
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">{language === 'he' ? 'מקסימום משתתפים' : 'Max Participants'}</label>
-                          <Input
-                            type="number"
-                            value={editData.max_participants}
-                            onChange={(e) => setEditData({...editData, max_participants: parseInt(e.target.value)})}
-                            min={trip.current_participants}
-                          />
-                        </div>
-                        <div className="flex gap-2 justify-end">
-                          <Button variant="outline" onClick={handleCancelEdit}>
-                            {language === 'he' ? 'ביטול' : 'Cancel'}
-                          </Button>
-                          <Button onClick={handleSaveEdit} className="bg-emerald-600 hover:bg-emerald-700">
-                            <Check className="w-4 h-4 mr-2" />
-                            {language === 'he' ? 'שמור' : 'Save'}
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-gray-700 leading-relaxed whitespace-pre-wrap" dir={isRTL ? 'rtl' : 'ltr'}>{description}</p>
-                    )}
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap" dir={isRTL ? 'rtl' : 'ltr'}>{description}</p>
                   </CardContent>
                 </Card>
               )}
