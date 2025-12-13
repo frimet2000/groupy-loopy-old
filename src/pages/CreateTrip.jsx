@@ -357,7 +357,11 @@ export default function CreateTrip() {
     e.preventDefault();
     
     if (!formData.title || !formData.location || !formData.date) {
-      toast.error(language === 'he' ? 'נא למלא את כל השדות' : 'Please fill all fields');
+      const missing = [];
+      if (!formData.title) missing.push(language === 'he' ? 'כותרת' : 'title');
+      if (!formData.location) missing.push(language === 'he' ? 'מיקום' : 'location');
+      if (!formData.date) missing.push(language === 'he' ? 'תאריך' : 'date');
+      toast.error((language === 'he' ? 'שדות חובה חסרים: ' : 'Required fields missing: ') + missing.join(', '));
       return;
     }
 
