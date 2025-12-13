@@ -146,7 +146,7 @@ export default function TripCard({ trip }) {
         </Link>
         
         <Link to={createPageUrl('TripDetails') + `?id=${trip.id}`}>
-          <CardContent className="p-5">
+          <CardContent className="p-5" dir={isRTL ? 'rtl' : 'ltr'}>
           <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-emerald-700 transition-colors">
             {title}
           </h3>
