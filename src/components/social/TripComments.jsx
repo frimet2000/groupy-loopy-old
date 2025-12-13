@@ -40,9 +40,9 @@ export default function TripComments({ trip, currentUser, onUpdate }) {
       
       setCommentText('');
       onUpdate();
-      toast.success(language === 'he' ? 'התגובה נוספה' : 'Comment added');
+      toast.success(language === 'he' ? 'התגובה נוספה' : language === 'ru' ? 'Комментарий добавлен' : language === 'es' ? 'Comentario agregado' : language === 'fr' ? 'Commentaire ajouté' : language === 'de' ? 'Kommentar hinzugefügt' : language === 'it' ? 'Commento aggiunto' : 'Comment added');
     } catch (error) {
-      toast.error(language === 'he' ? 'שגיאה בהוספת תגובה' : 'Error adding comment');
+      toast.error(language === 'he' ? 'שגיאה בהוספת תגובה' : language === 'ru' ? 'Ошибка добавления комментария' : language === 'es' ? 'Error al agregar comentario' : language === 'fr' ? 'Erreur d\'ajout du commentaire' : language === 'de' ? 'Fehler beim Hinzufügen des Kommentars' : language === 'it' ? 'Errore nell\'aggiungere il commento' : 'Error adding comment');
     }
     setSubmitting(false);
   };
@@ -52,9 +52,9 @@ export default function TripComments({ trip, currentUser, onUpdate }) {
       const updatedComments = comments.filter(c => c.id !== commentId);
       await base44.entities.Trip.update(trip.id, { comments: updatedComments });
       onUpdate();
-      toast.success(language === 'he' ? 'התגובה נמחקה' : 'Comment deleted');
+      toast.success(language === 'he' ? 'התגובה נמחקה' : language === 'ru' ? 'Комментарий удален' : language === 'es' ? 'Comentario eliminado' : language === 'fr' ? 'Commentaire supprimé' : language === 'de' ? 'Kommentar gelöscht' : language === 'it' ? 'Commento eliminato' : 'Comment deleted');
     } catch (error) {
-      toast.error(language === 'he' ? 'שגיאה במחיקה' : 'Error deleting');
+      toast.error(language === 'he' ? 'שגיאה במחיקה' : language === 'ru' ? 'Ошибка удаления' : language === 'es' ? 'Error al eliminar' : language === 'fr' ? 'Erreur de suppression' : language === 'de' ? 'Fehler beim Löschen' : language === 'it' ? 'Errore nell\'eliminare' : 'Error deleting');
     }
   };
 
@@ -67,7 +67,7 @@ export default function TripComments({ trip, currentUser, onUpdate }) {
       await base44.entities.Trip.update(trip.id, { likes: updatedLikes });
       onUpdate();
     } catch (error) {
-      toast.error(language === 'he' ? 'שגיאה' : 'Error');
+      toast.error(language === 'he' ? 'שגיאה' : language === 'ru' ? 'Ошибка' : language === 'es' ? 'Error' : language === 'fr' ? 'Erreur' : language === 'de' ? 'Fehler' : language === 'it' ? 'Errore' : 'Error');
     }
   };
 
@@ -77,7 +77,7 @@ export default function TripComments({ trip, currentUser, onUpdate }) {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <MessageCircle className="w-5 h-5 text-blue-600" />
-            {language === 'he' ? 'תגובות ולייקים' : 'Comments & Likes'}
+            {language === 'he' ? 'תגובות ולייקים' : language === 'ru' ? 'Комментарии и лайки' : language === 'es' ? 'Comentarios y me gusta' : language === 'fr' ? 'Commentaires et likes' : language === 'de' ? 'Kommentare & Likes' : language === 'it' ? 'Commenti e mi piace' : 'Comments & Likes'}
           </CardTitle>
           <Button
             variant={hasLiked ? "default" : "outline"}
@@ -102,7 +102,7 @@ export default function TripComments({ trip, currentUser, onUpdate }) {
             <Textarea
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              placeholder={language === 'he' ? 'הוסף תגובה...' : 'Add a comment...'}
+              placeholder={language === 'he' ? 'הוסף תגובה...' : language === 'ru' ? 'Добавить комментарий...' : language === 'es' ? 'Agregar comentario...' : language === 'fr' ? 'Ajouter un commentaire...' : language === 'de' ? 'Kommentar hinzufügen...' : language === 'it' ? 'Aggiungi commento...' : 'Add a comment...'}
               rows={2}
               className="mb-2"
               dir={language === 'he' ? 'rtl' : 'ltr'}
@@ -114,7 +114,7 @@ export default function TripComments({ trip, currentUser, onUpdate }) {
               className="bg-blue-600 hover:bg-blue-700"
             >
               <Send className="w-4 h-4 mr-2" />
-              {language === 'he' ? 'שלח' : 'Send'}
+              {language === 'he' ? 'שלח' : language === 'ru' ? 'Отправить' : language === 'es' ? 'Enviar' : language === 'fr' ? 'Envoyer' : language === 'de' ? 'Senden' : language === 'it' ? 'Invia' : 'Send'}
             </Button>
           </div>
         </div>
@@ -123,7 +123,7 @@ export default function TripComments({ trip, currentUser, onUpdate }) {
         <div className="space-y-3 mt-6">
           {comments.length === 0 ? (
             <p className="text-center py-6 text-gray-500 text-sm">
-              {language === 'he' ? 'אין תגובות עדיין' : 'No comments yet'}
+              {language === 'he' ? 'אין תגובות עדיין' : language === 'ru' ? 'Комментариев пока нет' : language === 'es' ? 'Aún no hay comentarios' : language === 'fr' ? 'Pas encore de commentaires' : language === 'de' ? 'Noch keine Kommentare' : language === 'it' ? 'Nessun commento ancora' : 'No comments yet'}
             </p>
           ) : (
             comments.slice().reverse().map(comment => (
