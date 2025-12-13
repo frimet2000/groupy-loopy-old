@@ -81,9 +81,9 @@ export default function TripEquipment({ trip, isOrganizer, onUpdate }) {
     try {
       await base44.entities.Trip.update(trip.id, { equipment_checklist: updatedEquipment });
       onUpdate();
-      toast.success(language === 'he' ? 'פריט נוסף' : 'Item added');
+      toast.success(language === 'he' ? 'פריט נוסף' : language === 'ru' ? 'Элемент добавлен' : language === 'es' ? 'Elemento agregado' : language === 'fr' ? 'Élément ajouté' : language === 'de' ? 'Artikel hinzugefügt' : language === 'it' ? 'Elemento aggiunto' : 'Item added');
     } catch (error) {
-      toast.error(language === 'he' ? 'שגיאה בהוספה' : 'Error adding');
+      toast.error(language === 'he' ? 'שגיאה בהוספה' : language === 'ru' ? 'Ошибка добавления' : language === 'es' ? 'Error al agregar' : language === 'fr' ? 'Erreur d\'ajout' : language === 'de' ? 'Fehler beim Hinzufügen' : language === 'it' ? 'Errore nell\'aggiungere' : 'Error adding');
     }
   };
 
@@ -108,9 +108,9 @@ export default function TripEquipment({ trip, isOrganizer, onUpdate }) {
       onUpdate();
       setNewEquipmentItem('');
       setEquipmentDialog(false);
-      toast.success(language === 'he' ? 'פריט נוסף' : 'Item added');
+      toast.success(language === 'he' ? 'פריט נוסף' : language === 'ru' ? 'Элемент добавлен' : language === 'es' ? 'Elemento agregado' : language === 'fr' ? 'Élément ajouté' : language === 'de' ? 'Artikel hinzugefügt' : language === 'it' ? 'Elemento aggiunto' : 'Item added');
     } catch (error) {
-      toast.error(language === 'he' ? 'שגיאה בהוספה' : 'Error adding');
+      toast.error(language === 'he' ? 'שגיאה בהוספה' : language === 'ru' ? 'Ошибка добавления' : language === 'es' ? 'Error al agregar' : language === 'fr' ? 'Erreur d\'ajout' : language === 'de' ? 'Fehler beim Hinzufügen' : language === 'it' ? 'Errore nell\'aggiungere' : 'Error adding');
     }
   };
 
