@@ -98,7 +98,7 @@ export default function MyTrips() {
                 className="gap-1 md:gap-2 data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 flex-col md:flex-row py-2 text-xs md:text-sm"
               >
                 <Calendar className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span>{language === 'he' ? 'קרובים' : language === 'ru' ? 'Предстоящие' : 'Upcoming'}</span>
+                <span>{language === 'he' ? 'קרובים' : language === 'ru' ? 'Предстоящие' : language === 'es' ? 'Próximos' : 'Upcoming'}</span>
                 {upcomingTrips.length > 0 && (
                   <span className="bg-emerald-600 text-white text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 rounded-full sm:ml-1">
                     {upcomingTrips.length}
@@ -110,21 +110,21 @@ export default function MyTrips() {
                 className="gap-1 md:gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 flex-col md:flex-row py-2 text-xs md:text-sm"
               >
                 <Compass className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span>{language === 'he' ? 'הצטרפתי' : language === 'ru' ? 'Присоединился' : 'Joined'}</span>
+                <span>{language === 'he' ? 'הצטרפתי' : language === 'ru' ? 'Присоединился' : language === 'es' ? 'Unido' : 'Joined'}</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="organized" 
                 className="gap-1 md:gap-2 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700 flex-col md:flex-row py-2 text-xs md:text-sm"
               >
                 <UserCircle className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span>{language === 'he' ? 'ארגנתי' : language === 'ru' ? 'Организовал' : 'Organized'}</span>
+                <span>{language === 'he' ? 'ארגנתי' : language === 'ru' ? 'Организовал' : language === 'es' ? 'Organizado' : 'Organized'}</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="saved" 
                 className="gap-1 md:gap-2 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 flex-col md:flex-row py-2 text-xs md:text-sm"
               >
                 <Bookmark className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span>{language === 'he' ? 'שמורים' : language === 'ru' ? 'Сохранено' : 'Saved'}</span>
+                <span>{language === 'he' ? 'שמורים' : language === 'ru' ? 'Сохраненные' : language === 'es' ? 'Guardados' : 'Saved'}</span>
                 {savedTrips.length > 0 && (
                   <span className="bg-amber-600 text-white text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 rounded-full sm:ml-1">
                     {savedTrips.length}
@@ -154,7 +154,7 @@ export default function MyTrips() {
                 <EmptyState 
                   icon={Calendar}
                   title={t('noUpcomingTrips')}
-                  description={language === 'he' ? 'אין לך טיולים מתוכננים בקרוב' : language === 'ru' ? 'Нет запланированных поездок' : 'No upcoming trips scheduled'}
+                  description={language === 'he' ? 'אין לך טיולים מתוכננים בקרוב' : language === 'ru' ? 'Нет запланированных поездок' : language === 'es' ? 'No hay viajes próximos programados' : 'No upcoming trips scheduled'}
                 />
               )}
             </TabsContent>
@@ -180,7 +180,7 @@ export default function MyTrips() {
                 <EmptyState 
                   icon={Compass}
                   title={t('noTripsFound')}
-                  description={language === 'he' ? 'עדיין לא יצרת טיול' : language === 'ru' ? "Вы еще не создали поездку" : "You haven't created a trip yet"}
+                  description={language === 'he' ? 'עדיין לא יצרת טיול' : language === 'ru' ? 'Вы еще не создали поездку' : language === 'es' ? 'Aún no has creado un viaje' : "You haven't created a trip yet"}
                 />
               )}
             </TabsContent>
@@ -206,7 +206,7 @@ export default function MyTrips() {
                 <EmptyState 
                   icon={UserCircle}
                   title={t('noOrganizedTrips')}
-                  description={language === 'he' ? 'עדיין לא יצרת טיול' : language === 'ru' ? "Вы еще не организовали ни одной поездки" : "You haven't organized any trips yet"}
+                  description={language === 'he' ? 'עדיין לא יצרת טיול' : language === 'ru' ? 'Вы еще не организовали поездки' : language === 'es' ? 'Aún no has organizado ningún viaje' : "You haven't organized any trips yet"}
                 />
               )}
             </TabsContent>
@@ -232,7 +232,7 @@ export default function MyTrips() {
                 <EmptyState 
                   icon={Bookmark}
                   title={t('noSavedTrips')}
-                  description={language === 'he' ? 'עדיין לא שמרת טיולים' : language === 'ru' ? "Вы еще не сохранили ни одной поездки" : "You haven't saved any trips yet"}
+                  description={language === 'he' ? 'עדיין לא שמרת טיולים' : language === 'ru' ? 'Вы еще не сохранили поездки' : language === 'es' ? 'Aún no has guardado ningún viaje' : "You haven't saved any trips yet"}
                 />
               )}
             </TabsContent>
