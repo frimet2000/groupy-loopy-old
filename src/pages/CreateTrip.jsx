@@ -246,6 +246,7 @@ export default function CreateTrip() {
       longitude: lng
     }));
     
+    setShowMapPicker(false);
     toast.success(language === 'he' ? 'מיקום נשמר' : 'Location saved');
   };
 
