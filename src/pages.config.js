@@ -11,6 +11,7 @@ import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
 import AccessibilityStatement from './pages/AccessibilityStatement';
+import AboutUs from './pages/AboutUs';
 import __Layout from './Layout.jsx';
 
 
@@ -28,6 +29,7 @@ export const PAGES = {
     "PrivacyPolicy": PrivacyPolicy,
     "TermsOfUse": TermsOfUse,
     "AccessibilityStatement": AccessibilityStatement,
+    "AboutUs": AboutUs,
 }
 
 export const pagesConfig = {

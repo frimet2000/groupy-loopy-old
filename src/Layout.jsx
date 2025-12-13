@@ -30,7 +30,8 @@ import {
   Users,
   FileText,
   Shield,
-  AlertTriangle
+  AlertTriangle,
+  Building2
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
@@ -296,6 +297,13 @@ function LayoutContent({ children, currentPageName }) {
                 <Button variant="link" className="gap-2 text-gray-600 hover:text-emerald-600">
                   <AlertTriangle className="w-4 h-4" />
                   {language === 'he' ? 'מדיניות אחריות' : 'Liability Policy'}
+                </Button>
+              </Link>
+              <span className="text-gray-300">|</span>
+              <Link to={createPageUrl('AboutUs')}>
+                <Button variant="link" className="gap-2 text-gray-600 hover:text-emerald-600">
+                  <Building2 className="w-4 h-4" />
+                  {language === 'he' ? 'אודותינו' : 'About Us'}
                 </Button>
               </Link>
             </div>
