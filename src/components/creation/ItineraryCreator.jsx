@@ -73,7 +73,7 @@ export default function ItineraryCreator({ itinerary, setItinerary }) {
               <Calendar className="w-5 h-5" />
               {language === 'he' ? 'לוח זמנים יומי' : 'Daily Schedule'}
             </CardTitle>
-            <Button size="sm" onClick={() => {
+            <Button type="button" size="sm" onClick={() => {
               setEditingDayIndex(null);
               setDayData({ day: itinerary.length + 1, title: '', activities: [] });
               setShowDayDialog(true);
@@ -102,7 +102,7 @@ export default function ItineraryCreator({ itinerary, setItinerary }) {
                           <span className="font-semibold text-sm">{day.title}</span>
                         </div>
                         <div className="flex gap-1">
-                          <Button size="sm" variant="ghost" onClick={() => {
+                          <Button type="button" size="sm" variant="ghost" onClick={() => {
                             setSelectedDayIndex(dayIdx);
                             setEditingActivityIndex(null);
                             setActivityData({ time: '', activity: '', notes: '' });
@@ -110,14 +110,14 @@ export default function ItineraryCreator({ itinerary, setItinerary }) {
                           }}>
                             <Plus className="w-3 h-3" />
                           </Button>
-                          <Button size="sm" variant="ghost" onClick={() => {
+                          <Button type="button" size="sm" variant="ghost" onClick={() => {
                             setEditingDayIndex(dayIdx);
                             setDayData(day);
                             setShowDayDialog(true);
                           }}>
                             <Edit className="w-3 h-3" />
                           </Button>
-                          <Button size="sm" variant="ghost" className="text-red-600" onClick={() => handleDeleteDay(dayIdx)}>
+                          <Button type="button" size="sm" variant="ghost" className="text-red-600" onClick={() => handleDeleteDay(dayIdx)}>
                             <Trash2 className="w-3 h-3" />
                           </Button>
                         </div>
@@ -132,7 +132,7 @@ export default function ItineraryCreator({ itinerary, setItinerary }) {
                                 <p className="font-medium">{act.activity}</p>
                                 {act.notes && <p className="text-gray-600">{act.notes}</p>}
                               </div>
-                              <Button size="icon" variant="ghost" className="h-6 w-6 text-red-600" onClick={() => handleDeleteActivity(dayIdx, actIdx)}>
+                              <Button type="button" size="icon" variant="ghost" className="h-6 w-6 text-red-600" onClick={() => handleDeleteActivity(dayIdx, actIdx)}>
                                 <Trash2 className="w-3 h-3" />
                               </Button>
                             </div>
@@ -160,8 +160,8 @@ export default function ItineraryCreator({ itinerary, setItinerary }) {
             dir={language === 'he' ? 'rtl' : 'ltr'}
           />
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDayDialog(false)}>{language === 'he' ? 'ביטול' : 'Cancel'}</Button>
-            <Button onClick={handleAddDay} className="bg-violet-600">{language === 'he' ? 'שמור' : 'Save'}</Button>
+            <Button type="button" variant="outline" onClick={() => setShowDayDialog(false)}>{language === 'he' ? 'ביטול' : 'Cancel'}</Button>
+            <Button type="button" onClick={handleAddDay} className="bg-violet-600">{language === 'he' ? 'שמור' : 'Save'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -194,8 +194,8 @@ export default function ItineraryCreator({ itinerary, setItinerary }) {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowActivityDialog(false)}>{language === 'he' ? 'ביטול' : 'Cancel'}</Button>
-            <Button onClick={handleAddActivity} className="bg-violet-600">{language === 'he' ? 'שמור' : 'Save'}</Button>
+            <Button type="button" variant="outline" onClick={() => setShowActivityDialog(false)}>{language === 'he' ? 'ביטול' : 'Cancel'}</Button>
+            <Button type="button" onClick={handleAddActivity} className="bg-violet-600">{language === 'he' ? 'שמור' : 'Save'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

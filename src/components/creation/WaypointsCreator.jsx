@@ -159,7 +159,7 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
               </div>
             </Card>
           ) : (
-            <Button onClick={() => setShowMap(true)} className="w-full bg-emerald-600 hover:bg-emerald-700 gap-2" size="lg">
+            <Button type="button" onClick={() => setShowMap(true)} className="w-full bg-emerald-600 hover:bg-emerald-700 gap-2" size="lg">
               <MapPin className="w-5 h-5" />
               {language === 'he' ? 'הצג מפה' : 'Show Map'}
             </Button>
@@ -180,10 +180,10 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
                       {wp.description && <p className="text-xs text-gray-600">{wp.description}</p>}
                     </div>
                     <div className="flex gap-1">
-                      <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleEditWaypoint(wp, idx)}>
+                      <Button type="button" size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleEditWaypoint(wp, idx)}>
                         <Edit className="w-4 h-4" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-red-600" onClick={() => handleDeleteWaypoint(idx)}>
+                      <Button type="button" size="icon" variant="ghost" className="h-8 w-8 text-red-600" onClick={() => handleDeleteWaypoint(idx)}>
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
@@ -234,8 +234,8 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditDialog(false)}>{language === 'he' ? 'ביטול' : 'Cancel'}</Button>
-            <Button onClick={handleSaveWaypoint} className="bg-emerald-600 hover:bg-emerald-700">{language === 'he' ? 'שמור' : 'Save'}</Button>
+            <Button type="button" variant="outline" onClick={() => setEditDialog(false)}>{language === 'he' ? 'ביטול' : 'Cancel'}</Button>
+            <Button type="button" onClick={handleSaveWaypoint} className="bg-emerald-600 hover:bg-emerald-700">{language === 'he' ? 'שמור' : 'Save'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

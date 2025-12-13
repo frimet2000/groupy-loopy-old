@@ -88,7 +88,7 @@ export default function EquipmentCreator({ equipment, setEquipment }) {
             })}
           </div>
 
-          <Button onClick={() => setShowDialog(true)} className="w-full bg-indigo-600 hover:bg-indigo-700" size="sm">
+          <Button type="button" onClick={() => setShowDialog(true)} className="w-full bg-indigo-600 hover:bg-indigo-700" size="sm">
             <Plus className="w-4 h-4 mr-2" />
             {language === 'he' ? 'פריט מותאם' : 'Custom Item'}
           </Button>
@@ -113,7 +113,7 @@ export default function EquipmentCreator({ equipment, setEquipment }) {
                     <span className={`flex-1 text-sm ${item.checked ? 'line-through text-gray-500' : ''}`}>
                       {item.item}
                     </span>
-                    <Button size="icon" variant="ghost" className="h-7 w-7 text-red-600" onClick={() => handleDelete(item.id)}>
+                    <Button type="button" size="icon" variant="ghost" className="h-7 w-7 text-red-600" onClick={() => handleDelete(item.id)}>
                       <Trash2 className="w-3 h-3" />
                     </Button>
                   </div>
@@ -136,8 +136,8 @@ export default function EquipmentCreator({ equipment, setEquipment }) {
             onKeyPress={(e) => e.key === 'Enter' && handleAddCustom()}
           />
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDialog(false)}>{language === 'he' ? 'ביטול' : 'Cancel'}</Button>
-            <Button onClick={handleAddCustom} className="bg-indigo-600">{language === 'he' ? 'הוסף' : 'Add'}</Button>
+            <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>{language === 'he' ? 'ביטול' : 'Cancel'}</Button>
+            <Button type="button" onClick={handleAddCustom} className="bg-indigo-600">{language === 'he' ? 'הוסף' : 'Add'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
