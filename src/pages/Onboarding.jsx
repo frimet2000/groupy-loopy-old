@@ -124,6 +124,10 @@ export default function Onboarding() {
         full_name: fullName,
         profile_completed: true
       });
+      
+      // Mark first login as completed for PWA install prompt
+      localStorage.setItem('first_login_completed', 'true');
+      
       toast.success(language === 'he' ? 'הפרופיל נשמר בהצלחה!' : 'Profile saved successfully!');
       setCompleted(true);
     } catch (error) {
