@@ -192,11 +192,31 @@ export default function Community() {
         friend_requests: updatedRequests
       });
       
+      const userName = (user.first_name && user.last_name) 
+        ? `${user.first_name} ${user.last_name}` 
+        : user.full_name;
+
+      // Send email notification
+      try {
+        const emailSubject = language === 'he' 
+          ? `בקשת חברות חדשה מ-${userName}`
+          : `New Friend Request from ${userName}`;
+        
+        const emailBody = language === 'he'
+          ? `שלום,\n\n${userName} שלח/ה לך בקשת חברות ב-The Group Loop.\n\nכדי לאשר או לדחות את הבקשה, היכנס לאתר ועבור לעמוד הקהילה.\n\nבברכה,\nצוות The Group Loop`
+          : `Hello,\n\n${userName} sent you a friend request on The Group Loop.\n\nTo accept or decline this request, please log in to the website and go to the Community page.\n\nBest regards,\nThe Group Loop Team`;
+
+        await base44.integrations.Core.SendEmail({
+          to: targetEmail,
+          subject: emailSubject,
+          body: emailBody
+        });
+      } catch (error) {
+        console.log('Email error:', error);
+      }
+      
       // Send push notification to target user
       try {
-        const userName = (user.first_name && user.last_name) 
-          ? `${user.first_name} ${user.last_name}` 
-          : user.full_name;
         await base44.functions.invoke('sendPushNotification', {
           recipient_email: targetEmail,
           notification_type: 'friend_requests',
