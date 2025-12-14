@@ -26,7 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Shield, Users, Map, Search, Trash2, Ban, Loader2, UserX, CheckCircle } from 'lucide-react';
+import { Shield, Users, Map, Search, Trash2, Ban, Loader2, UserX, CheckCircle, Edit, UserMinus, UserPlus } from 'lucide-react';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
 
@@ -40,6 +40,8 @@ export default function Admin() {
   const [deleteUserDialog, setDeleteUserDialog] = useState(null);
   const [banUserDialog, setBanUserDialog] = useState(null);
   const [deleteTripDialog, setDeleteTripDialog] = useState(null);
+  const [editTripDialog, setEditTripDialog] = useState(null);
+  const [editTripData, setEditTripData] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -125,6 +127,56 @@ export default function Admin() {
       toast.error(language === 'he' ? 'שגיאה במחיקת הטיול' : 'Error deleting trip');
     },
   });
+
+  const updateTripMutation = useMutation({
+    mutationFn: ({ tripId, data }) => base44.entities.Trip.update(tripId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-trips'] });
+      toast.success(language === 'he' ? 'הטיול עודכן בהצלחה' : 'Trip updated successfully');
+      setEditTripDialog(null);
+      setEditTripData(null);
+    },
+    onError: () => {
+      toast.error(language === 'he' ? 'שגיאה בעדכון הטיול' : 'Error updating trip');
+    },
+  });
+
+  const handleEditTrip = (trip) => {
+    setEditTripDialog(trip);
+    setEditTripData({
+      title: trip.title || '',
+      location: trip.location || '',
+      date: trip.date || '',
+      max_participants: trip.max_participants || 10,
+      organizer_email: trip.organizer_email || '',
+      difficulty: trip.difficulty || 'moderate',
+      status: trip.status || 'open',
+    });
+  };
+
+  const handleSaveTrip = () => {
+    if (!editTripData.title || !editTripData.location || !editTripData.date) {
+      toast.error(language === 'he' ? 'יש למלא את כל השדות הנדרשים' : 'Please fill all required fields');
+      return;
+    }
+    updateTripMutation.mutate({
+      tripId: editTripDialog.id,
+      data: editTripData
+    });
+  };
+
+  const handleRemoveParticipant = (participantEmail) => {
+    const updatedParticipants = editTripDialog.participants?.filter(p => p.email !== participantEmail) || [];
+    const updatedData = {
+      ...editTripData,
+      participants: updatedParticipants,
+      current_participants: updatedParticipants.length
+    };
+    updateTripMutation.mutate({
+      tripId: editTripDialog.id,
+      data: updatedData
+    });
+  };
 
   if (!user) {
     return (
@@ -376,14 +428,24 @@ export default function Admin() {
                               {trip.current_participants || 1} / {trip.max_participants || '∞'}
                             </TableCell>
                             <TableCell>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => setDeleteTripDialog(trip)}
-                              >
-                                <Trash2 className="w-4 h-4 mr-1" />
-                                {language === 'he' ? 'מחק' : language === 'ru' ? 'Удалить' : language === 'es' ? 'Eliminar' : language === 'fr' ? 'Supprimer' : language === 'de' ? 'Löschen' : language === 'it' ? 'Elimina' : 'Delete'}
-                              </Button>
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleEditTrip(trip)}
+                                >
+                                  <Edit className="w-4 h-4 mr-1" />
+                                  {language === 'he' ? 'ערוך' : language === 'ru' ? 'Редактировать' : 'Edit'}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => setDeleteTripDialog(trip)}
+                                >
+                                  <Trash2 className="w-4 h-4 mr-1" />
+                                  {language === 'he' ? 'מחק' : language === 'ru' ? 'Удалить' : language === 'es' ? 'Eliminar' : language === 'fr' ? 'Supprimer' : language === 'de' ? 'Löschen' : language === 'it' ? 'Elimina' : 'Delete'}
+                                </Button>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -508,6 +570,157 @@ export default function Admin() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Edit Trip Dialog */}
+      {editTripDialog && editTripData && (
+        <AlertDialog open={!!editTripDialog} onOpenChange={() => { setEditTripDialog(null); setEditTripData(null); }}>
+          <AlertDialogContent dir={isRTL ? 'rtl' : 'ltr'} className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {language === 'he' ? 'עריכת טיול' : language === 'ru' ? 'Редактировать поездку' : 'Edit Trip'}
+              </AlertDialogTitle>
+            </AlertDialogHeader>
+            
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    {language === 'he' ? 'שם הטיול' : 'Trip Title'}
+                  </label>
+                  <Input
+                    value={editTripData.title}
+                    onChange={(e) => setEditTripData({...editTripData, title: e.target.value})}
+                    placeholder={language === 'he' ? 'הזן שם טיול' : 'Enter trip title'}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    {language === 'he' ? 'מיקום' : 'Location'}
+                  </label>
+                  <Input
+                    value={editTripData.location}
+                    onChange={(e) => setEditTripData({...editTripData, location: e.target.value})}
+                    placeholder={language === 'he' ? 'הזן מיקום' : 'Enter location'}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    {language === 'he' ? 'תאריך' : 'Date'}
+                  </label>
+                  <Input
+                    type="date"
+                    value={editTripData.date}
+                    onChange={(e) => setEditTripData({...editTripData, date: e.target.value})}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    {language === 'he' ? 'מקסימום משתתפים' : 'Max Participants'}
+                  </label>
+                  <Input
+                    type="number"
+                    value={editTripData.max_participants}
+                    onChange={(e) => setEditTripData({...editTripData, max_participants: parseInt(e.target.value)})}
+                    min={1}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    {language === 'he' ? 'מארגן (אימייל)' : 'Organizer Email'}
+                  </label>
+                  <Input
+                    type="email"
+                    value={editTripData.organizer_email}
+                    onChange={(e) => setEditTripData({...editTripData, organizer_email: e.target.value})}
+                    placeholder={language === 'he' ? 'הזן אימייל מארגן' : 'Enter organizer email'}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    {language === 'he' ? 'רמת קושי' : 'Difficulty'}
+                  </label>
+                  <select
+                    value={editTripData.difficulty}
+                    onChange={(e) => setEditTripData({...editTripData, difficulty: e.target.value})}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  >
+                    <option value="easy">{language === 'he' ? 'קל' : 'Easy'}</option>
+                    <option value="moderate">{language === 'he' ? 'בינוני' : 'Moderate'}</option>
+                    <option value="challenging">{language === 'he' ? 'מאתגר' : 'Challenging'}</option>
+                    <option value="hard">{language === 'he' ? 'קשה' : 'Hard'}</option>
+                    <option value="extreme">{language === 'he' ? 'אקסטרים' : 'Extreme'}</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    {language === 'he' ? 'סטטוס' : 'Status'}
+                  </label>
+                  <select
+                    value={editTripData.status}
+                    onChange={(e) => setEditTripData({...editTripData, status: e.target.value})}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  >
+                    <option value="open">{language === 'he' ? 'פתוח' : 'Open'}</option>
+                    <option value="full">{language === 'he' ? 'מלא' : 'Full'}</option>
+                    <option value="completed">{language === 'he' ? 'הושלם' : 'Completed'}</option>
+                    <option value="cancelled">{language === 'he' ? 'בוטל' : 'Cancelled'}</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Participants Management */}
+              {editTripDialog.participants && editTripDialog.participants.length > 0 && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    {language === 'he' ? 'משתתפים' : 'Participants'} ({editTripDialog.participants.length})
+                  </label>
+                  <div className="border rounded-lg p-3 space-y-2 max-h-48 overflow-y-auto">
+                    {editTripDialog.participants.map((participant, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <div>
+                          <p className="font-medium text-sm">{participant.name}</p>
+                          <p className="text-xs text-gray-500">{participant.email}</p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleRemoveParticipant(participant.email)}
+                          disabled={updateTripMutation.isPending}
+                        >
+                          <UserMinus className="w-4 h-4 text-red-600" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={updateTripMutation.isPending}>
+                {language === 'he' ? 'ביטול' : 'Cancel'}
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleSaveTrip}
+                disabled={updateTripMutation.isPending}
+                className="bg-emerald-600 hover:bg-emerald-700"
+              >
+                {updateTripMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  language === 'he' ? 'שמור' : 'Save'
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </div>
   );
 }
