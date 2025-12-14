@@ -184,6 +184,10 @@ export default function Community() {
         ...(targetUser.friend_requests || []),
         { email: user.email, timestamp: new Date().toISOString() }
       ];
+      
+      console.log('Sending friend request to:', targetEmail);
+      console.log('Updated requests:', updatedRequests);
+      
       await base44.entities.User.update(targetUser.id, {
         friend_requests: updatedRequests
       });
@@ -204,9 +208,13 @@ export default function Community() {
       } catch (error) {
         console.log('Notification error:', error);
       }
+      
+      return targetEmail;
     },
-    onSuccess: () => {
+    onSuccess: (targetEmail) => {
       queryClient.invalidateQueries(['users']);
+      queryClient.invalidateQueries(['usersForNotifications']);
+      queryClient.invalidateQueries(['currentUserForNotifications', targetEmail]);
       toast.success(language === 'he' ? 'בקשת חברות נשלחה' : 'Friend request sent');
     },
   });
