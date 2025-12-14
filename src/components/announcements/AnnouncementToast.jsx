@@ -100,7 +100,7 @@ export default function AnnouncementToast() {
   console.log('Message body:', messageBody);
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       {currentMessage && (
         <motion.div
           key={currentMessage.id}
