@@ -63,18 +63,16 @@ export default function AnnouncementToast() {
     new Date(b.sent_at || b.created_date) - new Date(a.sent_at || a.created_date)
   );
 
-  const handleDismiss = async (message) => {
+  const handleDismiss = (message) => {
     const newDismissed = [...dismissedAnnouncements, message.id];
     setDismissedAnnouncements(newDismissed);
     localStorage.setItem('dismissed_announcements', JSON.stringify(newDismissed));
     
-    // Mark as read if it's a private message
+    // Mark as read if it's a private message (async without waiting)
     if (message.type === 'private') {
-      try {
-        await base44.entities.Notification.update(message.id, { read: true });
-      } catch (error) {
-        console.log('Error marking message as read:', error);
-      }
+      base44.entities.Notification.update(message.id, { read: true }).catch(err => 
+        console.log('Error marking message as read:', err)
+      );
     }
   };
 
