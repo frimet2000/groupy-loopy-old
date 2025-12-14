@@ -210,19 +210,7 @@ export default function Community() {
         console.log('Email error:', error);
       }
       
-      // Send push notification to target user
-      try {
-        await base44.functions.invoke('sendPushNotification', {
-          recipient_email: targetEmail,
-          notification_type: 'friend_requests',
-          title: language === 'he' ? 'בקשת חברות חדשה' : 'New Friend Request',
-          body: language === 'he' 
-            ? `${userName} שלח/ה לך בקשת חברות`
-            : `${userName} sent you a friend request`
-        });
-      } catch (error) {
-        console.log('Notification error:', error);
-      }
+
       
       return targetEmail;
     },
