@@ -484,6 +484,19 @@ export default function Home() {
               </p>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
+              {/* Country Filter */}
+              <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder={language === 'he' ? 'כל המדינות' : language === 'ru' ? 'Все страны' : language === 'es' ? 'Todos los países' : language === 'fr' ? 'Tous les pays' : language === 'de' ? 'Alle Länder' : language === 'it' ? 'Tutti i paesi' : 'All Countries'} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{language === 'he' ? 'כל המדינות' : language === 'ru' ? 'Все страны' : language === 'es' ? 'Todos los países' : language === 'fr' ? 'Tous les pays' : language === 'de' ? 'Alle Länder' : language === 'it' ? 'Tutti i paesi' : 'All Countries'}</SelectItem>
+                  {Array.from(new Set(trips.map(t => t.country).filter(Boolean))).sort().map(country => (
+                    <SelectItem key={country} value={country}>{t(country)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
               {/* View Mode Toggle */}
               <div className="flex bg-gray-100 rounded-lg p-1">
                 <Button
