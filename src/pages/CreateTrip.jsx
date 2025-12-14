@@ -1193,92 +1193,37 @@ Include water recommendation in liters and detailed equipment list.`,
               </div>
 
               <div className="flex flex-wrap gap-6 pt-2">
-                <motion.div 
-                  whileHover={{ scale: 1.02 }} 
-                  whileTap={{ scale: 0.98 }}
-                  className="flex items-center gap-3"
-                >
-                  <div className="relative">
-                    <Checkbox
-                      id="pets"
-                      checked={formData.pets_allowed}
-                      onCheckedChange={(checked) => handleChange('pets_allowed', checked)}
-                      className="h-5 w-5 border-2 border-amber-400 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600 transition-all"
-                    />
-                    {formData.pets_allowed && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute -top-1 -right-1"
-                      >
-                        <Dog className="w-4 h-4 text-amber-600" />
-                      </motion.div>
-                    )}
-                  </div>
-                  <Label htmlFor="pets" className="cursor-pointer font-medium flex items-center gap-2 text-gray-700 hover:text-amber-700 transition-colors">
-                    <Dog className="w-4 h-4 text-amber-600" />
-                    {t('petsAllowed')}
-                  </Label>
-                </motion.div>
-                
-                <motion.div 
-                  whileHover={{ scale: 1.02 }} 
-                  whileTap={{ scale: 0.98 }}
-                  className="flex items-center gap-3"
-                >
-                  <div className="relative">
-                    <Checkbox
-                      id="camping"
-                      checked={formData.camping_available}
-                      onCheckedChange={(checked) => handleChange('camping_available', checked)}
-                      className="h-5 w-5 border-2 border-emerald-400 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600 transition-all"
-                    />
-                    {formData.camping_available && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute -top-1 -right-1"
-                      >
-                        <Tent className="w-4 h-4 text-emerald-600" />
-                      </motion.div>
-                    )}
-                  </div>
-                  <Label htmlFor="camping" className="cursor-pointer font-medium flex items-center gap-2 text-gray-700 hover:text-emerald-700 transition-colors">
-                    <Tent className="w-4 h-4 text-emerald-600" />
-                    {t('campingAvailable')}
-                  </Label>
-                </motion.div>
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="pets"
+                    checked={formData.pets_allowed}
+                    onCheckedChange={(checked) => handleChange('pets_allowed', checked)}
+                  />
+                  <Label htmlFor="pets" className="cursor-pointer">{t('petsAllowed')}</Label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="camping"
+                    checked={formData.camping_available}
+                    onCheckedChange={(checked) => handleChange('camping_available', checked)}
+                  />
+                  <Label htmlFor="camping" className="cursor-pointer">{t('campingAvailable')}</Label>
+                </div>
               </div>
 
               {/* Guide Information */}
               <div className="space-y-4 pt-4 border-t border-amber-200">
-                <motion.div 
-                  whileHover={{ scale: 1.02 }} 
-                  whileTap={{ scale: 0.98 }}
-                  className="flex items-center gap-3"
-                >
-                  <div className="relative">
-                    <Checkbox
-                      id="has_guide"
-                      checked={formData.has_guide}
-                      onCheckedChange={(checked) => handleChange('has_guide', checked)}
-                      className="h-5 w-5 border-2 border-blue-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 transition-all"
-                    />
-                    {formData.has_guide && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute -top-1 -right-1"
-                      >
-                        <User className="w-4 h-4 text-blue-600" />
-                      </motion.div>
-                    )}
-                  </div>
-                  <Label htmlFor="has_guide" className="cursor-pointer font-medium flex items-center gap-2 text-gray-700 hover:text-blue-700 transition-colors">
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="has_guide"
+                    checked={formData.has_guide}
+                    onCheckedChange={(checked) => handleChange('has_guide', checked)}
+                  />
+                  <Label htmlFor="has_guide" className="cursor-pointer flex items-center gap-2">
                     <User className="w-4 h-4 text-blue-600" />
                     {language === 'he' ? 'יש מדריך מקצועי' : language === 'ru' ? 'Есть профессиональный гид' : language === 'es' ? 'Tiene guía profesional' : language === 'fr' ? 'A un guide professionnel' : language === 'de' ? 'Hat professionellen Führer' : language === 'it' ? 'Ha guida professionale' : 'Has Professional Guide'}
                   </Label>
-                </motion.div>
+                </div>
 
                 {formData.has_guide && (
                   <div className="space-y-4 pl-6 pr-6">
@@ -1330,134 +1275,42 @@ Include water recommendation in liters and detailed equipment list.`,
                 </CardDescription>
               </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <Label className="flex items-center gap-2 text-purple-700 font-bold text-base">
-                  <div className="p-1.5 bg-purple-100 rounded-lg">
-                    <Users className="w-4 h-4 text-purple-700" />
-                  </div>
-                  {language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : language === 'es' ? 'Rangos de edad de padres' : language === 'fr' ? 'Tranches d\'âge des parents' : language === 'de' ? 'Altersgruppen Eltern' : language === 'it' ? 'Fasce d\'età genitori' : 'Parent Age Ranges'}
-                </Label>
-                <div className="flex flex-wrap gap-3">
+              <div className="space-y-3">
+                <Label>{language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : language === 'es' ? 'Rangos de edad de padres' : language === 'fr' ? 'Tranches d\'âge des parents' : language === 'de' ? 'Altersgruppen Eltern' : language === 'it' ? 'Fasce d\'età genitori' : 'Parent Age Ranges'}</Label>
+                <div className="flex flex-wrap gap-2">
                   {['20-30', '30-40', '40-50', '50-60', '60+'].map(range => (
-                    <motion.button
+                    <Badge
                       key={range}
-                      type="button"
-                      whileHover={{ 
-                        scale: 1.1, 
-                        y: -4,
-                        boxShadow: formData.parent_age_ranges.includes(range) 
-                          ? '0 20px 40px -10px rgba(168, 85, 247, 0.6), 0 0 30px rgba(168, 85, 247, 0.4)' 
-                          : '0 10px 25px -5px rgba(168, 85, 247, 0.3)'
-                      }}
-                      whileTap={{ scale: 0.92 }}
-                      onClick={() => handleArrayToggle('parent_age_ranges', range)}
-                      className={`relative px-7 py-3.5 rounded-2xl font-bold text-base transition-all duration-300 overflow-hidden ${
-                        formData.parent_age_ranges.includes(range)
-                          ? 'bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-700 text-white shadow-[0_15px_35px_-8px_rgba(168,85,247,0.6),0_0_25px_rgba(168,85,247,0.3),inset_0_-2px_10px_rgba(255,255,255,0.2)]'
-                          : 'bg-gradient-to-br from-white to-purple-50 border-2 border-purple-300 text-purple-700 hover:border-purple-500 shadow-[0_4px_15px_-3px_rgba(168,85,247,0.2)] hover:shadow-[0_10px_25px_-5px_rgba(168,85,247,0.4)]'
+                      variant={formData.parent_age_ranges.includes(range) ? 'default' : 'outline'}
+                      className={`cursor-pointer transition-all ${
+                        formData.parent_age_ranges.includes(range) 
+                          ? 'bg-purple-600 hover:bg-purple-700' 
+                          : 'hover:border-purple-500'
                       }`}
+                      onClick={() => handleArrayToggle('parent_age_ranges', range)}
                     >
-                      {formData.parent_age_ranges.includes(range) && (
-                        <>
-                          <motion.div
-                            initial={{ scale: 0, rotate: -180 }}
-                            animate={{ scale: 1, rotate: 0 }}
-                            className="absolute -top-2.5 -right-2.5 bg-gradient-to-br from-white to-purple-100 rounded-full p-1.5 shadow-[0_4px_12px_rgba(168,85,247,0.5)]"
-                          >
-                            <Users className="w-3.5 h-3.5 text-purple-700" />
-                          </motion.div>
-                          <motion.div
-                            animate={{
-                              boxShadow: [
-                                '0 0 20px rgba(168,85,247,0.4)',
-                                '0 0 30px rgba(168,85,247,0.6)',
-                                '0 0 20px rgba(168,85,247,0.4)'
-                              ]
-                            }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                            className="absolute inset-0 rounded-2xl"
-                          />
-                        </>
-                      )}
-                      <span className="relative z-10 drop-shadow-sm">{range}</span>
-                      {formData.parent_age_ranges.includes(range) && (
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-2xl"
-                          style={{
-                            backgroundSize: '200% 100%',
-                            animation: 'shimmer 2.5s infinite'
-                          }}
-                        />
-                      )}
-                    </motion.button>
+                      {range}
+                    </Badge>
                   ))}
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <Label className="flex items-center gap-2 text-pink-700 font-bold text-base">
-                  <div className="p-1.5 bg-pink-100 rounded-lg">
-                    <User className="w-4 h-4 text-pink-700" />
-                  </div>
-                  {language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : language === 'es' ? 'Rangos de edad de niños' : language === 'fr' ? 'Tranches d\'âge des enfants' : language === 'de' ? 'Altersgruppen Kinder' : language === 'it' ? 'Fasce d\'età bambini' : 'Children Age Ranges'}
-                </Label>
-                <div className="flex flex-wrap gap-3">
+              <div className="space-y-3">
+                <Label>{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : language === 'es' ? 'Rangos de edad de niños' : language === 'fr' ? 'Tranches d\'âge des enfants' : language === 'de' ? 'Altersgruppen Kinder' : language === 'it' ? 'Fasce d\'età bambini' : 'Children Age Ranges'}</Label>
+                <div className="flex flex-wrap gap-2">
                   {['0-2', '3-6', '7-10', '11-14', '15-18', '18-21', '21+'].map(range => (
-                    <motion.button
+                    <Badge
                       key={range}
-                      type="button"
-                      whileHover={{ 
-                        scale: 1.1, 
-                        y: -4,
-                        boxShadow: formData.children_age_ranges.includes(range) 
-                          ? '0 20px 40px -10px rgba(236, 72, 153, 0.6), 0 0 30px rgba(236, 72, 153, 0.4)' 
-                          : '0 10px 25px -5px rgba(236, 72, 153, 0.3)'
-                      }}
-                      whileTap={{ scale: 0.92 }}
-                      onClick={() => handleArrayToggle('children_age_ranges', range)}
-                      className={`relative px-7 py-3.5 rounded-2xl font-bold text-base transition-all duration-300 overflow-hidden ${
-                        formData.children_age_ranges.includes(range)
-                          ? 'bg-gradient-to-br from-pink-500 via-pink-600 to-rose-700 text-white shadow-[0_15px_35px_-8px_rgba(236,72,153,0.6),0_0_25px_rgba(236,72,153,0.3),inset_0_-2px_10px_rgba(255,255,255,0.2)]'
-                          : 'bg-gradient-to-br from-white to-pink-50 border-2 border-pink-300 text-pink-700 hover:border-pink-500 shadow-[0_4px_15px_-3px_rgba(236,72,153,0.2)] hover:shadow-[0_10px_25px_-5px_rgba(236,72,153,0.4)]'
+                      variant={formData.children_age_ranges.includes(range) ? 'default' : 'outline'}
+                      className={`cursor-pointer transition-all ${
+                        formData.children_age_ranges.includes(range) 
+                          ? 'bg-pink-600 hover:bg-pink-700' 
+                          : 'hover:border-pink-500'
                       }`}
+                      onClick={() => handleArrayToggle('children_age_ranges', range)}
                     >
-                      {formData.children_age_ranges.includes(range) && (
-                        <>
-                          <motion.div
-                            initial={{ scale: 0, rotate: -180 }}
-                            animate={{ scale: 1, rotate: 0 }}
-                            className="absolute -top-2.5 -right-2.5 bg-gradient-to-br from-white to-pink-100 rounded-full p-1.5 shadow-[0_4px_12px_rgba(236,72,153,0.5)]"
-                          >
-                            <User className="w-3.5 h-3.5 text-pink-700" />
-                          </motion.div>
-                          <motion.div
-                            animate={{
-                              boxShadow: [
-                                '0 0 20px rgba(236,72,153,0.4)',
-                                '0 0 30px rgba(236,72,153,0.6)',
-                                '0 0 20px rgba(236,72,153,0.4)'
-                              ]
-                            }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                            className="absolute inset-0 rounded-2xl"
-                          />
-                        </>
-                      )}
-                      <span className="relative z-10 drop-shadow-sm">{range}</span>
-                      {formData.children_age_ranges.includes(range) && (
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-2xl"
-                          style={{
-                            backgroundSize: '200% 100%',
-                            animation: 'shimmer 2.5s infinite'
-                          }}
-                        />
-                      )}
-                    </motion.button>
+                      {range}
+                    </Badge>
                   ))}
                 </div>
               </div>
