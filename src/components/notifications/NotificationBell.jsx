@@ -11,12 +11,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Bell, Check, Trash2, X, Users, MessageSquare, Calendar, TrendingUp, UserPlus } from 'lucide-react';
+import { Bell, Check, Trash2, X, Users, MessageSquare, Calendar, TrendingUp, UserPlus, UserCheck } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { he, enUS } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import FriendChatDialog from '../chat/FriendChatDialog';
+import { toast } from 'sonner';
 
 const notificationIcons = {
   join_request: Users,
@@ -30,6 +32,8 @@ export default function NotificationBell({ userEmail }) {
   const { language } = useLanguage();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [showChatDialog, setShowChatDialog] = useState(false);
+  const [chatFriend, setChatFriend] = useState(null);
 
   // For demo purposes, we'll check for:
   // 1. Join requests on user's trips
@@ -144,6 +148,54 @@ export default function NotificationBell({ userEmail }) {
 
   const unreadCount = notifications.filter(n => n.unread).length;
 
+  const acceptFriendMutation = useMutation({
+    mutationFn: async (requesterEmail) => {
+      const myFriends = currentUser?.friends || [];
+      const myRequests = currentUser?.friend_requests || [];
+      
+      const updatedMyFriends = [...myFriends, requesterEmail];
+      const updatedMyRequests = myRequests.filter(req => req.email !== requesterEmail);
+      
+      await base44.auth.updateMe({
+        friends: updatedMyFriends,
+        friend_requests: updatedMyRequests
+      });
+
+      const requester = allUsers.find(u => u.email === requesterEmail);
+      if (requester) {
+        const updatedTheirFriends = [...(requester.friends || []), userEmail];
+        await base44.entities.User.update(requester.id, {
+          friends: updatedTheirFriends
+        });
+      }
+
+      return requester;
+    },
+    onSuccess: (requester) => {
+      queryClient.invalidateQueries(['currentUserForNotifications']);
+      queryClient.invalidateQueries(['users']);
+      toast.success(language === 'he' ? 'בקשה התקבלה' : 'Request accepted');
+      
+      // Open chat with new friend
+      if (requester) {
+        setChatFriend(requester);
+        setShowChatDialog(true);
+      }
+    },
+  });
+
+  const rejectFriendMutation = useMutation({
+    mutationFn: async (requesterEmail) => {
+      const myRequests = currentUser?.friend_requests || [];
+      const updatedRequests = myRequests.filter(req => req.email !== requesterEmail);
+      await base44.auth.updateMe({ friend_requests: updatedRequests });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['currentUserForNotifications']);
+      toast.success(language === 'he' ? 'בקשה נדחתה' : 'Request rejected');
+    },
+  });
+
   const handleNotificationClick = (notification) => {
     setOpen(false);
   };
@@ -170,6 +222,14 @@ export default function NotificationBell({ userEmail }) {
   };
 
   return (
+    <>
+      <FriendChatDialog
+        open={showChatDialog}
+        onOpenChange={setShowChatDialog}
+        friend={chatFriend}
+        currentUser={currentUser}
+      />
+
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
@@ -213,6 +273,67 @@ export default function NotificationBell({ userEmail }) {
             <div className="divide-y">
               {notifications.map((notification, index) => {
                 const Icon = notificationIcons[notification.type] || Bell;
+                
+                if (notification.type === 'friend_request') {
+                  return (
+                    <motion.div
+                      key={notification.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className={`p-4 hover:bg-gray-50 transition-colors ${
+                        notification.unread ? 'bg-blue-50' : ''
+                      }`}
+                    >
+                      <div className="flex gap-3">
+                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Icon className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 mb-1">
+                            {notification.message}
+                          </p>
+                          <p className="text-xs text-gray-500 mb-2">
+                            {formatDistanceToNow(new Date(notification.timestamp), {
+                              addSuffix: true,
+                              locale: language === 'he' ? he : enUS
+                            })}
+                          </p>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                acceptFriendMutation.mutate(notification.requesterEmail);
+                              }}
+                              disabled={acceptFriendMutation.isLoading}
+                              className="bg-emerald-600 hover:bg-emerald-700 h-7 text-xs"
+                            >
+                              <UserCheck className="w-3 h-3 mr-1" />
+                              {language === 'he' ? 'אשר' : 'Accept'}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                rejectFriendMutation.mutate(notification.requesterEmail);
+                              }}
+                              disabled={rejectFriendMutation.isLoading}
+                              className="h-7 text-xs"
+                            >
+                              <X className="w-3 h-3 mr-1" />
+                              {language === 'he' ? 'דחה' : 'Reject'}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                }
+
                 return renderNotificationLink(
                   notification,
                   <motion.div
@@ -225,12 +346,8 @@ export default function NotificationBell({ userEmail }) {
                     }`}
                   >
                     <div className="flex gap-3">
-                      <div className={`w-10 h-10 ${
-                        notification.type === 'friend_request' ? 'bg-blue-100' : 'bg-emerald-100'
-                      } rounded-full flex items-center justify-center flex-shrink-0`}>
-                        <Icon className={`w-5 h-5 ${
-                          notification.type === 'friend_request' ? 'text-blue-600' : 'text-emerald-600'
-                        }`} />
+                      <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Icon className="w-5 h-5 text-emerald-600" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 mb-1">
@@ -252,5 +369,6 @@ export default function NotificationBell({ userEmail }) {
         </ScrollArea>
       </PopoverContent>
     </Popover>
+    </>
   );
 }
