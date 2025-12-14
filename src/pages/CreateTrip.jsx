@@ -850,7 +850,29 @@ Include water recommendation in liters and detailed equipment list.`,
                           <Input
                             value={formData.location}
                             onChange={(e) => handleChange('location', e.target.value)}
-                            placeholder={language === 'he' ? 'שם מדויק' : 'Specific name'}
+                            placeholder={
+                              formData.country === 'israel' 
+                                ? (language === 'he' ? 'לדוגמה: נחל עמוד, מצדה, עין גדי' : 'e.g., Nahal Amud, Masada, Ein Gedi')
+                              : formData.country === 'usa'
+                                ? (language === 'he' ? 'לדוגמה: Grand Canyon, Yosemite' : language === 'es' ? 'ej., Grand Canyon, Yosemite' : language === 'fr' ? 'ex., Grand Canyon, Yosemite' : language === 'de' ? 'z.B. Grand Canyon, Yosemite' : language === 'it' ? 'es., Grand Canyon, Yosemite' : 'e.g., Grand Canyon, Yosemite')
+                              : formData.country === 'france'
+                                ? (language === 'fr' ? 'ex., Mont Blanc, Chamonix, Verdon' : language === 'he' ? 'לדוגמה: Mont Blanc, Chamonix' : language === 'es' ? 'ej., Mont Blanc, Chamonix' : language === 'de' ? 'z.B. Mont Blanc, Chamonix' : language === 'it' ? 'es., Mont Blanc, Chamonix' : 'e.g., Mont Blanc, Chamonix')
+                              : formData.country === 'spain'
+                                ? (language === 'es' ? 'ej., Sierra de Guadarrama, Picos de Europa' : language === 'he' ? 'לדוגמה: Sierra de Guadarrama' : language === 'fr' ? 'ex., Sierra de Guadarrama' : language === 'de' ? 'z.B. Sierra de Guadarrama' : language === 'it' ? 'es., Sierra de Guadarrama' : 'e.g., Sierra de Guadarrama')
+                              : formData.country === 'italy'
+                                ? (language === 'it' ? 'es., Dolomiti, Cinque Terre, Lago di Como' : language === 'he' ? 'לדוגמה: Dolomiti, Cinque Terre' : language === 'es' ? 'ej., Dolomiti, Cinque Terre' : language === 'fr' ? 'ex., Dolomiti, Cinque Terre' : language === 'de' ? 'z.B. Dolomiti, Cinque Terre' : 'e.g., Dolomiti, Cinque Terre')
+                              : formData.country === 'germany'
+                                ? (language === 'de' ? 'z.B. Schwarzwald, Alpen, Harz' : language === 'he' ? 'לדוגמה: Schwarzwald, Alpen' : language === 'es' ? 'ej., Schwarzwald, Alpen' : language === 'fr' ? 'ex., Schwarzwald, Alpen' : language === 'it' ? 'es., Schwarzwald, Alpen' : 'e.g., Black Forest, Alps')
+                              : formData.country === 'switzerland'
+                                ? (language === 'de' ? 'z.B. Matterhorn, Jungfrau, Interlaken' : language === 'fr' ? 'ex., Matterhorn, Jungfrau' : language === 'it' ? 'es., Matterhorn, Jungfrau' : language === 'he' ? 'לדוגמה: Matterhorn, Jungfrau' : 'e.g., Matterhorn, Jungfrau')
+                              : formData.country === 'norway'
+                                ? (language === 'he' ? 'לדוגמה: Trolltunga, Preikestolen' : language === 'es' ? 'ej., Trolltunga, Preikestolen' : language === 'fr' ? 'ex., Trolltunga, Preikestolen' : language === 'de' ? 'z.B. Trolltunga, Preikestolen' : language === 'it' ? 'es., Trolltunga, Preikestolen' : 'e.g., Trolltunga, Preikestolen')
+                              : formData.country === 'new_zealand'
+                                ? (language === 'he' ? 'לדוגמה: Milford Sound, Mount Cook' : 'e.g., Milford Sound, Mount Cook')
+                              : formData.country === 'japan'
+                                ? (language === 'he' ? 'לדוגמה: Mount Fuji, Kyoto' : language === 'es' ? 'ej., Monte Fuji, Kioto' : language === 'fr' ? 'ex., Mont Fuji, Kyoto' : language === 'de' ? 'z.B. Fuji, Kyoto' : language === 'it' ? 'es., Monte Fuji, Kyoto' : 'e.g., Mount Fuji, Kyoto')
+                              : (language === 'he' ? 'שם מדויק של המיקום' : language === 'es' ? 'Nombre específico' : language === 'fr' ? 'Nom spécifique' : language === 'de' ? 'Spezifischer Name' : language === 'it' ? 'Nome specifico' : 'Specific location name')
+                            }
                             className="flex-1 p-4"
                           />
                           <Button
