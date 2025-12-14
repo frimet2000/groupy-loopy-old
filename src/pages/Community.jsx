@@ -214,7 +214,7 @@ export default function Community() {
     onSuccess: (targetEmail) => {
       queryClient.invalidateQueries(['users']);
       queryClient.invalidateQueries(['usersForNotifications']);
-      queryClient.invalidateQueries(['currentUserForNotifications', targetEmail]);
+      queryClient.invalidateQueries(['currentUserForNotifications']);
       toast.success(language === 'he' ? 'בקשת חברות נשלחה' : 'Friend request sent');
     },
   });
