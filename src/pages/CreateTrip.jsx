@@ -375,65 +375,7 @@ export default function CreateTrip() {
     }));
     
     setShowMapPicker(false);
-    
-    try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: language === 'he'
-          ? `עבור הקואורדינטות המדויקות ${exactLat}, ${exactLng}, תן את הפרטים הבאים:
-1. location_name: שם מדויק של המיקום (עיר/אתר/שכונה)
-2. sub_region: שם העיר או האזור הכללי (באנגלית, lowercase)
-3. region: שם המחוז או המדינה (באנגלית, lowercase)
-4. country: שם המדינה (באנגלית, lowercase, עם underscores אם יש רווחים)
-
-חשוב מאוד: זהה את המדינה בדיוק לפי הקואורדינטות האלה.`
-          : `For the EXACT coordinates ${exactLat}, ${exactLng}, provide the following details:
-1. location_name: exact location name (city/site/neighborhood)
-2. sub_region: city or general area name (English, lowercase)
-3. region: state or province name (English, lowercase)
-4. country: country name (English, lowercase, with underscores for spaces)
-
-IMPORTANT: Identify the country precisely based on these coordinates.`,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            location_name: { type: "string" },
-            sub_region: { type: "string" },
-            region: { type: "string" },
-            country: { type: "string" }
-          }
-        }
-      });
-      
-      if (result.location_name) {
-        if (result.country && result.country !== formData.country) {
-          await fetchRegionsForCountry(result.country);
-        }
-        
-        const isIsrael = result.country === 'israel';
-        
-        if (!isIsrael && result.region && result.region !== formData.region) {
-          await fetchSubRegionsForRegion(result.region, result.country);
-        }
-        
-        setFormData(prev => ({
-          ...prev,
-          latitude: exactLat,
-          longitude: exactLng,
-          location: result.location_name,
-          sub_region: isIsrael ? '' : (result.sub_region || prev.sub_region),
-          region: isIsrael ? (result.sub_region || result.region || prev.region) : (result.region || prev.region),
-          country: result.country || prev.country
-        }));
-        
-        toast.success(language === 'he' ? `מיקום מדויק נשמר: ${result.location_name} (${exactLat.toFixed(6)}, ${exactLng.toFixed(6)})` : `Exact location saved: ${result.location_name} (${exactLat.toFixed(6)}, ${exactLng.toFixed(6)})`);
-      } else {
-        toast.success(language === 'he' ? `קואורדינטות מדויקות נשמרו: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}` : `Exact coordinates saved: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}`);
-      }
-    } catch (error) {
-      console.error('Error getting location details:', error);
-      toast.success(language === 'he' ? `קואורדינטות נשמרו: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}` : `Coordinates saved: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}`);
-    }
+    toast.success(language === 'he' ? `מיקום נשמר: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}` : `Location saved: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}`);
   };
 
   const handleGenerateItinerary = async () => {
