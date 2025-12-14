@@ -972,45 +972,51 @@ Include water recommendation in liters and detailed equipment list.`,
                 <div className="space-y-2">
                   <Label>{t('activityType')} *</Label>
                   <div className="grid grid-cols-3 gap-3">
-                    <Button
-                      type="button"
-                      variant={formData.activity_type === 'hiking' ? 'default' : 'outline'}
-                      className={`h-20 flex flex-col items-center gap-2 ${
-                        formData.activity_type === 'hiking'
-                          ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                          : 'hover:border-emerald-500 hover:text-emerald-600'
-                      }`}
-                      onClick={() => handleChange('activity_type', 'hiking')}
-                    >
-                      <Footprints className="w-6 h-6" />
-                      <span className="text-sm font-semibold">{t('hiking')}</span>
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={formData.activity_type === 'cycling' ? 'default' : 'outline'}
-                      className={`h-20 flex flex-col items-center gap-2 ${
-                        formData.activity_type === 'cycling'
-                          ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                          : 'hover:border-blue-500 hover:text-blue-600'
-                      }`}
-                      onClick={() => handleChange('activity_type', 'cycling')}
-                    >
-                      <Bike className="w-6 h-6" />
-                      <span className="text-sm font-semibold">{t('cycling')}</span>
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={formData.activity_type === 'offroad' ? 'default' : 'outline'}
-                      className={`h-20 flex flex-col items-center gap-2 ${
-                        formData.activity_type === 'offroad'
-                          ? 'bg-orange-600 hover:bg-orange-700 text-white'
-                          : 'hover:border-orange-500 hover:text-orange-600'
-                      }`}
-                      onClick={() => handleChange('activity_type', 'offroad')}
-                    >
-                      <Truck className="w-6 h-6" />
-                      <span className="text-sm font-semibold">{t('offroad')}</span>
-                    </Button>
+                    <motion.div whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.98 }}>
+                      <Button
+                        type="button"
+                        variant={formData.activity_type === 'hiking' ? 'default' : 'outline'}
+                        className={`h-24 w-full flex flex-col items-center gap-2 transition-all duration-300 shadow-lg ${
+                          formData.activity_type === 'hiking'
+                            ? 'bg-gradient-to-br from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-emerald-300'
+                            : 'hover:border-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 border-2'
+                        }`}
+                        onClick={() => handleChange('activity_type', 'hiking')}
+                      >
+                        <Footprints className="w-7 h-7" />
+                        <span className="text-sm font-bold">{t('hiking')}</span>
+                      </Button>
+                    </motion.div>
+                    <motion.div whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.98 }}>
+                      <Button
+                        type="button"
+                        variant={formData.activity_type === 'cycling' ? 'default' : 'outline'}
+                        className={`h-24 w-full flex flex-col items-center gap-2 transition-all duration-300 shadow-lg ${
+                          formData.activity_type === 'cycling'
+                            ? 'bg-gradient-to-br from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-blue-300'
+                            : 'hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 border-2'
+                        }`}
+                        onClick={() => handleChange('activity_type', 'cycling')}
+                      >
+                        <Bike className="w-7 h-7" />
+                        <span className="text-sm font-bold">{t('cycling')}</span>
+                      </Button>
+                    </motion.div>
+                    <motion.div whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.98 }}>
+                      <Button
+                        type="button"
+                        variant={formData.activity_type === 'offroad' ? 'default' : 'outline'}
+                        className={`h-24 w-full flex flex-col items-center gap-2 transition-all duration-300 shadow-lg ${
+                          formData.activity_type === 'offroad'
+                            ? 'bg-gradient-to-br from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white shadow-orange-300'
+                            : 'hover:border-orange-500 hover:text-orange-600 hover:bg-orange-50 border-2'
+                        }`}
+                        onClick={() => handleChange('activity_type', 'offroad')}
+                      >
+                        <Truck className="w-7 h-7" />
+                        <span className="text-sm font-bold">{t('offroad')}</span>
+                      </Button>
+                    </motion.div>
                   </div>
                 </div>
                 
@@ -1192,23 +1198,41 @@ Include water recommendation in liters and detailed equipment list.`,
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-6 pt-2">
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id="pets"
-                    checked={formData.pets_allowed}
-                    onCheckedChange={(checked) => handleChange('pets_allowed', checked)}
-                  />
-                  <Label htmlFor="pets" className="cursor-pointer">{t('petsAllowed')}</Label>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id="camping"
-                    checked={formData.camping_available}
-                    onCheckedChange={(checked) => handleChange('camping_available', checked)}
-                  />
-                  <Label htmlFor="camping" className="cursor-pointer">{t('campingAvailable')}</Label>
-                </div>
+              <div className="flex flex-wrap gap-4 pt-2">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
+                    formData.pets_allowed 
+                      ? 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-400 shadow-md' 
+                      : 'border-gray-300 hover:border-amber-400 hover:bg-amber-50/50'
+                  }`} onClick={() => handleChange('pets_allowed', !formData.pets_allowed)}>
+                    <Checkbox
+                      id="pets"
+                      checked={formData.pets_allowed}
+                      onCheckedChange={(checked) => handleChange('pets_allowed', checked)}
+                    />
+                    <Label htmlFor="pets" className="cursor-pointer flex items-center gap-2 font-semibold">
+                      <Dog className="w-4 h-4 text-amber-600" />
+                      {t('petsAllowed')}
+                    </Label>
+                  </div>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
+                    formData.camping_available 
+                      ? 'bg-gradient-to-r from-teal-50 to-cyan-50 border-teal-400 shadow-md' 
+                      : 'border-gray-300 hover:border-teal-400 hover:bg-teal-50/50'
+                  }`} onClick={() => handleChange('camping_available', !formData.camping_available)}>
+                    <Checkbox
+                      id="camping"
+                      checked={formData.camping_available}
+                      onCheckedChange={(checked) => handleChange('camping_available', checked)}
+                    />
+                    <Label htmlFor="camping" className="cursor-pointer flex items-center gap-2 font-semibold">
+                      <Tent className="w-4 h-4 text-teal-600" />
+                      {t('campingAvailable')}
+                    </Label>
+                  </div>
+                </motion.div>
               </div>
 
               {/* Guide Information */}
