@@ -26,7 +26,7 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'map'
-  const [selectedCountry, setSelectedCountry] = useState('all');
+  const [selectedContinent, setSelectedContinent] = useState('all');
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -57,10 +57,11 @@ export default function Home() {
       }
     }
     
-    // Country filter from dropdown
-    if (selectedCountry !== 'all') {
+    // Continent filter from dropdown
+    if (selectedContinent !== 'all') {
       const tripCountry = trip.country || 'israel'; // backward compatibility
-      if (tripCountry !== selectedCountry) return false;
+      const tripContinent = getContinentForCountry(tripCountry);
+      if (tripContinent !== selectedContinent) return false;
     }
     
     if (filters.country && trip.country !== filters.country) {
@@ -493,16 +494,19 @@ export default function Home() {
               </p>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
-              {/* Country Filter */}
-              <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder={language === 'he' ? 'כל המדינות' : language === 'ru' ? 'Все страны' : language === 'es' ? 'Todos los países' : language === 'fr' ? 'Tous les pays' : language === 'de' ? 'Alle Länder' : language === 'it' ? 'Tutti i paesi' : 'All Countries'} />
+              {/* Continent Filter */}
+              <Select value={selectedContinent} onValueChange={setSelectedContinent}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{language === 'he' ? 'כל המדינות' : language === 'ru' ? 'Все страны' : language === 'es' ? 'Todos los países' : language === 'fr' ? 'Tous les pays' : language === 'de' ? 'Alle Länder' : language === 'it' ? 'Tutti i paesi' : 'All Countries'}</SelectItem>
-                  {Array.from(new Set(trips.map(t => t.country).filter(Boolean))).sort().map(country => (
-                    <SelectItem key={country} value={country}>{t(country)}</SelectItem>
-                  ))}
+                  <SelectItem value="all">{language === 'he' ? 'כל היבשות' : language === 'ru' ? 'Все континенты' : language === 'es' ? 'Todos los continentes' : language === 'fr' ? 'Tous les continents' : language === 'de' ? 'Alle Kontinente' : language === 'it' ? 'Tutti i continenti' : 'All Continents'}</SelectItem>
+                  <SelectItem value="europe">{language === 'he' ? 'אירופה' : language === 'ru' ? 'Европа' : language === 'es' ? 'Europa' : language === 'fr' ? 'Europe' : language === 'de' ? 'Europa' : language === 'it' ? 'Europa' : 'Europe'}</SelectItem>
+                  <SelectItem value="asia">{language === 'he' ? 'אסיה' : language === 'ru' ? 'Азия' : language === 'es' ? 'Asia' : language === 'fr' ? 'Asie' : language === 'de' ? 'Asien' : language === 'it' ? 'Asia' : 'Asia'}</SelectItem>
+                  <SelectItem value="africa">{language === 'he' ? 'אפריקה' : language === 'ru' ? 'Африка' : language === 'es' ? 'África' : language === 'fr' ? 'Afrique' : language === 'de' ? 'Afrika' : language === 'it' ? 'Africa' : 'Africa'}</SelectItem>
+                  <SelectItem value="north_america">{language === 'he' ? 'צפון אמריקה' : language === 'ru' ? 'Северная Америка' : language === 'es' ? 'América del Norte' : language === 'fr' ? 'Amérique du Nord' : language === 'de' ? 'Nordamerika' : language === 'it' ? 'Nord America' : 'North America'}</SelectItem>
+                  <SelectItem value="south_america">{language === 'he' ? 'דרום אמריקה' : language === 'ru' ? 'Южная Америка' : language === 'es' ? 'América del Sur' : language === 'fr' ? 'Amérique du Sud' : language === 'de' ? 'Südamerika' : language === 'it' ? 'Sud America' : 'South America'}</SelectItem>
+                  <SelectItem value="oceania">{language === 'he' ? 'אוקיאניה' : language === 'ru' ? 'Океания' : language === 'es' ? 'Oceanía' : language === 'fr' ? 'Océanie' : language === 'de' ? 'Ozeanien' : language === 'it' ? 'Oceania' : 'Oceania'}</SelectItem>
                 </SelectContent>
               </Select>
 
