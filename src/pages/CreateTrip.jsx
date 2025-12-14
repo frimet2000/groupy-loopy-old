@@ -1338,8 +1338,6 @@ Include water recommendation in liters and detailed equipment list.`,
               setEquipment={setEquipment}
               waterRecommendation={waterRecommendation}
               setWaterRecommendation={setWaterRecommendation}
-              allergens={allergens}
-              setAllergens={setAllergens}
               onGenerateAI={generatingEquipment ? null : handleGenerateEquipment}
             />
 

@@ -7,10 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Calendar, Clock, Plus, Edit, Trash2 } from 'lucide-react';
+import { Calendar, Clock, Plus, Edit, Trash2, Sparkles } from 'lucide-react';
 import { toast } from "sonner";
 
-export default function ItineraryCreator({ itinerary, setItinerary }) {
+export default function ItineraryCreator({ itinerary, setItinerary, onGenerateAI }) {
   const { language } = useLanguage();
   const [showDayDialog, setShowDayDialog] = useState(false);
   const [showActivityDialog, setShowActivityDialog] = useState(false);
@@ -73,20 +73,28 @@ export default function ItineraryCreator({ itinerary, setItinerary }) {
               <Calendar className="w-5 h-5" />
               {language === 'he' ? 'לוח זמנים יומי' : 'Daily Schedule'}
             </CardTitle>
-            <Button type="button" size="sm" onClick={(e) => {
-              e.preventDefault();
-              if (itinerary.length === 0) {
-                const newDay = { id: Date.now().toString(), day: 1, title: language === 'he' ? 'יום 1' : 'Day 1', activities: [] };
-                setItinerary([newDay]);
-              }
-              setSelectedDayIndex(itinerary.length > 0 ? itinerary.length - 1 : 0);
-              setEditingActivityIndex(null);
-              setActivityData({ time: '', activity: '', notes: '' });
-              setShowActivityDialog(true);
-            }}>
-              <Plus className="w-4 h-4 mr-1" />
-              {language === 'he' ? 'הוסף פעילות' : 'Add Activity'}
-            </Button>
+            <div className="flex gap-2">
+              {onGenerateAI && (
+                <Button type="button" size="sm" variant="outline" onClick={onGenerateAI} className="border-violet-300 hover:bg-violet-50">
+                  <Sparkles className="w-4 h-4 mr-1" />
+                  AI
+                </Button>
+              )}
+              <Button type="button" size="sm" onClick={(e) => {
+                e.preventDefault();
+                if (itinerary.length === 0) {
+                  const newDay = { id: Date.now().toString(), day: 1, title: language === 'he' ? 'יום 1' : 'Day 1', activities: [] };
+                  setItinerary([newDay]);
+                }
+                setSelectedDayIndex(itinerary.length > 0 ? itinerary.length - 1 : 0);
+                setEditingActivityIndex(null);
+                setActivityData({ time: '', activity: '', notes: '' });
+                setShowActivityDialog(true);
+              }}>
+                <Plus className="w-4 h-4 mr-1" />
+                {language === 'he' ? 'הוסף פעילות' : 'Add Activity'}
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="p-4">

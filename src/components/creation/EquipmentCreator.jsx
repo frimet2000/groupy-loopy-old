@@ -6,10 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Backpack, Plus, Trash2, Check, AlertTriangle } from 'lucide-react';
+import { Backpack, Plus, Trash2, Check, AlertTriangle, Sparkles } from 'lucide-react';
 import { toast } from "sonner";
 
-export default function EquipmentCreator({ equipment, setEquipment, waterRecommendation, setWaterRecommendation }) {
+export default function EquipmentCreator({ equipment, setEquipment, waterRecommendation, setWaterRecommendation, onGenerateAI }) {
   const { language } = useLanguage();
   const [showDialog, setShowDialog] = useState(false);
   const [newItem, setNewItem] = useState('');
@@ -52,10 +52,18 @@ export default function EquipmentCreator({ equipment, setEquipment, waterRecomme
     <>
       <Card className="border-2 border-indigo-100 shadow-xl bg-white/80">
         <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b">
-          <CardTitle className="flex items-center gap-2 text-indigo-700">
-            <Backpack className="w-5 h-5" />
-            {language === 'he' ? 'רשימת ציוד' : language === 'ru' ? 'Список снаряжения' : language === 'es' ? 'Lista de equipo' : language === 'fr' ? 'Liste d\'équipement' : language === 'de' ? 'Ausrüstungsliste' : language === 'it' ? 'Lista equipaggiamento' : 'Equipment Checklist'}
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-indigo-700">
+              <Backpack className="w-5 h-5" />
+              {language === 'he' ? 'רשימת ציוד' : language === 'ru' ? 'Список снаряжения' : language === 'es' ? 'Lista de equipo' : language === 'fr' ? 'Liste d\'équipement' : language === 'de' ? 'Ausrüstungsliste' : language === 'it' ? 'Lista equipaggiamento' : 'Equipment Checklist'}
+            </CardTitle>
+            {onGenerateAI && (
+              <Button type="button" size="sm" variant="outline" onClick={onGenerateAI} className="border-indigo-300 hover:bg-indigo-50">
+                <Sparkles className="w-4 h-4 mr-1" />
+                AI
+              </Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="p-4 space-y-4">
           {/* Water Recommendation */}
