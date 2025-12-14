@@ -1193,37 +1193,92 @@ Include water recommendation in liters and detailed equipment list.`,
               </div>
 
               <div className="flex flex-wrap gap-6 pt-2">
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id="pets"
-                    checked={formData.pets_allowed}
-                    onCheckedChange={(checked) => handleChange('pets_allowed', checked)}
-                  />
-                  <Label htmlFor="pets" className="cursor-pointer">{t('petsAllowed')}</Label>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id="camping"
-                    checked={formData.camping_available}
-                    onCheckedChange={(checked) => handleChange('camping_available', checked)}
-                  />
-                  <Label htmlFor="camping" className="cursor-pointer">{t('campingAvailable')}</Label>
-                </div>
+                <motion.div 
+                  whileHover={{ scale: 1.02 }} 
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center gap-3"
+                >
+                  <div className="relative">
+                    <Checkbox
+                      id="pets"
+                      checked={formData.pets_allowed}
+                      onCheckedChange={(checked) => handleChange('pets_allowed', checked)}
+                      className="h-5 w-5 border-2 border-amber-400 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600 transition-all"
+                    />
+                    {formData.pets_allowed && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute -top-1 -right-1"
+                      >
+                        <Dog className="w-4 h-4 text-amber-600" />
+                      </motion.div>
+                    )}
+                  </div>
+                  <Label htmlFor="pets" className="cursor-pointer font-medium flex items-center gap-2 text-gray-700 hover:text-amber-700 transition-colors">
+                    <Dog className="w-4 h-4 text-amber-600" />
+                    {t('petsAllowed')}
+                  </Label>
+                </motion.div>
+                
+                <motion.div 
+                  whileHover={{ scale: 1.02 }} 
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center gap-3"
+                >
+                  <div className="relative">
+                    <Checkbox
+                      id="camping"
+                      checked={formData.camping_available}
+                      onCheckedChange={(checked) => handleChange('camping_available', checked)}
+                      className="h-5 w-5 border-2 border-emerald-400 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600 transition-all"
+                    />
+                    {formData.camping_available && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute -top-1 -right-1"
+                      >
+                        <Tent className="w-4 h-4 text-emerald-600" />
+                      </motion.div>
+                    )}
+                  </div>
+                  <Label htmlFor="camping" className="cursor-pointer font-medium flex items-center gap-2 text-gray-700 hover:text-emerald-700 transition-colors">
+                    <Tent className="w-4 h-4 text-emerald-600" />
+                    {t('campingAvailable')}
+                  </Label>
+                </motion.div>
               </div>
 
               {/* Guide Information */}
               <div className="space-y-4 pt-4 border-t border-amber-200">
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id="has_guide"
-                    checked={formData.has_guide}
-                    onCheckedChange={(checked) => handleChange('has_guide', checked)}
-                  />
-                  <Label htmlFor="has_guide" className="cursor-pointer flex items-center gap-2">
+                <motion.div 
+                  whileHover={{ scale: 1.02 }} 
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center gap-3"
+                >
+                  <div className="relative">
+                    <Checkbox
+                      id="has_guide"
+                      checked={formData.has_guide}
+                      onCheckedChange={(checked) => handleChange('has_guide', checked)}
+                      className="h-5 w-5 border-2 border-blue-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 transition-all"
+                    />
+                    {formData.has_guide && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute -top-1 -right-1"
+                      >
+                        <User className="w-4 h-4 text-blue-600" />
+                      </motion.div>
+                    )}
+                  </div>
+                  <Label htmlFor="has_guide" className="cursor-pointer font-medium flex items-center gap-2 text-gray-700 hover:text-blue-700 transition-colors">
                     <User className="w-4 h-4 text-blue-600" />
                     {language === 'he' ? 'יש מדריך מקצועי' : language === 'ru' ? 'Есть профессиональный гид' : language === 'es' ? 'Tiene guía profesional' : language === 'fr' ? 'A un guide professionnel' : language === 'de' ? 'Hat professionellen Führer' : language === 'it' ? 'Ha guida professionale' : 'Has Professional Guide'}
                   </Label>
-                </div>
+                </motion.div>
 
                 {formData.has_guide && (
                   <div className="space-y-4 pl-6 pr-6">
