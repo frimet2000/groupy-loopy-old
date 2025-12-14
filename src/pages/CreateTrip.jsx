@@ -1342,33 +1342,52 @@ Include water recommendation in liters and detailed equipment list.`,
                     <motion.button
                       key={range}
                       type="button"
-                      whileHover={{ scale: 1.08, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
+                      whileHover={{ 
+                        scale: 1.1, 
+                        y: -4,
+                        boxShadow: formData.parent_age_ranges.includes(range) 
+                          ? '0 20px 40px -10px rgba(168, 85, 247, 0.6), 0 0 30px rgba(168, 85, 247, 0.4)' 
+                          : '0 10px 25px -5px rgba(168, 85, 247, 0.3)'
+                      }}
+                      whileTap={{ scale: 0.92 }}
                       onClick={() => handleArrayToggle('parent_age_ranges', range)}
-                      className={`relative px-6 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${
+                      className={`relative px-7 py-3.5 rounded-2xl font-bold text-base transition-all duration-300 overflow-hidden ${
                         formData.parent_age_ranges.includes(range)
-                          ? 'bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 text-white shadow-2xl shadow-purple-500/50'
-                          : 'bg-white border-2 border-purple-200 text-purple-700 hover:border-purple-400 hover:bg-purple-50 hover:shadow-lg'
+                          ? 'bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-700 text-white shadow-[0_15px_35px_-8px_rgba(168,85,247,0.6),0_0_25px_rgba(168,85,247,0.3),inset_0_-2px_10px_rgba(255,255,255,0.2)]'
+                          : 'bg-gradient-to-br from-white to-purple-50 border-2 border-purple-300 text-purple-700 hover:border-purple-500 shadow-[0_4px_15px_-3px_rgba(168,85,247,0.2)] hover:shadow-[0_10px_25px_-5px_rgba(168,85,247,0.4)]'
                       }`}
                     >
                       {formData.parent_age_ranges.includes(range) && (
-                        <motion.div
-                          initial={{ scale: 0, rotate: -180 }}
-                          animate={{ scale: 1, rotate: 0 }}
-                          className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-lg"
-                        >
-                          <Users className="w-3 h-3 text-purple-600" />
-                        </motion.div>
+                        <>
+                          <motion.div
+                            initial={{ scale: 0, rotate: -180 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            className="absolute -top-2.5 -right-2.5 bg-gradient-to-br from-white to-purple-100 rounded-full p-1.5 shadow-[0_4px_12px_rgba(168,85,247,0.5)]"
+                          >
+                            <Users className="w-3.5 h-3.5 text-purple-700" />
+                          </motion.div>
+                          <motion.div
+                            animate={{
+                              boxShadow: [
+                                '0 0 20px rgba(168,85,247,0.4)',
+                                '0 0 30px rgba(168,85,247,0.6)',
+                                '0 0 20px rgba(168,85,247,0.4)'
+                              ]
+                            }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                            className="absolute inset-0 rounded-2xl"
+                          />
+                        </>
                       )}
-                      <span className="relative z-10">{range}</span>
+                      <span className="relative z-10 drop-shadow-sm">{range}</span>
                       {formData.parent_age_ranges.includes(range) && (
                         <motion.div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-xl"
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-2xl"
                           style={{
                             backgroundSize: '200% 100%',
-                            animation: 'shimmer 2s infinite'
+                            animation: 'shimmer 2.5s infinite'
                           }}
                         />
                       )}
@@ -1389,33 +1408,52 @@ Include water recommendation in liters and detailed equipment list.`,
                     <motion.button
                       key={range}
                       type="button"
-                      whileHover={{ scale: 1.08, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
+                      whileHover={{ 
+                        scale: 1.1, 
+                        y: -4,
+                        boxShadow: formData.children_age_ranges.includes(range) 
+                          ? '0 20px 40px -10px rgba(236, 72, 153, 0.6), 0 0 30px rgba(236, 72, 153, 0.4)' 
+                          : '0 10px 25px -5px rgba(236, 72, 153, 0.3)'
+                      }}
+                      whileTap={{ scale: 0.92 }}
                       onClick={() => handleArrayToggle('children_age_ranges', range)}
-                      className={`relative px-6 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${
+                      className={`relative px-7 py-3.5 rounded-2xl font-bold text-base transition-all duration-300 overflow-hidden ${
                         formData.children_age_ranges.includes(range)
-                          ? 'bg-gradient-to-br from-pink-500 via-pink-600 to-rose-600 text-white shadow-2xl shadow-pink-500/50'
-                          : 'bg-white border-2 border-pink-200 text-pink-700 hover:border-pink-400 hover:bg-pink-50 hover:shadow-lg'
+                          ? 'bg-gradient-to-br from-pink-500 via-pink-600 to-rose-700 text-white shadow-[0_15px_35px_-8px_rgba(236,72,153,0.6),0_0_25px_rgba(236,72,153,0.3),inset_0_-2px_10px_rgba(255,255,255,0.2)]'
+                          : 'bg-gradient-to-br from-white to-pink-50 border-2 border-pink-300 text-pink-700 hover:border-pink-500 shadow-[0_4px_15px_-3px_rgba(236,72,153,0.2)] hover:shadow-[0_10px_25px_-5px_rgba(236,72,153,0.4)]'
                       }`}
                     >
                       {formData.children_age_ranges.includes(range) && (
-                        <motion.div
-                          initial={{ scale: 0, rotate: -180 }}
-                          animate={{ scale: 1, rotate: 0 }}
-                          className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-lg"
-                        >
-                          <User className="w-3 h-3 text-pink-600" />
-                        </motion.div>
+                        <>
+                          <motion.div
+                            initial={{ scale: 0, rotate: -180 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            className="absolute -top-2.5 -right-2.5 bg-gradient-to-br from-white to-pink-100 rounded-full p-1.5 shadow-[0_4px_12px_rgba(236,72,153,0.5)]"
+                          >
+                            <User className="w-3.5 h-3.5 text-pink-700" />
+                          </motion.div>
+                          <motion.div
+                            animate={{
+                              boxShadow: [
+                                '0 0 20px rgba(236,72,153,0.4)',
+                                '0 0 30px rgba(236,72,153,0.6)',
+                                '0 0 20px rgba(236,72,153,0.4)'
+                              ]
+                            }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                            className="absolute inset-0 rounded-2xl"
+                          />
+                        </>
                       )}
-                      <span className="relative z-10">{range}</span>
+                      <span className="relative z-10 drop-shadow-sm">{range}</span>
                       {formData.children_age_ranges.includes(range) && (
                         <motion.div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-xl"
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-2xl"
                           style={{
                             backgroundSize: '200% 100%',
-                            animation: 'shimmer 2s infinite'
+                            animation: 'shimmer 2.5s infinite'
                           }}
                         />
                       )}
