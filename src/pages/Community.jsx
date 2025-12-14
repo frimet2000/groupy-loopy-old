@@ -327,46 +327,6 @@ export default function Community() {
               <p className="font-semibold">{userName}</p>
               <p className="text-sm text-gray-500">{targetUser.email}</p>
             </div>
-            <div className="flex gap-2">
-              <Link to={createPageUrl('Profile') + '?email=' + targetUser.email}>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="gap-2"
-                >
-                  <Send className="w-4 h-4" />
-                  {language === 'he' ? 'פרופיל' : 'Profile'}
-                </Button>
-              </Link>
-              {isFriend ? (
-                <Button
-                  size="sm"
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
-                  disabled
-                >
-                  <UserCheck className="w-4 h-4 mr-2" />
-                  {language === 'he' ? 'חבר' : language === 'ru' ? 'Друг' : language === 'es' ? 'Amigo' : language === 'fr' ? 'Ami' : language === 'de' ? 'Freund' : language === 'it' ? 'Amico' : 'Friend'}
-                </Button>
-              ) : hasSentRequest ? (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled
-                >
-                  <Clock className="w-4 h-4 mr-2" />
-                  {language === 'he' ? 'ממתין לאישור' : language === 'ru' ? 'Ожидание' : language === 'es' ? 'Pendiente' : language === 'fr' ? 'En attente' : language === 'de' ? 'Ausstehend' : language === 'it' ? 'In attesa' : 'Pending'}
-                </Button>
-              ) : (
-                <Button
-                  size="sm"
-                  onClick={() => sendRequestMutation.mutate(targetUser.email)}
-                  disabled={sendRequestMutation.isLoading}
-                >
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  {language === 'he' ? 'הוסף' : language === 'ru' ? 'Добавить' : language === 'es' ? 'Agregar' : language === 'fr' ? 'Ajouter' : language === 'de' ? 'Hinzufügen' : language === 'it' ? 'Aggiungi' : 'Add'}
-                </Button>
-              )}
-            </div>
           </div>
         </CardContent>
       </Card>
