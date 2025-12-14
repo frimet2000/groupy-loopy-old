@@ -1330,58 +1330,96 @@ Include water recommendation in liters and detailed equipment list.`,
                 </CardDescription>
               </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-3">
-                <Label className="flex items-center gap-2 text-purple-700 font-semibold">
-                  <Users className="w-4 h-4" />
+              <div className="space-y-4">
+                <Label className="flex items-center gap-2 text-purple-700 font-bold text-base">
+                  <div className="p-1.5 bg-purple-100 rounded-lg">
+                    <Users className="w-4 h-4 text-purple-700" />
+                  </div>
                   {language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : language === 'es' ? 'Rangos de edad de padres' : language === 'fr' ? 'Tranches d\'âge des parents' : language === 'de' ? 'Altersgruppen Eltern' : language === 'it' ? 'Fasce d\'età genitori' : 'Parent Age Ranges'}
                 </Label>
                 <div className="flex flex-wrap gap-3">
                   {['20-30', '30-40', '40-50', '50-60', '60+'].map(range => (
-                    <motion.div
+                    <motion.button
                       key={range}
-                      whileHover={{ scale: 1.05 }}
+                      type="button"
+                      whileHover={{ scale: 1.08, y: -2 }}
                       whileTap={{ scale: 0.95 }}
+                      onClick={() => handleArrayToggle('parent_age_ranges', range)}
+                      className={`relative px-6 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${
+                        formData.parent_age_ranges.includes(range)
+                          ? 'bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 text-white shadow-2xl shadow-purple-500/50'
+                          : 'bg-white border-2 border-purple-200 text-purple-700 hover:border-purple-400 hover:bg-purple-50 hover:shadow-lg'
+                      }`}
                     >
-                      <Badge
-                        variant={formData.parent_age_ranges.includes(range) ? 'default' : 'outline'}
-                        className={`cursor-pointer transition-all duration-300 px-4 py-2 text-sm font-semibold ${
-                          formData.parent_age_ranges.includes(range) 
-                            ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg shadow-purple-500/30' 
-                            : 'hover:border-purple-500 hover:bg-purple-50 border-2'
-                        }`}
-                        onClick={() => handleArrayToggle('parent_age_ranges', range)}
-                      >
-                        {range}
-                      </Badge>
-                    </motion.div>
+                      {formData.parent_age_ranges.includes(range) && (
+                        <motion.div
+                          initial={{ scale: 0, rotate: -180 }}
+                          animate={{ scale: 1, rotate: 0 }}
+                          className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-lg"
+                        >
+                          <Users className="w-3 h-3 text-purple-600" />
+                        </motion.div>
+                      )}
+                      <span className="relative z-10">{range}</span>
+                      {formData.parent_age_ranges.includes(range) && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-xl"
+                          style={{
+                            backgroundSize: '200% 100%',
+                            animation: 'shimmer 2s infinite'
+                          }}
+                        />
+                      )}
+                    </motion.button>
                   ))}
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <Label className="flex items-center gap-2 text-pink-700 font-semibold">
-                  <User className="w-4 h-4" />
+              <div className="space-y-4">
+                <Label className="flex items-center gap-2 text-pink-700 font-bold text-base">
+                  <div className="p-1.5 bg-pink-100 rounded-lg">
+                    <User className="w-4 h-4 text-pink-700" />
+                  </div>
                   {language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : language === 'es' ? 'Rangos de edad de niños' : language === 'fr' ? 'Tranches d\'âge des enfants' : language === 'de' ? 'Altersgruppen Kinder' : language === 'it' ? 'Fasce d\'età bambini' : 'Children Age Ranges'}
                 </Label>
                 <div className="flex flex-wrap gap-3">
                   {['0-2', '3-6', '7-10', '11-14', '15-18', '18-21', '21+'].map(range => (
-                    <motion.div
+                    <motion.button
                       key={range}
-                      whileHover={{ scale: 1.05 }}
+                      type="button"
+                      whileHover={{ scale: 1.08, y: -2 }}
                       whileTap={{ scale: 0.95 }}
+                      onClick={() => handleArrayToggle('children_age_ranges', range)}
+                      className={`relative px-6 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${
+                        formData.children_age_ranges.includes(range)
+                          ? 'bg-gradient-to-br from-pink-500 via-pink-600 to-rose-600 text-white shadow-2xl shadow-pink-500/50'
+                          : 'bg-white border-2 border-pink-200 text-pink-700 hover:border-pink-400 hover:bg-pink-50 hover:shadow-lg'
+                      }`}
                     >
-                      <Badge
-                        variant={formData.children_age_ranges.includes(range) ? 'default' : 'outline'}
-                        className={`cursor-pointer transition-all duration-300 px-4 py-2 text-sm font-semibold ${
-                          formData.children_age_ranges.includes(range) 
-                            ? 'bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 shadow-lg shadow-pink-500/30' 
-                            : 'hover:border-pink-500 hover:bg-pink-50 border-2'
-                        }`}
-                        onClick={() => handleArrayToggle('children_age_ranges', range)}
-                      >
-                        {range}
-                      </Badge>
-                    </motion.div>
+                      {formData.children_age_ranges.includes(range) && (
+                        <motion.div
+                          initial={{ scale: 0, rotate: -180 }}
+                          animate={{ scale: 1, rotate: 0 }}
+                          className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-lg"
+                        >
+                          <User className="w-3 h-3 text-pink-600" />
+                        </motion.div>
+                      )}
+                      <span className="relative z-10">{range}</span>
+                      {formData.children_age_ranges.includes(range) && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-xl"
+                          style={{
+                            backgroundSize: '200% 100%',
+                            animation: 'shimmer 2s infinite'
+                          }}
+                        />
+                      )}
+                    </motion.button>
                   ))}
                 </div>
               </div>
