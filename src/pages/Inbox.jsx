@@ -100,7 +100,7 @@ export default function Inbox() {
         ? `${user.first_name} ${user.last_name}` 
         : user.full_name;
 
-      return base44.entities.Message.create({
+      const message = await base44.entities.Message.create({
         sender_email: user.email,
         sender_name: userName,
         recipient_email: messageData.recipient_email,
@@ -111,24 +111,26 @@ export default function Inbox() {
         starred: false,
         archived: false
       });
+
+      // Send push notification
+      try {
+        await base44.functions.invoke('sendPushNotification', {
+          recipient_email: messageData.recipient_email,
+          notification_type: 'new_messages',
+          title: language === 'he' ? 'הודעה חדשה' : 'New Message',
+          body: messageData.subject
+        });
+      } catch (error) {
+        console.log('Notification error:', error);
+      }
+
+      return message;
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries(['sentMessages']);
       setShowCompose(false);
       setComposeData({ recipient_email: '', subject: '', body: '' });
       toast.success(language === 'he' ? 'ההודעה נשלחה' : 'Message sent');
-
-      // Send push notification
-      try {
-        await base44.functions.invoke('sendPushNotification', {
-          recipient_email: composeData.recipient_email,
-          notification_type: 'new_messages',
-          title: language === 'he' ? 'הודעה חדשה' : 'New Message',
-          body: composeData.subject
-        });
-      } catch (error) {
-        console.log('Notification error:', error);
-      }
     },
   });
 
