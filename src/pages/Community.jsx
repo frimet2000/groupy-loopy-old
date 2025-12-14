@@ -303,9 +303,6 @@ export default function Community() {
     const userName = (targetUser.first_name && targetUser.last_name) 
       ? `${targetUser.first_name} ${targetUser.last_name}` 
       : targetUser.full_name || targetUser.email;
-    
-    // Check if already sent request
-    const hasSentRequest = targetUser.friend_requests?.some(req => req.email === user.email);
 
     return (
       <Card className="hover:shadow-lg transition-all">
@@ -331,24 +328,14 @@ export default function Community() {
                   {language === 'he' ? 'פרופיל' : 'Profile'}
                 </Button>
               </Link>
-              {hasSentRequest ? (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled
-                >
-                  {language === 'he' ? 'נשלחה בקשה' : 'Pending'}
-                </Button>
-              ) : (
-                <Button
-                  size="sm"
-                  onClick={() => sendRequestMutation.mutate(targetUser.email)}
-                  disabled={sendRequestMutation.isLoading}
-                >
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  {language === 'he' ? 'הוסף' : language === 'ru' ? 'Добавить' : language === 'es' ? 'Agregar' : language === 'fr' ? 'Ajouter' : language === 'de' ? 'Hinzufügen' : language === 'it' ? 'Aggiungi' : 'Add'}
-                </Button>
-              )}
+              <Button
+                size="sm"
+                onClick={() => sendRequestMutation.mutate(targetUser.email)}
+                disabled={sendRequestMutation.isLoading}
+              >
+                <UserPlus className="w-4 h-4 mr-2" />
+                {language === 'he' ? 'הוסף' : language === 'ru' ? 'Добавить' : language === 'es' ? 'Agregar' : language === 'fr' ? 'Ajouter' : language === 'de' ? 'Hinzufügen' : language === 'it' ? 'Aggiungi' : 'Add'}
+              </Button>
             </div>
           </div>
         </CardContent>
