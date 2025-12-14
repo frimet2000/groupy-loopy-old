@@ -102,31 +102,31 @@ export default function CreateTrip() {
   const steps = [
     { 
       id: 1, 
-      title: language === 'he' ? 'פרטים בסיסיים' : 'Basic Info',
+      title: language === 'he' ? 'פרטים בסיסיים' : language === 'ru' ? 'Основная информация' : language === 'es' ? 'Información básica' : language === 'fr' ? 'Informations de base' : language === 'de' ? 'Grundlegende Informationen' : language === 'it' ? 'Informazioni di base' : 'Basic Info',
       icon: Sparkles,
       color: 'from-emerald-500 to-teal-500'
     },
     { 
       id: 2, 
-      title: language === 'he' ? 'מיקום וזמן' : 'Location & Time',
+      title: language === 'he' ? 'מיקום וזמן' : language === 'ru' ? 'Место и время' : language === 'es' ? 'Ubicación y hora' : language === 'fr' ? 'Lieu et heure' : language === 'de' ? 'Ort und Zeit' : language === 'it' ? 'Luogo e orario' : 'Location & Time',
       icon: MapPin,
       color: 'from-blue-500 to-cyan-500'
     },
     { 
       id: 3, 
-      title: language === 'he' ? 'פרטי הפעילות' : 'Activity Details',
+      title: language === 'he' ? 'פרטי הפעילות' : language === 'ru' ? 'Детали активности' : language === 'es' ? 'Detalles de la actividad' : language === 'fr' ? 'Détails de l\'activité' : language === 'de' ? 'Aktivitätsdetails' : language === 'it' ? 'Dettagli dell\'attività' : 'Activity Details',
       icon: Mountain,
       color: 'from-amber-500 to-orange-500'
     },
     { 
       id: 4, 
-      title: language === 'he' ? 'תכנון' : 'Planning',
+      title: language === 'he' ? 'תכנון' : language === 'ru' ? 'Планирование' : language === 'es' ? 'Planificación' : language === 'fr' ? 'Planification' : language === 'de' ? 'Planung' : language === 'it' ? 'Pianificazione' : 'Planning',
       icon: Compass,
       color: 'from-purple-500 to-pink-500'
     },
     { 
       id: 5, 
-      title: language === 'he' ? 'סיכום' : 'Summary',
+      title: language === 'he' ? 'סיכום' : language === 'ru' ? 'Резюме' : language === 'es' ? 'Resumen' : language === 'fr' ? 'Résumé' : language === 'de' ? 'Zusammenfassung' : language === 'it' ? 'Riepilogo' : 'Summary',
       icon: Check,
       color: 'from-green-500 to-emerald-500'
     }
@@ -629,7 +629,7 @@ Include water recommendation in liters and detailed equipment list.`,
               <h1 className="text-3xl font-bold">{t('createTrip')}</h1>
             </div>
             <p className="text-gray-600 text-lg">
-              {language === 'he' ? 'אשף יצירת טיול חכם' : 'Smart Trip Creation Wizard'}
+              {language === 'he' ? 'אשף יצירת טיול חכם' : language === 'ru' ? 'Умный мастер создания поездки' : language === 'es' ? 'Asistente inteligente para crear viajes' : language === 'fr' ? 'Assistant intelligent de création de voyage' : language === 'de' ? 'Intelligenter Reiseerstellungsassistent' : language === 'it' ? 'Assistente intelligente per la creazione di viaggi' : 'Smart Trip Creation Wizard'}
             </p>
           </motion.div>
 
@@ -712,22 +712,22 @@ Include water recommendation in liters and detailed equipment list.`,
                   </CardHeader>
                   <CardContent className="p-8 space-y-6">
                     <div className="space-y-2">
-                      <Label className="text-lg font-semibold">{language === 'he' ? 'כותרת הטיול' : 'Trip Title'} *</Label>
+                      <Label className="text-lg font-semibold">{language === 'he' ? 'כותרת הטיול' : language === 'ru' ? 'Название поездки' : language === 'es' ? 'Título del viaje' : language === 'fr' ? 'Titre du voyage' : language === 'de' ? 'Reisename' : language === 'it' ? 'Titolo del viaggio' : 'Trip Title'} *</Label>
                       <Input
                         value={formData.title}
                         onChange={(e) => handleChange('title', e.target.value)}
-                        placeholder={language === 'he' ? 'למשל: טיול מהמם בגליל העליון' : 'e.g., Amazing Galilee Hike'}
+                        placeholder={language === 'he' ? 'למשל: טיול מהמם בגליל העליון' : language === 'ru' ? 'напр., Поход на Алтай' : language === 'es' ? 'ej., Increíble excursión por los Pirineos' : language === 'fr' ? 'ex., Randonnée incroyable dans les Alpes' : language === 'de' ? 'z.B. Tolle Wanderung im Schwarzwald' : language === 'it' ? 'es., Escursione mozzafiato sulle Dolomiti' : 'e.g., Amazing Mountain Hike'}
                         dir={isRTL ? 'rtl' : 'ltr'}
                         className="text-lg p-6"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-lg font-semibold">{language === 'he' ? 'תיאור' : 'Description'}</Label>
+                      <Label className="text-lg font-semibold">{language === 'he' ? 'תיאור' : language === 'ru' ? 'Описание' : language === 'es' ? 'Descripción' : language === 'fr' ? 'Description' : language === 'de' ? 'Beschreibung' : language === 'it' ? 'Descrizione' : 'Description'}</Label>
                       <Textarea
                         value={formData.description}
                         onChange={(e) => handleChange('description', e.target.value)}
-                        placeholder={language === 'he' ? 'ספר על הטיול שלך...' : 'Tell us about your trip...'}
+                        placeholder={language === 'he' ? 'ספר על הטיול שלך...' : language === 'ru' ? 'Расскажите о вашей поездке...' : language === 'es' ? 'Cuéntanos sobre tu viaje...' : language === 'fr' ? 'Parlez-nous de votre voyage...' : language === 'de' ? 'Erzählen Sie uns von Ihrer Reise...' : language === 'it' ? 'Raccontaci del tuo viaggio...' : 'Tell us about your trip...'}
                         dir={isRTL ? 'rtl' : 'ltr'}
                         rows={5}
                         className="text-base"
@@ -762,7 +762,7 @@ Include water recommendation in liters and detailed equipment list.`,
                               ) : (
                                 <Upload className="w-5 h-5" />
                               )}
-                              {language === 'he' ? 'העלה תמונה' : 'Upload Image'}
+                              {language === 'he' ? 'העלה תמונה' : language === 'ru' ? 'Загрузить фото' : language === 'es' ? 'Subir imagen' : language === 'fr' ? 'Télécharger une image' : language === 'de' ? 'Bild hochladen' : language === 'it' ? 'Carica immagine' : 'Upload Image'}
                             </span>
                           </Button>
                         </label>
@@ -778,9 +778,9 @@ Include water recommendation in liters and detailed equipment list.`,
                   <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50">
                     <CardTitle className="flex items-center gap-3 text-2xl">
                       <MapPin className="w-7 h-7 text-blue-600" />
-                      {language === 'he' ? 'מיקום וזמן' : 'Location & Time'}
+                      {language === 'he' ? 'מיקום וזמן' : language === 'ru' ? 'Место и время' : language === 'es' ? 'Ubicación y hora' : language === 'fr' ? 'Lieu et heure' : language === 'de' ? 'Ort und Zeit' : language === 'it' ? 'Luogo e orario' : 'Location & Time'}
                     </CardTitle>
-                    <CardDescription>{language === 'he' ? 'איפה וממתי?' : 'Where and when?'}</CardDescription>
+                    <CardDescription>{language === 'he' ? 'איפה וממתי?' : language === 'ru' ? 'Где и когда?' : language === 'es' ? '¿Dónde y cuándo?' : language === 'fr' ? 'Où et quand ?' : language === 'de' ? 'Wo und wann?' : language === 'it' ? 'Dove e quando?' : 'Where and when?'}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-8 space-y-6">
                     <div className="space-y-2">
@@ -806,7 +806,7 @@ Include water recommendation in liters and detailed equipment list.`,
                     <div className={`grid ${formData.country === 'israel' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-3'} gap-4`}>
                       {formData.country !== 'israel' && (
                         <div className="space-y-2">
-                          <Label className="text-base font-semibold">{language === 'he' ? 'מחוז/מדינה' : 'State/Province'}</Label>
+                          <Label className="text-base font-semibold">{language === 'he' ? 'מחוז/מדינה' : language === 'ru' ? 'Штат/Область' : language === 'es' ? 'Estado/Provincia' : language === 'fr' ? 'État/Province' : language === 'de' ? 'Staat/Provinz' : language === 'it' ? 'Stato/Provincia' : 'State/Province'}</Label>
                           <Select 
                             value={formData.region} 
                             onValueChange={(v) => handleChange('region', v)}
@@ -827,7 +827,7 @@ Include water recommendation in liters and detailed equipment list.`,
                       )}
 
                       <div className="space-y-2">
-                        <Label className="text-base font-semibold">{language === 'he' ? 'אזור/עיר' : 'Area/City'}</Label>
+                        <Label className="text-base font-semibold">{language === 'he' ? 'אזור/עיר' : language === 'ru' ? 'Область/Город' : language === 'es' ? 'Área/Ciudad' : language === 'fr' ? 'Région/Ville' : language === 'de' ? 'Region/Stadt' : language === 'it' ? 'Area/Città' : 'Area/City'}</Label>
                         <Select 
                           value={formData.country === 'israel' ? formData.region : formData.sub_region} 
                           onValueChange={(v) => handleChange(formData.country === 'israel' ? 'region' : 'sub_region', v)}
@@ -892,7 +892,7 @@ Include water recommendation in liters and detailed equipment list.`,
                         {formData.latitude && formData.longitude && (
                           <p className="text-sm text-green-600 flex items-center gap-1">
                             <MapPin className="w-4 h-4" />
-                            {language === 'he' ? 'מיקום נמצא במפה' : 'Location found on map'}
+                            {language === 'he' ? 'מיקום נמצא במפה' : language === 'ru' ? 'Местоположение найдено' : language === 'es' ? 'Ubicación encontrada' : language === 'fr' ? 'Emplacement trouvé' : language === 'de' ? 'Standort gefunden' : language === 'it' ? 'Posizione trovata' : 'Location found on map'}
                           </p>
                         )}
                       </div>
@@ -914,7 +914,7 @@ Include water recommendation in liters and detailed equipment list.`,
                       <div className="space-y-2">
                         <Label className="text-base font-semibold flex items-center gap-2">
                           <Clock className="w-5 h-5" />
-                          {language === 'he' ? 'שעת התכנסות' : 'Meeting Time'}
+                          {language === 'he' ? 'שעת התכנסות' : language === 'ru' ? 'Время встречи' : language === 'es' ? 'Hora de encuentro' : language === 'fr' ? 'Heure de rendez-vous' : language === 'de' ? 'Treffzeit' : language === 'it' ? 'Orario di ritrovo' : 'Meeting Time'}
                         </Label>
                         <Input
                           type="time"
@@ -947,9 +947,9 @@ Include water recommendation in liters and detailed equipment list.`,
                   <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50">
                     <CardTitle className="flex items-center gap-3 text-2xl">
                       <Mountain className="w-7 h-7 text-amber-600" />
-                      {language === 'he' ? 'פרטי הפעילות' : 'Activity Details'}
+                      {language === 'he' ? 'פרטי הפעילות' : language === 'ru' ? 'Детали активности' : language === 'es' ? 'Detalles de la actividad' : language === 'fr' ? 'Détails de l\'activité' : language === 'de' ? 'Aktivitätsdetails' : language === 'it' ? 'Dettagli dell\'attività' : 'Activity Details'}
                     </CardTitle>
-                    <CardDescription>{language === 'he' ? 'איזה סוג של טיול?' : 'What kind of trip?'}</CardDescription>
+                    <CardDescription>{language === 'he' ? 'איזה סוג של טיול?' : language === 'ru' ? 'Какой тип поездки?' : language === 'es' ? '¿Qué tipo de viaje?' : language === 'fr' ? 'Quel type de voyage ?' : language === 'de' ? 'Welche Art von Reise?' : language === 'it' ? 'Che tipo di viaggio?' : 'What kind of trip?'}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-8 space-y-6">
                     <div className="space-y-4">
@@ -1030,7 +1030,7 @@ Include water recommendation in liters and detailed equipment list.`,
 
                     {formData.activity_type === 'cycling' && (
                       <div className="space-y-4 p-6 bg-blue-50 rounded-2xl">
-                        <h3 className="text-lg font-bold text-blue-900">{language === 'he' ? 'פרטי רכיבה' : 'Cycling Details'}</h3>
+                        <h3 className="text-lg font-bold text-blue-900">{language === 'he' ? 'פרטי רכיבה' : language === 'ru' ? 'Детали велопоездки' : language === 'es' ? 'Detalles del ciclismo' : language === 'fr' ? 'Détails du cyclisme' : language === 'de' ? 'Radfahrdetails' : language === 'it' ? 'Dettagli del ciclismo' : 'Cycling Details'}</h3>
                         <div className="space-y-2">
                           <Label>{t('cyclingType')}</Label>
                           <Select value={formData.cycling_type} onValueChange={(v) => handleChange('cycling_type', v)}>
@@ -1071,7 +1071,7 @@ Include water recommendation in liters and detailed equipment list.`,
 
                     {formData.activity_type === 'offroad' && (
                       <div className="space-y-4 p-6 bg-orange-50 rounded-2xl">
-                        <h3 className="text-lg font-bold text-orange-900">{language === 'he' ? 'פרטי שטח' : 'Off-Road Details'}</h3>
+                        <h3 className="text-lg font-bold text-orange-900">{language === 'he' ? 'פרטי שטח' : language === 'ru' ? 'Детали внедорожной поездки' : language === 'es' ? 'Detalles del todoterreno' : language === 'fr' ? 'Détails du tout-terrain' : language === 'de' ? 'Offroad-Details' : language === 'it' ? 'Dettagli del fuoristrada' : 'Off-Road Details'}</h3>
                         <div className="space-y-2">
                           <Label>{t('offroadVehicleType')}</Label>
                           <Select value={formData.offroad_vehicle_type} onValueChange={(v) => handleChange('offroad_vehicle_type', v)}>
@@ -1220,9 +1220,9 @@ Include water recommendation in liters and detailed equipment list.`,
                   <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50">
                     <CardTitle className="flex items-center gap-3 text-2xl">
                       <Check className="w-7 h-7 text-green-600" />
-                      {language === 'he' ? 'סיכום הטיול' : 'Trip Summary'}
+                      {language === 'he' ? 'סיכום הטיול' : language === 'ru' ? 'Резюме поездки' : language === 'es' ? 'Resumen del viaje' : language === 'fr' ? 'Résumé du voyage' : language === 'de' ? 'Reisezusammenfassung' : language === 'it' ? 'Riepilogo del viaggio' : 'Trip Summary'}
                     </CardTitle>
-                    <CardDescription>{language === 'he' ? 'בדוק שהכל נכון לפני פרסום' : 'Review everything before publishing'}</CardDescription>
+                    <CardDescription>{language === 'he' ? 'בדוק שהכל נכון לפני פרסום' : language === 'ru' ? 'Проверьте все перед публикацией' : language === 'es' ? 'Revisa todo antes de publicar' : language === 'fr' ? 'Vérifiez tout avant de publier' : language === 'de' ? 'Überprüfen Sie alles vor der Veröffentlichung' : language === 'it' ? 'Rivedi tutto prima di pubblicare' : 'Review everything before publishing'}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-8 space-y-6">
                     <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-2xl">
@@ -1233,19 +1233,19 @@ Include water recommendation in liters and detailed equipment list.`,
                       <p className="text-gray-700 mb-4">{formData.description}</p>
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <span className="font-semibold">{language === 'he' ? 'מיקום:' : 'Location:'}</span>
+                          <span className="font-semibold">{language === 'he' ? 'מיקום:' : language === 'ru' ? 'Место:' : language === 'es' ? 'Ubicación:' : language === 'fr' ? 'Lieu :' : language === 'de' ? 'Ort:' : language === 'it' ? 'Luogo:' : 'Location:'}</span>
                           <p>{formData.location}, {formData.region}, {t(formData.country)}</p>
                         </div>
                         <div>
-                          <span className="font-semibold">{language === 'he' ? 'תאריך:' : 'Date:'}</span>
+                          <span className="font-semibold">{language === 'he' ? 'תאריך:' : language === 'ru' ? 'Дата:' : language === 'es' ? 'Fecha:' : language === 'fr' ? 'Date :' : language === 'de' ? 'Datum:' : language === 'it' ? 'Data:' : 'Date:'}</span>
                           <p>{new Date(formData.date).toLocaleDateString()}</p>
                         </div>
                         <div>
-                          <span className="font-semibold">{language === 'he' ? 'סוג:' : 'Type:'}</span>
+                          <span className="font-semibold">{language === 'he' ? 'סוג:' : language === 'ru' ? 'Тип:' : language === 'es' ? 'Tipo:' : language === 'fr' ? 'Type :' : language === 'de' ? 'Typ:' : language === 'it' ? 'Tipo:' : 'Type:'}</span>
                           <p>{t(formData.activity_type)}</p>
                         </div>
                         <div>
-                          <span className="font-semibold">{language === 'he' ? 'קושי:' : 'Difficulty:'}</span>
+                          <span className="font-semibold">{language === 'he' ? 'קושי:' : language === 'ru' ? 'Сложность:' : language === 'es' ? 'Dificultad:' : language === 'fr' ? 'Difficulté :' : language === 'de' ? 'Schwierigkeit:' : language === 'it' ? 'Difficoltà:' : 'Difficulty:'}</span>
                           <p>{t(formData.difficulty)}</p>
                         </div>
                       </div>
@@ -1254,15 +1254,15 @@ Include water recommendation in liters and detailed equipment list.`,
                     <div className="grid grid-cols-3 gap-4 text-center">
                       <div className="bg-white p-4 rounded-xl shadow">
                         <p className="text-3xl font-bold text-purple-600">{equipment.length}</p>
-                        <p className="text-sm text-gray-600">{language === 'he' ? 'פריטי ציוד' : 'Equipment Items'}</p>
+                        <p className="text-sm text-gray-600">{language === 'he' ? 'פריטי ציוד' : language === 'ru' ? 'Предметы снаряжения' : language === 'es' ? 'Artículos de equipo' : language === 'fr' ? 'Articles d\'équipement' : language === 'de' ? 'Ausrüstungsgegenstände' : language === 'it' ? 'Articoli di equipaggiamento' : 'Equipment Items'}</p>
                       </div>
                       <div className="bg-white p-4 rounded-xl shadow">
                         <p className="text-3xl font-bold text-indigo-600">{itinerary.length}</p>
-                        <p className="text-sm text-gray-600">{language === 'he' ? 'ימים מתוכננים' : 'Planned Days'}</p>
+                        <p className="text-sm text-gray-600">{language === 'he' ? 'ימים מתוכננים' : language === 'ru' ? 'Запланированные дни' : language === 'es' ? 'Días planificados' : language === 'fr' ? 'Jours planifiés' : language === 'de' ? 'Geplante Tage' : language === 'it' ? 'Giorni pianificati' : 'Planned Days'}</p>
                       </div>
                       <div className="bg-white p-4 rounded-xl shadow">
                         <p className="text-3xl font-bold text-emerald-600">{waypoints.length}</p>
-                        <p className="text-sm text-gray-600">{language === 'he' ? 'נקודות ציון' : 'Waypoints'}</p>
+                        <p className="text-sm text-gray-600">{language === 'he' ? 'נקודות ציון' : language === 'ru' ? 'Точки маршрута' : language === 'es' ? 'Puntos de referencia' : language === 'fr' ? 'Points de repère' : language === 'de' ? 'Wegpunkte' : language === 'it' ? 'Punti di riferimento' : 'Waypoints'}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -1285,7 +1285,7 @@ Include water recommendation in liters and detailed equipment list.`,
               className="px-8 py-6 text-base font-semibold border-2"
             >
               <ArrowLeft className={`w-5 h-5 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-              {language === 'he' ? 'אחורה' : 'Back'}
+              {language === 'he' ? 'אחורה' : language === 'ru' ? 'Назад' : language === 'es' ? 'Atrás' : language === 'fr' ? 'Retour' : language === 'de' ? 'Zurück' : language === 'it' ? 'Indietro' : 'Back'}
             </Button>
 
             {currentStep < steps.length ? (
@@ -1294,7 +1294,7 @@ Include water recommendation in liters and detailed equipment list.`,
                 onClick={nextStep}
                 className="px-8 py-6 text-base font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-xl"
               >
-                {language === 'he' ? 'הבא' : 'Next'}
+                {language === 'he' ? 'הבא' : language === 'ru' ? 'Далее' : language === 'es' ? 'Siguiente' : language === 'fr' ? 'Suivant' : language === 'de' ? 'Weiter' : language === 'it' ? 'Avanti' : 'Next'}
                 <ArrowRight className={`w-5 h-5 ${isRTL ? 'mr-2' : 'ml-2'}`} />
               </Button>
             ) : (
@@ -1309,7 +1309,7 @@ Include water recommendation in liters and detailed equipment list.`,
                 ) : (
                   <>
                     <Check className="w-6 h-6 mr-2" />
-                    {language === 'he' ? 'פרסם טיול' : 'Publish Trip'}
+                    {language === 'he' ? 'פרסם טיול' : language === 'ru' ? 'Опубликовать поездку' : language === 'es' ? 'Publicar viaje' : language === 'fr' ? 'Publier le voyage' : language === 'de' ? 'Reise veröffentlichen' : language === 'it' ? 'Pubblica viaggio' : 'Publish Trip'}
                   </>
                 )}
               </Button>
