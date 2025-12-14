@@ -192,11 +192,27 @@ export default function Community() {
         friend_requests: updatedRequests
       });
       
-      // Send notification to target user
+      const userName = (user.first_name && user.last_name) 
+        ? `${user.first_name} ${user.last_name}` 
+        : user.full_name;
+
+      // Create inbox message for friend request
+      await base44.entities.Message.create({
+        sender_email: user.email,
+        sender_name: userName,
+        recipient_email: targetEmail,
+        subject: language === 'he' ? 'בקשת חברות חדשה' : 'New Friend Request',
+        body: language === 'he' 
+          ? `${userName} שלח/ה לך בקשת חברות. עבור לעמוד הקהילה כדי לאשר או לדחות את הבקשה.`
+          : `${userName} sent you a friend request. Go to the Community page to accept or reject the request.`,
+        sent_at: new Date().toISOString(),
+        read: false,
+        starred: false,
+        archived: false
+      });
+      
+      // Send push notification to target user
       try {
-        const userName = (user.first_name && user.last_name) 
-          ? `${user.first_name} ${user.last_name}` 
-          : user.full_name;
         await base44.functions.invoke('sendPushNotification', {
           recipient_email: targetEmail,
           notification_type: 'friend_requests',
