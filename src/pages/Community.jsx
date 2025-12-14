@@ -287,6 +287,9 @@ export default function Community() {
     const userName = (targetUser.first_name && targetUser.last_name) 
       ? `${targetUser.first_name} ${targetUser.last_name}` 
       : targetUser.full_name || targetUser.email;
+    
+    const hasSentRequest = targetUser.friend_requests?.some(req => req.email === user.email);
+    const isFriend = myFriends.includes(targetUser.email);
 
     return (
       <Card className="hover:shadow-lg transition-all">
@@ -312,14 +315,34 @@ export default function Community() {
                   {language === 'he' ? 'פרופיל' : 'Profile'}
                 </Button>
               </Link>
-              <Button
-                size="sm"
-                onClick={() => sendRequestMutation.mutate(targetUser.email)}
-                disabled={sendRequestMutation.isLoading}
-              >
-                <UserPlus className="w-4 h-4 mr-2" />
-                {language === 'he' ? 'הוסף' : language === 'ru' ? 'Добавить' : language === 'es' ? 'Agregar' : language === 'fr' ? 'Ajouter' : language === 'de' ? 'Hinzufügen' : language === 'it' ? 'Aggiungi' : 'Add'}
-              </Button>
+              {isFriend ? (
+                <Button
+                  size="sm"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  disabled
+                >
+                  <UserCheck className="w-4 h-4 mr-2" />
+                  {language === 'he' ? 'חבר' : language === 'ru' ? 'Друг' : language === 'es' ? 'Amigo' : language === 'fr' ? 'Ami' : language === 'de' ? 'Freund' : language === 'it' ? 'Amico' : 'Friend'}
+                </Button>
+              ) : hasSentRequest ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled
+                >
+                  <Clock className="w-4 h-4 mr-2" />
+                  {language === 'he' ? 'ממתין לאישור' : language === 'ru' ? 'Ожидание' : language === 'es' ? 'Pendiente' : language === 'fr' ? 'En attente' : language === 'de' ? 'Ausstehend' : language === 'it' ? 'In attesa' : 'Pending'}
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  onClick={() => sendRequestMutation.mutate(targetUser.email)}
+                  disabled={sendRequestMutation.isLoading}
+                >
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  {language === 'he' ? 'הוסף' : language === 'ru' ? 'Добавить' : language === 'es' ? 'Agregar' : language === 'fr' ? 'Ajouter' : language === 'de' ? 'Hinzufügen' : language === 'it' ? 'Aggiungi' : 'Add'}
+                </Button>
+              )}
             </div>
           </div>
         </CardContent>
