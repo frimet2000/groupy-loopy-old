@@ -13,20 +13,20 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
-import { 
-  Home, 
-  Map, 
-  Plus, 
-  Sparkles, 
-  User, 
-  LogOut, 
+  DropdownMenuTrigger } from
+"@/components/ui/dropdown-menu";
+import {
+  Home,
+  Map,
+  Plus,
+  Sparkles,
+  User,
+  LogOut,
   Menu,
   Mountain,
   Bell,
@@ -36,8 +36,8 @@ import {
   AlertTriangle,
   Building2,
   Settings as SettingsIcon,
-  Mail
-} from 'lucide-react';
+  Mail } from
+'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
@@ -61,7 +61,7 @@ function LayoutContent({ children, currentPageName }) {
       try {
         const userData = await base44.auth.me();
         setUser(userData);
-        
+
         // Check if user needs to complete onboarding
         if (userData && !userData.profile_completed && currentPageName !== 'Onboarding') {
           navigate(createPageUrl('Onboarding'));
@@ -83,16 +83,16 @@ function LayoutContent({ children, currentPageName }) {
     queryKey: ['pendingRequests', user?.email],
     queryFn: async () => {
       if (!user?.email) return 0;
-      const trips = await base44.entities.Trip.filter({ 
+      const trips = await base44.entities.Trip.filter({
         organizer_email: user.email,
         status: 'open'
       });
-      return trips.reduce((total, trip) => 
-        total + (trip.pending_requests?.length || 0), 0
+      return trips.reduce((total, trip) =>
+      total + (trip.pending_requests?.length || 0), 0
       );
     },
     enabled: !!user?.email,
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 30000 // Refresh every 30 seconds
   });
 
   const handleLogout = async () => {
@@ -100,14 +100,14 @@ function LayoutContent({ children, currentPageName }) {
   };
 
   const navItems = [
-    { name: 'Home', icon: Home, label: t('home'), color: 'text-emerald-600' },
-    { name: 'MyTrips', icon: Map, label: t('myTrips'), color: 'text-blue-600' },
-    { name: 'CreateTrip', icon: Plus, label: t('createTrip'), color: 'text-purple-600' },
-    { name: 'AIRecommendations', icon: Sparkles, label: t('aiRecommendations'), color: 'text-indigo-600' },
-    { name: 'Community', icon: Users, label: language === 'he' ? 'קהילה' : language === 'ru' ? 'Сообщество' : language === 'es' ? 'Comunidad' : language === 'fr' ? 'Communauté' : language === 'de' ? 'Gemeinschaft' : language === 'it' ? 'Comunità' : 'Community', color: 'text-pink-600' },
-    { name: 'Inbox', icon: Mail, label: language === 'he' ? 'הודעות' : language === 'ru' ? 'Сообщения' : language === 'es' ? 'Mensajes' : language === 'fr' ? 'Messages' : language === 'de' ? 'Nachrichten' : language === 'it' ? 'Messaggi' : 'Messages', color: 'text-amber-600' },
-    { name: 'Settings', icon: SettingsIcon, label: language === 'he' ? 'הגדרות' : language === 'ru' ? 'Настройки' : language === 'es' ? 'Configuración' : language === 'fr' ? 'Paramètres' : language === 'de' ? 'Einstellungen' : language === 'it' ? 'Impostazioni' : 'Settings', color: 'text-gray-600' },
-    ];
+  { name: 'Home', icon: Home, label: t('home'), color: 'text-emerald-600' },
+  { name: 'MyTrips', icon: Map, label: t('myTrips'), color: 'text-blue-600' },
+  { name: 'CreateTrip', icon: Plus, label: t('createTrip'), color: 'text-purple-600' },
+  { name: 'AIRecommendations', icon: Sparkles, label: t('aiRecommendations'), color: 'text-indigo-600' },
+  { name: 'Community', icon: Users, label: language === 'he' ? 'קהילה' : language === 'ru' ? 'Сообщество' : language === 'es' ? 'Comunidad' : language === 'fr' ? 'Communauté' : language === 'de' ? 'Gemeinschaft' : language === 'it' ? 'Comunità' : 'Community', color: 'text-pink-600' },
+  { name: 'Inbox', icon: Mail, label: language === 'he' ? 'הודעות' : language === 'ru' ? 'Сообщения' : language === 'es' ? 'Mensajes' : language === 'fr' ? 'Messages' : language === 'de' ? 'Nachrichten' : language === 'it' ? 'Messaggi' : 'Messages', color: 'text-amber-600' },
+  { name: 'Settings', icon: SettingsIcon, label: language === 'he' ? 'הגדרות' : language === 'ru' ? 'Настройки' : language === 'es' ? 'Configuración' : language === 'fr' ? 'Paramètres' : language === 'de' ? 'Einstellungen' : language === 'it' ? 'Impostazioni' : 'Settings', color: 'text-gray-600' }];
+
 
   const isActive = (pageName) => currentPageName === pageName;
 
@@ -126,24 +126,24 @@ function LayoutContent({ children, currentPageName }) {
               <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:shadow-emerald-500/30 transition-shadow">
                 <Mountain className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-800 bg-clip-text text-transparent hidden sm:block">
-                The Group Loop
+              <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-800 bg-clip-text text-transparent hidden sm:block">The Groupy Loopy
+
               </span>
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-2">
-              {navItems.map(item => (
-                <Link key={item.name} to={createPageUrl(item.name)}>
+              {navItems.map((item) =>
+              <Link key={item.name} to={createPageUrl(item.name)}>
                   <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
                     <Button
-                      variant={isActive(item.name) ? "secondary" : "ghost"}
-                      className={`gap-2 transition-all duration-300 ${
-                        isActive(item.name) 
-                          ? 'bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 font-semibold shadow-sm' 
-                          : 'text-gray-600 hover:text-emerald-700 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50'
-                      }`}
-                    >
+                    variant={isActive(item.name) ? "secondary" : "ghost"}
+                    className={`gap-2 transition-all duration-300 ${
+                    isActive(item.name) ?
+                    'bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 font-semibold shadow-sm' :
+                    'text-gray-600 hover:text-emerald-700 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50'}`
+                    }>
+
                       <div className={`p-1 rounded-lg ${isActive(item.name) ? 'bg-emerald-100' : ''}`}>
                         <item.icon className={`w-4 h-4 ${item.color}`} />
                       </div>
@@ -151,7 +151,7 @@ function LayoutContent({ children, currentPageName }) {
                     </Button>
                   </motion.div>
                 </Link>
-              ))}
+              )}
             </nav>
 
             {/* Right Side */}
@@ -159,24 +159,24 @@ function LayoutContent({ children, currentPageName }) {
               {user && <NotificationBell userEmail={user.email} />}
               <LanguageSwitcher />
               
-              {user ? (
-                <>
+              {user ?
+              <>
                   {/* Pending Requests Notification */}
-                  {pendingCount > 0 && (
-                    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  {pendingCount > 0 &&
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                       <Link to={createPageUrl('MyTrips')}>
                         <Button
-                          variant="ghost"
-                          size="icon"
-                          className="relative hover:bg-red-50 transition-all duration-300"
-                        >
+                      variant="ghost"
+                      size="icon"
+                      className="relative hover:bg-red-50 transition-all duration-300">
+
                           <div className="p-1.5 bg-red-100 rounded-lg">
                             <Bell className="w-5 h-5 text-red-600" />
                           </div>
                           <motion.div
-                            animate={{ scale: [1, 1.2, 1] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                          >
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}>
+
                             <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-gradient-to-r from-red-500 to-rose-600 text-white font-bold shadow-lg">
                               {pendingCount}
                             </Badge>
@@ -184,7 +184,7 @@ function LayoutContent({ children, currentPageName }) {
                         </Button>
                       </Link>
                     </motion.div>
-                  )}
+                }
 
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -199,9 +199,9 @@ function LayoutContent({ children, currentPageName }) {
                       <DropdownMenuContent align="end" className="w-56">
                     <div className="px-3 py-2">
                       <p className="font-semibold">
-                        {user.first_name && user.last_name 
-                          ? `${user.first_name} ${user.last_name}` 
-                          : user.full_name}
+                        {user.first_name && user.last_name ?
+                        `${user.first_name} ${user.last_name}` :
+                        user.full_name}
                       </p>
                       <p className="text-sm text-gray-500">{user.email}</p>
                     </div>
@@ -217,17 +217,17 @@ function LayoutContent({ children, currentPageName }) {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                   </DropdownMenu>
-                  </>
-                  ) : (
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button 
-                        onClick={() => base44.auth.redirectToLogin()}
-                        className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                      >
+                  </> :
+
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button
+                  onClick={() => base44.auth.redirectToLogin()}
+                  className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+
                         {language === 'he' ? 'התחבר' : language === 'ru' ? 'Войти' : language === 'es' ? 'Iniciar sesión' : language === 'fr' ? 'Connexion' : language === 'de' ? 'Anmelden' : language === 'it' ? 'Accedi' : 'Login'}
                       </Button>
                     </motion.div>
-                  )}
+              }
 
               {/* Mobile Menu */}
               <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -242,17 +242,17 @@ function LayoutContent({ children, currentPageName }) {
                 </SheetTrigger>
                 <SheetContent side={isRTL ? "right" : "left"} className="w-72 bg-gradient-to-b from-white to-gray-50">
                   <nav className="flex flex-col gap-2 mt-8">
-                    {navItems.map(item => (
-                      <Link key={item.name} to={createPageUrl(item.name)} onClick={() => setMobileMenuOpen(false)}>
+                    {navItems.map((item) =>
+                    <Link key={item.name} to={createPageUrl(item.name)} onClick={() => setMobileMenuOpen(false)}>
                         <motion.div whileHover={{ x: isRTL ? -5 : 5 }} whileTap={{ scale: 0.98 }}>
                           <Button
-                            variant={isActive(item.name) ? "secondary" : "ghost"}
-                            className={`w-full justify-start gap-3 h-12 transition-all duration-300 ${
-                              isActive(item.name) 
-                                ? 'bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 font-semibold shadow-sm' 
-                                : 'hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50'
-                            }`}
-                          >
+                          variant={isActive(item.name) ? "secondary" : "ghost"}
+                          className={`w-full justify-start gap-3 h-12 transition-all duration-300 ${
+                          isActive(item.name) ?
+                          'bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 font-semibold shadow-sm' :
+                          'hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50'}`
+                          }>
+
                             <div className={`p-1.5 rounded-lg ${isActive(item.name) ? 'bg-emerald-100' : ''}`}>
                               <item.icon className={`w-5 h-5 ${item.color}`} />
                             </div>
@@ -260,7 +260,7 @@ function LayoutContent({ children, currentPageName }) {
                           </Button>
                         </motion.div>
                       </Link>
-                    ))}
+                    )}
                   </nav>
                 </SheetContent>
               </Sheet>
@@ -327,45 +327,45 @@ function LayoutContent({ children, currentPageName }) {
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 safe-area-inset-bottom z-50 shadow-2xl">
         <div className="flex items-center justify-around h-16 px-2">
-          {navItems.slice(0, 4).map((item, idx) => (
-            <Link 
-              key={item.name} 
-              to={createPageUrl(item.name)}
-              className="relative flex-1"
-            >
+          {navItems.slice(0, 4).map((item, idx) =>
+          <Link
+            key={item.name}
+            to={createPageUrl(item.name)}
+            className="relative flex-1">
+
               <motion.div
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ y: -2 }}
-                className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-300 ${
-                  isActive(item.name) 
-                    ? 'text-emerald-600 bg-gradient-to-br from-emerald-50 to-teal-50' 
-                    : 'text-gray-500 hover:text-emerald-600'
-                }`}
-              >
-                <motion.div 
-                  className={`p-1.5 rounded-lg transition-all relative ${
-                    isActive(item.name) ? 'bg-emerald-100' : ''
-                  }`}
-                  animate={isActive(item.name) ? {
-                    boxShadow: ['0 0 0 0 rgba(16,185,129,0.4)', '0 0 0 8px rgba(16,185,129,0)']
-                  } : {}}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
+              whileTap={{ scale: 0.9 }}
+              whileHover={{ y: -2 }}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-300 ${
+              isActive(item.name) ?
+              'text-emerald-600 bg-gradient-to-br from-emerald-50 to-teal-50' :
+              'text-gray-500 hover:text-emerald-600'}`
+              }>
+
+                <motion.div
+                className={`p-1.5 rounded-lg transition-all relative ${
+                isActive(item.name) ? 'bg-emerald-100' : ''}`
+                }
+                animate={isActive(item.name) ? {
+                  boxShadow: ['0 0 0 0 rgba(16,185,129,0.4)', '0 0 0 8px rgba(16,185,129,0)']
+                } : {}}
+                transition={{ duration: 2, repeat: Infinity }}>
+
                   <item.icon className={`w-5 h-5 ${isActive(item.name) ? item.color : ''}`} />
                 </motion.div>
                 <span className={`text-xs font-medium text-center ${isActive(item.name) ? 'font-semibold' : ''}`}>
                   {item.label}
                 </span>
-                {isActive(item.name) && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full shadow-lg"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
+                {isActive(item.name) &&
+              <motion.div
+                layoutId="activeTab"
+                className="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full shadow-lg"
+                transition={{ type: "spring", stiffness: 380, damping: 30 }} />
+
+              }
               </motion.div>
             </Link>
-          ))}
+          )}
         </div>
       </nav>
 
@@ -383,9 +383,9 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* PWA Install Prompt */}
       <InstallPrompt />
-      </div>
-      );
-      }
+      </div>);
+
+}
 
 export default function Layout({ children, currentPageName }) {
   return (
@@ -393,6 +393,6 @@ export default function Layout({ children, currentPageName }) {
       <LayoutContent currentPageName={currentPageName}>
         {children}
       </LayoutContent>
-    </LanguageProvider>
-  );
+    </LanguageProvider>);
+
 }
