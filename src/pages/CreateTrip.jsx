@@ -564,20 +564,42 @@ Include water recommendation in liters and detailed equipment list.`,
     setGeneratingEquipment(false);
   };
 
+  const [missingFields, setMissingFields] = useState([]);
+
   const validateStep = (step) => {
+    const missing = [];
+    
     switch(step) {
       case 1:
         if (!formData.title) {
-          toast.error(language === 'he' ? 'נא להזין כותרת' : 'Please enter title');
-          return false;
+          missing.push('title');
+          toast.error(
+            language === 'he' ? '⚠️ נא להזין כותרת לטיול' :
+            language === 'ru' ? '⚠️ Введите название поездки' :
+            language === 'es' ? '⚠️ Ingrese el título del viaje' :
+            language === 'fr' ? '⚠️ Entrez le titre du voyage' :
+            language === 'de' ? '⚠️ Geben Sie den Reisename ein' :
+            language === 'it' ? '⚠️ Inserisci il titolo del viaggio' :
+            '⚠️ Please enter trip title'
+          );
         }
-        return true;
+        break;
       case 2:
-        if (!formData.location || !formData.date) {
-          toast.error(language === 'he' ? 'נא למלא מיקום ותאריך' : 'Please fill location and date');
-          return false;
+        if (!formData.location) missing.push('location');
+        if (!formData.date) missing.push('date');
+        
+        if (missing.length > 0) {
+          toast.error(
+            language === 'he' ? '⚠️ נא למלא את כל השדות המסומנים' :
+            language === 'ru' ? '⚠️ Заполните все отмеченные поля' :
+            language === 'es' ? '⚠️ Complete todos los campos marcados' :
+            language === 'fr' ? '⚠️ Remplissez tous les champs marqués' :
+            language === 'de' ? '⚠️ Füllen Sie alle markierten Felder aus' :
+            language === 'it' ? '⚠️ Compila tutti i campi contrassegnati' :
+            '⚠️ Please fill all marked fields'
+          );
         }
-        return true;
+        break;
       case 3:
         return true;
       case 4:
@@ -585,6 +607,9 @@ Include water recommendation in liters and detailed equipment list.`,
       default:
         return true;
     }
+    
+    setMissingFields(missing);
+    return missing.length === 0;
   };
 
   const nextStep = () => {
