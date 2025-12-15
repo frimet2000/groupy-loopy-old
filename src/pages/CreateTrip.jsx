@@ -1005,9 +1005,19 @@ Include water recommendation in liters and detailed equipment list.`,
                         <Input
                           type="date"
                           value={formData.date}
-                          onChange={(e) => handleChange('date', e.target.value)}
-                          className="p-4"
+                          onChange={(e) => {
+                            handleChange('date', e.target.value);
+                            if (missingFields.includes('date')) {
+                              setMissingFields(prev => prev.filter(f => f !== 'date'));
+                            }
+                          }}
+                          className={`p-4 ${missingFields.includes('date') ? 'border-2 border-red-500 bg-red-50' : ''}`}
                         />
+                        {missingFields.includes('date') && (
+                          <p className="text-red-600 text-sm font-semibold animate-bounce">
+                            {language === 'he' ? '⚠️ שדה חובה - נא לבחור תאריך' : '⚠️ Required field - please select a date'}
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <Label className="text-base font-semibold flex items-center gap-2">
