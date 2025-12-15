@@ -1,47 +1,51 @@
-import Home from './pages/Home';
-import TripDetails from './pages/TripDetails';
-import MyTrips from './pages/MyTrips';
 import AIRecommendations from './pages/AIRecommendations';
-import Profile from './pages/Profile';
-import Onboarding from './pages/Onboarding';
+import AboutUs from './pages/AboutUs';
+import AccessibilityStatement from './pages/AccessibilityStatement';
+import Admin from './pages/Admin';
+import Community from './pages/Community';
+import CookiePolicy from './pages/CookiePolicy';
 import CreateTrip from './pages/CreateTrip';
 import EditTrip from './pages/EditTrip';
-import Community from './pages/Community';
-import TermsOfService from './pages/TermsOfService';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import TermsOfUse from './pages/TermsOfUse';
-import AccessibilityStatement from './pages/AccessibilityStatement';
-import AboutUs from './pages/AboutUs';
-import Admin from './pages/Admin';
-import Settings from './pages/Settings';
-import MyLists from './pages/MyLists';
-import ListDetails from './pages/ListDetails';
+import Home from './pages/Home';
 import Inbox from './pages/Inbox';
-import CookiePolicy from './pages/CookiePolicy';
+import ListDetails from './pages/ListDetails';
+import MyLists from './pages/MyLists';
+import MyTrips from './pages/MyTrips';
+import Notifications from './pages/Notifications';
+import Onboarding from './pages/Onboarding';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
+import TermsOfService from './pages/TermsOfService';
+import TermsOfUse from './pages/TermsOfUse';
+import TripDetails from './pages/TripDetails';
+import Feedback from './pages/Feedback';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Home": Home,
-    "TripDetails": TripDetails,
-    "MyTrips": MyTrips,
     "AIRecommendations": AIRecommendations,
-    "Profile": Profile,
-    "Onboarding": Onboarding,
+    "AboutUs": AboutUs,
+    "AccessibilityStatement": AccessibilityStatement,
+    "Admin": Admin,
+    "Community": Community,
+    "CookiePolicy": CookiePolicy,
     "CreateTrip": CreateTrip,
     "EditTrip": EditTrip,
-    "Community": Community,
-    "TermsOfService": TermsOfService,
-    "PrivacyPolicy": PrivacyPolicy,
-    "TermsOfUse": TermsOfUse,
-    "AccessibilityStatement": AccessibilityStatement,
-    "AboutUs": AboutUs,
-    "Admin": Admin,
-    "Settings": Settings,
-    "MyLists": MyLists,
-    "ListDetails": ListDetails,
+    "Home": Home,
     "Inbox": Inbox,
-    "CookiePolicy": CookiePolicy,
+    "ListDetails": ListDetails,
+    "MyLists": MyLists,
+    "MyTrips": MyTrips,
+    "Notifications": Notifications,
+    "Onboarding": Onboarding,
+    "PrivacyPolicy": PrivacyPolicy,
+    "Profile": Profile,
+    "Settings": Settings,
+    "TermsOfService": TermsOfService,
+    "TermsOfUse": TermsOfUse,
+    "TripDetails": TripDetails,
+    "Feedback": Feedback,
 }
 
 export const pagesConfig = {
