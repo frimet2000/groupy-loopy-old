@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../components/LanguageContext';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Building2, Phone, Mail, Globe, Users, Code } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Building2, Phone, Mail, Globe, Users, Code, MessageCircle } from 'lucide-react';
 
 export default function AboutUs() {
   const { language, isRTL } = useLanguage();
@@ -36,7 +36,9 @@ export default function AboutUs() {
     },
     contact: {
       title: 'צור קשר',
-      email: 'frimet@gmail.com'
+      email: 'frimet@gmail.com',
+      phone: '+972523759167',
+      phoneName: 'גלעד'
       }
     };
     }
@@ -67,7 +69,9 @@ export default function AboutUs() {
     },
     contact: {
       title: 'Свяжитесь с нами',
-      email: 'frimet@gmail.com'
+      email: 'frimet@gmail.com',
+      phone: '+972523759167',
+      phoneName: 'Gilad'
     }
       };
     }
@@ -96,8 +100,10 @@ export default function AboutUs() {
         text: 'We believe in the power of technology to connect people and improve quality of life. The Group Loop was born from the desire to create a platform that makes it easy for travelers to find trip partners and share experiences in nature.'
       },
       contact: {
-        title: 'Свяжитесь с нами',
-        email: 'frimet@gmail.com'
+        title: 'Contact Us',
+        email: 'frimet@gmail.com',
+        phone: '+972523759167',
+        phoneName: 'Gilad'
       }
     };
   };
@@ -187,6 +193,21 @@ export default function AboutUs() {
                   <div>
                     <div className="text-sm text-emerald-100">{language === 'he' ? 'דוא"ל' : 'Email'}</div>
                     <div className="font-semibold" dir="ltr">{content.contact.email}</div>
+                  </div>
+                </a>
+                
+                <a 
+                  href={`https://wa.me/${content.contact.phone.replace(/[^0-9]/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 hover:bg-white/10 rounded-lg p-3 transition-colors"
+                >
+                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                    <MessageCircle className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm text-emerald-100">{language === 'he' ? 'וואטסאפ' : 'WhatsApp'}</div>
+                    <div className="font-semibold" dir="ltr">{content.contact.phoneName} - {content.contact.phone}</div>
                   </div>
                 </a>
               </div>
