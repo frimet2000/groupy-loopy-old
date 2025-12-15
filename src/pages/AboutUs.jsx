@@ -13,7 +13,7 @@ export default function AboutUs() {
     if (language === 'he') {
       return {
     title: 'אודותינו',
-    intro: 'The Group Loop פותחה על ידי פרימט מחשבים - צוות מקצועי המתמחה בשירותי מחשוב ויצירה דיגיטלית.',
+    intro: 'The Groupy Loopy פותחה על ידי פרימט מחשבים - צוות מקצועי המתמחה בשירותי מחשוב ויצירה דיגיטלית.',
     company: {
       name: 'פרימט מחשבים',
       tagline: 'שירותי מחשוב ויוצר דיגיטלי',
