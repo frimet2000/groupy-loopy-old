@@ -988,6 +988,11 @@ Include water recommendation in liters and detailed equipment list.`,
                             {language === 'he' ? 'מיקום נמצא במפה' : language === 'ru' ? 'Местоположение найдено' : language === 'es' ? 'Ubicación encontrada' : language === 'fr' ? 'Emplacement trouvé' : language === 'de' ? 'Standort gefunden' : language === 'it' ? 'Posizione trovata' : 'Location found on map'}
                           </p>
                         )}
+                        {missingFields.includes('location') && (
+                          <p className="text-red-600 text-sm font-semibold animate-bounce">
+                            {language === 'he' ? '⚠️ שדה חובה - נא להזין מיקום' : '⚠️ Required field - please enter location'}
+                          </p>
+                        )}
                       </div>
                     </div>
 
