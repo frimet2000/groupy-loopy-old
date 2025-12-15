@@ -614,6 +614,7 @@ Include water recommendation in liters and detailed equipment list.`,
 
   const nextStep = () => {
     if (validateStep(currentStep)) {
+      setMissingFields([]);
       setCurrentStep(prev => Math.min(prev + 1, steps.length));
     }
   };
