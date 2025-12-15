@@ -364,9 +364,11 @@ export default function CreateTrip() {
     }
   };
 
-  const handleMapConfirm = async (lat, lng) => {
+  const handleMapConfirm = (lat, lng) => {
     const exactLat = parseFloat(lat);
     const exactLng = parseFloat(lng);
+    
+    console.log('Map confirmed:', exactLat, exactLng); // Debug log
     
     setFormData(prev => ({
       ...prev,
@@ -375,7 +377,21 @@ export default function CreateTrip() {
     }));
     
     setShowMapPicker(false);
-    toast.success(language === 'he' ? `מיקום נשמר: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}` : `Location saved: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}`);
+    toast.success(
+      language === 'he' 
+        ? `מיקום נשמר: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}` 
+        : language === 'ru'
+        ? `Местоположение сохранено: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}`
+        : language === 'es'
+        ? `Ubicación guardada: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}`
+        : language === 'fr'
+        ? `Emplacement enregistré: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}`
+        : language === 'de'
+        ? `Standort gespeichert: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}`
+        : language === 'it'
+        ? `Posizione salvata: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}`
+        : `Location saved: ${exactLat.toFixed(6)}, ${exactLng.toFixed(6)}`
+    );
   };
 
   const handleGenerateItinerary = async () => {
