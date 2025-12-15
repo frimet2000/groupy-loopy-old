@@ -50,6 +50,18 @@ function LayoutContent({ children, currentPageName }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Add Facebook domain verification meta tag
+    const metaTag = document.createElement('meta');
+    metaTag.name = 'facebook-domain-verification';
+    metaTag.content = 'u7wujwd6860x2d554lgdr2kycajfrs';
+    document.head.appendChild(metaTag);
+
+    return () => {
+      document.head.removeChild(metaTag);
+    };
+  }, []);
+
+  useEffect(() => {
     // Check if language has been selected
     const languageSelected = localStorage.getItem('language_selected');
     if (!languageSelected) {
