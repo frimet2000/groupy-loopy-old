@@ -112,28 +112,20 @@ function LayoutContent({ children, currentPageName }) {
     await base44.auth.logout();
   };
 
-  const baseNavItems = [
+  const allNavItems = [
     { name: 'Home', icon: Home, label: t('home'), color: 'text-emerald-600' },
     { name: 'MyTrips', icon: Map, label: t('myTrips'), color: 'text-blue-600' },
     { name: 'CreateTrip', icon: Plus, label: t('createTrip'), color: 'text-purple-600' },
     { name: 'AIRecommendations', icon: Sparkles, label: t('aiRecommendations'), color: 'text-indigo-600' },
-  ];
-
-  const adminNavItems = [
     { name: 'Community', icon: Users, label: language === 'he' ? 'קהילה' : language === 'ru' ? 'Сообщество' : language === 'es' ? 'Comunidad' : language === 'fr' ? 'Communauté' : language === 'de' ? 'Gemeinschaft' : language === 'it' ? 'Comunità' : 'Community', color: 'text-pink-600' },
-  ];
-
-  const allUsersNavItems = [
     { name: 'Inbox', icon: Mail, label: language === 'he' ? 'הודעות' : language === 'ru' ? 'Сообщения' : language === 'es' ? 'Mensajes' : language === 'fr' ? 'Messages' : language === 'de' ? 'Nachrichten' : language === 'it' ? 'Messaggi' : 'Messages', color: 'text-amber-600' },
     { name: 'Feedback', icon: MessageSquare, label: language === 'he' ? 'משוב' : language === 'ru' ? 'Отзывы' : language === 'es' ? 'Comentarios' : language === 'fr' ? 'Retour' : language === 'de' ? 'Feedback' : language === 'it' ? 'Feedback' : 'Feedback', color: 'text-indigo-600' },
     { name: 'Settings', icon: SettingsIcon, label: language === 'he' ? 'הגדרות' : language === 'ru' ? 'Настройки' : language === 'es' ? 'Configuración' : language === 'fr' ? 'Paramètres' : language === 'de' ? 'Einstellungen' : language === 'it' ? 'Impostazioni' : 'Settings', color: 'text-gray-600' },
   ];
 
-  const navItems = [
-    ...baseNavItems,
-    ...(user?.role === 'admin' ? adminNavItems : []),
-    ...allUsersNavItems
-  ];
+  const navItems = user?.role === 'admin' 
+    ? allNavItems 
+    : allNavItems.filter(item => item.name !== 'Community');
 
   const isActive = (pageName) => currentPageName === pageName;
 
