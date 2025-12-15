@@ -89,6 +89,7 @@ export default function TripDetails() {
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showWaiver, setShowWaiver] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [addingToCalendar, setAddingToCalendar] = useState(false);
   
   const accessibilityTypes = ['wheelchair', 'visual_impairment', 'hearing_impairment', 'mobility_aid', 'stroller_friendly', 'elderly_friendly'];
 
@@ -382,6 +383,42 @@ export default function TripDetails() {
     }
     
     queryClient.invalidateQueries(['trip', tripId]);
+  };
+
+  const handleAddToCalendar = async () => {
+    if (!user) {
+      base44.auth.redirectToLogin(window.location.href);
+      return;
+    }
+
+    setAddingToCalendar(true);
+    try {
+      const response = await base44.functions.invoke('addToGoogleCalendar', { tripId: trip.id });
+      
+      if (response.data.success) {
+        toast.success(
+          language === 'he' ? 'הטיול נוסף ליומן Google שלך!' : 
+          language === 'ru' ? 'Поездка добавлена в ваш Google Calendar!' : 
+          language === 'es' ? '¡Viaje agregado a tu Google Calendar!' :
+          language === 'fr' ? 'Voyage ajouté à votre Google Agenda!' :
+          language === 'de' ? 'Reise zu Ihrem Google Kalender hinzugefügt!' :
+          language === 'it' ? 'Viaggio aggiunto al tuo Google Calendar!' :
+          'Trip added to your Google Calendar!'
+        );
+      }
+    } catch (error) {
+      console.error('Calendar error:', error);
+      toast.error(
+        language === 'he' ? 'שגיאה בהוספה ליומן' : 
+        language === 'ru' ? 'Ошибка добавления в календарь' :
+        language === 'es' ? 'Error al agregar al calendario' :
+        language === 'fr' ? 'Erreur d\'ajout au calendrier' :
+        language === 'de' ? 'Fehler beim Hinzufügen zum Kalender' :
+        language === 'it' ? 'Errore nell\'aggiunta al calendario' :
+        'Error adding to calendar'
+      );
+    }
+    setAddingToCalendar(false);
   };
 
   const handleStartEdit = () => {
@@ -1181,15 +1218,29 @@ export default function TripDetails() {
 
                   {user && !isOrganizer && (
                     hasJoined ? (
-                      <Button 
-                        variant="outline" 
-                        onClick={() => leaveMutation.mutate()}
-                        disabled={leaveMutation.isLoading}
-                        className="text-red-600 border-red-200 hover:bg-red-50"
-                      >
-                        <X className="w-4 h-4 mr-2" />
-                        {t('leave')}
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button 
+                          onClick={handleAddToCalendar}
+                          disabled={addingToCalendar}
+                          className="bg-blue-600 hover:bg-blue-700 gap-2"
+                        >
+                          {addingToCalendar ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Calendar className="w-4 h-4" />
+                          )}
+                          {language === 'he' ? 'הוסף ליומן' : language === 'ru' ? 'В календарь' : language === 'es' ? 'Agregar a calendario' : language === 'fr' ? 'Ajouter au calendrier' : language === 'de' ? 'Zum Kalender' : language === 'it' ? 'Aggiungi al calendario' : 'Add to Calendar'}
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => leaveMutation.mutate()}
+                          disabled={leaveMutation.isLoading}
+                          className="text-red-600 border-red-200 hover:bg-red-50"
+                        >
+                          <X className="w-4 h-4 mr-2" />
+                          {t('leave')}
+                        </Button>
+                      </div>
                     ) : hasPendingRequest ? (
                       <Badge variant="outline" className="border-yellow-300 text-yellow-700 bg-yellow-50">
                         {language === 'he' ? 'הבקשה ממתינה לאישור' : language === 'ru' ? 'Запрос ожидает подтверждения' : language === 'es' ? 'Solicitud pendiente de aprobación' : language === 'fr' ? 'Demande en attente d\'approbation' : language === 'de' ? 'Anfrage wartet auf Genehmigung' : language === 'it' ? 'Richiesta in attesa di approvazione' : 'Request pending approval'}
@@ -1216,9 +1267,23 @@ export default function TripDetails() {
                   )}
 
                   {isOrganizer && (
-                    <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">
-                      {language === 'he' ? 'אתה המארגן' : language === 'ru' ? 'Вы организатор' : language === 'es' ? 'Eres el organizador' : language === 'fr' ? 'Vous êtes l\'organisateur' : language === 'de' ? 'Sie sind der Organisator' : language === 'it' ? 'Sei l\'organizzatore' : "You're the organizer"}
-                    </Badge>
+                    <div className="flex gap-2">
+                      <Button 
+                        onClick={handleAddToCalendar}
+                        disabled={addingToCalendar}
+                        className="bg-blue-600 hover:bg-blue-700 gap-2"
+                      >
+                        {addingToCalendar ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Calendar className="w-4 h-4" />
+                        )}
+                        {language === 'he' ? 'הוסף ליומן' : language === 'ru' ? 'В календарь' : language === 'es' ? 'Agregar a calendario' : language === 'fr' ? 'Ajouter au calendrier' : language === 'de' ? 'Zum Kalender' : language === 'it' ? 'Aggiungi al calendario' : 'Add to Calendar'}
+                      </Button>
+                      <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 h-10 flex items-center">
+                        {language === 'he' ? 'אתה המארגן' : language === 'ru' ? 'Вы организатор' : language === 'es' ? 'Eres el organizador' : language === 'fr' ? 'Vous êtes l\'organisateur' : language === 'de' ? 'Sie sind der Organisator' : language === 'it' ? 'Sei l\'organizzatore' : "You're the organizer"}
+                      </Badge>
+                    </div>
                   )}
                 </div>
               )}
