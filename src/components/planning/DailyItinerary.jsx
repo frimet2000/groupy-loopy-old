@@ -73,8 +73,11 @@ export default function DailyItinerary({ trip, isOrganizer, onUpdate }) {
     if (!day) return;
 
     const newActivity = {
-      id: Date.now().toString(),
-      ...activityData
+      id: editingActivity?.id || Date.now().toString(),
+      time: activityData.time,
+      activity: activityData.activity,
+      notes: activityData.notes,
+      image_url: activityData.image_url || ''
     };
 
     const updatedActivities = editingActivity
