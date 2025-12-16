@@ -208,7 +208,7 @@ Return the response in ${language === 'he' ? 'Hebrew' : 'English'}.`;
                   ) : (
                     <Sparkles className="w-4 h-4 mr-2" />
                   )}
-                  {language === 'he' ? 'צור עם AI' : 'Generate with AI'}
+                  {language === 'he' ? 'צור עם AI' : language === 'ru' ? 'Создать с AI' : language === 'es' ? 'Generar con IA' : language === 'fr' ? 'Générer avec IA' : language === 'de' ? 'Mit KI erstellen' : language === 'it' ? 'Genera con IA' : 'Generate with AI'}
                 </Button>
               )}
               <Button onClick={() => {
