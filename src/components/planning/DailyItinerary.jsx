@@ -165,7 +165,7 @@ Return the response in ${language === 'he' ? 'Hebrew' : 'English'}.`;
 
       await base44.entities.Trip.update(trip.id, { daily_itinerary: aiItinerary });
       onUpdate();
-      toast.success(language === 'he' ? 'לוח זמנים נוצר בהצלחה!' : 'Itinerary generated successfully!');
+      toast.success(language === 'he' ? 'לוח זמנים נוצר בהצלחה!' : language === 'ru' ? 'Маршрут создан успешно!' : language === 'es' ? '¡Itinerario generado con éxito!' : language === 'fr' ? 'Itinéraire généré avec succès!' : language === 'de' ? 'Route erfolgreich erstellt!' : language === 'it' ? 'Itinerario generato con successo!' : 'Itinerary generated successfully!');
     } catch (error) {
       toast.error(language === 'he' ? 'שגיאה ביצירת לוח זמנים' : 'Error generating itinerary');
     }
