@@ -167,7 +167,7 @@ export default function OrganizerWaiver({ open, onAccept, onDecline }) {
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onDecline()}>
       <DialogContent 
-        className="max-w-2xl max-h-[90vh] flex flex-col" 
+        className="max-w-2xl h-[90vh] sm:max-h-[90vh] flex flex-col overflow-hidden" 
         dir={isRTL ? 'rtl' : 'ltr'}
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
@@ -195,7 +195,7 @@ export default function OrganizerWaiver({ open, onAccept, onDecline }) {
           </AlertDescription>
         </Alert>
 
-        <ScrollArea ref={scrollRef} className="h-[180px] sm:h-[250px] border rounded-lg p-4 flex-shrink-0">
+        <ScrollArea ref={scrollRef} className="flex-1 min-h-0 border rounded-lg p-4">
           <div className="space-y-6">
             {content.sections.map((section, index) => (
               <div key={index}>
