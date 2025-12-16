@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Shield, AlertTriangle, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
