@@ -12,7 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, Share2, SlidersHorizontal, List, Globe, Heart } from 'lucide-react';
+import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, Share2, SlidersHorizontal, List, Globe, Heart, Radio, Bike, Mountain, Truck } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from 'framer-motion';
 import { format, isPast, isToday, isTomorrow } from 'date-fns';
@@ -28,6 +29,8 @@ export default function Home() {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'map'
   const [selectedContinent, setSelectedContinent] = useState('all');
+  const [showLiveTripsDialog, setShowLiveTripsDialog] = useState(false);
+  const [joiningLiveTrip, setJoiningLiveTrip] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -232,6 +235,72 @@ export default function Home() {
     }
   };
 
+  const handleJoinLiveTrip = async (activityType) => {
+    if (!user) {
+      base44.auth.redirectToLogin(createPageUrl('Home'));
+      return;
+    }
+
+    setJoiningLiveTrip(true);
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      // Find trips happening today with the selected activity type
+      const liveTrips = trips.filter(trip => {
+        const tripDate = new Date(trip.date);
+        tripDate.setHours(0, 0, 0, 0);
+        return tripDate.getTime() === today.getTime() && 
+               trip.activity_type === activityType &&
+               trip.status === 'open' &&
+               !trip.participants?.some(p => p.email === user.email) &&
+               trip.organizer_email !== user.email &&
+               (!trip.max_participants || (trip.current_participants || 1) < trip.max_participants);
+      });
+
+      if (liveTrips.length === 0) {
+        toast.error(language === 'he' ? 'אין טיולים פעילים כרגע מסוג זה' : language === 'ru' ? 'Сейчас нет активных поездок этого типа' : language === 'es' ? 'No hay viajes activos de este tipo' : language === 'fr' ? 'Aucun voyage actif de ce type' : language === 'de' ? 'Keine aktiven Reisen dieses Typs' : language === 'it' ? 'Nessun viaggio attivo di questo tipo' : 'No active trips of this type right now');
+        setShowLiveTripsDialog(false);
+        setJoiningLiveTrip(false);
+        return;
+      }
+
+      const selectedTrip = liveTrips[0];
+      const userName = (user.first_name && user.last_name) 
+        ? `${user.first_name} ${user.last_name}` 
+        : user.full_name;
+
+      // Add join request
+      const updatedPendingRequests = [
+        ...(selectedTrip.pending_requests || []),
+        {
+          email: user.email,
+          name: userName,
+          requested_at: new Date().toISOString(),
+          message: language === 'he' ? 'הצטרפות מהירה דרך הרדאר' : language === 'ru' ? 'Быстрое присоединение через радар' : language === 'es' ? 'Unión rápida vía radar' : language === 'fr' ? 'Adhésion rapide via radar' : language === 'de' ? 'Schnellbeitritt über Radar' : language === 'it' ? 'Unione rapida via radar' : 'Quick join via radar',
+          accessibility_needs: [],
+          waiver_accepted: false,
+          waiver_timestamp: null
+        }
+      ];
+
+      await base44.entities.Trip.update(selectedTrip.id, {
+        pending_requests: updatedPendingRequests
+      });
+
+      toast.success(language === 'he' ? 'בקשה נשלחה בהצלחה!' : language === 'ru' ? 'Запрос успешно отправлен!' : language === 'es' ? '¡Solicitud enviada!' : language === 'fr' ? 'Demande envoyée!' : language === 'de' ? 'Anfrage gesendet!' : language === 'it' ? 'Richiesta inviata!' : 'Request sent successfully!');
+      setShowLiveTripsDialog(false);
+      
+      // Navigate to trip details
+      navigate(createPageUrl('TripDetails') + '?id=' + selectedTrip.id);
+    } catch (error) {
+      toast.error(language === 'he' ? 'שגיאה בהצטרפות' : language === 'ru' ? 'Ошибка присоединения' : language === 'es' ? 'Error al unirse' : language === 'fr' ? 'Erreur de participation' : language === 'de' ? 'Fehler beim Beitreten' : language === 'it' ? 'Errore nell\'unirsi' : 'Error joining');
+    }
+    setJoiningLiveTrip(false);
+  };
+
   return (
     <div className="pb-8">
       {/* Announcement Toast */}
@@ -413,7 +482,32 @@ export default function Home() {
                   <span>{language === 'he' ? 'שתף עם חברים' : language === 'ru' ? 'Поделиться' : language === 'es' ? 'Compartir' : language === 'fr' ? 'Partager' : language === 'de' ? 'Teilen' : language === 'it' ? 'Condividi' : 'Share'}</span>
                 </Button>
               </motion.div>
-            </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className="active:opacity-70"
+              >
+                <Button 
+                  onClick={() => setShowLiveTripsDialog(true)}
+                  className="relative bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 text-white hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 h-12 sm:h-16 px-4 sm:px-10 text-sm sm:text-lg font-bold shadow-[0_10px_40px_rgba(16,185,129,0.5),0_0_20px_rgba(20,184,166,0.3)] border-2 border-white/20 touch-manipulation min-h-[44px]"
+                >
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      opacity: [1, 0.8, 1]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <Radio className="w-4 h-4 sm:w-6 sm:h-6 mr-1 sm:mr-2" />
+                  </motion.div>
+                  <span>{language === 'he' ? 'טיולים חיים' : language === 'ru' ? 'Прямо сейчас' : language === 'es' ? 'Ahora mismo' : language === 'fr' ? 'En direct' : language === 'de' ? 'Jetzt live' : language === 'it' ? 'In diretta' : 'Live Now'}</span>
+                </Button>
+              </motion.div>
+              </motion.div>
           </motion.div>
 
           {/* Enhanced Stats with Animations */}
@@ -781,5 +875,72 @@ export default function Home() {
         )}
       </section>
     </div>
-  );
-}
+
+    {/* Live Trips Dialog */}
+    <Dialog open={showLiveTripsDialog} onOpenChange={setShowLiveTripsDialog}>
+    <DialogContent className="sm:max-w-md">
+    <DialogHeader>
+      <DialogTitle className="flex items-center gap-2 text-center justify-center">
+        <Radio className="w-6 h-6 text-emerald-600" />
+        {language === 'he' ? 'הצטרף לטיול חי' : language === 'ru' ? 'Присоединиться к живой поездке' : language === 'es' ? 'Únete a un viaje en vivo' : language === 'fr' ? 'Rejoindre un voyage en direct' : language === 'de' ? 'Live-Reise beitreten' : language === 'it' ? 'Unisciti a un viaggio live' : 'Join a Live Trip'}
+      </DialogTitle>
+      <DialogDescription className="text-center">
+        {language === 'he' 
+          ? 'בחר את סוג הפעילות שאתה מעוניין בה היום'
+          : language === 'ru' ? 'Выберите тип активности, которая вас интересует сегодня'
+          : language === 'es' ? 'Elige el tipo de actividad que te interesa hoy'
+          : language === 'fr' ? 'Choisissez le type d\'activité qui vous intéresse aujourd\'hui'
+          : language === 'de' ? 'Wählen Sie die Aktivität, die Sie heute interessiert'
+          : language === 'it' ? 'Scegli il tipo di attività che ti interessa oggi'
+          : 'Choose the activity type you\'re interested in today'}
+      </DialogDescription>
+    </DialogHeader>
+
+    <div className="grid grid-cols-1 gap-3 py-4">
+      <Button
+        onClick={() => handleJoinLiveTrip('hiking')}
+        disabled={joiningLiveTrip}
+        className="h-20 flex items-center justify-start gap-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
+      >
+        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+          <Mountain className="w-6 h-6" />
+        </div>
+        <div className="text-right flex-1">
+          <p className="font-bold text-lg">{t('hiking')}</p>
+          <p className="text-sm text-green-100">{language === 'he' ? 'טיולי רגלי' : language === 'ru' ? 'Пешие прогулки' : language === 'es' ? 'Senderismo' : language === 'fr' ? 'Randonnée' : language === 'de' ? 'Wandern' : language === 'it' ? 'Escursioni' : 'Hiking trips'}</p>
+        </div>
+      </Button>
+
+      <Button
+        onClick={() => handleJoinLiveTrip('cycling')}
+        disabled={joiningLiveTrip}
+        className="h-20 flex items-center justify-start gap-4 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white"
+      >
+        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+          <Bike className="w-6 h-6" />
+        </div>
+        <div className="text-right flex-1">
+          <p className="font-bold text-lg">{t('cycling')}</p>
+          <p className="text-sm text-blue-100">{language === 'he' ? 'רכיבת אופניים' : language === 'ru' ? 'Велоспорт' : language === 'es' ? 'Ciclismo' : language === 'fr' ? 'Cyclisme' : language === 'de' ? 'Radfahren' : language === 'it' ? 'Ciclismo' : 'Cycling trips'}</p>
+        </div>
+      </Button>
+
+      <Button
+        onClick={() => handleJoinLiveTrip('offroad')}
+        disabled={joiningLiveTrip}
+        className="h-20 flex items-center justify-start gap-4 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
+      >
+        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+          <Truck className="w-6 h-6" />
+        </div>
+        <div className="text-right flex-1">
+          <p className="font-bold text-lg">{t('offroad')}</p>
+          <p className="text-sm text-orange-100">{language === 'he' ? 'טיולי שטח' : language === 'ru' ? 'Внедорожные' : language === 'es' ? 'Todo terreno' : language === 'fr' ? 'Tout-terrain' : language === 'de' ? 'Offroad' : language === 'it' ? 'Fuoristrada' : 'Off-road trips'}</p>
+        </div>
+      </Button>
+    </div>
+    </DialogContent>
+    </Dialog>
+    </div>
+    );
+    }
