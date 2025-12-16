@@ -324,41 +324,40 @@ function LayoutContent({ children, currentPageName }) {
       )}
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 safe-area-inset-bottom z-50 shadow-2xl">
-        <div className="flex items-center justify-around h-16 px-2">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/98 backdrop-blur-xl border-t-2 border-gray-200 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 8px)' }}>
+        <div className="flex items-center justify-around h-20 px-2">
           {navItems.slice(0, 3).map((item, idx) => (
             <Link 
               key={item.name} 
               to={createPageUrl(item.name)}
-              className="relative flex-1"
+              className="relative flex-1 touch-manipulation"
             >
               <motion.div
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ y: -2 }}
-                className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-300 ${
+                whileTap={{ scale: 0.92 }}
+                className={`flex flex-col items-center gap-1.5 px-2 py-2.5 rounded-2xl transition-all duration-300 min-h-[64px] ${
                   isActive(item.name) 
                     ? 'text-emerald-600 bg-gradient-to-br from-emerald-50 to-teal-50' 
-                    : 'text-gray-500 hover:text-emerald-600'
+                    : 'text-gray-500 active:text-emerald-600'
                 }`}
               >
                 <motion.div 
-                  className={`p-1.5 rounded-lg transition-all relative ${
-                    isActive(item.name) ? 'bg-emerald-100' : ''
+                  className={`p-2 rounded-xl transition-all relative ${
+                    isActive(item.name) ? 'bg-emerald-100 shadow-sm' : ''
                   }`}
                   animate={isActive(item.name) ? {
                     boxShadow: ['0 0 0 0 rgba(16,185,129,0.4)', '0 0 0 8px rgba(16,185,129,0)']
                   } : {}}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
-                  <item.icon className={`w-5 h-5 ${isActive(item.name) ? item.color : ''}`} />
+                  <item.icon className={`w-6 h-6 ${isActive(item.name) ? item.color : ''}`} />
                 </motion.div>
-                <span className={`text-xs font-medium text-center ${isActive(item.name) ? 'font-semibold' : ''}`}>
+                <span className={`text-xs font-semibold text-center leading-tight ${isActive(item.name) ? 'font-bold' : ''}`}>
                   {item.label}
                 </span>
                 {isActive(item.name) && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full shadow-lg"
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full shadow-lg"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -372,7 +371,7 @@ function LayoutContent({ children, currentPageName }) {
       </nav>
 
       {/* Spacer for mobile bottom nav */}
-      <div className="md:hidden h-16" />
+      <div className="md:hidden h-20" style={{ height: 'calc(80px + env(safe-area-inset-bottom))' }} />
 
       {/* Permissions Request Dialog */}
       {user && <PermissionsRequest />}

@@ -124,9 +124,9 @@ export default function TripCard({ trip }) {
 
   return (
     <>
-      <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-white via-gray-50/50 to-white border border-gray-200/50 hover:border-emerald-300/50 shadow-lg relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-emerald-500/5 before:to-teal-500/5 before:opacity-0 before:group-hover:opacity-100 before:transition-opacity before:duration-500">
+      <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-white via-gray-50/50 to-white border border-gray-200/50 hover:border-emerald-300/50 shadow-lg relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-emerald-500/5 before:to-teal-500/5 before:opacity-0 before:group-hover:opacity-100 before:transition-opacity before:duration-500 touch-manipulation active:scale-[0.98]">
         <Link to={createPageUrl('TripDetails') + `?id=${trip.id}`}>
-          <div className="relative h-40 md:h-48 overflow-hidden">
+          <div className="relative h-48 sm:h-52 md:h-56 overflow-hidden">
             <img
               src={trip.image_url || `https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=600`}
               alt={title}
@@ -141,52 +141,52 @@ export default function TripCard({ trip }) {
             {/* Shimmer effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
             
-            <div className={`absolute top-2 md:top-3 ${isRTL ? 'right-2 md:right-3' : 'left-2 md:left-3'} flex gap-1 md:gap-2`}>
-              <Badge className={`${difficultyColors[trip.difficulty]} border-0 font-medium text-[10px] md:text-xs px-1.5 md:px-2 py-0.5`}>
+            <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} flex gap-1.5`}>
+              <Badge className={`${difficultyColors[trip.difficulty]} border-0 font-semibold text-xs px-2.5 py-1 shadow-sm`}>
                 {t(trip.difficulty)}
               </Badge>
               {trip.status !== 'open' && (
-                <Badge variant="secondary" className="bg-white/90 text-gray-700 text-[10px] md:text-xs px-1.5 md:px-2 py-0.5">
+                <Badge variant="secondary" className="bg-white/90 text-gray-700 text-xs px-2.5 py-1 font-semibold shadow-sm">
                   {t(trip.status)}
                 </Badge>
               )}
             </div>
 
-            <div className={`absolute top-2 md:top-3 ${isRTL ? 'left-2 md:left-3' : 'right-2 md:right-3'} flex gap-2`}>
+            <div className={`absolute top-3 ${isRTL ? 'left-3' : 'right-3'} flex gap-2`}>
               {user && (
                 <Button
                   size="icon"
                   variant="ghost"
-                  className={`h-7 w-7 md:h-8 md:w-8 ${isLiked ? 'bg-rose-600 hover:bg-rose-700' : 'bg-white/90 hover:bg-white'} transition-all shadow-sm`}
+                  className={`h-10 w-10 rounded-full ${isLiked ? 'bg-rose-600 hover:bg-rose-700' : 'bg-white/95 hover:bg-white'} transition-all shadow-lg backdrop-blur-sm touch-manipulation min-h-[44px] min-w-[44px]`}
                   onClick={handleLike}
                 >
-                  <Heart className={`h-3 w-3 md:h-4 md:w-4 ${isLiked ? 'fill-white text-white' : 'text-rose-600'}`} />
+                  <Heart className={`h-5 w-5 ${isLiked ? 'fill-white text-white' : 'text-rose-600'}`} />
                 </Button>
               )}
               {canDelete && (
                 <Button
                   size="icon"
                   variant="destructive"
-                  className="h-7 w-7 md:h-8 md:w-8 bg-red-600 hover:bg-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="h-10 w-10 rounded-full bg-red-600/95 hover:bg-red-700 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-lg backdrop-blur-sm touch-manipulation min-h-[44px] min-w-[44px]"
                   onClick={(e) => {
                     e.preventDefault();
                     setShowDeleteDialog(true);
                   }}
                 >
-                  <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
+                  <Trash2 className="h-5 w-5" />
                 </Button>
               )}
             </div>
           
-            <div className={`absolute bottom-2 md:bottom-3 ${isRTL ? 'right-2 md:right-3' : 'left-2 md:left-3'} flex gap-1.5 md:gap-2`}>
+            <div className={`absolute bottom-3 ${isRTL ? 'right-3' : 'left-3'} flex gap-2`}>
               {trip.pets_allowed && (
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/90 flex items-center justify-center shadow-sm">
-                  <Dog className="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-600" />
+                <div className="w-9 h-9 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                  <Dog className="w-5 h-5 text-amber-600" />
                 </div>
               )}
               {trip.camping_available && (
-                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/90 flex items-center justify-center shadow-sm">
-                  <Tent className="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-600" />
+                <div className="w-9 h-9 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                  <Tent className="w-5 h-5 text-emerald-600" />
                 </div>
               )}
             </div>
@@ -194,65 +194,65 @@ export default function TripCard({ trip }) {
         </Link>
         
         <Link to={createPageUrl('TripDetails') + `?id=${trip.id}`}>
-          <CardContent className="p-3 md:p-5" dir={isRTL ? 'rtl' : 'ltr'}>
-          <h3 className="text-base md:text-lg font-bold text-gray-900 mb-1.5 md:mb-2 line-clamp-1 group-hover:text-emerald-700 transition-colors">
+          <CardContent className="p-4 sm:p-5" dir={isRTL ? 'rtl' : 'ltr'}>
+          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-emerald-700 transition-colors leading-tight">
             {title}
           </h3>
           
           {description && (
-            <p className="text-gray-500 text-xs md:text-sm mb-3 md:mb-4 line-clamp-2">
+            <p className="text-gray-500 text-sm mb-4 line-clamp-2 leading-relaxed">
               {description}
             </p>
           )}
           
-          <div className="space-y-1.5 md:space-y-2">
-          <div className="flex items-center gap-1.5 md:gap-2 text-gray-700 text-xs md:text-sm">
-            <div className="p-1 md:p-1.5 bg-emerald-100 rounded-lg">
-              <MapPin className="w-3 h-3 md:w-4 md:h-4 text-emerald-600 flex-shrink-0" />
+          <div className="space-y-2.5">
+          <div className="flex items-center gap-2 text-gray-700">
+            <div className="p-1.5 bg-emerald-100 rounded-lg flex-shrink-0">
+              <MapPin className="w-4 h-4 text-emerald-600" />
             </div>
-            <span className="truncate font-medium">{trip.location}</span>
-            <Badge variant="outline" className="ml-auto text-[10px] md:text-xs bg-gradient-to-r from-gray-50 to-white px-1.5 md:px-2">
+            <span className="truncate font-semibold text-sm">{trip.location}</span>
+            <Badge variant="outline" className="ml-auto text-xs bg-gradient-to-r from-gray-50 to-white px-2.5 py-0.5 font-semibold flex-shrink-0">
               {t(trip.region)}
             </Badge>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4 text-gray-700 text-xs md:text-sm">
-          <div className="flex items-center gap-1 md:gap-2">
-            <div className="p-1 md:p-1.5 bg-blue-100 rounded-lg">
-              <Calendar className="w-3 h-3 md:w-4 md:h-4 text-blue-600" />
+          <div className="flex items-center gap-3 text-gray-700">
+          <div className="flex items-center gap-2 flex-1">
+            <div className="p-1.5 bg-blue-100 rounded-lg flex-shrink-0">
+              <Calendar className="w-4 h-4 text-blue-600" />
             </div>
-            <span className="font-medium text-[11px] md:text-sm">{formatDate(new Date(trip.date), 'dd/MM/yy', language)}</span>
+            <span className="font-semibold text-sm">{formatDate(new Date(trip.date), 'dd/MM/yy', language)}</span>
           </div>
-            <div className="flex items-center gap-1 md:gap-2">
-              <div className="p-1 md:p-1.5 bg-purple-100 rounded-lg">
-                <Clock className="w-3 h-3 md:w-4 md:h-4 text-purple-600" />
+            <div className="flex items-center gap-2 flex-1">
+              <div className="p-1.5 bg-purple-100 rounded-lg flex-shrink-0">
+                <Clock className="w-4 h-4 text-purple-600" />
               </div>
-              <span className="font-medium text-[11px] md:text-sm">{trip.duration_value} {t(trip.duration_type)}</span>
+              <span className="font-semibold text-sm truncate">{trip.duration_value} {t(trip.duration_type)}</span>
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-1.5 md:pt-2 border-t border-gray-100 mt-2 md:mt-3">
-            <div className="flex items-center gap-2 md:gap-4 text-gray-700 text-xs md:text-sm">
-              <div className="flex items-center gap-1 md:gap-2">
-                <div className="p-1 md:p-1.5 bg-rose-100 rounded-lg">
-                  <Users className="w-3 h-3 md:w-4 md:h-4 text-rose-600" />
+          <div className="flex items-center justify-between pt-2.5 border-t border-gray-100 mt-3">
+            <div className="flex items-center gap-3 text-gray-700">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-rose-100 rounded-lg">
+                  <Users className="w-4 h-4 text-rose-600" />
                 </div>
-                <span className="font-medium text-[11px] md:text-sm">{trip.current_participants || 1}/{trip.max_participants || '∞'}</span>
+                <span className="font-semibold text-sm">{trip.current_participants || 1}/{trip.max_participants || '∞'}</span>
               </div>
-              <div className="flex items-center gap-0.5 md:gap-1 text-gray-500">
-                <Heart className="w-3 h-3 md:w-4 md:h-4" />
-                <span className="text-[10px] md:text-xs">{likesCount}</span>
+              <div className="flex items-center gap-1 text-gray-500">
+                <Heart className="w-4 h-4" />
+                <span className="text-sm font-medium">{likesCount}</span>
               </div>
-              <div className="flex items-center gap-0.5 md:gap-1 text-gray-500">
-                <MessageCircle className="w-3 h-3 md:w-4 md:h-4" />
-                <span className="text-[10px] md:text-xs">{trip.comments?.length || 0}</span>
+              <div className="flex items-center gap-1 text-gray-500">
+                <MessageCircle className="w-4 h-4" />
+                <span className="text-sm font-medium">{trip.comments?.length || 0}</span>
               </div>
             </div>
               
               {trip.trail_type && trip.trail_type.length > 0 && (
-                <div className="flex gap-1">
+                <div className="flex gap-1 flex-wrap justify-end">
                   {trip.trail_type.slice(0, 2).map((type) => (
-                    <Badge key={type} variant="secondary" className="text-[10px] md:text-xs bg-gray-100 px-1.5 md:px-2 py-0 md:py-0.5">
+                    <Badge key={type} variant="secondary" className="text-xs bg-gray-100 px-2 py-0.5 font-medium">
                       {t(type)}
                     </Badge>
                   ))}

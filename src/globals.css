@@ -14,12 +14,44 @@
 .touch-manipulation {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* Smooth Scrolling for Mobile */
 @media (max-width: 768px) {
   html {
     -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Prevent bounce scrolling on iOS */
+  body {
+    overscroll-behavior-y: none;
+  }
+}
+
+/* Better button touch targets */
+button, a, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Disable pull-to-refresh on Android Chrome */
+body {
+  overscroll-behavior-y: contain;
+}
+
+/* iOS Input Fix */
+input, textarea, select {
+  font-size: 16px !important;
+}
+
+@media (max-width: 768px) {
+  /* Prevent zoom on input focus */
+  input:focus, 
+  textarea:focus, 
+  select:focus {
+    font-size: 16px !important;
   }
 }
 

@@ -48,13 +48,13 @@ export default function MyTrips() {
   ).sort((a, b) => new Date(a.date) - new Date(b.date));
 
   const EmptyState = ({ icon: Icon, title, description }) => (
-    <div className="text-center py-12 md:py-16 bg-white rounded-2xl border border-gray-100">
-      <Icon className="w-12 h-12 md:w-16 md:h-16 text-gray-300 mx-auto mb-3 md:mb-4" />
-      <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-1 md:mb-2 px-4">{title}</h3>
-      <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6 px-4">{description}</p>
+    <div className="text-center py-16 sm:py-20 bg-white rounded-2xl border border-gray-100 shadow-sm">
+      <Icon className="w-16 h-16 sm:w-20 sm:h-20 text-gray-300 mx-auto mb-4" />
+      <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 px-4">{title}</h3>
+      <p className="text-sm sm:text-base text-gray-500 mb-6 sm:mb-8 px-4 leading-relaxed">{description}</p>
       <Link to={createPageUrl('CreateTrip')}>
-        <Button className="bg-emerald-600 hover:bg-emerald-700 h-9 md:h-10 text-sm md:text-base">
-          <Plus className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
+        <Button className="bg-emerald-600 hover:bg-emerald-700 h-12 px-8 text-base font-semibold touch-manipulation min-h-[44px]">
+          <Plus className="w-5 h-5 mr-2" />
           {t('createTrip')}
         </Button>
       </Link>
@@ -74,59 +74,59 @@ export default function MyTrips() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-4 md:py-8 px-3 md:px-4 pb-20 md:pb-8">
+    <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 pb-24 sm:pb-8">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="flex items-center justify-between mb-6 md:mb-8">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{t('myTrips')}</h1>
+          <div className="flex items-center justify-between mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('myTrips')}</h1>
             <Link to={createPageUrl('CreateTrip')}>
-              <Button className="bg-emerald-600 hover:bg-emerald-700 h-9 md:h-10">
-                <Plus className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1 md:mr-2" />
-                <span className="text-sm md:text-base">{t('createTrip')}</span>
+              <Button className="bg-emerald-600 hover:bg-emerald-700 h-11 px-4 sm:px-6 touch-manipulation min-h-[44px]">
+                <Plus className="w-5 h-5 mr-2" />
+                <span className="font-semibold">{t('createTrip')}</span>
               </Button>
             </Link>
           </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 md:space-y-6">
-            <TabsList className="bg-white p-1 rounded-xl border shadow-sm w-full grid grid-cols-4 h-auto">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <TabsList className="bg-white p-1 rounded-xl border shadow-sm w-full grid grid-cols-4 h-auto touch-manipulation">
               <TabsTrigger 
                 value="upcoming" 
-                className="gap-1 md:gap-2 data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 flex-col md:flex-row py-2 text-xs md:text-sm"
+                className="gap-1.5 data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 flex-col py-3 text-xs sm:text-sm min-h-[56px] touch-manipulation"
               >
-                <Calendar className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span>{language === 'he' ? 'קרובים' : language === 'ru' ? 'Предстоящие' : language === 'es' ? 'Próximos' : language === 'fr' ? 'À venir' : language === 'de' ? 'Bevorstehend' : language === 'it' ? 'Imminenti' : 'Upcoming'}</span>
+                <Calendar className="w-5 h-5" />
+                <span className="font-medium">{language === 'he' ? 'קרובים' : language === 'ru' ? 'Скоро' : language === 'es' ? 'Próximos' : language === 'fr' ? 'À venir' : language === 'de' ? 'Bald' : language === 'it' ? 'Imminenti' : 'Upcoming'}</span>
                 {upcomingTrips.length > 0 && (
-                  <span className="bg-emerald-600 text-white text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 rounded-full sm:ml-1">
+                  <span className="absolute -top-1 -right-1 bg-emerald-600 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-lg">
                     {upcomingTrips.length}
                   </span>
                 )}
               </TabsTrigger>
               <TabsTrigger 
                 value="joined" 
-                className="gap-1 md:gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 flex-col md:flex-row py-2 text-xs md:text-sm"
+                className="gap-1.5 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 flex-col py-3 text-xs sm:text-sm min-h-[56px] touch-manipulation"
               >
-                <Compass className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span>{language === 'he' ? 'הצטרפתי' : language === 'ru' ? 'Присоединился' : language === 'es' ? 'Unido' : language === 'fr' ? 'Rejoint' : language === 'de' ? 'Beigetreten' : language === 'it' ? 'Partecipato' : 'Joined'}</span>
+                <Compass className="w-5 h-5" />
+                <span className="font-medium">{language === 'he' ? 'הצטרפתי' : language === 'ru' ? 'Мои' : language === 'es' ? 'Unido' : language === 'fr' ? 'Rejoint' : language === 'de' ? 'Dabei' : language === 'it' ? 'Unito' : 'Joined'}</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="organized" 
-                className="gap-1 md:gap-2 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700 flex-col md:flex-row py-2 text-xs md:text-sm"
+                className="gap-1.5 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700 flex-col py-3 text-xs sm:text-sm min-h-[56px] touch-manipulation"
               >
-                <UserCircle className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span>{language === 'he' ? 'ארגנתי' : language === 'ru' ? 'Организовал' : language === 'es' ? 'Organizado' : language === 'fr' ? 'Organisé' : language === 'de' ? 'Organisiert' : language === 'it' ? 'Organizzato' : 'Organized'}</span>
+                <UserCircle className="w-5 h-5" />
+                <span className="font-medium">{language === 'he' ? 'ארגנתי' : language === 'ru' ? 'Мои' : language === 'es' ? 'Míos' : language === 'fr' ? 'Mes' : language === 'de' ? 'Meine' : language === 'it' ? 'Miei' : 'My'}</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="saved" 
-                className="gap-1 md:gap-2 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 flex-col md:flex-row py-2 text-xs md:text-sm"
+                className="gap-1.5 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 flex-col py-3 text-xs sm:text-sm min-h-[56px] touch-manipulation relative"
               >
-                <Bookmark className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span>{language === 'he' ? 'שמורים' : language === 'ru' ? 'Сохраненные' : language === 'es' ? 'Guardados' : language === 'fr' ? 'Sauvegardés' : language === 'de' ? 'Gespeichert' : language === 'it' ? 'Salvati' : 'Saved'}</span>
+                <Bookmark className="w-5 h-5" />
+                <span className="font-medium">{language === 'he' ? 'שמורים' : language === 'ru' ? 'Избранное' : language === 'es' ? 'Guardados' : language === 'fr' ? 'Sauvegardés' : language === 'de' ? 'Gespeichert' : language === 'it' ? 'Salvati' : 'Saved'}</span>
                 {savedTrips.length > 0 && (
-                  <span className="bg-amber-600 text-white text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 rounded-full sm:ml-1">
+                  <span className="absolute -top-1 -right-1 bg-amber-600 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-lg">
                     {savedTrips.length}
                   </span>
                 )}
