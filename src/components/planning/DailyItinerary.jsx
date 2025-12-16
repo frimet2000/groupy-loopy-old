@@ -306,17 +306,21 @@ Return the response in ${language === 'he' ? 'Hebrew' : 'English'}.`;
                         {language === 'he' ? 'אין פעילויות מתוכננות' : language === 'ru' ? 'Активностей не запланировано' : language === 'es' ? 'No hay actividades planeadas' : language === 'fr' ? 'Aucune activité prévue' : language === 'de' ? 'Keine Aktivitäten geplant' : language === 'it' ? 'Nessuna attività pianificata' : 'No activities planned'}
                       </p>
                     ) : (
-                     <div className="space-y-3">
-                       {day.activities.map(activity => (
-                         <div key={activity.id} className="flex items-start gap-3 p-3 bg-white rounded-lg" dir={language === 'he' ? 'rtl' : 'ltr'}>
-                           {activity.image_url && (
-                             <img 
-                               src={activity.image_url} 
-                               alt={activity.activity}
-                               className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
-                             />
-                           )}
-                           <Clock className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
+                    <div className="space-y-3">
+                      {day.activities.map(activity => {
+                        console.log('=== DISPLAYING ACTIVITY ===');
+                        console.log('activity:', activity);
+                        console.log('image_url:', activity.image_url);
+                        return (
+                        <div key={activity.id} className="flex items-start gap-3 p-3 bg-white rounded-lg" dir={language === 'he' ? 'rtl' : 'ltr'}>
+                          {activity.image_url && (
+                            <img 
+                              src={activity.image_url} 
+                              alt={activity.activity}
+                              className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
+                            />
+                          )}
+                          <Clock className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
                            <div className="flex-1">
                              <div className="flex items-center gap-2 mb-1">
                                <Badge variant="outline" className="text-xs">
