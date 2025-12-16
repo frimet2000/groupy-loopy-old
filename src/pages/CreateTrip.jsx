@@ -886,7 +886,10 @@ Include water recommendation in liters and detailed equipment list.`,
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-base font-semibold">{t('location')} *</Label>
+                      <Label className="text-base font-semibold">
+                        {t('location')} * 
+                        {language === 'he' && <span className="text-sm text-gray-500 font-normal mr-2">(ניתן לסמן נק' ספציפית על המפה)</span>}
+                      </Label>
                       <div className="flex gap-2">
                         <Input
                           value={formData.location}

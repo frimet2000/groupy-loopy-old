@@ -4,6 +4,7 @@ import AccessibilityStatement from './pages/AccessibilityStatement';
 import Admin from './pages/Admin';
 import Community from './pages/Community';
 import CookiePolicy from './pages/CookiePolicy';
+import CreateTrip from './pages/CreateTrip';
 import EditTrip from './pages/EditTrip';
 import Feedback from './pages/Feedback';
 import Home from './pages/Home';
@@ -19,7 +20,6 @@ import Settings from './pages/Settings';
 import TermsOfService from './pages/TermsOfService';
 import TermsOfUse from './pages/TermsOfUse';
 import TripDetails from './pages/TripDetails';
-import CreateTrip from './pages/CreateTrip';
 import __Layout from './Layout.jsx';
 
 
@@ -30,6 +30,7 @@ export const PAGES = {
     "Admin": Admin,
     "Community": Community,
     "CookiePolicy": CookiePolicy,
+    "CreateTrip": CreateTrip,
     "EditTrip": EditTrip,
     "Feedback": Feedback,
     "Home": Home,
@@ -45,7 +46,6 @@ export const PAGES = {
     "TermsOfService": TermsOfService,
     "TermsOfUse": TermsOfUse,
     "TripDetails": TripDetails,
-    "CreateTrip": CreateTrip,
 }
 
 export const pagesConfig = {
