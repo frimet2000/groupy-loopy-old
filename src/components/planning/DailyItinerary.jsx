@@ -172,6 +172,21 @@ Return the response in ${language === 'he' ? 'Hebrew' : 'English'}.`;
     setGeneratingAI(false);
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setActivityData({ ...activityData, image_url: file_url });
+      toast.success(language === 'he' ? 'התמונה הועלתה בהצלחה' : 'Image uploaded successfully');
+    } catch (error) {
+      toast.error(language === 'he' ? 'שגיאה בהעלאת התמונה' : 'Error uploading image');
+    }
+    setUploadingImage(false);
+  };
+
   return (
     <Card>
       <CardHeader>
