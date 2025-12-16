@@ -237,7 +237,7 @@ Return the response in ${language === 'he' ? 'Hebrew' : 'English'}.`;
                     <div className="flex items-center justify-between">
                       <div>
                         <Badge className="bg-emerald-600 mb-2">
-                          {language === 'he' ? 'יום' : 'Day'} {day.day}
+                          {language === 'he' ? 'יום' : language === 'ru' ? 'День' : language === 'es' ? 'Día' : language === 'fr' ? 'Jour' : language === 'de' ? 'Tag' : language === 'it' ? 'Giorno' : 'Day'} {day.day}
                         </Badge>
                         <h3 className="text-lg font-semibold">{day.title}</h3>
                       </div>
