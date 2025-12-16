@@ -702,11 +702,11 @@ Include water recommendation in liters and detailed equipment list.`,
           <motion.div
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-2 sm:mb-4 flex-shrink-0"
+            className="text-center mb-1 flex-shrink-0"
           >
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-2xl shadow-lg">
-              <Compass className="w-5 h-5 sm:w-6 sm:h-6" />
-              <h1 className="text-lg sm:text-xl font-bold">{t('createTrip')}</h1>
+            <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-3 py-1.5 rounded-xl shadow-lg">
+              <Compass className="w-4 h-4" />
+              <h1 className="text-sm font-bold">{t('createTrip')}</h1>
             </div>
           </motion.div>
 
@@ -714,11 +714,11 @@ Include water recommendation in liters and detailed equipment list.`,
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-2 sm:mb-3 flex-shrink-0"
+            className="mb-1.5 flex-shrink-0"
           >
-            <Card className="overflow-hidden shadow-lg border border-emerald-100">
-              <CardContent className="p-2 sm:p-3">
-                <div className="flex items-center justify-between mb-2">
+            <Card className="overflow-hidden shadow-sm border border-emerald-100">
+              <CardContent className="p-1.5">
+                <div className="flex items-center justify-between mb-1">
                   {steps.map((step, idx) => {
                     const StepIcon = step.icon;
                     const isActive = currentStep === step.id;
@@ -726,36 +726,31 @@ Include water recommendation in liters and detailed equipment list.`,
                     
                     return (
                       <React.Fragment key={step.id}>
-                        <div className={`flex flex-col items-center gap-1 ${isActive || isCompleted ? 'opacity-100' : 'opacity-40'}`}>
-                          <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                        <div className={`flex flex-col items-center ${isActive || isCompleted ? 'opacity-100' : 'opacity-40'}`}>
+                          <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all ${
                             isCompleted 
-                              ? 'bg-gradient-to-br from-green-500 to-emerald-500' 
+                              ? 'bg-green-500' 
                               : isActive 
                               ? `bg-gradient-to-br ${step.color}` 
                               : 'bg-gray-200'
                           }`}>
                             {isCompleted ? (
-                              <Check className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                              <Check className="w-3 h-3 text-white" />
                             ) : (
-                              <StepIcon className={`w-4 h-4 sm:w-5 sm:h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
+                              <StepIcon className={`w-3 h-3 ${isActive ? 'text-white' : 'text-gray-500'}`} />
                             )}
                           </div>
-                          <span className={`text-[10px] sm:text-xs font-semibold text-center hidden sm:block ${
-                            isActive ? 'text-gray-900' : 'text-gray-500'
-                          }`}>
-                            {step.title.split(' ')[0]}
-                          </span>
                         </div>
                         {idx < steps.length - 1 && (
-                          <div className={`flex-1 h-1 mx-1 rounded-full transition-all duration-500 ${
-                            currentStep > step.id ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gray-200'
+                          <div className={`flex-1 h-0.5 mx-0.5 rounded-full transition-all ${
+                            currentStep > step.id ? 'bg-green-500' : 'bg-gray-200'
                           }`} />
                         )}
                       </React.Fragment>
                     );
                   })}
                 </div>
-                <Progress value={progressPercent} className="h-1.5 bg-gray-200" />
+                <Progress value={progressPercent} className="h-1 bg-gray-200" />
               </CardContent>
             </Card>
           </motion.div>
@@ -779,9 +774,9 @@ Include water recommendation in liters and detailed equipment list.`,
                       {language === 'he' ? 'פרטים בסיסיים' : 'Basic Details'}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-3 sm:p-4 space-y-3 sm:space-y-4 overflow-y-auto flex-1">
-                    <div className="space-y-1">
-                      <Label className="text-sm font-semibold">{language === 'he' ? 'כותרת הטיול' : 'Trip Title'} *</Label>
+                  <CardContent className="p-2 space-y-1.5 overflow-y-auto flex-1">
+                    <div className="space-y-0.5">
+                      <Label className="text-xs font-semibold">{language === 'he' ? 'כותרת' : 'Title'} *</Label>
                       <Input
                         value={formData.title}
                         onChange={(e) => {
@@ -790,56 +785,35 @@ Include water recommendation in liters and detailed equipment list.`,
                             setMissingFields(prev => prev.filter(f => f !== 'title'));
                           }
                         }}
-                        placeholder={language === 'he' ? 'למשל: טיול בגליל' : 'e.g., Mountain Hike'}
+                        placeholder={language === 'he' ? 'טיול בגליל' : 'Mountain Hike'}
                         dir={isRTL ? 'rtl' : 'ltr'}
-                        className={`text-sm p-2 ${
-                          missingFields.includes('title') 
-                            ? 'border-2 border-red-500 bg-red-50' 
-                            : ''
-                        }`}
+                        className={`text-xs p-1.5 h-7 ${missingFields.includes('title') ? 'border-red-500' : ''}`}
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <Label className="text-sm font-semibold">{language === 'he' ? 'תיאור' : 'Description'}</Label>
+                    <div className="space-y-0.5">
+                      <Label className="text-xs font-semibold">{language === 'he' ? 'תיאור' : 'Description'}</Label>
                       <Textarea
                         value={formData.description}
                         onChange={(e) => handleChange('description', e.target.value)}
-                        placeholder={language === 'he' ? 'ספר על הטיול...' : 'Tell us about your trip...'}
+                        placeholder={language === 'he' ? 'ספר...' : 'Tell us...'}
                         dir={isRTL ? 'rtl' : 'ltr'}
-                        rows={2}
-                        className="text-sm p-2"
+                        rows={1}
+                        className="text-xs p-1.5 min-h-[28px]"
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <Label className="text-sm font-semibold">{t('uploadImage')}</Label>
-                      <div className="flex items-center gap-3">
-                        {formData.image_url ? (
-                          <img 
-                            src={formData.image_url} 
-                            alt="Trip" 
-                            className="w-20 h-16 object-cover rounded-lg"
-                          />
-                        ) : (
-                          <div className="w-20 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                            <Upload className="w-6 h-6 text-gray-400" />
-                          </div>
+                    <div className="space-y-0.5">
+                      <Label className="text-xs font-semibold">{language === 'he' ? 'תמונה' : 'Image'}</Label>
+                      <div className="flex items-center gap-2">
+                        {formData.image_url && (
+                          <img src={formData.image_url} alt="Trip" className="w-12 h-10 object-cover rounded" />
                         )}
                         <label className="cursor-pointer">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            className="hidden"
-                          />
+                          <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                           <Button type="button" variant="outline" size="sm" disabled={imageUploading} asChild>
-                            <span className="gap-1 text-xs">
-                              {imageUploading ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <Upload className="w-4 h-4" />
-                              )}
+                            <span className="gap-1 text-[10px] h-7 px-2">
+                              {imageUploading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
                               {language === 'he' ? 'העלה' : 'Upload'}
                             </span>
                           </Button>
@@ -859,15 +833,15 @@ Include water recommendation in liters and detailed equipment list.`,
                       {language === 'he' ? 'מיקום וזמן' : 'Location & Time'}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-3 sm:p-4 space-y-2 overflow-y-auto flex-1">
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="space-y-1 col-span-2">
-                        <Label className="text-sm font-semibold">{t('country')}</Label>
+                  <CardContent className="p-2 space-y-1 overflow-y-auto flex-1">
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <div className="space-y-0.5 col-span-2">
+                        <Label className="text-xs">{t('country')}</Label>
                         <Select value={formData.country} onValueChange={(v) => handleChange('country', v)}>
-                          <SelectTrigger className="p-2 text-sm h-8">
+                          <SelectTrigger className="p-1.5 text-xs h-7">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="max-h-40">
+                          <SelectContent className="max-h-32">
                             {countries.map(c => (
                               <SelectItem key={c} value={c}>{t(c)}</SelectItem>
                             ))}
@@ -876,13 +850,13 @@ Include water recommendation in liters and detailed equipment list.`,
                       </div>
 
                       {formData.country !== 'israel' && (
-                        <div className="space-y-1">
-                          <Label className="text-sm font-semibold">{language === 'he' ? 'מחוז' : 'State'}</Label>
+                        <div className="space-y-0.5">
+                          <Label className="text-xs">{language === 'he' ? 'מחוז' : 'State'}</Label>
                           <Select value={formData.region} onValueChange={(v) => handleChange('region', v)} disabled={loadingRegions}>
-                            <SelectTrigger className="p-2 text-sm h-8">
-                              <SelectValue placeholder={language === 'he' ? 'בחר' : 'Select'} />
+                            <SelectTrigger className="p-1.5 text-xs h-7">
+                              <SelectValue />
                             </SelectTrigger>
-                            <SelectContent className="max-h-40">
+                            <SelectContent className="max-h-32">
                               {dynamicRegions.map(r => (
                                 <SelectItem key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</SelectItem>
                               ))}
@@ -891,17 +865,17 @@ Include water recommendation in liters and detailed equipment list.`,
                         </div>
                       )}
 
-                      <div className="space-y-1">
-                        <Label className="text-sm font-semibold">{language === 'he' ? 'עיר' : 'City'}</Label>
+                      <div className="space-y-0.5">
+                        <Label className="text-xs">{language === 'he' ? 'עיר' : 'City'}</Label>
                         <Select 
                           value={formData.country === 'israel' ? formData.region : formData.sub_region} 
                           onValueChange={(v) => handleChange(formData.country === 'israel' ? 'region' : 'sub_region', v)}
                           disabled={formData.country === 'israel' ? loadingRegions : !formData.region}
                         >
-                          <SelectTrigger className="p-2 text-sm h-8">
-                            <SelectValue placeholder={language === 'he' ? 'בחר' : 'Select'} />
+                          <SelectTrigger className="p-1.5 text-xs h-7">
+                            <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="max-h-40">
+                          <SelectContent className="max-h-32">
                             {(formData.country === 'israel' ? dynamicRegions : dynamicSubRegions).map(item => (
                               <SelectItem key={item} value={item}>{item}</SelectItem>
                             ))}
@@ -909,8 +883,8 @@ Include water recommendation in liters and detailed equipment list.`,
                         </Select>
                       </div>
 
-                      <div className={`space-y-1 ${formData.country === 'israel' ? 'col-span-1' : 'col-span-2'}`}>
-                        <Label className="text-sm font-semibold">{t('location')} *</Label>
+                      <div className={`space-y-0.5 ${formData.country === 'israel' ? 'col-span-1' : 'col-span-2'}`}>
+                        <Label className="text-xs">{t('location')} *</Label>
                         <div className="flex gap-1">
                           <Input
                             value={formData.location}
@@ -920,17 +894,17 @@ Include water recommendation in liters and detailed equipment list.`,
                                 setMissingFields(prev => prev.filter(f => f !== 'location'));
                               }
                             }}
-                            className={`text-sm p-2 h-8 ${missingFields.includes('location') ? 'border-red-500' : ''}`}
-                            placeholder={language === 'he' ? 'למשל: נחל עמוד' : 'e.g., Grand Canyon'}
+                            className={`text-xs p-1.5 h-7 ${missingFields.includes('location') ? 'border-red-500' : ''}`}
+                            placeholder={language === 'he' ? 'נחל עמוד' : 'Location'}
                           />
-                          <Button type="button" variant="outline" size="sm" onClick={handleLocationSearch} disabled={searchingLocation} className="h-8 px-2">
-                            {searchingLocation ? <Loader2 className="w-4 h-4 animate-spin" /> : <Navigation className="w-4 h-4" />}
+                          <Button type="button" variant="outline" size="sm" onClick={handleLocationSearch} disabled={searchingLocation} className="h-7 w-7 p-0">
+                            {searchingLocation ? <Loader2 className="w-3 h-3 animate-spin" /> : <Navigation className="w-3 h-3" />}
                           </Button>
                         </div>
                       </div>
 
-                      <div className="space-y-1">
-                        <Label className="text-sm font-semibold">{t('date')} *</Label>
+                      <div className="space-y-0.5">
+                        <Label className="text-xs">{t('date')} *</Label>
                         <Input
                           type="date"
                           value={formData.date}
@@ -940,17 +914,17 @@ Include water recommendation in liters and detailed equipment list.`,
                               setMissingFields(prev => prev.filter(f => f !== 'date'));
                             }
                           }}
-                          className={`p-2 text-sm h-8 ${missingFields.includes('date') ? 'border-red-500' : ''}`}
+                          className={`p-1.5 text-xs h-7 ${missingFields.includes('date') ? 'border-red-500' : ''}`}
                         />
                       </div>
-                      <div className="space-y-1">
-                        <Label className="text-sm font-semibold">{language === 'he' ? 'שעה' : 'Time'}</Label>
-                        <Input type="time" value={formData.meeting_time} onChange={(e) => handleChange('meeting_time', e.target.value)} className="p-2 text-sm h-8" />
+                      <div className="space-y-0.5">
+                        <Label className="text-xs">{language === 'he' ? 'שעה' : 'Time'}</Label>
+                        <Input type="time" value={formData.meeting_time} onChange={(e) => handleChange('meeting_time', e.target.value)} className="p-1.5 text-xs h-7" />
                       </div>
-                      <div className="space-y-1 col-span-2">
-                        <Label className="text-sm font-semibold">{t('duration')}</Label>
+                      <div className="space-y-0.5 col-span-2">
+                        <Label className="text-xs">{t('duration')}</Label>
                         <Select value={formData.duration_type} onValueChange={(v) => handleChange('duration_type', v)}>
-                          <SelectTrigger className="p-2 text-sm h-8">
+                          <SelectTrigger className="p-1.5 text-xs h-7">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -974,9 +948,9 @@ Include water recommendation in liters and detailed equipment list.`,
                       {language === 'he' ? 'פרטי הפעילות' : 'Activity Details'}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-3 sm:p-4 space-y-2 overflow-y-auto flex-1">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-semibold">{t('activityType')}</Label>
+                  <CardContent className="p-2 space-y-1 overflow-y-auto flex-1">
+                    <div className="space-y-0.5">
+                      <Label className="text-xs">{t('activityType')}</Label>
                       <div className="grid grid-cols-5 gap-1">
                         {[
                           { type: 'hiking', icon: Footprints },
@@ -989,24 +963,23 @@ Include water recommendation in liters and detailed equipment list.`,
                             key={type}
                             type="button"
                             variant={formData.activity_type === type ? 'default' : 'outline'}
-                            size="sm"
-                            className={`h-14 flex flex-col gap-1 text-[10px] ${
+                            className={`h-12 flex flex-col gap-0.5 text-[9px] p-0 ${
                               formData.activity_type === type ? 'bg-emerald-600' : ''
                             }`}
                             onClick={() => handleChange('activity_type', type)}
                           >
-                            <Icon className="w-4 h-4" />
-                            {t(type)}
+                            <Icon className="w-3 h-3" />
+                            <span className="leading-tight">{t(type)}</span>
                           </Button>
                         ))}
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="space-y-1">
-                        <Label className="text-sm font-semibold">{t('difficulty')}</Label>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <div className="space-y-0.5">
+                        <Label className="text-xs">{t('difficulty')}</Label>
                         <Select value={formData.difficulty} onValueChange={(v) => handleChange('difficulty', v)}>
-                          <SelectTrigger className="p-2 text-sm h-8">
+                          <SelectTrigger className="p-1.5 text-xs h-7">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -1017,27 +990,27 @@ Include water recommendation in liters and detailed equipment list.`,
                         </Select>
                       </div>
 
-                      <div className="space-y-1">
-                        <Label className="text-sm font-semibold">{language === 'he' ? 'משתתפים' : 'Max'}</Label>
+                      <div className="space-y-0.5">
+                        <Label className="text-xs">{language === 'he' ? 'מקס׳' : 'Max'}</Label>
                         <Input
                           type="number"
                           min={2}
                           max={50}
                           value={formData.max_participants}
                           onChange={(e) => handleChange('max_participants', parseInt(e.target.value))}
-                          className="p-2 text-sm h-8"
+                          className="p-1.5 text-xs h-7"
                         />
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-sm font-semibold">{t('trailType')}</Label>
+                    <div className="space-y-0.5">
+                      <Label className="text-xs">{t('trailType')}</Label>
                       <div className="flex flex-wrap gap-1">
                         {trailTypes.slice(0, 6).map(type => (
                           <Badge
                             key={type}
                             variant={formData.trail_type.includes(type) ? 'default' : 'outline'}
-                            className={`cursor-pointer text-[10px] py-0.5 px-2 ${
+                            className={`cursor-pointer text-[9px] py-0 px-1.5 h-5 ${
                               formData.trail_type.includes(type) ? 'bg-emerald-600' : ''
                             }`}
                             onClick={() => handleArrayToggle('trail_type', type)}
@@ -1048,25 +1021,27 @@ Include water recommendation in liters and detailed equipment list.`,
                       </div>
                     </div>
 
-                    <div className="flex gap-3 text-xs">
-                      <div className="flex items-center gap-1">
+                    <div className="flex gap-2 text-[10px]">
+                      <div className="flex items-center gap-0.5">
                         <Checkbox
                           id="pets"
+                          className="h-3 w-3"
                           checked={formData.pets_allowed}
                           onCheckedChange={(checked) => handleChange('pets_allowed', checked)}
                         />
-                        <Label htmlFor="pets" className="cursor-pointer flex items-center gap-1">
+                        <Label htmlFor="pets" className="cursor-pointer flex items-center gap-0.5">
                           <Dog className="w-3 h-3" />
                           {t('petsAllowed')}
                         </Label>
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-0.5">
                         <Checkbox
                           id="camping"
+                          className="h-3 w-3"
                           checked={formData.camping_available}
                           onCheckedChange={(checked) => handleChange('camping_available', checked)}
                         />
-                        <Label htmlFor="camping" className="cursor-pointer flex items-center gap-1">
+                        <Label htmlFor="camping" className="cursor-pointer flex items-center gap-0.5">
                           <Tent className="w-3 h-3" />
                           {t('campingAvailable')}
                         </Label>
@@ -1085,18 +1060,18 @@ Include water recommendation in liters and detailed equipment list.`,
                       {language === 'he' ? 'תכנון (אופציונלי)' : 'Planning (Optional)'}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-3 overflow-y-auto flex-1">
-                    <p className="text-xs text-gray-600 mb-2">
-                      {language === 'he' ? 'ניתן להוסיף פרטי תכנון לאחר יצירת הטיול' : 'You can add planning details after creating the trip'}
+                  <CardContent className="p-2 overflow-y-auto flex-1">
+                    <p className="text-[10px] text-gray-600 mb-1">
+                      {language === 'he' ? 'תוכל להוסיף לאחר היצירה' : 'Add after creating'}
                     </p>
-                    <div className="grid grid-cols-2 gap-2 text-center">
-                      <div className="bg-white p-2 rounded-lg shadow">
-                        <p className="text-sm font-bold text-purple-600">{equipment.length}</p>
-                        <p className="text-[10px] text-gray-600">{language === 'he' ? 'ציוד' : 'Equipment'}</p>
+                    <div className="grid grid-cols-2 gap-1.5 text-center">
+                      <div className="bg-white p-1.5 rounded shadow">
+                        <p className="text-xs font-bold text-purple-600">{equipment.length}</p>
+                        <p className="text-[9px] text-gray-600">{language === 'he' ? 'ציוד' : 'Gear'}</p>
                       </div>
-                      <div className="bg-white p-2 rounded-lg shadow">
-                        <p className="text-sm font-bold text-indigo-600">{waypoints.length}</p>
-                        <p className="text-[10px] text-gray-600">{language === 'he' ? 'נקודות' : 'Waypoints'}</p>
+                      <div className="bg-white p-1.5 rounded shadow">
+                        <p className="text-xs font-bold text-indigo-600">{waypoints.length}</p>
+                        <p className="text-[9px] text-gray-600">{language === 'he' ? 'נקודות' : 'Points'}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -1112,13 +1087,13 @@ Include water recommendation in liters and detailed equipment list.`,
                       {language === 'he' ? 'סיכום' : 'Summary'}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-3 space-y-2 overflow-y-auto flex-1">
-                    <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-3 rounded-lg">
-                      <h3 className="text-base font-bold mb-2">{formData.title}</h3>
+                  <CardContent className="p-2 space-y-1 overflow-y-auto flex-1">
+                    <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-2 rounded-lg">
+                      <h3 className="text-sm font-bold mb-1">{formData.title}</h3>
                       {formData.image_url && (
-                        <img src={formData.image_url} alt="Trip" className="w-full h-24 object-cover rounded-lg mb-2" />
+                        <img src={formData.image_url} alt="Trip" className="w-full h-16 object-cover rounded mb-1" />
                       )}
-                      <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="grid grid-cols-2 gap-1.5 text-[10px]">
                         <div>
                           <span className="font-semibold">{language === 'he' ? 'מיקום:' : 'Location:'}</span>
                           <p className="truncate">{formData.location}</p>
@@ -1132,7 +1107,7 @@ Include water recommendation in liters and detailed equipment list.`,
                           <p>{t(formData.activity_type)}</p>
                         </div>
                         <div>
-                          <span className="font-semibold">{language === 'he' ? 'קושי:' : 'Difficulty:'}</span>
+                          <span className="font-semibold">{language === 'he' ? 'קושי:' : 'Diff:'}</span>
                           <p>{t(formData.difficulty)}</p>
                         </div>
                       </div>
@@ -1147,16 +1122,16 @@ Include water recommendation in liters and detailed equipment list.`,
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex justify-between mt-2 sm:mt-3 gap-2 flex-shrink-0"
+            className="flex justify-between mt-1.5 gap-2 flex-shrink-0 pb-1"
           >
             <Button
               type="button"
               variant="outline"
               onClick={prevStep}
               disabled={currentStep === 1}
-              className="px-3 py-2 text-sm font-semibold"
+              className="px-2 py-1.5 text-xs h-8"
             >
-              <ArrowLeft className={`w-4 h-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+              <ArrowLeft className={`w-3 h-3 ${isRTL ? 'ml-0.5' : 'mr-0.5'}`} />
               {language === 'he' ? 'אחורה' : 'Back'}
             </Button>
 
@@ -1164,23 +1139,23 @@ Include water recommendation in liters and detailed equipment list.`,
               <Button
                 type="button"
                 onClick={nextStep}
-                className="px-3 py-2 text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+                className="px-2 py-1.5 text-xs h-8 bg-gradient-to-r from-emerald-600 to-teal-600"
               >
                 {language === 'he' ? 'הבא' : 'Next'}
-                <ArrowRight className={`w-4 h-4 ${isRTL ? 'mr-1' : 'ml-1'}`} />
+                <ArrowRight className={`w-3 h-3 ${isRTL ? 'mr-0.5' : 'ml-0.5'}`} />
               </Button>
             ) : (
               <Button
                 type="button"
                 onClick={handleSubmit}
                 disabled={saving}
-                className="px-4 py-2 text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                className="px-3 py-1.5 text-xs h-8 bg-gradient-to-r from-green-600 to-emerald-600"
               >
                 {saving ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-3 h-3 animate-spin" />
                 ) : (
                   <>
-                    <Check className="w-4 h-4 mr-1" />
+                    <Check className="w-3 h-3 mr-0.5" />
                     {language === 'he' ? 'פרסם' : 'Publish'}
                   </>
                 )}
