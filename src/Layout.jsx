@@ -37,11 +37,13 @@ import {
         Building2,
         Settings as SettingsIcon,
         Mail,
-        MessageSquare
+        MessageSquare,
+        Share2
       } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 function LayoutContent({ children, currentPageName }) {
   const { t, isRTL, setLanguage, language } = useLanguage();
@@ -175,6 +177,41 @@ function LayoutContent({ children, currentPageName }) {
             {/* Right Side */}
             <div className="flex items-center gap-3">
               {user && <NotificationBell userEmail={user.email} />}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-emerald-50"
+                onClick={() => {
+                  const shareUrl = window.location.origin;
+                  const shareText = language === 'he' 
+                    ? 'הצטרף אליי ל-Groupy Loopy - הפלטפורמה לארגון טיולים קבוצתיים!' 
+                    : language === 'ru' 
+                    ? 'Присоединяйтесь ко мне в Groupy Loopy - платформе для организации групповых поездок!'
+                    : language === 'es'
+                    ? '¡Únete a mí en Groupy Loopy - la plataforma para organizar viajes grupales!'
+                    : language === 'fr'
+                    ? 'Rejoignez-moi sur Groupy Loopy - la plateforme pour organiser des voyages de groupe!'
+                    : language === 'de'
+                    ? 'Tritt mir bei Groupy Loopy bei - der Plattform für Gruppenreisen!'
+                    : language === 'it'
+                    ? 'Unisciti a me su Groupy Loopy - la piattaforma per organizzare viaggi di gruppo!'
+                    : 'Join me on Groupy Loopy - the platform for organizing group trips!';
+                  
+                  if (navigator.share) {
+                    navigator.share({
+                      title: 'Groupy Loopy',
+                      text: shareText,
+                      url: shareUrl
+                    });
+                  } else {
+                    navigator.clipboard.writeText(shareUrl);
+                    toast.success(language === 'he' ? 'הקישור הועתק' : 'Link copied');
+                  }
+                }}
+                title={language === 'he' ? 'שתף עם חברים' : language === 'ru' ? 'Поделиться' : language === 'es' ? 'Compartir' : language === 'fr' ? 'Partager' : language === 'de' ? 'Teilen' : language === 'it' ? 'Condividi' : 'Share with Friends'}
+              >
+                <Share2 className="w-5 h-5 text-emerald-600" />
+              </Button>
               <LanguageSwitcher />
               
               {user ? (
