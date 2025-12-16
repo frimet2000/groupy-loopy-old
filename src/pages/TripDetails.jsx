@@ -1348,22 +1348,18 @@ export default function TripDetails() {
                 <Navigation className="w-4 h-4 text-green-600 hidden sm:block" />
                 <span className="hidden sm:inline">{language === 'he' ? 'נווט ליעד' : language === 'ru' ? 'Навигация' : language === 'es' ? 'Navegar' : language === 'fr' ? 'Naviguer' : language === 'de' ? 'Navigieren' : language === 'it' ? 'Navigare' : 'Navigate'}</span>
               </TabsTrigger>
-              {(hasJoined || isOrganizer) && (
-                <>
-                  <TabsTrigger value="itinerary" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-violet-50 data-[state=active]:text-violet-700 py-3">
-                    <Calendar className="w-4 h-4 text-violet-600 sm:hidden" />
-                    <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'לוח' : language === 'ru' ? 'План' : language === 'es' ? 'Plan' : language === 'fr' ? 'Plan' : language === 'de' ? 'Plan' : language === 'it' ? 'Piano' : 'Plan'}</span>
-                    <Calendar className="w-4 h-4 text-violet-600 hidden sm:block" />
-                    <span className="hidden sm:inline">{language === 'he' ? 'לוח זמנים' : language === 'ru' ? 'Маршрут' : language === 'es' ? 'Itinerario' : language === 'fr' ? 'Itinéraire' : language === 'de' ? 'Reiseplan' : language === 'it' ? 'Itinerario' : 'Itinerary'}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="budget" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 py-3">
-                    <DollarSign className="w-4 h-4 text-amber-600 sm:hidden" />
-                    <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'תקציב' : language === 'ru' ? 'Бюджет' : language === 'es' ? 'Presupuesto' : language === 'fr' ? 'Budget' : language === 'de' ? 'Budget' : language === 'it' ? 'Budget' : 'Budget'}</span>
-                    <DollarSign className="w-4 h-4 text-amber-600 hidden sm:block" />
-                    <span className="hidden sm:inline">{language === 'he' ? 'תקציב' : language === 'ru' ? 'Бюджет' : language === 'es' ? 'Presupuesto' : language === 'fr' ? 'Budget' : language === 'de' ? 'Budget' : language === 'it' ? 'Budget' : 'Budget'}</span>
-                  </TabsTrigger>
-                </>
-              )}
+              <TabsTrigger value="itinerary" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-violet-50 data-[state=active]:text-violet-700 py-3">
+                <Calendar className="w-4 h-4 text-violet-600 sm:hidden" />
+                <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'לוח' : language === 'ru' ? 'План' : language === 'es' ? 'Plan' : language === 'fr' ? 'Plan' : language === 'de' ? 'Plan' : language === 'it' ? 'Piano' : 'Plan'}</span>
+                <Calendar className="w-4 h-4 text-violet-600 hidden sm:block" />
+                <span className="hidden sm:inline">{language === 'he' ? 'לוח זמנים' : language === 'ru' ? 'Маршрут' : language === 'es' ? 'Itinerario' : language === 'fr' ? 'Itinéraire' : language === 'de' ? 'Reiseplan' : language === 'it' ? 'Itinerario' : 'Itinerary'}</span>
+              </TabsTrigger>
+              <TabsTrigger value="budget" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 py-3">
+                <DollarSign className="w-4 h-4 text-amber-600 sm:hidden" />
+                <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'תקציב' : language === 'ru' ? 'Бюджет' : language === 'es' ? 'Presupuesto' : language === 'fr' ? 'Budget' : language === 'de' ? 'Budget' : language === 'it' ? 'Budget' : 'Budget'}</span>
+                <DollarSign className="w-4 h-4 text-amber-600 hidden sm:block" />
+                <span className="hidden sm:inline">{language === 'he' ? 'תקציב' : language === 'ru' ? 'Бюджет' : language === 'es' ? 'Presupuesto' : language === 'fr' ? 'Budget' : language === 'de' ? 'Budget' : language === 'it' ? 'Budget' : 'Budget'}</span>
+              </TabsTrigger>
               {(hasJoined || isOrganizer) && (
                 <>
                   <TabsTrigger value="chat" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700 py-3">
