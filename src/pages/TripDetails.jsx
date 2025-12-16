@@ -17,6 +17,7 @@ import ShareDialog from '../components/sharing/ShareDialog';
 import TripComments from '../components/social/TripComments';
 import ParticipantWaiver from '../components/legal/ParticipantWaiver';
 import TripReminders from '../components/reminders/TripReminders';
+import TripContributions from '../components/contributions/TripContributions';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -46,7 +47,7 @@ import {
   Calendar, MapPin, Clock, Users, Mountain, Dog, Tent,
   Share2, ArrowLeft, ArrowRight, Check, X, User,
   Droplets, TreePine, Sun, History, Building, Navigation, Edit, MessageCircle, Bike, Truck,
-  Info, GalleryHorizontal, Heart, MessageSquare, Radio, Backpack, Bookmark, DollarSign, Image, Loader2, Camera, Upload, Bell
+  Info, GalleryHorizontal, Heart, MessageSquare, Radio, Backpack, Bookmark, DollarSign, Image, Loader2, Camera, Upload, Bell, Package
 } from 'lucide-react';
 
 const difficultyColors = {
@@ -1307,7 +1308,7 @@ export default function TripDetails() {
           </Card>
 
           <Tabs defaultValue="details" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-11 h-auto bg-white border shadow-sm mb-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
+            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-12 h-auto bg-white border shadow-sm mb-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
               <TabsTrigger value="details" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 py-3">
                 <Info className="w-4 h-4 text-emerald-600 sm:hidden" />
                 <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'פרטים' : language === 'ru' ? 'Детали' : language === 'es' ? 'Detalles' : language === 'fr' ? 'Détails' : language === 'de' ? 'Details' : language === 'it' ? 'Dettagli' : 'Details'}</span>
@@ -1390,6 +1391,12 @@ export default function TripDetails() {
                     <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'תזכורות' : language === 'ru' ? 'Напоминания' : language === 'es' ? 'Recordatorios' : language === 'fr' ? 'Rappels' : language === 'de' ? 'Erinnerungen' : language === 'it' ? 'Promemoria' : 'Reminders'}</span>
                     <Bell className="w-4 h-4 text-yellow-600 hidden sm:block" />
                     <span className="hidden sm:inline">{language === 'he' ? 'תזכורות' : language === 'ru' ? 'Напоминания' : language === 'es' ? 'Recordatorios' : language === 'fr' ? 'Rappels' : language === 'de' ? 'Erinnerungen' : language === 'it' ? 'Promemoria' : 'Reminders'}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="contributions" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 py-3">
+                    <Package className="w-4 h-4 text-indigo-600 sm:hidden" />
+                    <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'מביאים' : 'Bringing'}</span>
+                    <Package className="w-4 h-4 text-indigo-600 hidden sm:block" />
+                    <span className="hidden sm:inline">{language === 'he' ? 'מה אני מביא' : 'What I\'m Bringing'}</span>
                   </TabsTrigger>
                   </>
                   )}
@@ -1698,6 +1705,13 @@ export default function TripDetails() {
                   <TripReminders 
                     trip={trip}
                     currentUserEmail={user?.email}
+                  />
+                </TabsContent>
+                <TabsContent value="contributions" className="mt-0">
+                  <TripContributions 
+                    trip={trip}
+                    currentUserEmail={user?.email}
+                    onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
                   />
                 </TabsContent>
                 </>
