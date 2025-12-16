@@ -696,32 +696,29 @@ Include water recommendation in liters and detailed equipment list.`,
         onConfirm={handleMapConfirm}
       />
       
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 py-8 px-4">
-        <div className="max-w-5xl mx-auto">
+      <div className="h-screen flex flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 p-2 sm:p-4 overflow-hidden">
+        <div className="max-w-5xl mx-auto w-full flex flex-col h-full">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8"
+            className="text-center mb-2 sm:mb-4 flex-shrink-0"
           >
-            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-8 py-4 rounded-3xl shadow-2xl mb-6">
-              <Compass className="w-8 h-8" />
-              <h1 className="text-3xl font-bold">{t('createTrip')}</h1>
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-2xl shadow-lg">
+              <Compass className="w-5 h-5 sm:w-6 sm:h-6" />
+              <h1 className="text-lg sm:text-xl font-bold">{t('createTrip')}</h1>
             </div>
-            <p className="text-gray-600 text-lg">
-              {language === 'he' ? 'אשף יצירת טיול חכם' : language === 'ru' ? 'Умный мастер создания поездки' : language === 'es' ? 'Asistente inteligente para crear viajes' : language === 'fr' ? 'Assistant intelligent de création de voyage' : language === 'de' ? 'Intelligenter Reiseerstellungsassistent' : language === 'it' ? 'Assistente intelligente per la creazione di viaggi' : 'Smart Trip Creation Wizard'}
-            </p>
           </motion.div>
 
           {/* Progress Bar */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-8"
+            className="mb-2 sm:mb-3 flex-shrink-0"
           >
-            <Card className="overflow-hidden shadow-xl border-2 border-emerald-100">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
+            <Card className="overflow-hidden shadow-lg border border-emerald-100">
+              <CardContent className="p-2 sm:p-3">
+                <div className="flex items-center justify-between mb-2">
                   {steps.map((step, idx) => {
                     const StepIcon = step.icon;
                     const isActive = currentStep === step.id;
@@ -729,31 +726,28 @@ Include water recommendation in liters and detailed equipment list.`,
                     
                     return (
                       <React.Fragment key={step.id}>
-                        <motion.div
-                          whileHover={{ scale: 1.05 }}
-                          className={`flex flex-col items-center gap-2 ${isActive || isCompleted ? 'opacity-100' : 'opacity-40'}`}
-                        >
-                          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 ${
+                        <div className={`flex flex-col items-center gap-1 ${isActive || isCompleted ? 'opacity-100' : 'opacity-40'}`}>
+                          <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
                             isCompleted 
-                              ? 'bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg' 
+                              ? 'bg-gradient-to-br from-green-500 to-emerald-500' 
                               : isActive 
-                              ? `bg-gradient-to-br ${step.color} shadow-2xl scale-110` 
+                              ? `bg-gradient-to-br ${step.color}` 
                               : 'bg-gray-200'
                           }`}>
                             {isCompleted ? (
-                              <Check className="w-8 h-8 text-white" />
+                              <Check className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                             ) : (
-                              <StepIcon className={`w-7 h-7 ${isActive ? 'text-white' : 'text-gray-500'}`} />
+                              <StepIcon className={`w-4 h-4 sm:w-5 sm:h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
                             )}
                           </div>
-                          <span className={`text-xs font-semibold text-center hidden sm:block ${
+                          <span className={`text-[10px] sm:text-xs font-semibold text-center hidden sm:block ${
                             isActive ? 'text-gray-900' : 'text-gray-500'
                           }`}>
-                            {step.title}
+                            {step.title.split(' ')[0]}
                           </span>
-                        </motion.div>
+                        </div>
                         {idx < steps.length - 1 && (
-                          <div className={`flex-1 h-2 mx-2 rounded-full transition-all duration-500 ${
+                          <div className={`flex-1 h-1 mx-1 rounded-full transition-all duration-500 ${
                             currentStep > step.id ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gray-200'
                           }`} />
                         )}
@@ -761,12 +755,7 @@ Include water recommendation in liters and detailed equipment list.`,
                     );
                   })}
                 </div>
-                <Progress value={progressPercent} className="h-3 bg-gray-200" />
-                <div className="mt-2 text-center">
-                  <span className="text-sm font-semibold text-gray-700">
-                    {language === 'he' ? `שלב ${currentStep} מתוך ${steps.length}` : `Step ${currentStep} of ${steps.length}`}
-                  </span>
-                </div>
+                <Progress value={progressPercent} className="h-1.5 bg-gray-200" />
               </CardContent>
             </Card>
           </motion.div>
@@ -779,20 +768,20 @@ Include water recommendation in liters and detailed equipment list.`,
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
+              className="flex-1 overflow-y-auto"
             >
               {/* Step 1: Basic Info */}
               {currentStep === 1 && (
-                <Card className="border-2 border-emerald-100 shadow-2xl">
-                  <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50">
-                    <CardTitle className="flex items-center gap-3 text-2xl">
-                      <Sparkles className="w-7 h-7 text-emerald-600" />
+                <Card className="border border-emerald-100 shadow-lg h-full flex flex-col">
+                  <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 py-2 sm:py-3 flex-shrink-0">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
                       {language === 'he' ? 'פרטים בסיסיים' : 'Basic Details'}
                     </CardTitle>
-                    <CardDescription>{language === 'he' ? 'תן לטיול שלך שם וסיפור' : 'Give your trip a name and story'}</CardDescription>
                   </CardHeader>
-                  <CardContent className="p-8 space-y-6">
-                    <div className="space-y-2">
-                      <Label className="text-lg font-semibold">{language === 'he' ? 'כותרת הטיול' : language === 'ru' ? 'Название поездки' : language === 'es' ? 'Título del viaje' : language === 'fr' ? 'Titre du voyage' : language === 'de' ? 'Reisename' : language === 'it' ? 'Titolo del viaggio' : 'Trip Title'} *</Label>
+                  <CardContent className="p-3 sm:p-4 space-y-3 sm:space-y-4 overflow-y-auto flex-1">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-semibold">{language === 'he' ? 'כותרת הטיול' : 'Trip Title'} *</Label>
                       <Input
                         value={formData.title}
                         onChange={(e) => {
@@ -801,45 +790,40 @@ Include water recommendation in liters and detailed equipment list.`,
                             setMissingFields(prev => prev.filter(f => f !== 'title'));
                           }
                         }}
-                        placeholder={language === 'he' ? 'למשל: טיול מהמם בגליל העליון' : language === 'ru' ? 'напр., Поход на Алтай' : language === 'es' ? 'ej., Increíble excursión por los Pirineos' : language === 'fr' ? 'ex., Randonnée incroyable dans les Alpes' : language === 'de' ? 'z.B. Tolle Wanderung im Schwarzwald' : language === 'it' ? 'es., Escursione mozzafiato sulle Dolomiti' : 'e.g., Amazing Mountain Hike'}
+                        placeholder={language === 'he' ? 'למשל: טיול בגליל' : 'e.g., Mountain Hike'}
                         dir={isRTL ? 'rtl' : 'ltr'}
-                        className={`text-lg p-6 transition-all ${
+                        className={`text-sm p-2 ${
                           missingFields.includes('title') 
-                            ? 'border-2 border-red-500 bg-red-50 animate-pulse' 
+                            ? 'border-2 border-red-500 bg-red-50' 
                             : ''
                         }`}
                       />
-                      {missingFields.includes('title') && (
-                        <p className="text-red-600 text-sm font-semibold animate-bounce">
-                          {language === 'he' ? '⚠️ שדה חובה - נא להזין כותרת' : '⚠️ Required field - please enter a title'}
-                        </p>
-                      )}
                     </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-lg font-semibold">{language === 'he' ? 'תיאור' : language === 'ru' ? 'Описание' : language === 'es' ? 'Descripción' : language === 'fr' ? 'Description' : language === 'de' ? 'Beschreibung' : language === 'it' ? 'Descrizione' : 'Description'}</Label>
+                    <div className="space-y-1">
+                      <Label className="text-sm font-semibold">{language === 'he' ? 'תיאור' : 'Description'}</Label>
                       <Textarea
                         value={formData.description}
                         onChange={(e) => handleChange('description', e.target.value)}
-                        placeholder={language === 'he' ? 'ספר על הטיול שלך...' : language === 'ru' ? 'Расскажите о вашей поездке...' : language === 'es' ? 'Cuéntanos sobre tu viaje...' : language === 'fr' ? 'Parlez-nous de votre voyage...' : language === 'de' ? 'Erzählen Sie uns von Ihrer Reise...' : language === 'it' ? 'Raccontaci del tuo viaggio...' : 'Tell us about your trip...'}
+                        placeholder={language === 'he' ? 'ספר על הטיול...' : 'Tell us about your trip...'}
                         dir={isRTL ? 'rtl' : 'ltr'}
-                        rows={5}
-                        className="text-base"
+                        rows={2}
+                        className="text-sm p-2"
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-lg font-semibold">{t('uploadImage')}</Label>
-                      <div className="flex items-center gap-6">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-semibold">{t('uploadImage')}</Label>
+                      <div className="flex items-center gap-3">
                         {formData.image_url ? (
                           <img 
                             src={formData.image_url} 
                             alt="Trip" 
-                            className="w-48 h-36 object-cover rounded-2xl shadow-lg"
+                            className="w-20 h-16 object-cover rounded-lg"
                           />
                         ) : (
-                          <div className="w-48 h-36 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
-                            <Upload className="w-12 h-12 text-gray-400" />
+                          <div className="w-20 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <Upload className="w-6 h-6 text-gray-400" />
                           </div>
                         )}
                         <label className="cursor-pointer">
@@ -849,14 +833,14 @@ Include water recommendation in liters and detailed equipment list.`,
                             onChange={handleImageUpload}
                             className="hidden"
                           />
-                          <Button type="button" variant="outline" disabled={imageUploading} asChild>
-                            <span className="gap-2 p-6">
+                          <Button type="button" variant="outline" size="sm" disabled={imageUploading} asChild>
+                            <span className="gap-1 text-xs">
                               {imageUploading ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <Loader2 className="w-4 h-4 animate-spin" />
                               ) : (
-                                <Upload className="w-5 h-5" />
+                                <Upload className="w-4 h-4" />
                               )}
-                              {language === 'he' ? 'העלה תמונה' : language === 'ru' ? 'Загрузить фото' : language === 'es' ? 'Subir imagen' : language === 'fr' ? 'Télécharger une image' : language === 'de' ? 'Bild hochladen' : language === 'it' ? 'Carica immagine' : 'Upload Image'}
+                              {language === 'he' ? 'העלה' : 'Upload'}
                             </span>
                           </Button>
                         </label>
@@ -1416,41 +1400,41 @@ Include water recommendation in liters and detailed equipment list.`,
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex justify-between mt-8"
+            className="flex justify-between mt-2 sm:mt-3 gap-2 flex-shrink-0"
           >
             <Button
               type="button"
               variant="outline"
               onClick={prevStep}
               disabled={currentStep === 1}
-              className="px-8 py-6 text-base font-semibold border-2"
+              className="px-3 py-2 text-sm font-semibold"
             >
-              <ArrowLeft className={`w-5 h-5 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-              {language === 'he' ? 'אחורה' : language === 'ru' ? 'Назад' : language === 'es' ? 'Atrás' : language === 'fr' ? 'Retour' : language === 'de' ? 'Zurück' : language === 'it' ? 'Indietro' : 'Back'}
+              <ArrowLeft className={`w-4 h-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+              {language === 'he' ? 'אחורה' : 'Back'}
             </Button>
 
             {currentStep < steps.length ? (
               <Button
                 type="button"
                 onClick={nextStep}
-                className="px-8 py-6 text-base font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-xl"
+                className="px-3 py-2 text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
               >
-                {language === 'he' ? 'הבא' : language === 'ru' ? 'Далее' : language === 'es' ? 'Siguiente' : language === 'fr' ? 'Suivant' : language === 'de' ? 'Weiter' : language === 'it' ? 'Avanti' : 'Next'}
-                <ArrowRight className={`w-5 h-5 ${isRTL ? 'mr-2' : 'ml-2'}`} />
+                {language === 'he' ? 'הבא' : 'Next'}
+                <ArrowRight className={`w-4 h-4 ${isRTL ? 'mr-1' : 'ml-1'}`} />
               </Button>
             ) : (
               <Button
                 type="button"
                 onClick={handleSubmit}
                 disabled={saving}
-                className="px-12 py-6 text-lg font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-2xl"
+                className="px-4 py-2 text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
               >
                 {saving ? (
-                  <Loader2 className="w-6 h-6 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <>
-                    <Check className="w-6 h-6 mr-2" />
-                    {language === 'he' ? 'פרסם טיול' : language === 'ru' ? 'Опубликовать поездку' : language === 'es' ? 'Publicar viaje' : language === 'fr' ? 'Publier le voyage' : language === 'de' ? 'Reise veröffentlichen' : language === 'it' ? 'Pubblica viaggio' : 'Publish Trip'}
+                    <Check className="w-4 h-4 mr-1" />
+                    {language === 'he' ? 'פרסם' : 'Publish'}
                   </>
                 )}
               </Button>
