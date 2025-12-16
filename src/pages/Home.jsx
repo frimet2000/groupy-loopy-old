@@ -478,10 +478,13 @@ export default function Home() {
               >
                 <Button 
                   onClick={() => {
-                    if (user?.home_region) {
-                      setFilters({ region: user.home_region });
-                    }
-                    document.getElementById('trips-section')?.scrollIntoView({ behavior: 'smooth' });
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const todayStr = today.toISOString().split('T')[0];
+                    setFilters({ date_from: todayStr, date_to: todayStr });
+                    setTimeout(() => {
+                      document.getElementById('trips-section')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
                   }}
                   className="bg-gradient-to-r from-teal-500 to-emerald-600 text-white hover:from-teal-600 hover:to-emerald-700 h-12 sm:h-16 px-4 sm:px-10 text-sm sm:text-lg font-bold shadow-2xl shadow-teal-500/20 border-2 border-white/20 touch-manipulation min-h-[44px]"
                 >
