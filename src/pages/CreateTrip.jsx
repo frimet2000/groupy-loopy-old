@@ -23,7 +23,6 @@ import WaypointsCreator from '../components/creation/WaypointsCreator';
 import EquipmentCreator from '../components/creation/EquipmentCreator';
 import ItineraryCreator from '../components/creation/ItineraryCreator';
 import BudgetCreator from '../components/creation/BudgetCreator';
-import OrganizerWaiver from '../components/legal/OrganizerWaiver';
 
 const difficulties = ['easy', 'moderate', 'challenging', 'hard', 'extreme'];
 const durations = ['hours', 'half_day', 'full_day', 'overnight', 'multi_day'];
@@ -50,7 +49,6 @@ export default function CreateTrip() {
   const [dynamicSubRegions, setDynamicSubRegions] = useState([]);
   const [citySearch, setCitySearch] = useState('');
   const [filteredCities, setFilteredCities] = useState(israelCities);
-  const [showWaiver, setShowWaiver] = useState(false);
   const [generatingItinerary, setGeneratingItinerary] = useState(false);
   const [generatingEquipment, setGeneratingEquipment] = useState(false);
   
@@ -634,12 +632,9 @@ Include water recommendation in liters and detailed equipment list.`,
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateStep(currentStep)) return;
-    setShowWaiver(true);
-  };
-
-  const saveTrip = async () => {
+    
     setSaving(true);
     try {
       const tripData = {
@@ -648,15 +643,11 @@ Include water recommendation in liters and detailed equipment list.`,
         status: 'open',
         organizer_name: user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : (user?.full_name || user?.email || ''),
         organizer_email: user?.email || '',
-        organizer_waiver_accepted: true,
-        organizer_waiver_timestamp: new Date().toISOString(),
         participants: [{
           email: user?.email || '',
           name: user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : (user?.full_name || user?.email || ''),
           joined_at: new Date().toISOString(),
-          accessibility_needs: [],
-          waiver_accepted: true,
-          waiver_timestamp: new Date().toISOString()
+          accessibility_needs: []
         }],
         waypoints,
         equipment_checklist: equipment,
@@ -670,7 +661,6 @@ Include water recommendation in liters and detailed equipment list.`,
 
       const createdTrip = await base44.entities.Trip.create(tripData);
       toast.success(language === 'he' ? 'הטיול נשמר בהצלחה!' : 'Trip created successfully!');
-      setShowWaiver(false);
       navigate(createPageUrl('TripDetails') + '?id=' + createdTrip.id);
     } catch (error) {
       console.error('Error:', error);
@@ -678,11 +668,6 @@ Include water recommendation in liters and detailed equipment list.`,
     } finally {
       setSaving(false);
     }
-  };
-
-  const handleWaiverDecline = () => {
-    setShowWaiver(false);
-    setSaving(false);
   };
 
   if (!user) return null;
@@ -1663,12 +1648,6 @@ Include water recommendation in liters and detailed equipment list.`,
           </motion.div>
         </div>
       </div>
-
-      <OrganizerWaiver
-        open={showWaiver}
-        onAccept={saveTrip}
-        onDecline={handleWaiverDecline}
-      />
     </>
   );
 }
