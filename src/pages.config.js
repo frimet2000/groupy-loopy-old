@@ -20,6 +20,7 @@ import Settings from './pages/Settings';
 import TermsOfService from './pages/TermsOfService';
 import TermsOfUse from './pages/TermsOfUse';
 import TripDetails from './pages/TripDetails';
+import TripSummary from './pages/TripSummary';
 import __Layout from './Layout.jsx';
 
 
@@ -46,6 +47,7 @@ export const PAGES = {
     "TermsOfService": TermsOfService,
     "TermsOfUse": TermsOfUse,
     "TripDetails": TripDetails,
+    "TripSummary": TripSummary,
 }
 
 export const pagesConfig = {
