@@ -167,7 +167,7 @@ export default function TripEquipment({ trip, isOrganizer, onUpdate }) {
   return (
     <>
       <Card>
-        <CardContent className="p-4 space-y-4">
+        <CardContent className="p-4 space-y-4" dir={language === 'he' ? 'rtl' : 'ltr'}>
 
 
           {/* Water Recommendation */}
