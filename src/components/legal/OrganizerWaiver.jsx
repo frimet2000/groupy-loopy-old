@@ -219,12 +219,12 @@ export default function OrganizerWaiver({ open, onAccept, onDecline }) {
             id="agree" 
             checked={agreed}
             onCheckedChange={setAgreed}
-            disabled={!readFully}
+            disabled={currentSection < content.sections.length - 1}
             className="mt-0.5 flex-shrink-0"
           />
           <label 
             htmlFor="agree" 
-            className={`text-xs sm:text-sm font-medium leading-snug ${!readFully ? 'text-gray-400' : 'text-gray-900 cursor-pointer'}`}
+            className={`text-xs sm:text-sm font-medium leading-snug ${currentSection < content.sections.length - 1 ? 'text-gray-400' : 'text-gray-900 cursor-pointer'}`}
           >
             {content.confirmation}
           </label>
