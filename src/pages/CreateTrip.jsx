@@ -741,20 +741,20 @@ Include water recommendation in liters and detailed equipment list.`,
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="py-2 flex-shrink-0"
+            className="py-1 flex-shrink-0"
           >
             <Card className="overflow-hidden shadow-lg border border-emerald-100">
-              <CardContent className="p-2 sm:p-3">
-                <div className="flex items-center justify-between mb-2">
+              <CardContent className="p-1.5 sm:p-3">
+                <div className="flex items-center justify-between mb-1">
                   {steps.map((step, idx) => {
                     const StepIcon = step.icon;
                     const isActive = currentStep === step.id;
                     const isCompleted = currentStep > step.id;
-                    
+
                     return (
                       <React.Fragment key={step.id}>
-                        <div className={`flex flex-col items-center gap-1 ${isActive || isCompleted ? 'opacity-100' : 'opacity-40'}`}>
-                          <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                        <div className={`flex flex-col items-center gap-0.5 ${isActive || isCompleted ? 'opacity-100' : 'opacity-40'}`}>
+                          <div className={`w-6 h-6 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center transition-all duration-300 ${
                             isCompleted 
                               ? 'bg-gradient-to-br from-green-500 to-emerald-500' 
                               : isActive 
@@ -762,12 +762,12 @@ Include water recommendation in liters and detailed equipment list.`,
                               : 'bg-gray-200'
                           }`}>
                             {isCompleted ? (
-                              <Check className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                              <Check className="w-3 h-3 sm:w-5 sm:h-5 text-white" />
                             ) : (
-                              <StepIcon className={`w-4 h-4 sm:w-5 sm:h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
+                              <StepIcon className={`w-3 h-3 sm:w-5 sm:h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
                             )}
                           </div>
-                          <span className={`text-[10px] sm:text-xs font-semibold text-center hidden sm:block ${
+                          <span className={`text-[8px] sm:text-xs font-semibold text-center hidden sm:block ${
                             isActive ? 'text-gray-900' : 'text-gray-500'
                           }`}>
                             {step.title.split(' ')[0]}
@@ -778,11 +778,11 @@ Include water recommendation in liters and detailed equipment list.`,
                             currentStep > step.id ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gray-200'
                           }`} />
                         )}
-                      </React.Fragment>
-                    );
-                  })}
-                </div>
-                <Progress value={progressPercent} className="h-1.5 bg-gray-200" />
+                        </React.Fragment>
+                        );
+                        })}
+                        </div>
+                        <Progress value={progressPercent} className="h-1 sm:h-1.5 bg-gray-200" />
               </CardContent>
             </Card>
           </motion.div>
@@ -800,15 +800,15 @@ Include water recommendation in liters and detailed equipment list.`,
               {/* Step 1: Basic Info */}
               {currentStep === 1 && (
                 <Card className="border border-emerald-100 shadow-lg">
-                  <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 py-2 flex-shrink-0">
-                    <CardTitle className="flex items-center gap-2 text-sm sm:text-lg">
-                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                  <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 py-1.5 sm:py-2 flex-shrink-0">
+                    <CardTitle className="flex items-center gap-1.5 text-xs sm:text-lg">
+                      <Sparkles className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-emerald-600" />
                       {language === 'he' ? 'פרטים בסיסיים' : language === 'ru' ? 'Основная информация' : language === 'es' ? 'Información básica' : language === 'fr' ? 'Informations de base' : language === 'de' ? 'Grundinformationen' : language === 'it' ? 'Informazioni di base' : 'Basic Details'}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-3 sm:p-4 space-y-2.5 sm:space-y-3">
-                    <div className="space-y-1">
-                      <Label className="text-sm font-semibold">
+                  <CardContent className="p-2 sm:p-4 space-y-2 sm:space-y-3">
+                    <div className="space-y-0.5">
+                      <Label className="text-xs sm:text-sm font-semibold">
                         {language === 'he' ? 'כותרת הטיול' :
                          language === 'ru' ? 'Название поездки' :
                          language === 'es' ? 'Título del viaje' :
@@ -833,7 +833,7 @@ Include water recommendation in liters and detailed equipment list.`,
                                     language === 'it' ? 'es., Escursione in montagna' :
                                     'e.g., Mountain Hike'}
                         dir={isRTL ? 'rtl' : 'ltr'}
-                        className={`text-sm p-2 ${
+                        className={`text-xs sm:text-sm p-1.5 sm:p-2 h-8 sm:h-10 ${
                           missingFields.includes('title') 
                             ? 'border-2 border-red-500 bg-red-50' 
                             : ''
@@ -841,8 +841,8 @@ Include water recommendation in liters and detailed equipment list.`,
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <Label className="text-sm font-semibold">
+                    <div className="space-y-0.5">
+                      <Label className="text-xs sm:text-sm font-semibold">
                         {language === 'he' ? 'תיאור' :
                          language === 'ru' ? 'Описание' :
                          language === 'es' ? 'Descripción' :
@@ -863,12 +863,12 @@ Include water recommendation in liters and detailed equipment list.`,
                                     'Tell us about your trip...'}
                         dir={isRTL ? 'rtl' : 'ltr'}
                         rows={2}
-                        className="text-sm p-2"
+                        className="text-xs sm:text-sm p-1.5 sm:p-2 resize-none"
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <Label className="text-sm font-semibold">
+                    <div className="space-y-0.5">
+                      <Label className="text-xs sm:text-sm font-semibold">
                         {language === 'he' ? 'העלה תמונה' :
                          language === 'ru' ? 'Загрузить изображение' :
                          language === 'es' ? 'Subir imagen' :
@@ -877,16 +877,16 @@ Include water recommendation in liters and detailed equipment list.`,
                          language === 'it' ? 'Carica immagine' :
                          'Upload Image'}
                       </Label>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
                         {formData.image_url ? (
                           <img 
                             src={formData.image_url} 
                             alt="Trip" 
-                            className="w-20 h-16 object-cover rounded-lg"
+                            className="w-14 h-12 sm:w-20 sm:h-16 object-cover rounded-lg"
                           />
                         ) : (
-                          <div className="w-20 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                            <Upload className="w-6 h-6 text-gray-400" />
+                          <div className="w-14 h-12 sm:w-20 sm:h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <Upload className="w-4 h-4 sm:w-6 sm:h-6 text-gray-400" />
                           </div>
                         )}
                         <label className="cursor-pointer">
@@ -897,11 +897,11 @@ Include water recommendation in liters and detailed equipment list.`,
                             className="hidden"
                           />
                           <Button type="button" variant="outline" size="sm" disabled={imageUploading} asChild>
-                            <span className="gap-1 text-xs">
+                            <span className="gap-1 text-[10px] sm:text-xs px-2 py-1">
                               {imageUploading ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
+                                <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
                               ) : (
-                                <Upload className="w-4 h-4" />
+                                <Upload className="w-3 h-3 sm:w-4 sm:h-4" />
                               )}
                               {language === 'he' ? 'העלה' :
                                language === 'ru' ? 'Загрузить' :
@@ -922,23 +922,23 @@ Include water recommendation in liters and detailed equipment list.`,
               {/* Step 2: Location & Time */}
               {currentStep === 2 && (
                 <Card className="border-2 border-blue-100 shadow-2xl">
-                  <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50 py-2 sm:py-3">
-                    <CardTitle className="flex items-center gap-2 text-sm sm:text-xl">
-                      <MapPin className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600" />
+                  <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50 py-1.5 sm:py-3">
+                    <CardTitle className="flex items-center gap-1.5 text-xs sm:text-xl">
+                      <MapPin className="w-3.5 h-3.5 sm:w-6 sm:h-6 text-blue-600" />
                       {language === 'he' ? 'מיקום וזמן' : language === 'ru' ? 'Место и время' : language === 'es' ? 'Ubicación y hora' : language === 'fr' ? 'Lieu et heure' : language === 'de' ? 'Ort und Zeit' : language === 'it' ? 'Luogo e orario' : 'Location & Time'}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-3 sm:p-6 space-y-3 sm:space-y-4">
-                    <div className="space-y-2">
-                      <Label className="text-lg font-semibold flex items-center gap-2">
-                        <Globe className="w-5 h-5" />
+                  <CardContent className="p-2 sm:p-6 space-y-2 sm:space-y-4">
+                    <div className="space-y-0.5">
+                      <Label className="text-xs sm:text-base font-semibold flex items-center gap-1">
+                        <Globe className="w-3 h-3 sm:w-4 sm:h-4" />
                         {t('country')} *
                       </Label>
                       <Select 
                         value={formData.country} 
                         onValueChange={(v) => handleChange('country', v)}
                       >
-                        <SelectTrigger className="p-6 text-base">
+                        <SelectTrigger className="p-2 sm:p-3 text-xs sm:text-base h-8 sm:h-10">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="max-h-60">
@@ -949,12 +949,11 @@ Include water recommendation in liters and detailed equipment list.`,
                       </Select>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-base font-semibold">
-                        {t('location')} * 
-                        {language === 'he' && <span className="text-sm text-gray-500 font-normal mr-2">(ניתן לסמן נק' ספציפית על המפה)</span>}
+                    <div className="space-y-0.5">
+                      <Label className="text-xs sm:text-base font-semibold">
+                        {t('location')} *
                       </Label>
-                      <div className="flex gap-2">
+                      <div className="flex gap-1.5">
                         <Input
                           value={formData.location}
                           onChange={(e) => {
@@ -963,7 +962,7 @@ Include water recommendation in liters and detailed equipment list.`,
                               setMissingFields(prev => prev.filter(f => f !== 'location'));
                             }
                           }}
-                          className={missingFields.includes('location') ? 'border-2 border-red-500 bg-red-50' : ''}
+                          className={`text-xs sm:text-sm p-1.5 sm:p-2 h-8 sm:h-10 ${missingFields.includes('location') ? 'border-2 border-red-500 bg-red-50' : ''}`}
                           placeholder={
                             formData.country === 'israel' 
                               ? (language === 'he' ? 'לדוגמה: נחל עמוד, מצדה, עין גדי' : 'e.g., Nahal Amud, Masada, Ein Gedi')
@@ -986,41 +985,41 @@ Include water recommendation in liters and detailed equipment list.`,
                             : formData.country === 'japan'
                               ? (language === 'he' ? 'לדוגמה: Mount Fuji, Kyoto' : language === 'es' ? 'ej., Monte Fuji, Kioto' : language === 'fr' ? 'ex., Mont Fuji, Kyoto' : language === 'de' ? 'z.B. Fuji, Kyoto' : language === 'it' ? 'es., Monte Fuji, Kyoto' : 'e.g., Mount Fuji, Kyoto')
                             : (language === 'he' ? 'שם מדויק של המיקום' : language === 'es' ? 'Nombre específico' : language === 'fr' ? 'Nom spécifique' : language === 'de' ? 'Spezifischer Name' : language === 'it' ? 'Nome specifico' : 'Specific location name')
-                          }
-                          className="flex-1 p-4"
-                          dir={isRTL ? 'rtl' : 'ltr'}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={handleLocationSearch}
-                          disabled={searchingLocation}
-                          className="gap-2 px-4"
-                        >
-                          {searchingLocation ? (
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                          ) : (
-                            <Navigation className="w-5 h-5" />
-                          )}
-                        </Button>
+                            }
+                            dir={isRTL ? 'rtl' : 'ltr'}
+                            />
+                            <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleLocationSearch}
+                            disabled={searchingLocation}
+                            className="gap-1 px-2 sm:px-3 h-8 sm:h-10"
+                            size="sm"
+                            >
+                            {searchingLocation ? (
+                            <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" />
+                            ) : (
+                            <Navigation className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                            )}
+                            </Button>
                       </div>
                       {formData.latitude && formData.longitude && (
-                        <p className="text-sm text-green-600 flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
+                        <p className="text-[10px] sm:text-sm text-green-600 flex items-center gap-0.5">
+                          <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
                           {language === 'he' ? 'מיקום נמצא במפה' : language === 'ru' ? 'Местоположение найдено' : language === 'es' ? 'Ubicación encontrada' : language === 'fr' ? 'Emplacement trouvé' : language === 'de' ? 'Standort gefunden' : language === 'it' ? 'Posizione trovata' : 'Location found on map'}
                         </p>
                       )}
                       {missingFields.includes('location') && (
-                        <p className="text-red-600 text-sm font-semibold animate-bounce">
-                          {language === 'he' ? '⚠️ שדה חובה - נא להזין מיקום' : '⚠️ Required field - please enter location'}
+                        <p className="text-red-600 text-[10px] sm:text-sm font-semibold">
+                          {language === 'he' ? '⚠️ שדה חובה' : '⚠️ Required'}
                         </p>
                       )}
-                    </div>
+                      </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-base font-semibold flex items-center gap-2">
-                          <Calendar className="w-5 h-5" />
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      <div className="space-y-0.5">
+                        <Label className="text-xs sm:text-base font-semibold flex items-center gap-1">
+                          <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                           {t('date')} *
                         </Label>
                         <Input
@@ -1032,30 +1031,30 @@ Include water recommendation in liters and detailed equipment list.`,
                               setMissingFields(prev => prev.filter(f => f !== 'date'));
                             }
                           }}
-                          className={`p-4 ${missingFields.includes('date') ? 'border-2 border-red-500 bg-red-50' : ''}`}
+                          className={`p-1.5 sm:p-2 h-8 sm:h-10 text-xs sm:text-sm ${missingFields.includes('date') ? 'border-2 border-red-500 bg-red-50' : ''}`}
                         />
                         {missingFields.includes('date') && (
-                          <p className="text-red-600 text-sm font-semibold animate-bounce">
-                            {language === 'he' ? '⚠️ שדה חובה - נא לבחור תאריך' : '⚠️ Required field - please select a date'}
+                          <p className="text-red-600 text-[10px] sm:text-sm font-semibold">
+                            {language === 'he' ? '⚠️ חובה' : '⚠️ Required'}
                           </p>
                         )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-base font-semibold flex items-center gap-2">
-                          <Clock className="w-5 h-5" />
-                          {language === 'he' ? 'שעת התכנסות' : language === 'ru' ? 'Время встречи' : language === 'es' ? 'Hora de encuentro' : language === 'fr' ? 'Heure de rendez-vous' : language === 'de' ? 'Treffzeit' : language === 'it' ? 'Orario di ritrovo' : 'Meeting Time'}
+                        </div>
+                        <div className="space-y-0.5">
+                        <Label className="text-xs sm:text-base font-semibold flex items-center gap-1">
+                          <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                          {language === 'he' ? 'שעה' : language === 'ru' ? 'Время' : language === 'es' ? 'Hora' : language === 'fr' ? 'Heure' : language === 'de' ? 'Zeit' : language === 'it' ? 'Ora' : 'Time'}
                         </Label>
                         <Input
                           type="time"
                           value={formData.meeting_time}
                           onChange={(e) => handleChange('meeting_time', e.target.value)}
-                          className="p-4"
+                          className="p-1.5 sm:p-2 h-8 sm:h-10 text-xs sm:text-sm"
                         />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-base font-semibold">{t('duration')}</Label>
+                        </div>
+                        <div className="space-y-0.5 col-span-2 sm:col-span-1">
+                        <Label className="text-xs sm:text-base font-semibold">{t('duration')}</Label>
                         <Select value={formData.duration_type} onValueChange={(v) => handleChange('duration_type', v)}>
-                          <SelectTrigger className="p-4">
+                          <SelectTrigger className="p-1.5 sm:p-2 h-8 sm:h-10 text-xs sm:text-sm">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -1073,13 +1072,13 @@ Include water recommendation in liters and detailed equipment list.`,
               {/* Step 3: Activity Details */}
               {currentStep === 3 && (
                 <Card className="border-2 border-amber-100 shadow-2xl">
-                  <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 py-2 sm:py-3">
-                    <CardTitle className="flex items-center gap-2 text-sm sm:text-xl">
-                      <Mountain className="w-4 h-4 sm:w-6 sm:h-6 text-amber-600" />
+                  <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 py-1.5 sm:py-3">
+                    <CardTitle className="flex items-center gap-1.5 text-xs sm:text-xl">
+                      <Mountain className="w-3.5 h-3.5 sm:w-6 sm:h-6 text-amber-600" />
                       {language === 'he' ? 'פרטי הפעילות' : language === 'ru' ? 'Детали активности' : language === 'es' ? 'Detalles de la actividad' : language === 'fr' ? 'Détails de l\'activité' : language === 'de' ? 'Aktivitätsdetails' : language === 'it' ? 'Dettagli dell\'attività' : 'Activity Details'}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-3 sm:p-6 space-y-3 sm:space-y-4">
+                  <CardContent className="p-2 sm:p-6 space-y-2 sm:space-y-4">
                     <div className="space-y-2">
                       <Label className="text-sm sm:text-base font-semibold">{t('activityType')} *</Label>
                       <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
@@ -1151,11 +1150,11 @@ Include water recommendation in liters and detailed equipment list.`,
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label className="text-base font-semibold">{t('difficulty')}</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="space-y-0.5">
+                        <Label className="text-xs sm:text-base font-semibold">{t('difficulty')}</Label>
                         <Select value={formData.difficulty} onValueChange={(v) => handleChange('difficulty', v)}>
-                          <SelectTrigger className="p-4 text-base">
+                          <SelectTrigger className="p-1.5 sm:p-2 h-8 sm:h-10 text-xs sm:text-base">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -1166,10 +1165,10 @@ Include water recommendation in liters and detailed equipment list.`,
                         </Select>
                       </div>
 
-                      <div className="space-y-2">
-                        <Label className="text-base font-semibold flex items-center gap-2">
-                          <Users className="w-5 h-5" />
-                          {t('maxParticipants')}
+                      <div className="space-y-0.5">
+                        <Label className="text-xs sm:text-base font-semibold flex items-center gap-1">
+                          <Users className="w-3 h-3 sm:w-4 sm:h-4" />
+                          {language === 'he' ? 'מקס׳' : language === 'ru' ? 'Макс' : language === 'es' ? 'Máx' : language === 'fr' ? 'Max' : language === 'de' ? 'Max' : language === 'it' ? 'Max' : 'Max'}
                         </Label>
                         <Input
                           type="number"
@@ -1177,10 +1176,10 @@ Include water recommendation in liters and detailed equipment list.`,
                           max={50}
                           value={formData.max_participants}
                           onChange={(e) => handleChange('max_participants', parseInt(e.target.value))}
-                          className="p-4"
+                          className="p-1.5 sm:p-2 h-8 sm:h-10 text-xs sm:text-sm"
                         />
                       </div>
-                    </div>
+                      </div>
 
                     {formData.activity_type === 'cycling' && (
                       <div className="space-y-4 p-6 bg-blue-50 rounded-2xl">
@@ -1271,14 +1270,14 @@ Include water recommendation in liters and detailed equipment list.`,
                       </div>
                     )}
 
-                    <div className="space-y-3">
-                      <Label className="text-base font-semibold">{t('trailType')}</Label>
-                      <div className="flex flex-wrap gap-2">
+                    <div className="space-y-1">
+                      <Label className="text-xs sm:text-base font-semibold">{t('trailType')}</Label>
+                      <div className="flex flex-wrap gap-1 sm:gap-2">
                         {trailTypes.map(type => (
                           <Badge
                             key={type}
                             variant={formData.trail_type.includes(type) ? 'default' : 'outline'}
-                            className={`cursor-pointer text-sm py-2 px-4 ${
+                            className={`cursor-pointer text-[10px] sm:text-sm py-1 px-2 sm:py-1.5 sm:px-3 ${
                               formData.trail_type.includes(type) 
                                 ? 'bg-emerald-600 hover:bg-emerald-700' 
                                 : 'hover:border-emerald-500'
@@ -1291,14 +1290,14 @@ Include water recommendation in liters and detailed equipment list.`,
                       </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <Label className="text-base font-semibold">{t('interests')}</Label>
-                      <div className="flex flex-wrap gap-2">
+                    <div className="space-y-1">
+                      <Label className="text-xs sm:text-base font-semibold">{t('interests')}</Label>
+                      <div className="flex flex-wrap gap-1 sm:gap-2">
                         {interests.map(interest => (
                           <Badge
                             key={interest}
                             variant={formData.interests.includes(interest) ? 'default' : 'outline'}
-                            className={`cursor-pointer text-sm py-2 px-4 ${
+                            className={`cursor-pointer text-[10px] sm:text-sm py-1 px-2 sm:py-1.5 sm:px-3 ${
                               formData.interests.includes(interest) 
                                 ? 'bg-blue-600 hover:bg-blue-700' 
                                 : 'hover:border-blue-500'
@@ -1311,53 +1310,55 @@ Include water recommendation in liters and detailed equipment list.`,
                       </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <Label className="text-base font-semibold">{language === 'he' ? 'אופי הטיול' : 'Trip Character'}</Label>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <div className="space-y-1">
+                      <Label className="text-xs sm:text-base font-semibold">{language === 'he' ? 'אופי הטיול' : 'Trip Character'}</Label>
+                      <div className="grid grid-cols-3 sm:grid-cols-3 gap-1.5 sm:gap-2">
                         {['families', 'couples', 'seniors', 'singles', 'lgbtq'].map(char => (
                           <Button
                             key={char}
                             type="button"
                             variant={formData.trip_character === char ? 'default' : 'outline'}
                             size="sm"
-                            className={`h-auto py-2 ${
+                            className={`h-auto py-1 sm:py-1.5 text-[10px] sm:text-sm ${
                               formData.trip_character === char
                                 ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
                                 : 'hover:border-emerald-500'
                             }`}
                             onClick={() => handleChange('trip_character', char)}
                           >
-                            {char === 'families' ? (language === 'he' ? 'משפחות' : 'Families') :
-                             char === 'couples' ? (language === 'he' ? 'זוגות' : 'Couples') :
-                             char === 'seniors' ? (language === 'he' ? 'גיל השלישי' : 'Seniors') :
-                             char === 'singles' ? (language === 'he' ? 'היכרויות' : 'Singles') :
+                            {char === 'families' ? (language === 'he' ? 'משפחות' : language === 'ru' ? 'Семьи' : language === 'es' ? 'Familias' : language === 'fr' ? 'Familles' : language === 'de' ? 'Familien' : language === 'it' ? 'Famiglie' : 'Families') :
+                             char === 'couples' ? (language === 'he' ? 'זוגות' : language === 'ru' ? 'Пары' : language === 'es' ? 'Parejas' : language === 'fr' ? 'Couples' : language === 'de' ? 'Paare' : language === 'it' ? 'Coppie' : 'Couples') :
+                             char === 'seniors' ? (language === 'he' ? 'גיל 3' : language === 'ru' ? 'Пожилые' : language === 'es' ? 'Mayores' : language === 'fr' ? 'Seniors' : language === 'de' ? 'Senioren' : language === 'it' ? 'Anziani' : 'Seniors') :
+                             char === 'singles' ? (language === 'he' ? 'רווקים' : language === 'ru' ? 'Одиночки' : language === 'es' ? 'Solteros' : language === 'fr' ? 'Célibataires' : language === 'de' ? 'Singles' : language === 'it' ? 'Single' : 'Singles') :
                              char === 'lgbtq' ? (language === 'he' ? 'להט״ב' : 'LGBTQ+') : char}
                           </Button>
                         ))}
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-4 pt-2">
-                      <div className="flex items-center gap-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="flex items-center gap-1.5 bg-amber-50 p-1.5 sm:p-2 rounded-lg">
                         <Checkbox
                           id="pets"
                           checked={formData.pets_allowed}
                           onCheckedChange={(checked) => handleChange('pets_allowed', checked)}
+                          className="h-3.5 w-3.5 sm:h-4 sm:w-4"
                         />
-                        <Label htmlFor="pets" className="cursor-pointer text-sm flex items-center gap-1">
-                          <Dog className="w-4 h-4" />
-                          {t('petsAllowed')}
+                        <Label htmlFor="pets" className="cursor-pointer text-[10px] sm:text-sm flex items-center gap-0.5 sm:gap-1">
+                          <Dog className="w-3 h-3 sm:w-4 sm:h-4" />
+                          {language === 'he' ? 'חיות' : language === 'ru' ? 'Питомцы' : language === 'es' ? 'Mascotas' : language === 'fr' ? 'Animaux' : language === 'de' ? 'Haustiere' : language === 'it' ? 'Animali' : 'Pets'}
                         </Label>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5 bg-emerald-50 p-1.5 sm:p-2 rounded-lg">
                         <Checkbox
                           id="camping"
                           checked={formData.camping_available}
                           onCheckedChange={(checked) => handleChange('camping_available', checked)}
+                          className="h-3.5 w-3.5 sm:h-4 sm:w-4"
                         />
-                        <Label htmlFor="camping" className="cursor-pointer text-sm flex items-center gap-1">
-                          <Tent className="w-4 h-4" />
-                          {t('campingAvailable')}
+                        <Label htmlFor="camping" className="cursor-pointer text-[10px] sm:text-sm flex items-center gap-0.5 sm:gap-1">
+                          <Tent className="w-3 h-3 sm:w-4 sm:h-4" />
+                          {language === 'he' ? 'קמפינג' : language === 'ru' ? 'Кемпинг' : language === 'es' ? 'Camping' : language === 'fr' ? 'Camping' : language === 'de' ? 'Camping' : language === 'it' ? 'Campeggio' : 'Camping'}
                         </Label>
                       </div>
                     </div>
