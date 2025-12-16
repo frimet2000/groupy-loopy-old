@@ -84,7 +84,7 @@ export default function DailyItinerary({ trip, isOrganizer, onUpdate }) {
       image_url: activityData.image_url || ''
     };
 
-    console.log('newActivity:', newActivity);
+    console.log('newActivity being saved:', newActivity);
 
     const updatedActivities = editingActivity
       ? day.activities.map(a => a.id === editingActivity.id ? newActivity : a)
@@ -94,14 +94,21 @@ export default function DailyItinerary({ trip, isOrganizer, onUpdate }) {
       d.id === selectedDay ? { ...d, activities: updatedActivities } : d
     );
 
+    console.log('updatedItinerary:', JSON.stringify(updatedItinerary, null, 2));
+
     await base44.entities.Trip.update(trip.id, {
       daily_itinerary: updatedItinerary
     });
 
+    console.log('Trip updated successfully, calling onUpdate');
+    
     setShowAddActivity(false);
     setEditingActivity(null);
     setActivityData({ time: '', activity: '', notes: '', image_url: '' });
-    onUpdate();
+    
+    // Call onUpdate which should refetch the trip data
+    await onUpdate();
+    
     toast.success(language === 'he' ? 'הפעילות נשמרה' : language === 'ru' ? 'Активность сохранена' : language === 'es' ? 'Actividad guardada' : language === 'fr' ? 'Activité enregistrée' : language === 'de' ? 'Aktivität gespeichert' : language === 'it' ? 'Attività salvata' : 'Activity saved');
   };
 
