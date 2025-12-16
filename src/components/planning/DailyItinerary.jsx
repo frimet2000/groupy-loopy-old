@@ -72,6 +72,10 @@ export default function DailyItinerary({ trip, isOrganizer, onUpdate }) {
     const day = itinerary.find(d => d.id === selectedDay);
     if (!day) return;
 
+    console.log('=== SAVING ACTIVITY ===');
+    console.log('activityData:', activityData);
+    console.log('image_url:', activityData.image_url);
+
     const newActivity = {
       id: editingActivity?.id || Date.now().toString(),
       time: activityData.time,
@@ -79,6 +83,8 @@ export default function DailyItinerary({ trip, isOrganizer, onUpdate }) {
       notes: activityData.notes,
       image_url: activityData.image_url || ''
     };
+
+    console.log('newActivity:', newActivity);
 
     const updatedActivities = editingActivity
       ? day.activities.map(a => a.id === editingActivity.id ? newActivity : a)
