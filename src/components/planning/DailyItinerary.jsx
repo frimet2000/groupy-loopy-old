@@ -481,7 +481,11 @@ Return the response in ${language === 'he' ? 'Hebrew' : 'English'}.`;
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAddActivity(false)}>
+            <Button variant="outline" onClick={() => {
+              setShowAddActivity(false);
+              setEditingActivity(null);
+              setActivityData({ time: '', activity: '', notes: '', image_url: '' });
+            }}>
               {language === 'he' ? 'ביטול' : language === 'ru' ? 'Отмена' : language === 'es' ? 'Cancelar' : language === 'fr' ? 'Annuler' : language === 'de' ? 'Abbrechen' : language === 'it' ? 'Annulla' : 'Cancel'}
             </Button>
             <Button onClick={handleAddActivity} className="bg-emerald-600 hover:bg-emerald-700">
