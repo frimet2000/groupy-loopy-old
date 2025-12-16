@@ -885,145 +885,69 @@ Include water recommendation in liters and detailed equipment list.`,
                       </Select>
                     </div>
 
-                    <div className={`grid ${formData.country === 'israel' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-3'} gap-4`}>
-                      {formData.country !== 'israel' && (
-                        <div className="space-y-2">
-                          <Label className="text-base font-semibold">{language === 'he' ? 'מחוז/מדינה' : language === 'ru' ? 'Штат/Область' : language === 'es' ? 'Estado/Provincia' : language === 'fr' ? 'État/Province' : language === 'de' ? 'Staat/Provinz' : language === 'it' ? 'Stato/Provincia' : 'State/Province'}</Label>
-                          <Select 
-                            value={formData.region} 
-                            onValueChange={(v) => handleChange('region', v)}
-                            disabled={loadingRegions}
-                          >
-                            <SelectTrigger className="p-4">
-                              <SelectValue placeholder={loadingRegions ? (language === 'he' ? 'טוען...' : 'Loading...') : (language === 'he' ? 'בחר' : 'Select')} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {dynamicRegions.map(r => (
-                                <SelectItem key={r} value={r}>
-                                  {r.charAt(0).toUpperCase() + r.slice(1)}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      )}
-
-                      <div className="space-y-2">
-                        <Label className="text-base font-semibold">{language === 'he' ? 'יישוב/עיר' : 'City/Settlement'}</Label>
-                        {formData.country === 'israel' ? (
-                          <div className="relative">
-                            <Input
-                              value={citySearch}
-                              onChange={(e) => {
-                                setCitySearch(e.target.value);
-                                setFilteredCities(filterCities(e.target.value));
-                              }}
-                              onFocus={() => setFilteredCities(filterCities(citySearch))}
-                              placeholder={language === 'he' ? 'חפש יישוב או עיר...' : 'Search city...'}
-                              className="p-4"
-                              dir="rtl"
-                            />
-                            {citySearch && filteredCities.length > 0 && (
-                              <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                                {filteredCities.slice(0, 50).map(city => (
-                                  <div
-                                    key={city}
-                                    onClick={() => {
-                                      handleChange('region', city);
-                                      handleChange('location', city);
-                                      setCitySearch(city);
-                                      setFilteredCities([]);
-                                    }}
-                                    className="px-4 py-2 hover:bg-emerald-50 cursor-pointer text-right"
-                                  >
-                                    {city}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <Select 
-                            value={formData.sub_region} 
-                            onValueChange={(v) => handleChange('sub_region', v)}
-                            disabled={loadingSubRegions || !formData.region}
-                          >
-                            <SelectTrigger className="p-4">
-                              <SelectValue placeholder={language === 'he' ? 'בחר' : 'Select'} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {dynamicSubRegions.map(item => (
-                                <SelectItem key={item} value={item}>{item}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        )}
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label className="text-base font-semibold">{t('location')} *</Label>
-                        <div className="flex gap-2">
-                          <Input
-                            value={formData.location}
-                            onChange={(e) => {
-                              handleChange('location', e.target.value);
-                              if (missingFields.includes('location')) {
-                                setMissingFields(prev => prev.filter(f => f !== 'location'));
-                              }
-                            }}
-                            className={missingFields.includes('location') ? 'border-2 border-red-500 bg-red-50' : ''}
-                            placeholder={
-                              formData.country === 'israel' 
-                                ? (language === 'he' ? 'לדוגמה: נחל עמוד, מצדה, עין גדי' : 'e.g., Nahal Amud, Masada, Ein Gedi')
-                              : formData.country === 'usa'
-                                ? (language === 'he' ? 'לדוגמה: Grand Canyon, Yosemite' : language === 'es' ? 'ej., Grand Canyon, Yosemite' : language === 'fr' ? 'ex., Grand Canyon, Yosemite' : language === 'de' ? 'z.B. Grand Canyon, Yosemite' : language === 'it' ? 'es., Grand Canyon, Yosemite' : 'e.g., Grand Canyon, Yosemite')
-                              : formData.country === 'france'
-                                ? (language === 'fr' ? 'ex., Mont Blanc, Chamonix, Verdon' : language === 'he' ? 'לדוגמה: Mont Blanc, Chamonix' : language === 'es' ? 'ej., Mont Blanc, Chamonix' : language === 'de' ? 'z.B. Mont Blanc, Chamonix' : language === 'it' ? 'es., Mont Blanc, Chamonix' : 'e.g., Mont Blanc, Chamonix')
-                              : formData.country === 'spain'
-                                ? (language === 'es' ? 'ej., Sierra de Guadarrama, Picos de Europa' : language === 'he' ? 'לדוגמה: Sierra de Guadarrama' : language === 'fr' ? 'ex., Sierra de Guadarrama' : language === 'de' ? 'z.B. Sierra de Guadarrama' : language === 'it' ? 'es., Sierra de Guadarrama' : 'e.g., Sierra de Guadarrama')
-                              : formData.country === 'italy'
-                                ? (language === 'it' ? 'es., Dolomiti, Cinque Terre, Lago di Como' : language === 'he' ? 'לדוגמה: Dolomiti, Cinque Terre' : language === 'es' ? 'ej., Dolomiti, Cinque Terre' : language === 'fr' ? 'ex., Dolomiti, Cinque Terre' : language === 'de' ? 'z.B. Dolomiti, Cinque Terre' : 'e.g., Dolomiti, Cinque Terre')
-                              : formData.country === 'germany'
-                                ? (language === 'de' ? 'z.B. Schwarzwald, Alpen, Harz' : language === 'he' ? 'לדוגמה: Schwarzwald, Alpen' : language === 'es' ? 'ej., Schwarzwald, Alpen' : language === 'fr' ? 'ex., Schwarzwald, Alpen' : language === 'it' ? 'es., Schwarzwald, Alpen' : 'e.g., Black Forest, Alps')
-                              : formData.country === 'switzerland'
-                                ? (language === 'de' ? 'z.B. Matterhorn, Jungfrau, Interlaken' : language === 'fr' ? 'ex., Matterhorn, Jungfrau' : language === 'it' ? 'es., Matterhorn, Jungfrau' : language === 'he' ? 'לדוגמה: Matterhorn, Jungfrau' : 'e.g., Matterhorn, Jungfrau')
-                              : formData.country === 'norway'
-                                ? (language === 'he' ? 'לדוגמה: Trolltunga, Preikestolen' : language === 'es' ? 'ej., Trolltunga, Preikestolen' : language === 'fr' ? 'ex., Trolltunga, Preikestolen' : language === 'de' ? 'z.B. Trolltunga, Preikestolen' : language === 'it' ? 'es., Trolltunga, Preikestolen' : 'e.g., Trolltunga, Preikestolen')
-                              : formData.country === 'new_zealand'
-                                ? (language === 'he' ? 'לדוגמה: Milford Sound, Mount Cook' : 'e.g., Milford Sound, Mount Cook')
-                              : formData.country === 'japan'
-                                ? (language === 'he' ? 'לדוגמה: Mount Fuji, Kyoto' : language === 'es' ? 'ej., Monte Fuji, Kioto' : language === 'fr' ? 'ex., Mont Fuji, Kyoto' : language === 'de' ? 'z.B. Fuji, Kyoto' : language === 'it' ? 'es., Monte Fuji, Kyoto' : 'e.g., Mount Fuji, Kyoto')
-                              : (language === 'he' ? 'שם מדויק של המיקום' : language === 'es' ? 'Nombre específico' : language === 'fr' ? 'Nom spécifique' : language === 'de' ? 'Spezifischer Name' : language === 'it' ? 'Nome specifico' : 'Specific location name')
+                    <div className="space-y-2">
+                      <Label className="text-base font-semibold">{t('location')} *</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          value={formData.location}
+                          onChange={(e) => {
+                            handleChange('location', e.target.value);
+                            if (missingFields.includes('location')) {
+                              setMissingFields(prev => prev.filter(f => f !== 'location'));
                             }
-                            className="flex-1 p-4"
-                            dir={isRTL ? 'rtl' : 'ltr'}
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={handleLocationSearch}
-                            disabled={searchingLocation}
-                            className="gap-2 px-4"
-                          >
-                            {searchingLocation ? (
-                              <Loader2 className="w-5 h-5 animate-spin" />
-                            ) : (
-                              <Navigation className="w-5 h-5" />
-                            )}
-                          </Button>
-                        </div>
-                        {formData.latitude && formData.longitude && (
-                          <p className="text-sm text-green-600 flex items-center gap-1">
-                            <MapPin className="w-4 h-4" />
-                            {language === 'he' ? 'מיקום נמצא במפה' : language === 'ru' ? 'Местоположение найдено' : language === 'es' ? 'Ubicación encontrada' : language === 'fr' ? 'Emplacement trouvé' : language === 'de' ? 'Standort gefunden' : language === 'it' ? 'Posizione trovata' : 'Location found on map'}
-                          </p>
-                        )}
-                        {missingFields.includes('location') && (
-                          <p className="text-red-600 text-sm font-semibold animate-bounce">
-                            {language === 'he' ? '⚠️ שדה חובה - נא להזין מיקום' : '⚠️ Required field - please enter location'}
-                          </p>
-                        )}
+                          }}
+                          className={missingFields.includes('location') ? 'border-2 border-red-500 bg-red-50' : ''}
+                          placeholder={
+                            formData.country === 'israel' 
+                              ? (language === 'he' ? 'לדוגמה: נחל עמוד, מצדה, עין גדי' : 'e.g., Nahal Amud, Masada, Ein Gedi')
+                            : formData.country === 'usa'
+                              ? (language === 'he' ? 'לדוגמה: Grand Canyon, Yosemite' : language === 'es' ? 'ej., Grand Canyon, Yosemite' : language === 'fr' ? 'ex., Grand Canyon, Yosemite' : language === 'de' ? 'z.B. Grand Canyon, Yosemite' : language === 'it' ? 'es., Grand Canyon, Yosemite' : 'e.g., Grand Canyon, Yosemite')
+                            : formData.country === 'france'
+                              ? (language === 'fr' ? 'ex., Mont Blanc, Chamonix, Verdon' : language === 'he' ? 'לדוגמה: Mont Blanc, Chamonix' : language === 'es' ? 'ej., Mont Blanc, Chamonix' : language === 'de' ? 'z.B. Mont Blanc, Chamonix' : language === 'it' ? 'es., Mont Blanc, Chamonix' : 'e.g., Mont Blanc, Chamonix')
+                            : formData.country === 'spain'
+                              ? (language === 'es' ? 'ej., Sierra de Guadarrama, Picos de Europa' : language === 'he' ? 'לדוגמה: Sierra de Guadarrama' : language === 'fr' ? 'ex., Sierra de Guadarrama' : language === 'de' ? 'z.B. Sierra de Guadarrama' : language === 'it' ? 'es., Sierra de Guadarrama' : 'e.g., Sierra de Guadarrama')
+                            : formData.country === 'italy'
+                              ? (language === 'it' ? 'es., Dolomiti, Cinque Terre, Lago di Como' : language === 'he' ? 'לדוגמה: Dolomiti, Cinque Terre' : language === 'es' ? 'ej., Dolomiti, Cinque Terre' : language === 'fr' ? 'ex., Dolomiti, Cinque Terre' : language === 'de' ? 'z.B. Dolomiti, Cinque Terre' : 'e.g., Dolomiti, Cinque Terre')
+                            : formData.country === 'germany'
+                              ? (language === 'de' ? 'z.B. Schwarzwald, Alpen, Harz' : language === 'he' ? 'לדוגמה: Schwarzwald, Alpen' : language === 'es' ? 'ej., Schwarzwald, Alpen' : language === 'fr' ? 'ex., Schwarzwald, Alpen' : language === 'it' ? 'es., Schwarzwald, Alpen' : 'e.g., Black Forest, Alps')
+                            : formData.country === 'switzerland'
+                              ? (language === 'de' ? 'z.B. Matterhorn, Jungfrau, Interlaken' : language === 'fr' ? 'ex., Matterhorn, Jungfrau' : language === 'it' ? 'es., Matterhorn, Jungfrau' : language === 'he' ? 'לדוגמה: Matterhorn, Jungfrau' : 'e.g., Matterhorn, Jungfrau')
+                            : formData.country === 'norway'
+                              ? (language === 'he' ? 'לדוגמה: Trolltunga, Preikestolen' : language === 'es' ? 'ej., Trolltunga, Preikestolen' : language === 'fr' ? 'ex., Trolltunga, Preikestolen' : language === 'de' ? 'z.B. Trolltunga, Preikestolen' : language === 'it' ? 'es., Trolltunga, Preikestolen' : 'e.g., Trolltunga, Preikestolen')
+                            : formData.country === 'new_zealand'
+                              ? (language === 'he' ? 'לדוגמה: Milford Sound, Mount Cook' : 'e.g., Milford Sound, Mount Cook')
+                            : formData.country === 'japan'
+                              ? (language === 'he' ? 'לדוגמה: Mount Fuji, Kyoto' : language === 'es' ? 'ej., Monte Fuji, Kioto' : language === 'fr' ? 'ex., Mont Fuji, Kyoto' : language === 'de' ? 'z.B. Fuji, Kyoto' : language === 'it' ? 'es., Monte Fuji, Kyoto' : 'e.g., Mount Fuji, Kyoto')
+                            : (language === 'he' ? 'שם מדויק של המיקום' : language === 'es' ? 'Nombre específico' : language === 'fr' ? 'Nom spécifique' : language === 'de' ? 'Spezifischer Name' : language === 'it' ? 'Nome specifico' : 'Specific location name')
+                          }
+                          className="flex-1 p-4"
+                          dir={isRTL ? 'rtl' : 'ltr'}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={handleLocationSearch}
+                          disabled={searchingLocation}
+                          className="gap-2 px-4"
+                        >
+                          {searchingLocation ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                          ) : (
+                            <Navigation className="w-5 h-5" />
+                          )}
+                        </Button>
                       </div>
+                      {formData.latitude && formData.longitude && (
+                        <p className="text-sm text-green-600 flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          {language === 'he' ? 'מיקום נמצא במפה' : language === 'ru' ? 'Местоположение найдено' : language === 'es' ? 'Ubicación encontrada' : language === 'fr' ? 'Emplacement trouvé' : language === 'de' ? 'Standort gefunden' : language === 'it' ? 'Posizione trovata' : 'Location found on map'}
+                        </p>
+                      )}
+                      {missingFields.includes('location') && (
+                        <p className="text-red-600 text-sm font-semibold animate-bounce">
+                          {language === 'he' ? '⚠️ שדה חובה - נא להזין מיקום' : '⚠️ Required field - please enter location'}
+                        </p>
+                      )}
                     </div>
                     </div>
 
