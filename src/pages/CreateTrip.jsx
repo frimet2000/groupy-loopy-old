@@ -996,6 +996,7 @@ Include water recommendation in liters and detailed equipment list.`,
                               : (language === 'he' ? 'שם מדויק של המיקום' : language === 'es' ? 'Nombre específico' : language === 'fr' ? 'Nom spécifique' : language === 'de' ? 'Spezifischer Name' : language === 'it' ? 'Nome specifico' : 'Specific location name')
                             }
                             className="flex-1 p-4"
+                            dir={isRTL ? 'rtl' : 'ltr'}
                           />
                           <Button
                             type="button"
@@ -1023,6 +1024,7 @@ Include water recommendation in liters and detailed equipment list.`,
                           </p>
                         )}
                       </div>
+                    </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
