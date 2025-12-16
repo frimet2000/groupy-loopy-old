@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, Share2, SlidersHorizontal, List, Globe, Heart, Radio, Bike, Mountain, Truck } from 'lucide-react';
+import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, Share2, SlidersHorizontal, List, Globe, Heart, Radio, Bike, Mountain, Truck, History } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from 'framer-motion';
@@ -119,6 +119,13 @@ export default function Home() {
       if (!isInvitedOrParticipant) return false;
     }
 
+    // Only show future trips in main section
+    const tripDate = new Date(trip.date);
+    tripDate.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (tripDate < today) return false;
+
     return true;
   }).sort((a, b) => {
     // Smart sorting: prioritize user's location and interests
@@ -173,6 +180,33 @@ export default function Home() {
         return 0;
     }
   });
+
+  // Get past trips
+  const pastTrips = trips.filter(trip => {
+    const tripDate = new Date(trip.date);
+    tripDate.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (tripDate >= today) return false;
+    if (trip.status !== 'open' && trip.status !== 'completed') return false;
+    
+    // Apply same privacy filters
+    if (trip.privacy === 'private') {
+      if (!user) return false;
+      const isOrganizerOrParticipant = trip.organizer_email === user.email || 
+        trip.participants?.some(p => p.email === user.email);
+      if (!isOrganizerOrParticipant) return false;
+    } else if (trip.privacy === 'invite_only') {
+      if (!user) return false;
+      const isInvitedOrParticipant = trip.invited_emails?.includes(user.email) ||
+        trip.organizer_email === user.email ||
+        trip.participants?.some(p => p.email === user.email);
+      if (!isInvitedOrParticipant) return false;
+    }
+    
+    return true;
+  }).sort((a, b) => new Date(b.date) - new Date(a.date));
 
   // Group trips by country
   const tripsByCountry = filteredTrips.reduce((acc, trip) => {
@@ -875,6 +909,67 @@ export default function Home() {
           </motion.div>
         )}
       </section>
+
+      {/* Past Trips Section */}
+      {pastTrips.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-6 pb-20 sm:pb-8">
+          <div className="flex items-center gap-2 sm:gap-3 mb-6">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+            <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm">
+              <History className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
+              <h3 className="text-lg sm:text-2xl font-bold text-gray-700">
+                {language === 'he' ? 'טיולים שהיו' : language === 'ru' ? 'Прошедшие поездки' : language === 'es' ? 'Viajes pasados' : language === 'fr' ? 'Voyages passés' : language === 'de' ? 'Vergangene Reisen' : language === 'it' ? 'Viaggi passati' : 'Past Trips'}
+              </h3>
+              <Badge variant="secondary" className="bg-gray-200 text-gray-700 font-semibold text-xs sm:text-sm">
+                {pastTrips.length}
+              </Badge>
+            </div>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+          </div>
+
+          <motion.div 
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.08 }
+              }
+            }}
+          >
+            {pastTrips.map((trip) => (
+              <motion.div
+                key={trip.id}
+                variants={{
+                  hidden: { opacity: 0, y: 30, scale: 0.95 },
+                  visible: { 
+                    opacity: 1, 
+                    y: 0,
+                    scale: 1,
+                    transition: {
+                      type: "spring",
+                      stiffness: 100,
+                      damping: 12
+                    }
+                  }
+                }}
+                whileHover={{ 
+                  y: -8,
+                  transition: { duration: 0.3 }
+                }}
+                className="group relative opacity-75 hover:opacity-100 transition-opacity"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-400/0 to-gray-400/0 group-hover:from-gray-400/20 group-hover:to-gray-500/20 rounded-2xl blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
+                <div className="relative">
+                  <TripCard trip={trip} />
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </section>
+      )}
 
       {/* Live Trips Dialog */}
       <Dialog open={showLiveTripsDialog} onOpenChange={setShowLiveTripsDialog}>
