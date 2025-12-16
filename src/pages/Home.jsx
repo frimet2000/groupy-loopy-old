@@ -305,7 +305,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-20">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-20 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] backdrop-blur-sm">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
