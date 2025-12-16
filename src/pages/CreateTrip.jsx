@@ -651,6 +651,15 @@ Include water recommendation in liters and detailed equipment list.`,
         Object.entries(formData).filter(([_, v]) => v !== undefined && v !== null && v !== '')
       );
 
+      // Clean budget - convert empty strings to null or remove them
+      const cleanBudget = {};
+      if (budget.solo_min && budget.solo_min !== '') cleanBudget.solo_min = Number(budget.solo_min);
+      if (budget.solo_max && budget.solo_max !== '') cleanBudget.solo_max = Number(budget.solo_max);
+      if (budget.family_min && budget.family_min !== '') cleanBudget.family_min = Number(budget.family_min);
+      if (budget.family_max && budget.family_max !== '') cleanBudget.family_max = Number(budget.family_max);
+      if (budget.currency) cleanBudget.currency = budget.currency;
+      if (budget.notes) cleanBudget.notes = budget.notes;
+
       const tripData = {
         ...cleanFormData,
         current_participants: 1,
@@ -671,7 +680,7 @@ Include water recommendation in liters and detailed equipment list.`,
         equipment_checklist: equipment || [],
         recommended_water_liters: waterRecommendation || null,
         daily_itinerary: itinerary || [],
-        budget: budget || {}
+        budget: Object.keys(cleanBudget).length > 0 ? cleanBudget : undefined
       };
 
       const createdTrip = await base44.entities.Trip.create(tripData);
