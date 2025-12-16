@@ -292,30 +292,32 @@ function LayoutContent({ children, currentPageName }) {
         {children}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 py-2 mt-12">
-        <div className="max-w-7xl mx-auto px-2">
-          <div className="flex items-center justify-center gap-1 text-[10px] text-gray-500 whitespace-nowrap overflow-x-auto">
-            <span>© 2025 Groupy Loopy</span>
-            <span>•</span>
-            <Link to={createPageUrl('PrivacyPolicy')} className="hover:text-emerald-600">
-              {language === 'he' ? 'פרטיות' : 'Privacy'}
-            </Link>
-            <span>•</span>
-            <Link to={createPageUrl('TermsOfUse')} className="hover:text-emerald-600">
-              {language === 'he' ? 'תנאים' : 'Terms'}
-            </Link>
-            <span>•</span>
-            <Link to={createPageUrl('AccessibilityStatement')} className="hover:text-emerald-600">
-              {language === 'he' ? 'נגישות' : 'Accessibility'}
-            </Link>
-            <span>•</span>
-            <Link to={createPageUrl('AboutUs')} className="hover:text-emerald-600">
-              {language === 'he' ? 'אודות' : 'About'}
-            </Link>
+      {/* Footer - Only on Home page */}
+      {currentPageName === 'Home' && (
+        <footer className="bg-white border-t border-gray-200 py-2 mt-12">
+          <div className="max-w-7xl mx-auto px-2">
+            <div className="flex items-center justify-center gap-1 text-[10px] text-gray-500 whitespace-nowrap overflow-x-auto">
+              <span>© 2025 Groupy Loopy</span>
+              <span>•</span>
+              <Link to={createPageUrl('PrivacyPolicy')} className="hover:text-emerald-600">
+                {language === 'he' ? 'פרטיות' : 'Privacy'}
+              </Link>
+              <span>•</span>
+              <Link to={createPageUrl('TermsOfUse')} className="hover:text-emerald-600">
+                {language === 'he' ? 'תנאים' : 'Terms'}
+              </Link>
+              <span>•</span>
+              <Link to={createPageUrl('AccessibilityStatement')} className="hover:text-emerald-600">
+                {language === 'he' ? 'נגישות' : 'Accessibility'}
+              </Link>
+              <span>•</span>
+              <Link to={createPageUrl('AboutUs')} className="hover:text-emerald-600">
+                {language === 'he' ? 'אודות' : 'About'}
+              </Link>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      )}
 
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 safe-area-inset-bottom z-50 shadow-2xl">
