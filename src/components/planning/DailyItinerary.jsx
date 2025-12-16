@@ -330,6 +330,12 @@ Return the response in ${language === 'he' ? 'Hebrew' : 'English'}.`;
                                   onClick={() => {
                                     setSelectedDay(day.id);
                                     setEditingActivity(activity);
+                                    setActivityData({
+                                      time: activity.time || '',
+                                      activity: activity.activity || '',
+                                      notes: activity.notes || '',
+                                      image_url: activity.image_url || ''
+                                    });
                                     setShowAddActivity(true);
                                   }}
                                 >
