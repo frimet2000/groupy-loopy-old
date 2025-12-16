@@ -254,7 +254,7 @@ Return the response in ${language === 'he' ? 'Hebrew' : 'English'}.`;
                             }}
                           >
                             <Plus className="w-3 h-3 mr-1" />
-                            {language === 'he' ? 'פעילות' : 'Activity'}
+                            {language === 'he' ? 'פעילות' : language === 'ru' ? 'Активность' : language === 'es' ? 'Actividad' : language === 'fr' ? 'Activité' : language === 'de' ? 'Aktivität' : language === 'it' ? 'Attività' : 'Activity'}
                           </Button>
                           <Button
                             size="sm"
