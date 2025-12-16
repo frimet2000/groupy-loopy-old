@@ -385,41 +385,55 @@ export default function TripDetails() {
     queryClient.invalidateQueries(['trip', tripId]);
   };
 
-  const handleAddToCalendar = async () => {
-    if (!user) {
-      base44.auth.redirectToLogin(window.location.href);
-      return;
+  const handleAddToCalendar = () => {
+    // Create Google Calendar event URL - no authentication needed!
+    const title = trip.title || trip.title_he || trip.title_en || 'Trip';
+    const description = trip.description || trip.description_he || trip.description_en || '';
+    const location = trip.location || '';
+    
+    // Calculate end time based on duration
+    let endDate = new Date(trip.date);
+    if (trip.duration_type === 'hours' && trip.duration_value) {
+      endDate.setHours(endDate.getHours() + trip.duration_value);
+    } else if (trip.duration_type === 'half_day') {
+      endDate.setHours(endDate.getHours() + 4);
+    } else if (trip.duration_type === 'full_day') {
+      endDate.setDate(endDate.getDate() + 1);
+    } else if (trip.duration_type === 'overnight') {
+      endDate.setDate(endDate.getDate() + 1);
+    } else if (trip.duration_type === 'multi_day' && trip.duration_value) {
+      endDate.setDate(endDate.getDate() + trip.duration_value);
+    } else {
+      endDate.setHours(endDate.getHours() + 2);
     }
 
-    setAddingToCalendar(true);
-    try {
-      const { event_link } = await base44.functions.invoke('createCalendarEvent', {
-        trip_id: tripId
-      });
-      
-      window.open(event_link, '_blank');
-      
-      toast.success(
-        language === 'he' ? 'הפגישה נוצרה ביומן Google' : 
-        language === 'ru' ? 'Встреча создана в Google Calendar' : 
-        language === 'es' ? 'Reunión creada en Google Calendar' :
-        language === 'fr' ? 'Réunion créée dans Google Agenda' :
-        language === 'de' ? 'Termin in Google Kalender erstellt' :
-        language === 'it' ? 'Evento creato in Google Calendar' :
-        'Meeting created in Google Calendar'
-      );
-    } catch (error) {
-      toast.error(
-        language === 'he' ? 'שגיאה ביצירת פגישה' : 
-        language === 'ru' ? 'Ошибка создания встречи' : 
-        language === 'es' ? 'Error al crear reunión' :
-        language === 'fr' ? 'Erreur de création de réunion' :
-        language === 'de' ? 'Fehler beim Erstellen des Termins' :
-        language === 'it' ? 'Errore nella creazione dell\'evento' :
-        'Error creating meeting'
-      );
+    // Format dates for Google Calendar (YYYYMMDDTHHMMSSZ)
+    const formatGoogleDate = (date) => {
+      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    };
+
+    const startDate = new Date(trip.date);
+    if (trip.meeting_time) {
+      const [hours, minutes] = trip.meeting_time.split(':');
+      startDate.setHours(parseInt(hours), parseInt(minutes));
+    } else {
+      startDate.setHours(9, 0); // Default to 9 AM
     }
-    setAddingToCalendar(false);
+
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&details=${encodeURIComponent(description)}&location=${encodeURIComponent(location)}&dates=${formatGoogleDate(startDate)}/${formatGoogleDate(endDate)}`;
+
+    // Open Google Calendar in new tab
+    window.open(googleCalendarUrl, '_blank');
+    
+    toast.success(
+      language === 'he' ? 'נפתח יומן Google' : 
+      language === 'ru' ? 'Открытие Google Calendar' : 
+      language === 'es' ? 'Abriendo Google Calendar' :
+      language === 'fr' ? 'Ouverture de Google Agenda' :
+      language === 'de' ? 'Google Kalender wird geöffnet' :
+      language === 'it' ? 'Apertura di Google Calendar' :
+      'Opening Google Calendar'
+    );
   };
 
   const handleStartEdit = () => {
