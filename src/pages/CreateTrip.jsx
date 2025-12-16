@@ -640,8 +640,11 @@ Include water recommendation in liters and detailed equipment list.`,
   };
 
   const saveTrip = async () => {
-    setShowWaiver(false);
     setSaving(true);
+    
+    // סוגר את הדיאלוג אחרי שמסך הטעינה מופיע
+    await new Promise(resolve => setTimeout(resolve, 50));
+    setShowWaiver(false);
     
     try {
       const cleanFormData = Object.fromEntries(
