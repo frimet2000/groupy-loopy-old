@@ -238,7 +238,7 @@ export default function Home() {
       <AnnouncementToast />
       
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-teal-900 to-emerald-950 text-white min-h-[60vh] md:min-h-[85vh] flex items-center touch-manipulation">
+      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-teal-900 to-emerald-950 text-white min-h-[60vh] md:min-h-[85vh] flex items-center touch-manipulation mx-4 sm:mx-6 my-6 rounded-[2.5rem] shadow-[0_20px_80px_rgba(0,0,0,0.5),0_0_60px_rgba(16,185,129,0.3),inset_0_1px_0_rgba(255,255,255,0.1)]">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <img
@@ -305,7 +305,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-20 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] backdrop-blur-sm">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-20">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -317,7 +317,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="inline-flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 backdrop-blur-sm border border-emerald-400/30 rounded-full px-3 py-1.5 sm:px-5 sm:py-2 mb-4 sm:mb-8"
+              className="inline-flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-emerald-500/30 to-teal-500/30 backdrop-blur-md border border-emerald-400/40 rounded-full px-3 py-1.5 sm:px-5 sm:py-2 mb-4 sm:mb-8 shadow-[0_4px_20px_rgba(16,185,129,0.4)]"
             >
               <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -432,8 +432,8 @@ export default function Home() {
                 whileHover={{ scale: 1.05, y: -4 }}
                 className="group relative flex-1 min-w-[90px]"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/30 to-teal-400/30 rounded-xl sm:rounded-2xl blur-lg sm:blur-xl group-hover:blur-xl sm:group-hover:blur-2xl transition-all" />
-                <div className="relative flex items-center gap-2 sm:gap-4 bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl px-3 sm:px-8 py-3 sm:py-5 border border-white/20">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/40 to-teal-400/40 rounded-2xl blur-2xl group-hover:blur-3xl transition-all" />
+                <div className="relative flex items-center gap-2 sm:gap-4 bg-white/15 backdrop-blur-xl rounded-2xl px-3 sm:px-8 py-3 sm:py-5 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.2)]">
                   <div className="p-1.5 sm:p-3 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-lg sm:rounded-xl">
                     <stat.icon className={`w-5 h-5 sm:w-8 sm:h-8 ${stat.color}`} />
                   </div>
