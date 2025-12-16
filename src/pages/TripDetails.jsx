@@ -90,6 +90,7 @@ export default function TripDetails() {
   const [showWaiver, setShowWaiver] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [addingToCalendar, setAddingToCalendar] = useState(false);
+  const [showNavigationDialog, setShowNavigationDialog] = useState(false);
   
   const accessibilityTypes = ['wheelchair', 'visual_impairment', 'hearing_impairment', 'mobility_aid', 'stroller_friendly', 'elderly_friendly'];
 
@@ -1321,9 +1322,7 @@ export default function TripDetails() {
               </TabsTrigger>
               <TabsTrigger value="navigate" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-green-50 data-[state=active]:text-green-700 py-3" onClick={(e) => {
                 e.preventDefault();
-                if (trip.latitude && trip.longitude) {
-                  window.open(`https://www.google.com/maps/dir/?api=1&destination=${trip.latitude},${trip.longitude}`, '_blank');
-                }
+                setShowNavigationDialog(true);
               }}>
                 <Navigation className="w-4 h-4 text-green-600 sm:hidden" />
                 <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'נווט' : language === 'ru' ? 'Навиг.' : language === 'es' ? 'Navegar' : language === 'fr' ? 'Naviguer' : language === 'de' ? 'Navigieren' : language === 'it' ? 'Navigare' : 'Navigate'}</span>
@@ -1929,6 +1928,48 @@ export default function TripDetails() {
         onDecline={handleWaiverDecline}
         tripTitle={title}
       />
+
+      {/* Navigation Choice Dialog */}
+      <Dialog open={showNavigationDialog} onOpenChange={setShowNavigationDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              {language === 'he' ? 'בחר אפליקציית ניווט' : 'Choose Navigation App'}
+            </DialogTitle>
+            <DialogDescription className="text-center">
+              {language === 'he' 
+                ? 'איך תרצה לנווט ליעד?'
+                : 'How would you like to navigate to the destination?'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid grid-cols-2 gap-4 py-4">
+            <Button
+              onClick={() => {
+                const wazeUrl = `https://waze.com/ul?ll=${trip.latitude},${trip.longitude}&navigate=yes`;
+                window.open(wazeUrl, '_blank');
+                setShowNavigationDialog(false);
+              }}
+              className="h-24 flex flex-col gap-2 bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
+            >
+              <div className="text-3xl">🚗</div>
+              <span className="font-semibold">Waze</span>
+            </Button>
+            
+            <Button
+              onClick={() => {
+                const googleUrl = `https://www.google.com/maps/dir/?api=1&destination=${trip.latitude},${trip.longitude}`;
+                window.open(googleUrl, '_blank');
+                setShowNavigationDialog(false);
+              }}
+              className="h-24 flex flex-col gap-2 bg-gradient-to-br from-red-500 to-yellow-500 hover:from-red-600 hover:to-yellow-600"
+            >
+              <div className="text-3xl">🗺️</div>
+              <span className="font-semibold">Google Maps</span>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       </div>
       );
       }
