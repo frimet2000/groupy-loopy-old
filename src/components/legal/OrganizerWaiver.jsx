@@ -22,7 +22,8 @@ export default function OrganizerWaiver({ open, onAccept, onDecline }) {
   const [currentSection, setCurrentSection] = useState(0);
   
   const handleNextSection = () => {
-    setCurrentSection(currentSection + 1);
+    console.log('Advancing from section', currentSection, 'to', currentSection + 1);
+    setCurrentSection(prev => prev + 1);
   };
 
   useEffect(() => {
