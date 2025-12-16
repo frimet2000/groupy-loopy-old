@@ -1306,36 +1306,18 @@ export default function TripDetails() {
           </Card>
 
           <Tabs defaultValue="details" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-11 h-auto bg-white border shadow-sm mb-6">
+            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-11 h-auto bg-white border shadow-sm mb-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
               <TabsTrigger value="details" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 py-3">
                 <Info className="w-4 h-4 text-emerald-600 sm:hidden" />
                 <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'פרטים' : language === 'ru' ? 'Детали' : language === 'es' ? 'Detalles' : language === 'fr' ? 'Détails' : language === 'de' ? 'Details' : language === 'it' ? 'Dettagli' : 'Details'}</span>
                 <Info className="w-4 h-4 text-emerald-600 hidden sm:block" />
                 <span className="hidden sm:inline">{language === 'he' ? 'פרטים' : language === 'ru' ? 'Детали' : language === 'es' ? 'Detalles' : language === 'fr' ? 'Détails' : language === 'de' ? 'Details' : language === 'it' ? 'Dettagli' : 'Details'}</span>
               </TabsTrigger>
-              <TabsTrigger value="participants" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 py-3">
-                <Users className="w-4 h-4 text-blue-600 sm:hidden" />
-                <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'משתתפים' : language === 'ru' ? 'Люди' : language === 'es' ? 'Gente' : language === 'fr' ? 'Personnes' : language === 'de' ? 'Leute' : language === 'it' ? 'Persone' : 'People'}</span>
-                <Users className="w-4 h-4 text-blue-600 hidden sm:block" />
-                <span className="hidden sm:inline">{language === 'he' ? 'משתתפים' : language === 'ru' ? 'Участники' : language === 'es' ? 'Participantes' : language === 'fr' ? 'Participants' : language === 'de' ? 'Teilnehmer' : language === 'it' ? 'Partecipanti' : 'Participants'}</span>
-              </TabsTrigger>
               <TabsTrigger value="map" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700 py-3">
                 <MapPin className="w-4 h-4 text-purple-600 sm:hidden" />
                 <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'מפה' : language === 'ru' ? 'Карта' : language === 'es' ? 'Mapa' : language === 'fr' ? 'Carte' : language === 'de' ? 'Karte' : language === 'it' ? 'Mappa' : 'Map'}</span>
                 <MapPin className="w-4 h-4 text-purple-600 hidden sm:block" />
                 <span className="hidden sm:inline">{language === 'he' ? 'מפה' : language === 'ru' ? 'Карта' : language === 'es' ? 'Mapa' : language === 'fr' ? 'Carte' : language === 'de' ? 'Karte' : language === 'it' ? 'Mappa' : 'Map'}</span>
-              </TabsTrigger>
-              <TabsTrigger value="equipment" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 py-3">
-                <Backpack className="w-4 h-4 text-indigo-600 sm:hidden" />
-                <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'ציוד' : language === 'ru' ? 'Снаряжение' : language === 'es' ? 'Equipo' : language === 'fr' ? 'Équipement' : language === 'de' ? 'Ausrüstung' : language === 'it' ? 'Attrezzatura' : 'Gear'}</span>
-                <Backpack className="w-4 h-4 text-indigo-600 hidden sm:block" />
-                <span className="hidden sm:inline">{language === 'he' ? 'ציוד' : language === 'ru' ? 'Снаряжение' : language === 'es' ? 'Equipo' : language === 'fr' ? 'Équipement' : language === 'de' ? 'Ausrüstung' : language === 'it' ? 'Attrezzatura' : 'Equipment'}</span>
-              </TabsTrigger>
-              <TabsTrigger value="social" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-sky-50 data-[state=active]:text-sky-700 py-3">
-                <MessageCircle className="w-4 h-4 text-sky-600 sm:hidden" />
-                <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'חברתי' : language === 'ru' ? 'Соцсети' : language === 'es' ? 'Social' : language === 'fr' ? 'Social' : language === 'de' ? 'Sozial' : language === 'it' ? 'Sociale' : 'Social'}</span>
-                <MessageCircle className="w-4 h-4 text-sky-600 hidden sm:block" />
-                <span className="hidden sm:inline">{language === 'he' ? 'חברתי' : language === 'ru' ? 'Соцсети' : language === 'es' ? 'Social' : language === 'fr' ? 'Social' : language === 'de' ? 'Sozial' : language === 'it' ? 'Sociale' : 'Social'}</span>
               </TabsTrigger>
               <TabsTrigger value="navigate" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-green-50 data-[state=active]:text-green-700 py-3" onClick={(e) => {
                 e.preventDefault();
@@ -1348,6 +1330,18 @@ export default function TripDetails() {
                 <Navigation className="w-4 h-4 text-green-600 hidden sm:block" />
                 <span className="hidden sm:inline">{language === 'he' ? 'נווט ליעד' : language === 'ru' ? 'Навигация' : language === 'es' ? 'Navegar' : language === 'fr' ? 'Naviguer' : language === 'de' ? 'Navigieren' : language === 'it' ? 'Navigare' : 'Navigate'}</span>
               </TabsTrigger>
+              <TabsTrigger value="participants" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 py-3">
+                <Users className="w-4 h-4 text-blue-600 sm:hidden" />
+                <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'משתתפים' : language === 'ru' ? 'Люди' : language === 'es' ? 'Gente' : language === 'fr' ? 'Personnes' : language === 'de' ? 'Leute' : language === 'it' ? 'Persone' : 'People'}</span>
+                <Users className="w-4 h-4 text-blue-600 hidden sm:block" />
+                <span className="hidden sm:inline">{language === 'he' ? 'משתתפים' : language === 'ru' ? 'Участники' : language === 'es' ? 'Participantes' : language === 'fr' ? 'Participants' : language === 'de' ? 'Teilnehmer' : language === 'it' ? 'Partecipanti' : 'Participants'}</span>
+              </TabsTrigger>
+              <TabsTrigger value="equipment" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 py-3">
+                <Backpack className="w-4 h-4 text-indigo-600 sm:hidden" />
+                <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'ציוד' : language === 'ru' ? 'Снаряжение' : language === 'es' ? 'Equipo' : language === 'fr' ? 'Équipement' : language === 'de' ? 'Ausrüstung' : language === 'it' ? 'Attrezzatura' : 'Gear'}</span>
+                <Backpack className="w-4 h-4 text-indigo-600 hidden sm:block" />
+                <span className="hidden sm:inline">{language === 'he' ? 'ציוד' : language === 'ru' ? 'Снаряжение' : language === 'es' ? 'Equipo' : language === 'fr' ? 'Équipement' : language === 'de' ? 'Ausrüstung' : language === 'it' ? 'Attrezzatura' : 'Equipment'}</span>
+              </TabsTrigger>
               <TabsTrigger value="itinerary" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-violet-50 data-[state=active]:text-violet-700 py-3">
                 <Calendar className="w-4 h-4 text-violet-600 sm:hidden" />
                 <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'לוח' : language === 'ru' ? 'План' : language === 'es' ? 'Plan' : language === 'fr' ? 'Plan' : language === 'de' ? 'Plan' : language === 'it' ? 'Piano' : 'Plan'}</span>
@@ -1359,6 +1353,12 @@ export default function TripDetails() {
                 <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'תקציב' : language === 'ru' ? 'Бюджет' : language === 'es' ? 'Presupuesto' : language === 'fr' ? 'Budget' : language === 'de' ? 'Budget' : language === 'it' ? 'Budget' : 'Budget'}</span>
                 <DollarSign className="w-4 h-4 text-amber-600 hidden sm:block" />
                 <span className="hidden sm:inline">{language === 'he' ? 'תקציב' : language === 'ru' ? 'Бюджет' : language === 'es' ? 'Presupuesto' : language === 'fr' ? 'Budget' : language === 'de' ? 'Budget' : language === 'it' ? 'Budget' : 'Budget'}</span>
+              </TabsTrigger>
+              <TabsTrigger value="social" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-sky-50 data-[state=active]:text-sky-700 py-3">
+                <MessageCircle className="w-4 h-4 text-sky-600 sm:hidden" />
+                <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'חברתי' : language === 'ru' ? 'Соцсети' : language === 'es' ? 'Social' : language === 'fr' ? 'Social' : language === 'de' ? 'Sozial' : language === 'it' ? 'Sociale' : 'Social'}</span>
+                <MessageCircle className="w-4 h-4 text-sky-600 hidden sm:block" />
+                <span className="hidden sm:inline">{language === 'he' ? 'חברתי' : language === 'ru' ? 'Соцсети' : language === 'es' ? 'Social' : language === 'fr' ? 'Social' : language === 'de' ? 'Sozial' : language === 'it' ? 'Sociale' : 'Social'}</span>
               </TabsTrigger>
               {(hasJoined || isOrganizer) && (
                 <>
