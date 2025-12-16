@@ -69,6 +69,7 @@ export default function CreateTrip() {
     duration_value: 1,
     activity_type: 'hiking',
     difficulty: 'moderate',
+    trip_character: '',
     cycling_type: '',
     cycling_distance: null,
     cycling_elevation: null,
