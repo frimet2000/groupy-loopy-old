@@ -641,6 +641,8 @@ Include water recommendation in liters and detailed equipment list.`,
 
   const saveTrip = async () => {
     setSaving(true);
+    console.log('Starting trip creation...');
+    
     try {
       const tripData = {
         ...formData,
@@ -668,14 +670,21 @@ Include water recommendation in liters and detailed equipment list.`,
         offroad_distance: formData.offroad_distance || undefined,
       };
 
+      console.log('Creating trip with data:', tripData);
       const createdTrip = await base44.entities.Trip.create(tripData);
+      console.log('Trip created successfully:', createdTrip);
+      
       setShowWaiver(false);
-      navigate(createPageUrl('TripSummary') + '?id=' + createdTrip.id);
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error(language === 'he' ? 'שגיאה בשמירה' : 'Error saving trip');
-    } finally {
       setSaving(false);
+      
+      const summaryUrl = createPageUrl('TripSummary') + '?id=' + createdTrip.id;
+      console.log('Navigating to:', summaryUrl);
+      navigate(summaryUrl);
+    } catch (error) {
+      console.error('Error creating trip:', error);
+      toast.error(language === 'he' ? 'שגיאה בשמירה: ' + error.message : 'Error saving trip: ' + error.message);
+      setSaving(false);
+      setShowWaiver(false);
     }
   };
 
