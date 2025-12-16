@@ -13,7 +13,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { Loader2, Upload, MapPin, Mountain, Clock, Sparkles, Navigation, Globe, Calendar, Users, Compass, Footprints, Bike, Truck, User, Dog, Tent, ArrowRight, ArrowLeft, Check, ChevronRight, UtensilsCrossed } from 'lucide-react';
+import { Loader2, Upload, MapPin, Mountain, Clock, Sparkles, Navigation, Globe, Calendar, Users, Compass, Footprints, Bike, Truck, User, Dog, Tent, ArrowRight, ArrowLeft, Check, ChevronRight, UtensilsCrossed, FileText, Shield, AlertTriangle, Scale, UserX, Copyright } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from 'framer-motion';
 import { detectUserLocation, getRegionFromCoordinates } from '../components/utils/LocationDetector';
 import LocationPicker from '../components/maps/LocationPicker';
@@ -51,6 +53,7 @@ export default function CreateTrip() {
   const [filteredCities, setFilteredCities] = useState(israelCities);
   const [generatingItinerary, setGeneratingItinerary] = useState(false);
   const [generatingEquipment, setGeneratingEquipment] = useState(false);
+  const [showTermsDialog, setShowTermsDialog] = useState(false);
   
   const countries = getAllCountries();
   
@@ -1674,17 +1677,17 @@ Include water recommendation in liters and detailed equipment list.`,
 
                     {/* Terms Link */}
                     <div className="bg-blue-50 p-4 rounded-xl text-center border border-blue-200">
-                     <p className="text-sm text-gray-700 mb-2">
-                       {language === 'he' ? 'בפרסום הטיול, אתה מאשר שקראת את' : 'By publishing this trip, you confirm that you have read the'}
-                     </p>
-                     <a 
-                       href={createPageUrl('TermsOfUse')} 
-                       target="_blank" 
-                       rel="noopener noreferrer"
-                       className="text-blue-600 hover:text-blue-800 font-semibold underline"
-                     >
-                       {language === 'he' ? 'תנאי השימוש וכתב הויתור' : 'Terms of Use and Waiver'}
-                     </a>
+                      <p className="text-sm text-gray-700 mb-2">
+                        {language === 'he' ? 'מומלץ לקרוא את' : language === 'ru' ? 'Рекомендуем прочитать' : language === 'es' ? 'Recomendamos leer' : language === 'fr' ? 'Nous recommandons de lire' : language === 'de' ? 'Wir empfehlen zu lesen' : language === 'it' ? 'Si consiglia di leggere' : 'We recommend reading'}
+                      </p>
+                      <Button 
+                        type="button"
+                        variant="link"
+                        onClick={() => setShowTermsDialog(true)}
+                        className="text-blue-600 hover:text-blue-800 font-semibold underline"
+                      >
+                        {language === 'he' ? 'תנאי השימוש וכתב הויתור' : language === 'ru' ? 'Условия использования и отказ от ответственности' : language === 'es' ? 'Términos de uso y exención' : language === 'fr' ? 'Conditions d\'utilisation et décharge' : language === 'de' ? 'Nutzungsbedingungen und Haftungsausschluss' : language === 'it' ? 'Termini di utilizzo e liberatoria' : 'Terms of Use and Waiver'}
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -1738,6 +1741,220 @@ Include water recommendation in liters and detailed equipment list.`,
           </motion.div>
         </div>
       </div>
+
+      {/* Terms Dialog */}
+      <Dialog open={showTermsDialog} onOpenChange={setShowTermsDialog}>
+        <DialogContent className="max-w-4xl max-h-[85vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl" dir={isRTL ? 'rtl' : 'ltr'}>
+              <FileText className="w-6 h-6" />
+              {language === 'he' ? 'תקנון ותנאי שימוש' : language === 'ru' ? 'Условия использования' : language === 'es' ? 'Términos de uso' : language === 'fr' ? 'Conditions d\'utilisation' : language === 'de' ? 'Nutzungsbedingungen' : language === 'it' ? 'Termini di utilizzo' : 'Terms of Use'}
+            </DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="h-[60vh] pr-4">
+            <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+              <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                <p className="text-sm text-gray-700">
+                  {language === 'he' ? 'ברוכים הבאים ל-Groupy Loopy. השימוש באפליקציה ובשירותים שלנו כפוף לתנאי שימוש אלה.' 
+                   : language === 'ru' ? 'Добро пожаловать в Groupy Loopy. Использование приложения регулируется этими условиями.'
+                   : language === 'es' ? 'Bienvenido a Groupy Loopy. El uso de nuestra aplicación está sujeto a estos términos.'
+                   : language === 'fr' ? 'Bienvenue sur Groupy Loopy. L\'utilisation de notre application est soumise à ces conditions.'
+                   : language === 'de' ? 'Willkommen bei Groupy Loopy. Die Nutzung unserer App unterliegt diesen Bedingungen.'
+                   : language === 'it' ? 'Benvenuti su Groupy Loopy. L\'uso della nostra app è soggetto a questi termini.'
+                   : 'Welcome to Groupy Loopy. Use of our app is subject to these terms of use.'}
+                </p>
+              </div>
+
+              <div className="space-y-5">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Shield className="w-5 h-5 text-purple-600" />
+                    <h3 className="font-bold text-lg">{language === 'he' ? 'כתב ויתור - חשוב מאוד!' : language === 'ru' ? 'Отказ от ответственности - очень важно!' : language === 'es' ? '¡Exención - muy importante!' : language === 'fr' ? 'Décharge - très important!' : language === 'de' ? 'Haftungsausschluss - sehr wichtig!' : language === 'it' ? 'Liberatoria - molto importante!' : 'Waiver - Very Important!'}</h3>
+                  </div>
+                  <div className="bg-amber-50 rounded-lg p-4 border-2 border-amber-300 space-y-3">
+                    <p className="text-gray-700 leading-relaxed">
+                      {language === 'he' ? 'השתתפות בטיולים מאורגנים דרך האפליקציה נעשית על אחריותך הבלעדית. אתה מאשר כי:'
+                       : language === 'ru' ? 'Участие в поездках организованных через приложение осуществляется на ваш собственный риск. Вы подтверждаете, что:'
+                       : language === 'es' ? 'La participación en viajes organizados a través de la aplicación es bajo su propio riesgo. Usted confirma que:'
+                       : language === 'fr' ? 'La participation aux voyages organisés via l\'application se fait à vos propres risques. Vous confirmez que:'
+                       : language === 'de' ? 'Die Teilnahme an über die App organisierten Reisen erfolgt auf eigene Gefahr. Sie bestätigen, dass:'
+                       : language === 'it' ? 'La partecipazione ai viaggi organizzati tramite l\'app avviene a proprio rischio. Confermi che:'
+                       : 'Participation in trips organized through the app is at your own risk. You confirm that:'}
+                    </p>
+                    <ul className="space-y-2 text-sm">
+                      {(language === 'he' ? [
+                        'אתה כשיר מבחינה בריאותית ופיזית להשתתף בפעילות',
+                        'אתה אחראי לבדוק את התנאים, הציוד והסיכונים הכרוכים בטיול',
+                        'האפליקציה ומפעיליה אינם אחראים לכל פגיעה, נזק או אובדן שיגרם לך',
+                        'המארגן והמשתתפים אינם אחראים לבטיחותך האישית',
+                        'אתה מוותר על כל תביעה כנגד האפליקציה, המפעילים והמשתתפים האחרים',
+                        'מומלץ בחום לקחת ביטוח נסיעות מתאים'
+                      ] : language === 'ru' ? [
+                        'Вы физически и медицински здоровы для участия в активности',
+                        'Вы несете ответственность за проверку условий, оборудования и рисков поездки',
+                        'Приложение и его операторы не несут ответственности за травмы, ущерб или потери',
+                        'Организатор и участники не несут ответственности за вашу безопасность',
+                        'Вы отказываетесь от претензий к приложению, операторам и участникам',
+                        'Настоятельно рекомендуется оформить соответствующую страховку'
+                      ] : language === 'es' ? [
+                        'Está física y médicamente apto para participar en la actividad',
+                        'Es responsable de verificar las condiciones, equipo y riesgos del viaje',
+                        'La aplicación y sus operadores no son responsables de lesiones, daños o pérdidas',
+                        'El organizador y participantes no son responsables de su seguridad',
+                        'Renuncia a reclamaciones contra la aplicación, operadores y participantes',
+                        'Se recomienda encarecidamente contratar un seguro de viaje'
+                      ] : language === 'fr' ? [
+                        'Vous êtes physiquement et médicalement apte à participer à l\'activité',
+                        'Vous êtes responsable de vérifier les conditions, l\'équipement et les risques',
+                        'L\'application et ses opérateurs ne sont pas responsables des blessures, dommages ou pertes',
+                        'L\'organisateur et les participants ne sont pas responsables de votre sécurité',
+                        'Vous renoncez aux réclamations contre l\'application, les opérateurs et les participants',
+                        'Il est fortement recommandé de souscrire une assurance voyage'
+                      ] : language === 'de' ? [
+                        'Sie sind körperlich und medizinisch fit für die Teilnahme an der Aktivität',
+                        'Sie sind verantwortlich für die Überprüfung der Bedingungen, Ausrüstung und Risiken',
+                        'Die App und ihre Betreiber haften nicht für Verletzungen, Schäden oder Verluste',
+                        'Der Organisator und Teilnehmer sind nicht für Ihre Sicherheit verantwortlich',
+                        'Sie verzichten auf Ansprüche gegen die App, Betreiber und Teilnehmer',
+                        'Es wird dringend empfohlen, eine Reiseversicherung abzuschließen'
+                      ] : language === 'it' ? [
+                        'Sei fisicamente e medicalmente idoneo a partecipare all\'attività',
+                        'Sei responsabile di verificare condizioni, attrezzatura e rischi del viaggio',
+                        'L\'app e i suoi operatori non sono responsabili di lesioni, danni o perdite',
+                        'L\'organizzatore e i partecipanti non sono responsabili della tua sicurezza',
+                        'Rinunci a reclami contro l\'app, operatori e partecipanti',
+                        'Si raccomanda vivamente di stipulare un\'assicurazione di viaggio'
+                      ] : [
+                        'You are physically and medically fit to participate in the activity',
+                        'You are responsible for checking conditions, equipment, and risks',
+                        'The app and its operators are not liable for injuries, damage, or loss',
+                        'The organizer and participants are not responsible for your safety',
+                        'You waive claims against the app, operators, and other participants',
+                        'Travel insurance is strongly recommended'
+                      ]).map((item, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <span className="text-amber-600 mt-1">•</span>
+                          <span className="text-gray-700">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <UserX className="w-5 h-5 text-purple-600" />
+                    <h3 className="font-bold text-lg">{language === 'he' ? 'כשירות לשימוש' : language === 'ru' ? 'Право на использование' : language === 'es' ? 'Elegibilidad' : language === 'fr' ? 'Éligibilité' : language === 'de' ? 'Berechtigung' : language === 'it' ? 'Idoneità' : 'Eligibility'}</h3>
+                  </div>
+                  <ul className="space-y-2 text-sm">
+                    {(language === 'he' ? [
+                      'עליך להיות בגיל 18 לפחות',
+                      'עליך לספק מידע מדויק',
+                      'אתה אחראי לשמירה על סודיות הסיסמה',
+                      'אסור להעביר את חשבונך לאחרים'
+                    ] : language === 'ru' ? [
+                      'Вам должно быть не менее 18 лет',
+                      'Вы должны предоставить точную информацию',
+                      'Вы несете ответственность за конфиденциальность пароля',
+                      'Вы не можете передать учетную запись другим'
+                    ] : language === 'es' ? [
+                      'Debe tener al menos 18 años',
+                      'Debe proporcionar información precisa',
+                      'Es responsable de la confidencialidad de su contraseña',
+                      'No puede transferir su cuenta a otros'
+                    ] : language === 'fr' ? [
+                      'Vous devez avoir au moins 18 ans',
+                      'Vous devez fournir des informations exactes',
+                      'Vous êtes responsable de la confidentialité du mot de passe',
+                      'Vous ne pouvez pas transférer votre compte à d\'autres'
+                    ] : language === 'de' ? [
+                      'Sie müssen mindestens 18 Jahre alt sein',
+                      'Sie müssen genaue Informationen angeben',
+                      'Sie sind für die Vertraulichkeit des Passworts verantwortlich',
+                      'Sie können Ihr Konto nicht an andere übertragen'
+                    ] : language === 'it' ? [
+                      'Devi avere almeno 18 anni',
+                      'Devi fornire informazioni accurate',
+                      'Sei responsabile della riservatezza della password',
+                      'Non puoi trasferire il tuo account ad altri'
+                    ] : [
+                      'You must be at least 18 years old',
+                      'You must provide accurate information',
+                      'You are responsible for password confidentiality',
+                      'You may not transfer your account to others'
+                    ]).map((item, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="text-purple-600 mt-1">•</span>
+                        <span className="text-gray-700">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertTriangle className="w-5 h-5 text-red-600" />
+                    <h3 className="font-bold text-lg">{language === 'he' ? 'הגבלת אחריות' : language === 'ru' ? 'Ограничение ответственности' : language === 'es' ? 'Limitación de responsabilidad' : language === 'fr' ? 'Limitation de responsabilité' : language === 'de' ? 'Haftungsbeschränkung' : language === 'it' ? 'Limitazione di responsabilità' : 'Limitation of Liability'}</h3>
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    {language === 'he' ? 'האפליקציה מסופקת "כמות שהיא". איננו אחראים לפעולות משתמשים, נזקים מטיולים, או תקלות במערכת. אחריותנו מוגבלת לסכום ששילמת (אם בכלל) בשנים עשרת החודשים האחרונים.'
+                     : language === 'ru' ? 'Приложение предоставляется "как есть". Мы не несем ответственности за действия пользователей, ущерб от поездок или сбои в системе. Наша ответственность ограничена суммой, которую вы заплатили (если таковая имеется) за последние двенадцать месяцев.'
+                     : language === 'es' ? 'La aplicación se proporciona "tal cual". No somos responsables de las acciones de los usuarios, daños de viajes o fallos del sistema. Nuestra responsabilidad se limita a la cantidad que pagó (si corresponde) en los últimos doce meses.'
+                     : language === 'fr' ? 'L\'application est fournie "telle quelle". Nous ne sommes pas responsables des actions des utilisateurs, des dommages causés par les voyages ou des pannes du système. Notre responsabilité est limitée au montant que vous avez payé (le cas échéant) au cours des douze derniers mois.'
+                     : language === 'de' ? 'Die App wird "wie besehen" bereitgestellt. Wir haften nicht für Nutzeraktionen, Reiseschäden oder Systemausfälle. Unsere Haftung ist auf den Betrag beschränkt, den Sie (falls zutreffend) in den letzten zwölf Monaten bezahlt haben.'
+                     : language === 'it' ? 'L\'app viene fornita "così com\'è". Non siamo responsabili per le azioni degli utenti, danni da viaggi o guasti del sistema. La nostra responsabilità è limitata all\'importo pagato (se applicabile) negli ultimi dodici mesi.'
+                     : 'The app is provided "as is". We are not liable for user actions, trip damages, or system failures. Our liability is limited to the amount you paid (if any) in the last twelve months.'}
+                  </p>
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Copyright className="w-5 h-5 text-purple-600" />
+                    <h3 className="font-bold text-lg">{language === 'he' ? 'קניין רוחני' : language === 'ru' ? 'Интеллектуальная собственность' : language === 'es' ? 'Propiedad intelectual' : language === 'fr' ? 'Propriété intellectuelle' : language === 'de' ? 'Geistiges Eigentum' : language === 'it' ? 'Proprietà intellettuale' : 'Intellectual Property'}</h3>
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    {language === 'he' ? 'כל התוכן באפליקציה מוגן בזכויות יוצרים. אסור להעתיק או להפיץ ללא אישור. התוכן שאתה מפרסם נשאר שלך, אך אתה מעניק לנו רישיון להשתמש בו במסגרת השירות.'
+                     : language === 'ru' ? 'Весь контент приложения защищен авторским правом. Копирование или распространение без разрешения запрещено. Контент, который вы публикуете, остается вашим, но вы предоставляете нам лицензию на его использование в рамках сервиса.'
+                     : language === 'es' ? 'Todo el contenido de la aplicación está protegido por derechos de autor. No se permite copiar o distribuir sin permiso. El contenido que publique sigue siendo suyo, pero nos otorga una licencia para usarlo dentro del servicio.'
+                     : language === 'fr' ? 'Tout le contenu de l\'application est protégé par des droits d\'auteur. La copie ou la distribution sans autorisation est interdite. Le contenu que vous publiez reste le vôtre, mais vous nous accordez une licence pour l\'utiliser dans le cadre du service.'
+                     : language === 'de' ? 'Alle Inhalte der App sind urheberrechtlich geschützt. Kopieren oder Verteilen ohne Genehmigung ist verboten. Die Inhalte, die Sie veröffentlichen, bleiben Ihre, aber Sie gewähren uns eine Lizenz zur Nutzung im Rahmen des Dienstes.'
+                     : language === 'it' ? 'Tutti i contenuti dell\'app sono protetti da copyright. È vietato copiare o distribuire senza autorizzazione. Il contenuto che pubblichi rimane tuo, ma ci concedi una licenza per utilizzarlo all\'interno del servizio.'
+                     : 'All app content is copyright protected. Copying or distributing without permission is prohibited. Content you publish remains yours, but you grant us a license to use it within the service.'}
+                  </p>
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Scale className="w-5 h-5 text-purple-600" />
+                    <h3 className="font-bold text-lg">{language === 'he' ? 'דין חל' : language === 'ru' ? 'Применимое право' : language === 'es' ? 'Ley aplicable' : language === 'fr' ? 'Droit applicable' : language === 'de' ? 'Anwendbares Recht' : language === 'it' ? 'Legge applicabile' : 'Governing Law'}</h3>
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    {language === 'he' ? 'תנאים אלה כפופים לדיני מדינת ישראל. מחלוקות יתבררו בבתי המשפט המוסמכים בישראל.'
+                     : language === 'ru' ? 'Эти условия регулируются законами Государства Израиль. Споры разрешаются в компетентных судах Израиля.'
+                     : language === 'es' ? 'Estos términos se rigen por las leyes del Estado de Israel. Las disputas se resolverán en los tribunales competentes de Israel.'
+                     : language === 'fr' ? 'Ces conditions sont régies par les lois de l\'État d\'Israël. Les litiges seront résolus par les tribunaux compétents d\'Israël.'
+                     : language === 'de' ? 'Diese Bedingungen unterliegen den Gesetzen des Staates Israel. Streitigkeiten werden vor den zuständigen Gerichten Israels beigelegt.'
+                     : language === 'it' ? 'Questi termini sono regolati dalle leggi dello Stato di Israele. Le controversie saranno risolte dai tribunali competenti di Israele.'
+                     : 'These terms are governed by the laws of the State of Israel. Disputes will be resolved in the competent courts of Israel.'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 text-center">
+                <p className="text-sm text-gray-600">
+                  {language === 'he' ? 'לשאלות: frimet@gmail.com'
+                   : language === 'ru' ? 'Вопросы: frimet@gmail.com'
+                   : language === 'es' ? 'Preguntas: frimet@gmail.com'
+                   : language === 'fr' ? 'Questions: frimet@gmail.com'
+                   : language === 'de' ? 'Fragen: frimet@gmail.com'
+                   : language === 'it' ? 'Domande: frimet@gmail.com'
+                   : 'Questions: frimet@gmail.com'}
+                </p>
+              </div>
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
