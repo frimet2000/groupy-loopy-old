@@ -25,6 +25,14 @@ export default function PermissionsRequest() {
       const permissionsRequested = localStorage.getItem('permissions_requested');
       if (permissionsRequested) return;
 
+      // Detect if mobile device
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (!isMobile) {
+        // Don't show on desktop
+        localStorage.setItem('permissions_requested', 'true');
+        return;
+      }
+
       // Check notification permission
       if ('Notification' in window) {
         setNotificationGranted(Notification.permission === 'granted');
