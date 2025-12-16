@@ -18,6 +18,7 @@ import TripComments from '../components/social/TripComments';
 import ParticipantWaiver from '../components/legal/ParticipantWaiver';
 import TripReminders from '../components/reminders/TripReminders';
 import TripContributions from '../components/contributions/TripContributions';
+import InviteFriends from '../components/collaboration/InviteFriends';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -47,7 +48,7 @@ import {
   Calendar, MapPin, Clock, Users, Mountain, Dog, Tent,
   Share2, ArrowLeft, ArrowRight, Check, X, User,
   Droplets, TreePine, Sun, History, Building, Navigation, Edit, MessageCircle, Bike, Truck,
-  Info, GalleryHorizontal, Heart, MessageSquare, Radio, Backpack, Bookmark, DollarSign, Image, Loader2, Camera, Upload, Bell, Package
+  Info, GalleryHorizontal, Heart, MessageSquare, Radio, Backpack, Bookmark, DollarSign, Image, Loader2, Camera, Upload, Bell, Package, UserPlus
 } from 'lucide-react';
 
 const difficultyColors = {
@@ -1394,9 +1395,15 @@ export default function TripDetails() {
                   </TabsTrigger>
                   <TabsTrigger value="contributions" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 py-3">
                     <Package className="w-4 h-4 text-indigo-600 sm:hidden" />
-                    <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'מביאים' : 'Bringing'}</span>
+                    <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'מביאים' : language === 'ru' ? 'Вещи' : language === 'es' ? 'Cosas' : language === 'fr' ? 'Affaires' : language === 'de' ? 'Sachen' : language === 'it' ? 'Cose' : 'Bringing'}</span>
                     <Package className="w-4 h-4 text-indigo-600 hidden sm:block" />
-                    <span className="hidden sm:inline">{language === 'he' ? 'מה אני מביא' : 'What I\'m Bringing'}</span>
+                    <span className="hidden sm:inline">{language === 'he' ? 'מה אני מביא' : language === 'ru' ? 'Что я беру' : language === 'es' ? 'Qué traigo' : language === 'fr' ? 'Ce que j\'apporte' : language === 'de' ? 'Was ich mitbringe' : language === 'it' ? 'Cosa porto' : 'What I\'m Bringing'}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="invite" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 py-3">
+                    <UserPlus className="w-4 h-4 text-emerald-600 sm:hidden" />
+                    <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'הזמן' : language === 'ru' ? 'Пригл.' : language === 'es' ? 'Invitar' : language === 'fr' ? 'Inviter' : language === 'de' ? 'Einladen' : language === 'it' ? 'Invita' : 'Invite'}</span>
+                    <UserPlus className="w-4 h-4 text-emerald-600 hidden sm:block" />
+                    <span className="hidden sm:inline">{language === 'he' ? 'הזמן חברים' : language === 'ru' ? 'Пригласить' : language === 'es' ? 'Invitar amigos' : language === 'fr' ? 'Inviter amis' : language === 'de' ? 'Freunde einladen' : language === 'it' ? 'Invita amici' : 'Invite Friends'}</span>
                   </TabsTrigger>
                   </>
                   )}
@@ -1709,6 +1716,13 @@ export default function TripDetails() {
                 </TabsContent>
                 <TabsContent value="contributions" className="mt-0">
                   <TripContributions 
+                    trip={trip}
+                    currentUserEmail={user?.email}
+                    onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
+                  />
+                </TabsContent>
+                <TabsContent value="invite" className="mt-0">
+                  <InviteFriends 
                     trip={trip}
                     currentUserEmail={user?.email}
                     onUpdate={() => queryClient.invalidateQueries(['trip', tripId])}
