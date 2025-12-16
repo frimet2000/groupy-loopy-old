@@ -349,8 +349,8 @@ Return the response in ${language === 'he' ? 'Hebrew' : 'English'}.`;
           <DialogHeader>
             <DialogTitle>
               {editingDay
-                ? (language === 'he' ? 'ערוך יום' : 'Edit Day')
-                : (language === 'he' ? 'הוסף יום' : 'Add Day')}
+                ? (language === 'he' ? 'עריכת יום' : language === 'ru' ? 'Редактировать день' : language === 'es' ? 'Editar día' : language === 'fr' ? 'Modifier le jour' : language === 'de' ? 'Tag bearbeiten' : language === 'it' ? 'Modifica giorno' : 'Edit Day')
+                : (language === 'he' ? 'הוספת יום' : language === 'ru' ? 'Добавить день' : language === 'es' ? 'Añadir día' : language === 'fr' ? 'Ajouter un jour' : language === 'de' ? 'Tag hinzufügen' : language === 'it' ? 'Aggiungi giorno' : 'Add Day')}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
