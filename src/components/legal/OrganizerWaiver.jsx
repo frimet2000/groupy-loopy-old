@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Shield, AlertTriangle, ChevronRight, ChevronLeft, Check } from 'lucide-react';
+import { Shield, AlertTriangle, ChevronRight, ChevronLeft, Check, Loader2 } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -17,6 +17,7 @@ export default function OrganizerWaiver({ open, onAccept, onDecline }) {
   const { language, isRTL } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [agreed, setAgreed] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
   const content = language === 'he' ? {
     title: 'כתב ויתור למארגן טיול',
@@ -131,9 +132,14 @@ export default function OrganizerWaiver({ open, onAccept, onDecline }) {
     }
   };
 
-  const handleAccept = () => {
-    if (agreed) {
-      onAccept();
+  const handleAccept = async () => {
+    if (!agreed) return;
+    setProcessing(true);
+    try {
+      await onAccept();
+    } catch (error) {
+      console.error('Error accepting waiver:', error);
+      setProcessing(false);
     }
   };
 
@@ -233,10 +239,14 @@ export default function OrganizerWaiver({ open, onAccept, onDecline }) {
           ) : (
             <Button 
               onClick={handleAccept}
-              disabled={!agreed}
+              disabled={!agreed || processing}
               className="gap-2 bg-green-600 hover:bg-green-700"
             >
-              <Check className="w-4 h-4" />
+              {processing ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Check className="w-4 h-4" />
+              )}
               {content.accept}
             </Button>
           )}
