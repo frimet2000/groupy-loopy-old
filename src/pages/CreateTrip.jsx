@@ -639,56 +639,49 @@ Include water recommendation in liters and detailed equipment list.`,
     setShowWaiver(true);
   };
 
-  const saveTrip = async () => {
-    console.log('saveTrip called');
+  const saveTrip = () => {
+    setShowWaiver(false);
     setSaving(true);
     
-    try {
-      console.log('Preparing trip data...');
-      // Clean up the data - remove undefined and null values
-      const cleanFormData = Object.fromEntries(
-        Object.entries(formData).filter(([_, v]) => v !== undefined && v !== null && v !== '')
-      );
+    setTimeout(async () => {
+      try {
+        // Clean up the data - remove undefined and null values
+        const cleanFormData = Object.fromEntries(
+          Object.entries(formData).filter(([_, v]) => v !== undefined && v !== null && v !== '')
+        );
 
-      const tripData = {
-        ...cleanFormData,
-        current_participants: 1,
-        status: 'open',
-        organizer_name: user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : (user?.full_name || user?.email || ''),
-        organizer_email: user?.email || '',
-        organizer_waiver_accepted: true,
-        organizer_waiver_timestamp: new Date().toISOString(),
-        participants: [{
-          email: user?.email || '',
-          name: user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : (user?.full_name || user?.email || ''),
-          joined_at: new Date().toISOString(),
-          accessibility_needs: [],
-          waiver_accepted: true,
-          waiver_timestamp: new Date().toISOString()
-        }],
-        waypoints: waypoints || [],
-        equipment_checklist: equipment || [],
-        recommended_water_liters: waterRecommendation || null,
-        daily_itinerary: itinerary || [],
-        budget: budget || {}
-      };
+        const tripData = {
+          ...cleanFormData,
+          current_participants: 1,
+          status: 'open',
+          organizer_name: user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : (user?.full_name || user?.email || ''),
+          organizer_email: user?.email || '',
+          organizer_waiver_accepted: true,
+          organizer_waiver_timestamp: new Date().toISOString(),
+          participants: [{
+            email: user?.email || '',
+            name: user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : (user?.full_name || user?.email || ''),
+            joined_at: new Date().toISOString(),
+            accessibility_needs: [],
+            waiver_accepted: true,
+            waiver_timestamp: new Date().toISOString()
+          }],
+          waypoints: waypoints || [],
+          equipment_checklist: equipment || [],
+          recommended_water_liters: waterRecommendation || null,
+          daily_itinerary: itinerary || [],
+          budget: budget || {}
+        };
 
-      console.log('Creating trip...', tripData);
-      const createdTrip = await base44.entities.Trip.create(tripData);
-      console.log('Trip created:', createdTrip.id);
-      
-      setShowWaiver(false);
-      setSaving(false);
-      
-      console.log('Navigating to summary...');
-      navigate(createPageUrl('TripSummary') + '?id=' + createdTrip.id);
-    } catch (error) {
-      console.error('Error creating trip:', error);
-      alert('שגיאה ביצירת הטיול: ' + error.message);
-      toast.error(language === 'he' ? 'שגיאה: ' + error.message : 'Error: ' + error.message);
-      setSaving(false);
-      setShowWaiver(false);
-    }
+        const createdTrip = await base44.entities.Trip.create(tripData);
+        
+        navigate(createPageUrl('TripSummary') + '?id=' + createdTrip.id);
+      } catch (error) {
+        console.error('Error creating trip:', error);
+        toast.error(language === 'he' ? 'שגיאה: ' + error.message : 'Error: ' + error.message);
+        setSaving(false);
+      }
+    }, 100);
   };
 
   const handleWaiverDecline = () => {
