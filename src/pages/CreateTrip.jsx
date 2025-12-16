@@ -696,40 +696,68 @@ Include water recommendation in liters and detailed equipment list.`,
         onConfirm={handleMapConfirm}
       />
       
-      <div className="h-screen flex flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 p-1.5 overflow-hidden">
+      <div className="h-screen flex flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 p-2 sm:p-4 overflow-hidden">
         <div className="max-w-5xl mx-auto w-full flex flex-col h-full">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-2 sm:mb-4 flex-shrink-0"
+          >
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-2xl shadow-lg">
+              <Compass className="w-5 h-5 sm:w-6 sm:h-6" />
+              <h1 className="text-lg sm:text-xl font-bold">{t('createTrip')}</h1>
+            </div>
+          </motion.div>
+
           {/* Progress Bar */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-1 flex-shrink-0"
+            className="mb-2 sm:mb-3 flex-shrink-0"
           >
-            <div className="flex items-center justify-between px-1">
-              {steps.map((step, idx) => {
-                const StepIcon = step.icon;
-                const isActive = currentStep === step.id;
-                const isCompleted = currentStep > step.id;
-                
-                return (
-                  <React.Fragment key={step.id}>
-                    <div className={`${isActive || isCompleted ? 'opacity-100' : 'opacity-40'}`}>
-                      <div className={`w-5 h-5 rounded flex items-center justify-center ${
-                        isCompleted ? 'bg-green-500' : isActive ? `bg-emerald-600` : 'bg-gray-200'
-                      }`}>
-                        {isCompleted ? (
-                          <Check className="w-2.5 h-2.5 text-white" />
-                        ) : (
-                          <StepIcon className={`w-2.5 h-2.5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
+            <Card className="overflow-hidden shadow-lg border border-emerald-100">
+              <CardContent className="p-2 sm:p-3">
+                <div className="flex items-center justify-between mb-2">
+                  {steps.map((step, idx) => {
+                    const StepIcon = step.icon;
+                    const isActive = currentStep === step.id;
+                    const isCompleted = currentStep > step.id;
+                    
+                    return (
+                      <React.Fragment key={step.id}>
+                        <div className={`flex flex-col items-center gap-1 ${isActive || isCompleted ? 'opacity-100' : 'opacity-40'}`}>
+                          <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                            isCompleted 
+                              ? 'bg-gradient-to-br from-green-500 to-emerald-500' 
+                              : isActive 
+                              ? `bg-gradient-to-br ${step.color}` 
+                              : 'bg-gray-200'
+                          }`}>
+                            {isCompleted ? (
+                              <Check className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                            ) : (
+                              <StepIcon className={`w-4 h-4 sm:w-5 sm:h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
+                            )}
+                          </div>
+                          <span className={`text-[10px] sm:text-xs font-semibold text-center hidden sm:block ${
+                            isActive ? 'text-gray-900' : 'text-gray-500'
+                          }`}>
+                            {step.title.split(' ')[0]}
+                          </span>
+                        </div>
+                        {idx < steps.length - 1 && (
+                          <div className={`flex-1 h-1 mx-1 rounded-full transition-all duration-500 ${
+                            currentStep > step.id ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gray-200'
+                          }`} />
                         )}
-                      </div>
-                    </div>
-                    {idx < steps.length - 1 && (
-                      <div className={`flex-1 h-0.5 mx-0.5 ${currentStep > step.id ? 'bg-green-500' : 'bg-gray-200'}`} />
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </div>
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
+                <Progress value={progressPercent} className="h-1.5 bg-gray-200" />
+              </CardContent>
+            </Card>
           </motion.div>
 
           {/* Step Content */}
@@ -744,16 +772,16 @@ Include water recommendation in liters and detailed equipment list.`,
             >
               {/* Step 1: Basic Info */}
               {currentStep === 1 && (
-                <div className="bg-white border border-emerald-100 rounded-lg shadow-sm h-full flex flex-col">
-                  <div className="bg-emerald-50 py-1 px-2 flex-shrink-0 rounded-t-lg">
-                    <h2 className="flex items-center gap-1 text-xs font-bold text-emerald-700">
-                      <Sparkles className="w-3 h-3" />
+                <Card className="border border-emerald-100 shadow-lg h-full flex flex-col">
+                  <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 py-2 sm:py-3 flex-shrink-0">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
                       {language === 'he' ? 'פרטים בסיסיים' : 'Basic Details'}
-                    </h2>
-                  </div>
-                  <div className="p-2 space-y-1 overflow-y-auto flex-1">
-                    <div>
-                      <Label className="text-[10px]">{language === 'he' ? 'כותרת' : 'Title'} *</Label>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-3 sm:p-4 space-y-3 sm:space-y-4 overflow-y-auto flex-1">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-semibold">{language === 'he' ? 'כותרת הטיול' : 'Trip Title'} *</Label>
                       <Input
                         value={formData.title}
                         onChange={(e) => {
@@ -762,97 +790,131 @@ Include water recommendation in liters and detailed equipment list.`,
                             setMissingFields(prev => prev.filter(f => f !== 'title'));
                           }
                         }}
-                        placeholder={language === 'he' ? 'טיול בגליל' : 'Trip name'}
+                        placeholder={language === 'he' ? 'למשל: טיול בגליל' : 'e.g., Mountain Hike'}
                         dir={isRTL ? 'rtl' : 'ltr'}
-                        className={`text-xs p-1 h-6 ${missingFields.includes('title') ? 'border-red-500' : ''}`}
+                        className={`text-sm p-2 ${
+                          missingFields.includes('title') 
+                            ? 'border-2 border-red-500 bg-red-50' 
+                            : ''
+                        }`}
                       />
                     </div>
 
-                    <div>
-                      <Label className="text-[10px]">{language === 'he' ? 'תיאור' : 'Description'}</Label>
+                    <div className="space-y-1">
+                      <Label className="text-sm font-semibold">{language === 'he' ? 'תיאור' : 'Description'}</Label>
                       <Textarea
                         value={formData.description}
                         onChange={(e) => handleChange('description', e.target.value)}
-                        placeholder={language === 'he' ? 'ספר על הטיול...' : 'Tell us...'}
+                        placeholder={language === 'he' ? 'ספר על הטיול...' : 'Tell us about your trip...'}
                         dir={isRTL ? 'rtl' : 'ltr'}
-                        rows={1}
-                        className="text-xs p-1 min-h-[24px] resize-none"
+                        rows={2}
+                        className="text-sm p-2"
                       />
                     </div>
 
-                    <div>
-                      <Label className="text-[10px]">{language === 'he' ? 'תמונה' : 'Image'}</Label>
-                      <div className="flex items-center gap-1.5">
-                        {formData.image_url && (
-                          <img src={formData.image_url} alt="Trip" className="w-10 h-8 object-cover rounded" />
+                    <div className="space-y-1">
+                      <Label className="text-sm font-semibold">{t('uploadImage')}</Label>
+                      <div className="flex items-center gap-3">
+                        {formData.image_url ? (
+                          <img 
+                            src={formData.image_url} 
+                            alt="Trip" 
+                            className="w-20 h-16 object-cover rounded-lg"
+                          />
+                        ) : (
+                          <div className="w-20 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <Upload className="w-6 h-6 text-gray-400" />
+                          </div>
                         )}
                         <label className="cursor-pointer">
-                          <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                          <Button type="button" variant="outline" disabled={imageUploading} asChild>
-                            <span className="text-[9px] h-6 px-1.5 flex items-center gap-0.5">
-                              {imageUploading ? <Loader2 className="w-2.5 h-2.5 animate-spin" /> : <Upload className="w-2.5 h-2.5" />}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                          />
+                          <Button type="button" variant="outline" size="sm" disabled={imageUploading} asChild>
+                            <span className="gap-1 text-xs">
+                              {imageUploading ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Upload className="w-4 h-4" />
+                              )}
                               {language === 'he' ? 'העלה' : 'Upload'}
                             </span>
                           </Button>
                         </label>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               )}
 
               {/* Step 2: Location & Time */}
               {currentStep === 2 && (
-                <div className="bg-white border border-blue-100 rounded-lg shadow-sm h-full flex flex-col">
-                  <div className="bg-blue-50 py-1 px-2 flex-shrink-0 rounded-t-lg">
-                    <h2 className="flex items-center gap-1 text-xs font-bold text-blue-700">
-                      <MapPin className="w-3 h-3" />
-                      {language === 'he' ? 'מיקום וזמן' : 'Location & Time'}
-                    </h2>
-                  </div>
-                  <div className="p-2 space-y-1 overflow-y-auto flex-1">
-                    <div className="grid grid-cols-2 gap-1">
-                      <div className="col-span-2">
-                        <Label className="text-[10px]">{t('country')}</Label>
-                        <Select value={formData.country} onValueChange={(v) => handleChange('country', v)}>
-                          <SelectTrigger className="p-1 text-[10px] h-6">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="max-h-32">
-                            {countries.map(c => (
-                              <SelectItem key={c} value={c}>{t(c)}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                <Card className="border-2 border-blue-100 shadow-2xl">
+                  <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50">
+                    <CardTitle className="flex items-center gap-3 text-2xl">
+                      <MapPin className="w-7 h-7 text-blue-600" />
+                      {language === 'he' ? 'מיקום וזמן' : language === 'ru' ? 'Место и время' : language === 'es' ? 'Ubicación y hora' : language === 'fr' ? 'Lieu et heure' : language === 'de' ? 'Ort und Zeit' : language === 'it' ? 'Luogo e orario' : 'Location & Time'}
+                    </CardTitle>
+                    <CardDescription>{language === 'he' ? 'איפה וממתי?' : language === 'ru' ? 'Где и когда?' : language === 'es' ? '¿Dónde y cuándo?' : language === 'fr' ? 'Où et quand ?' : language === 'de' ? 'Wo und wann?' : language === 'it' ? 'Dove e quando?' : 'Where and when?'}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-8 space-y-6">
+                    <div className="space-y-2">
+                      <Label className="text-lg font-semibold flex items-center gap-2">
+                        <Globe className="w-5 h-5" />
+                        {t('country')} *
+                      </Label>
+                      <Select 
+                        value={formData.country} 
+                        onValueChange={(v) => handleChange('country', v)}
+                      >
+                        <SelectTrigger className="p-6 text-base">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-60">
+                          {countries.map(c => (
+                            <SelectItem key={c} value={c}>{t(c)}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
+                    <div className={`grid ${formData.country === 'israel' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-3'} gap-4`}>
                       {formData.country !== 'israel' && (
-                        <div>
-                          <Label className="text-[10px]">{language === 'he' ? 'מחוז' : 'State'}</Label>
-                          <Select value={formData.region} onValueChange={(v) => handleChange('region', v)} disabled={loadingRegions}>
-                            <SelectTrigger className="p-1 text-[10px] h-6">
-                              <SelectValue />
+                        <div className="space-y-2">
+                          <Label className="text-base font-semibold">{language === 'he' ? 'מחוז/מדינה' : language === 'ru' ? 'Штат/Область' : language === 'es' ? 'Estado/Provincia' : language === 'fr' ? 'État/Province' : language === 'de' ? 'Staat/Provinz' : language === 'it' ? 'Stato/Provincia' : 'State/Province'}</Label>
+                          <Select 
+                            value={formData.region} 
+                            onValueChange={(v) => handleChange('region', v)}
+                            disabled={loadingRegions}
+                          >
+                            <SelectTrigger className="p-4">
+                              <SelectValue placeholder={loadingRegions ? (language === 'he' ? 'טוען...' : 'Loading...') : (language === 'he' ? 'בחר' : 'Select')} />
                             </SelectTrigger>
-                            <SelectContent className="max-h-32">
+                            <SelectContent>
                               {dynamicRegions.map(r => (
-                                <SelectItem key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</SelectItem>
+                                <SelectItem key={r} value={r}>
+                                  {r.charAt(0).toUpperCase() + r.slice(1)}
+                                </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </div>
                       )}
 
-                      <div>
-                        <Label className="text-[10px]">{language === 'he' ? 'עיר' : 'City'}</Label>
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold">{language === 'he' ? 'אזור/עיר' : language === 'ru' ? 'Область/Город' : language === 'es' ? 'Área/Ciudad' : language === 'fr' ? 'Région/Ville' : language === 'de' ? 'Region/Stadt' : language === 'it' ? 'Area/Città' : 'Area/City'}</Label>
                         <Select 
                           value={formData.country === 'israel' ? formData.region : formData.sub_region} 
                           onValueChange={(v) => handleChange(formData.country === 'israel' ? 'region' : 'sub_region', v)}
-                          disabled={formData.country === 'israel' ? loadingRegions : !formData.region}
+                          disabled={formData.country === 'israel' ? loadingRegions : (loadingSubRegions || !formData.region)}
                         >
-                          <SelectTrigger className="p-1 text-[10px] h-6">
-                            <SelectValue />
+                          <SelectTrigger className="p-4">
+                            <SelectValue placeholder={language === 'he' ? 'בחר' : 'Select'} />
                           </SelectTrigger>
-                          <SelectContent className="max-h-32">
+                          <SelectContent>
                             {(formData.country === 'israel' ? dynamicRegions : dynamicSubRegions).map(item => (
                               <SelectItem key={item} value={item}>{item}</SelectItem>
                             ))}
@@ -860,9 +922,9 @@ Include water recommendation in liters and detailed equipment list.`,
                         </Select>
                       </div>
 
-                      <div className={formData.country === 'israel' ? 'col-span-1' : 'col-span-2'}>
-                        <Label className="text-[10px]">{t('location')} *</Label>
-                        <div className="flex gap-0.5">
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold">{t('location')} *</Label>
+                        <div className="flex gap-2">
                           <Input
                             value={formData.location}
                             onChange={(e) => {
@@ -871,17 +933,66 @@ Include water recommendation in liters and detailed equipment list.`,
                                 setMissingFields(prev => prev.filter(f => f !== 'location'));
                               }
                             }}
-                            className={`text-[10px] p-1 h-6 ${missingFields.includes('location') ? 'border-red-500' : ''}`}
-                            placeholder={language === 'he' ? 'נחל עמוד' : 'Location'}
+                            className={missingFields.includes('location') ? 'border-2 border-red-500 bg-red-50' : ''}
+                            placeholder={
+                              formData.country === 'israel' 
+                                ? (language === 'he' ? 'לדוגמה: נחל עמוד, מצדה, עין גדי' : 'e.g., Nahal Amud, Masada, Ein Gedi')
+                              : formData.country === 'usa'
+                                ? (language === 'he' ? 'לדוגמה: Grand Canyon, Yosemite' : language === 'es' ? 'ej., Grand Canyon, Yosemite' : language === 'fr' ? 'ex., Grand Canyon, Yosemite' : language === 'de' ? 'z.B. Grand Canyon, Yosemite' : language === 'it' ? 'es., Grand Canyon, Yosemite' : 'e.g., Grand Canyon, Yosemite')
+                              : formData.country === 'france'
+                                ? (language === 'fr' ? 'ex., Mont Blanc, Chamonix, Verdon' : language === 'he' ? 'לדוגמה: Mont Blanc, Chamonix' : language === 'es' ? 'ej., Mont Blanc, Chamonix' : language === 'de' ? 'z.B. Mont Blanc, Chamonix' : language === 'it' ? 'es., Mont Blanc, Chamonix' : 'e.g., Mont Blanc, Chamonix')
+                              : formData.country === 'spain'
+                                ? (language === 'es' ? 'ej., Sierra de Guadarrama, Picos de Europa' : language === 'he' ? 'לדוגמה: Sierra de Guadarrama' : language === 'fr' ? 'ex., Sierra de Guadarrama' : language === 'de' ? 'z.B. Sierra de Guadarrama' : language === 'it' ? 'es., Sierra de Guadarrama' : 'e.g., Sierra de Guadarrama')
+                              : formData.country === 'italy'
+                                ? (language === 'it' ? 'es., Dolomiti, Cinque Terre, Lago di Como' : language === 'he' ? 'לדוגמה: Dolomiti, Cinque Terre' : language === 'es' ? 'ej., Dolomiti, Cinque Terre' : language === 'fr' ? 'ex., Dolomiti, Cinque Terre' : language === 'de' ? 'z.B. Dolomiti, Cinque Terre' : 'e.g., Dolomiti, Cinque Terre')
+                              : formData.country === 'germany'
+                                ? (language === 'de' ? 'z.B. Schwarzwald, Alpen, Harz' : language === 'he' ? 'לדוגמה: Schwarzwald, Alpen' : language === 'es' ? 'ej., Schwarzwald, Alpen' : language === 'fr' ? 'ex., Schwarzwald, Alpen' : language === 'it' ? 'es., Schwarzwald, Alpen' : 'e.g., Black Forest, Alps')
+                              : formData.country === 'switzerland'
+                                ? (language === 'de' ? 'z.B. Matterhorn, Jungfrau, Interlaken' : language === 'fr' ? 'ex., Matterhorn, Jungfrau' : language === 'it' ? 'es., Matterhorn, Jungfrau' : language === 'he' ? 'לדוגמה: Matterhorn, Jungfrau' : 'e.g., Matterhorn, Jungfrau')
+                              : formData.country === 'norway'
+                                ? (language === 'he' ? 'לדוגמה: Trolltunga, Preikestolen' : language === 'es' ? 'ej., Trolltunga, Preikestolen' : language === 'fr' ? 'ex., Trolltunga, Preikestolen' : language === 'de' ? 'z.B. Trolltunga, Preikestolen' : language === 'it' ? 'es., Trolltunga, Preikestolen' : 'e.g., Trolltunga, Preikestolen')
+                              : formData.country === 'new_zealand'
+                                ? (language === 'he' ? 'לדוגמה: Milford Sound, Mount Cook' : 'e.g., Milford Sound, Mount Cook')
+                              : formData.country === 'japan'
+                                ? (language === 'he' ? 'לדוגמה: Mount Fuji, Kyoto' : language === 'es' ? 'ej., Monte Fuji, Kioto' : language === 'fr' ? 'ex., Mont Fuji, Kyoto' : language === 'de' ? 'z.B. Fuji, Kyoto' : language === 'it' ? 'es., Monte Fuji, Kyoto' : 'e.g., Mount Fuji, Kyoto')
+                              : (language === 'he' ? 'שם מדויק של המיקום' : language === 'es' ? 'Nombre específico' : language === 'fr' ? 'Nom spécifique' : language === 'de' ? 'Spezifischer Name' : language === 'it' ? 'Nome specifico' : 'Specific location name')
+                            }
+                            className="flex-1 p-4"
                           />
-                          <Button type="button" variant="outline" onClick={handleLocationSearch} disabled={searchingLocation} className="h-6 w-6 p-0">
-                            {searchingLocation ? <Loader2 className="w-2.5 h-2.5 animate-spin" /> : <Navigation className="w-2.5 h-2.5" />}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleLocationSearch}
+                            disabled={searchingLocation}
+                            className="gap-2 px-4"
+                          >
+                            {searchingLocation ? (
+                              <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                              <Navigation className="w-5 h-5" />
+                            )}
                           </Button>
                         </div>
+                        {formData.latitude && formData.longitude && (
+                          <p className="text-sm text-green-600 flex items-center gap-1">
+                            <MapPin className="w-4 h-4" />
+                            {language === 'he' ? 'מיקום נמצא במפה' : language === 'ru' ? 'Местоположение найдено' : language === 'es' ? 'Ubicación encontrada' : language === 'fr' ? 'Emplacement trouvé' : language === 'de' ? 'Standort gefunden' : language === 'it' ? 'Posizione trovata' : 'Location found on map'}
+                          </p>
+                        )}
+                        {missingFields.includes('location') && (
+                          <p className="text-red-600 text-sm font-semibold animate-bounce">
+                            {language === 'he' ? '⚠️ שדה חובה - נא להזין מיקום' : '⚠️ Required field - please enter location'}
+                          </p>
+                        )}
                       </div>
+                    </div>
 
-                      <div>
-                        <Label className="text-[10px]">{t('date')} *</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold flex items-center gap-2">
+                          <Calendar className="w-5 h-5" />
+                          {t('date')} *
+                        </Label>
                         <Input
                           type="date"
                           value={formData.date}
@@ -891,17 +1002,30 @@ Include water recommendation in liters and detailed equipment list.`,
                               setMissingFields(prev => prev.filter(f => f !== 'date'));
                             }
                           }}
-                          className={`p-1 text-[10px] h-6 ${missingFields.includes('date') ? 'border-red-500' : ''}`}
+                          className={`p-4 ${missingFields.includes('date') ? 'border-2 border-red-500 bg-red-50' : ''}`}
+                        />
+                        {missingFields.includes('date') && (
+                          <p className="text-red-600 text-sm font-semibold animate-bounce">
+                            {language === 'he' ? '⚠️ שדה חובה - נא לבחור תאריך' : '⚠️ Required field - please select a date'}
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold flex items-center gap-2">
+                          <Clock className="w-5 h-5" />
+                          {language === 'he' ? 'שעת התכנסות' : language === 'ru' ? 'Время встречи' : language === 'es' ? 'Hora de encuentro' : language === 'fr' ? 'Heure de rendez-vous' : language === 'de' ? 'Treffzeit' : language === 'it' ? 'Orario di ritrovo' : 'Meeting Time'}
+                        </Label>
+                        <Input
+                          type="time"
+                          value={formData.meeting_time}
+                          onChange={(e) => handleChange('meeting_time', e.target.value)}
+                          className="p-4"
                         />
                       </div>
-                      <div>
-                        <Label className="text-[10px]">{language === 'he' ? 'שעה' : 'Time'}</Label>
-                        <Input type="time" value={formData.meeting_time} onChange={(e) => handleChange('meeting_time', e.target.value)} className="p-1 text-[10px] h-6" />
-                      </div>
-                      <div className="col-span-2">
-                        <Label className="text-[10px]">{t('duration')}</Label>
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold">{t('duration')}</Label>
                         <Select value={formData.duration_type} onValueChange={(v) => handleChange('duration_type', v)}>
-                          <SelectTrigger className="p-1 text-[10px] h-6">
+                          <SelectTrigger className="p-4">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -912,51 +1036,97 @@ Include water recommendation in liters and detailed equipment list.`,
                         </Select>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               )}
 
               {/* Step 3: Activity Details */}
               {currentStep === 3 && (
-                <div className="bg-white border border-amber-100 rounded-lg shadow-sm h-full flex flex-col">
-                  <div className="bg-amber-50 py-1 px-2 flex-shrink-0 rounded-t-lg">
-                    <h2 className="flex items-center gap-1 text-xs font-bold text-amber-700">
-                      <Mountain className="w-3 h-3" />
-                      {language === 'he' ? 'פרטי פעילות' : 'Activity'}
-                    </h2>
-                  </div>
-                  <div className="p-2 space-y-1 overflow-y-auto flex-1">
-                    <div>
-                      <Label className="text-[10px]">{t('activityType')}</Label>
-                      <div className="grid grid-cols-5 gap-0.5">
-                        {[
-                          { type: 'hiking', icon: Footprints },
-                          { type: 'running', icon: User },
-                          { type: 'cycling', icon: Bike },
-                          { type: 'offroad', icon: Truck },
-                          { type: 'culinary', icon: UtensilsCrossed }
-                        ].map(({ type, icon: Icon }) => (
-                          <Button
-                            key={type}
-                            type="button"
-                            variant={formData.activity_type === type ? 'default' : 'outline'}
-                            className={`h-10 flex flex-col gap-0 text-[8px] p-0 ${
-                              formData.activity_type === type ? 'bg-emerald-600' : ''
-                            }`}
-                            onClick={() => handleChange('activity_type', type)}
-                          >
-                            <Icon className="w-3 h-3" />
-                            <span className="leading-none">{t(type)}</span>
-                          </Button>
-                        ))}
+                <Card className="border-2 border-amber-100 shadow-2xl">
+                  <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50">
+                    <CardTitle className="flex items-center gap-3 text-2xl">
+                      <Mountain className="w-7 h-7 text-amber-600" />
+                      {language === 'he' ? 'פרטי הפעילות' : language === 'ru' ? 'Детали активности' : language === 'es' ? 'Detalles de la actividad' : language === 'fr' ? 'Détails de l\'activité' : language === 'de' ? 'Aktivitätsdetails' : language === 'it' ? 'Dettagli dell\'attività' : 'Activity Details'}
+                    </CardTitle>
+                    <CardDescription>{language === 'he' ? 'איזה סוג של טיול?' : language === 'ru' ? 'Какой тип поездки?' : language === 'es' ? '¿Qué tipo de viaje?' : language === 'fr' ? 'Quel type de voyage ?' : language === 'de' ? 'Welche Art von Reise?' : language === 'it' ? 'Che tipo di viaggio?' : 'What kind of trip?'}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-8 space-y-6">
+                    <div className="space-y-4">
+                      <Label className="text-lg font-semibold">{t('activityType')} *</Label>
+                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                        <Button
+                          type="button"
+                          variant={formData.activity_type === 'hiking' ? 'default' : 'outline'}
+                          className={`h-32 flex flex-col items-center justify-center gap-3 text-lg font-bold ${
+                            formData.activity_type === 'hiking'
+                              ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-2xl scale-105'
+                              : 'border-2 hover:border-emerald-500 hover:bg-emerald-50'
+                          }`}
+                          onClick={() => handleChange('activity_type', 'hiking')}
+                        >
+                          <Footprints className="w-10 h-10" />
+                          {t('hiking')}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={formData.activity_type === 'running' ? 'default' : 'outline'}
+                          className={`h-32 flex flex-col items-center justify-center gap-3 text-lg font-bold ${
+                            formData.activity_type === 'running'
+                              ? 'bg-gradient-to-br from-violet-500 to-purple-500 text-white shadow-2xl scale-105'
+                              : 'border-2 hover:border-violet-500 hover:bg-violet-50'
+                          }`}
+                          onClick={() => handleChange('activity_type', 'running')}
+                        >
+                          <User className="w-10 h-10" />
+                          {t('running')}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={formData.activity_type === 'cycling' ? 'default' : 'outline'}
+                          className={`h-32 flex flex-col items-center justify-center gap-3 text-lg font-bold ${
+                            formData.activity_type === 'cycling'
+                              ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-2xl scale-105'
+                              : 'border-2 hover:border-blue-500 hover:bg-blue-50'
+                          }`}
+                          onClick={() => handleChange('activity_type', 'cycling')}
+                        >
+                          <Bike className="w-10 h-10" />
+                          {t('cycling')}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={formData.activity_type === 'offroad' ? 'default' : 'outline'}
+                          className={`h-32 flex flex-col items-center justify-center gap-3 text-lg font-bold ${
+                            formData.activity_type === 'offroad'
+                              ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-2xl scale-105'
+                              : 'border-2 hover:border-orange-500 hover:bg-orange-50'
+                          }`}
+                          onClick={() => handleChange('activity_type', 'offroad')}
+                        >
+                          <Truck className="w-10 h-10" />
+                          {t('offroad')}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={formData.activity_type === 'culinary' ? 'default' : 'outline'}
+                          className={`h-32 flex flex-col items-center justify-center gap-3 text-lg font-bold ${
+                            formData.activity_type === 'culinary'
+                              ? 'bg-gradient-to-br from-rose-500 to-pink-500 text-white shadow-2xl scale-105'
+                              : 'border-2 hover:border-rose-500 hover:bg-rose-50'
+                          }`}
+                          onClick={() => handleChange('activity_type', 'culinary')}
+                        >
+                          <UtensilsCrossed className="w-10 h-10" />
+                          {t('culinary')}
+                        </Button>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-1">
-                      <div>
-                        <Label className="text-[10px]">{t('difficulty')}</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold">{t('difficulty')}</Label>
                         <Select value={formData.difficulty} onValueChange={(v) => handleChange('difficulty', v)}>
-                          <SelectTrigger className="p-1 text-[10px] h-6">
+                          <SelectTrigger className="p-4 text-base">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -967,28 +1137,122 @@ Include water recommendation in liters and detailed equipment list.`,
                         </Select>
                       </div>
 
-                      <div>
-                        <Label className="text-[10px]">{language === 'he' ? 'מקס׳' : 'Max'}</Label>
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold flex items-center gap-2">
+                          <Users className="w-5 h-5" />
+                          {t('maxParticipants')}
+                        </Label>
                         <Input
                           type="number"
                           min={2}
                           max={50}
                           value={formData.max_participants}
                           onChange={(e) => handleChange('max_participants', parseInt(e.target.value))}
-                          className="p-1 text-[10px] h-6"
+                          className="p-4"
                         />
                       </div>
                     </div>
 
-                    <div>
-                      <Label className="text-[10px]">{t('trailType')}</Label>
-                      <div className="flex flex-wrap gap-0.5">
-                        {trailTypes.slice(0, 5).map(type => (
+                    {formData.activity_type === 'cycling' && (
+                      <div className="space-y-4 p-6 bg-blue-50 rounded-2xl">
+                        <h3 className="text-lg font-bold text-blue-900">{language === 'he' ? 'פרטי רכיבה' : language === 'ru' ? 'Детали велопоездки' : language === 'es' ? 'Detalles del ciclismo' : language === 'fr' ? 'Détails du cyclisme' : language === 'de' ? 'Radfahrdetails' : language === 'it' ? 'Dettagli del ciclismo' : 'Cycling Details'}</h3>
+                        <div className="space-y-2">
+                          <Label>{t('cyclingType')}</Label>
+                          <Select value={formData.cycling_type} onValueChange={(v) => handleChange('cycling_type', v)}>
+                            <SelectTrigger className="p-4">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {cyclingTypes.map(type => (
+                                <SelectItem key={type} value={type}>{t(type)}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>{t('cyclingDistance')}</Label>
+                            <Input
+                              type="number"
+                              min={1}
+                              value={formData.cycling_distance}
+                              onChange={(e) => handleChange('cycling_distance', parseInt(e.target.value))}
+                              className="p-4"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>{t('cyclingElevation')}</Label>
+                            <Input
+                              type="number"
+                              min={0}
+                              value={formData.cycling_elevation}
+                              onChange={(e) => handleChange('cycling_elevation', parseInt(e.target.value))}
+                              className="p-4"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {formData.activity_type === 'offroad' && (
+                      <div className="space-y-4 p-6 bg-orange-50 rounded-2xl">
+                        <h3 className="text-lg font-bold text-orange-900">{language === 'he' ? 'פרטי שטח' : language === 'ru' ? 'Детали внедорожной поездки' : language === 'es' ? 'Detalles del todoterreno' : language === 'fr' ? 'Détails du tout-terrain' : language === 'de' ? 'Offroad-Details' : language === 'it' ? 'Dettagli del fuoristrada' : 'Off-Road Details'}</h3>
+                        <div className="space-y-2">
+                          <Label>{t('offroadVehicleType')}</Label>
+                          <Select value={formData.offroad_vehicle_type} onValueChange={(v) => handleChange('offroad_vehicle_type', v)}>
+                            <SelectTrigger className="p-4">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {offroadVehicleTypes.map(type => (
+                                <SelectItem key={type} value={type}>{t(type)}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>{t('offroadDistance')}</Label>
+                          <Input
+                            type="number"
+                            min={1}
+                            value={formData.offroad_distance}
+                            onChange={(e) => handleChange('offroad_distance', parseInt(e.target.value))}
+                            className="p-4"
+                          />
+                        </div>
+                        <div className="space-y-3">
+                          <Label>{t('offroadTerrainType')}</Label>
+                          <div className="flex flex-wrap gap-2">
+                            {offroadTerrainTypes.map(type => (
+                              <Badge
+                                key={type}
+                                variant={formData.offroad_terrain_type.includes(type) ? 'default' : 'outline'}
+                                className={`cursor-pointer text-sm py-2 px-4 ${
+                                  formData.offroad_terrain_type.includes(type) 
+                                    ? 'bg-orange-600 hover:bg-orange-700' 
+                                    : 'hover:border-orange-500'
+                                }`}
+                                onClick={() => handleArrayToggle('offroad_terrain_type', type)}
+                              >
+                                {t(type)}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="space-y-3">
+                      <Label className="text-base font-semibold">{t('trailType')}</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {trailTypes.map(type => (
                           <Badge
                             key={type}
                             variant={formData.trail_type.includes(type) ? 'default' : 'outline'}
-                            className={`cursor-pointer text-[8px] py-0 px-1 h-4 ${
-                              formData.trail_type.includes(type) ? 'bg-emerald-600' : ''
+                            className={`cursor-pointer text-sm py-2 px-4 ${
+                              formData.trail_type.includes(type) 
+                                ? 'bg-emerald-600 hover:bg-emerald-700' 
+                                : 'hover:border-emerald-500'
                             }`}
                             onClick={() => handleArrayToggle('trail_type', type)}
                           >
@@ -998,135 +1262,184 @@ Include water recommendation in liters and detailed equipment list.`,
                       </div>
                     </div>
 
-                    <div className="flex gap-1.5 text-[9px]">
-                      <div className="flex items-center gap-0.5">
+                    <div className="space-y-3">
+                      <Label className="text-base font-semibold">{t('interests')}</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {interests.map(interest => (
+                          <Badge
+                            key={interest}
+                            variant={formData.interests.includes(interest) ? 'default' : 'outline'}
+                            className={`cursor-pointer text-sm py-2 px-4 ${
+                              formData.interests.includes(interest) 
+                                ? 'bg-blue-600 hover:bg-blue-700' 
+                                : 'hover:border-blue-500'
+                            }`}
+                            onClick={() => handleArrayToggle('interests', interest)}
+                          >
+                            {t(interest)}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-6 pt-4">
+                      <div className="flex items-center gap-3">
                         <Checkbox
                           id="pets"
-                          className="h-2.5 w-2.5"
                           checked={formData.pets_allowed}
                           onCheckedChange={(checked) => handleChange('pets_allowed', checked)}
                         />
-                        <Label htmlFor="pets" className="cursor-pointer flex items-center gap-0.5">
-                          <Dog className="w-2.5 h-2.5" />
-                          {language === 'he' ? 'חיות' : 'Pets'}
+                        <Label htmlFor="pets" className="cursor-pointer text-base flex items-center gap-2">
+                          <Dog className="w-5 h-5" />
+                          {t('petsAllowed')}
                         </Label>
                       </div>
-                      <div className="flex items-center gap-0.5">
+                      <div className="flex items-center gap-3">
                         <Checkbox
                           id="camping"
-                          className="h-2.5 w-2.5"
                           checked={formData.camping_available}
                           onCheckedChange={(checked) => handleChange('camping_available', checked)}
                         />
-                        <Label htmlFor="camping" className="cursor-pointer flex items-center gap-0.5">
-                          <Tent className="w-2.5 h-2.5" />
-                          {language === 'he' ? 'קמפינג' : 'Camp'}
+                        <Label htmlFor="camping" className="cursor-pointer text-base flex items-center gap-2">
+                          <Tent className="w-5 h-5" />
+                          {t('campingAvailable')}
                         </Label>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               )}
 
               {/* Step 4: Planning */}
               {currentStep === 4 && (
-                <div className="bg-white border border-purple-100 rounded-lg shadow-sm h-full flex flex-col">
-                  <div className="bg-purple-50 py-1 px-2 flex-shrink-0 rounded-t-lg">
-                    <h2 className="flex items-center gap-1 text-xs font-bold text-purple-700">
-                      <Compass className="w-3 h-3" />
-                      {language === 'he' ? 'תכנון (אופציונלי)' : 'Planning'}
-                    </h2>
-                  </div>
-                  <div className="p-2 overflow-y-auto flex-1">
-                    <p className="text-[9px] text-gray-600 mb-1">
-                      {language === 'he' ? 'ניתן להוסיף בהמשך' : 'Add later'}
-                    </p>
-                    <div className="grid grid-cols-2 gap-1 text-center">
-                      <div className="bg-gray-50 p-1 rounded">
-                        <p className="text-xs font-bold text-purple-600">{equipment.length}</p>
-                        <p className="text-[8px] text-gray-600">{language === 'he' ? 'ציוד' : 'Gear'}</p>
-                      </div>
-                      <div className="bg-gray-50 p-1 rounded">
-                        <p className="text-xs font-bold text-indigo-600">{waypoints.length}</p>
-                        <p className="text-[8px] text-gray-600">{language === 'he' ? 'נקודות' : 'Points'}</p>
-                      </div>
-                    </div>
-                  </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <EquipmentCreator
+                    equipment={equipment}
+                    setEquipment={setEquipment}
+                    waterRecommendation={waterRecommendation}
+                    setWaterRecommendation={setWaterRecommendation}
+                    onGenerateAI={generatingEquipment ? null : handleGenerateEquipment}
+                  />
+                  <ItineraryCreator
+                    itinerary={itinerary}
+                    setItinerary={setItinerary}
+                    onGenerateAI={generatingItinerary ? null : handleGenerateItinerary}
+                  />
+                  <WaypointsCreator
+                    waypoints={waypoints}
+                    setWaypoints={setWaypoints}
+                    startLat={formData.latitude}
+                    startLng={formData.longitude}
+                    locationName={formData.location}
+                  />
+                  <BudgetCreator
+                    budget={budget}
+                    setBudget={setBudget}
+                  />
                 </div>
               )}
 
               {/* Step 5: Summary */}
               {currentStep === 5 && (
-                <div className="bg-white border border-green-100 rounded-lg shadow-sm h-full flex flex-col">
-                  <div className="bg-green-50 py-1 px-2 flex-shrink-0 rounded-t-lg">
-                    <h2 className="flex items-center gap-1 text-xs font-bold text-green-700">
-                      <Check className="w-3 h-3" />
-                      {language === 'he' ? 'סיכום' : 'Summary'}
-                    </h2>
-                  </div>
-                  <div className="p-2 overflow-y-auto flex-1">
-                    <div className="bg-emerald-50 p-1.5 rounded">
-                      <h3 className="text-xs font-bold mb-0.5">{formData.title}</h3>
+                <Card className="border-2 border-green-100 shadow-2xl">
+                  <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50">
+                    <CardTitle className="flex items-center gap-3 text-2xl">
+                      <Check className="w-7 h-7 text-green-600" />
+                      {language === 'he' ? 'סיכום הטיול' : language === 'ru' ? 'Резюме поездки' : language === 'es' ? 'Resumen del viaje' : language === 'fr' ? 'Résumé du voyage' : language === 'de' ? 'Reisezusammenfassung' : language === 'it' ? 'Riepilogo del viaggio' : 'Trip Summary'}
+                    </CardTitle>
+                    <CardDescription>{language === 'he' ? 'בדוק שהכל נכון לפני פרסום' : language === 'ru' ? 'Проверьте все перед публикацией' : language === 'es' ? 'Revisa todo antes de publicar' : language === 'fr' ? 'Vérifiez tout avant de publier' : language === 'de' ? 'Überprüfen Sie alles vor der Veröffentlichung' : language === 'it' ? 'Rivedi tutto prima di pubblicare' : 'Review everything before publishing'}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-8 space-y-6">
+                    <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-2xl">
+                      <h3 className="text-2xl font-bold mb-4">{formData.title}</h3>
                       {formData.image_url && (
-                        <img src={formData.image_url} alt="Trip" className="w-full h-12 object-cover rounded mb-0.5" />
+                        <img src={formData.image_url} alt="Trip" className="w-full h-64 object-cover rounded-xl mb-4" />
                       )}
-                      <div className="grid grid-cols-2 gap-1 text-[9px]">
+                      <p className="text-gray-700 mb-4">{formData.description}</p>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <span className="font-semibold">{language === 'he' ? 'מיקום:' : 'Location:'}</span>
-                          <p className="truncate">{formData.location}</p>
+                          <span className="font-semibold">{language === 'he' ? 'מיקום:' : language === 'ru' ? 'Место:' : language === 'es' ? 'Ubicación:' : language === 'fr' ? 'Lieu :' : language === 'de' ? 'Ort:' : language === 'it' ? 'Luogo:' : 'Location:'}</span>
+                          <p>{formData.location}, {formData.region}, {t(formData.country)}</p>
                         </div>
                         <div>
-                          <span className="font-semibold">{language === 'he' ? 'תאריך:' : 'Date:'}</span>
+                          <span className="font-semibold">{language === 'he' ? 'תאריך:' : language === 'ru' ? 'Дата:' : language === 'es' ? 'Fecha:' : language === 'fr' ? 'Date :' : language === 'de' ? 'Datum:' : language === 'it' ? 'Data:' : 'Date:'}</span>
                           <p>{new Date(formData.date).toLocaleDateString()}</p>
                         </div>
                         <div>
-                          <span className="font-semibold">{language === 'he' ? 'סוג:' : 'Type:'}</span>
+                          <span className="font-semibold">{language === 'he' ? 'סוג:' : language === 'ru' ? 'Тип:' : language === 'es' ? 'Tipo:' : language === 'fr' ? 'Type :' : language === 'de' ? 'Typ:' : language === 'it' ? 'Tipo:' : 'Type:'}</span>
                           <p>{t(formData.activity_type)}</p>
                         </div>
                         <div>
-                          <span className="font-semibold">{language === 'he' ? 'קושי:' : 'Diff:'}</span>
+                          <span className="font-semibold">{language === 'he' ? 'קושי:' : language === 'ru' ? 'Сложность:' : language === 'es' ? 'Dificultad:' : language === 'fr' ? 'Difficulté :' : language === 'de' ? 'Schwierigkeit:' : language === 'it' ? 'Difficoltà:' : 'Difficulty:'}</span>
                           <p>{t(formData.difficulty)}</p>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
+
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div className="bg-white p-4 rounded-xl shadow">
+                        <p className="text-3xl font-bold text-purple-600">{equipment.length}</p>
+                        <p className="text-sm text-gray-600">{language === 'he' ? 'פריטי ציוד' : language === 'ru' ? 'Предметы снаряжения' : language === 'es' ? 'Artículos de equipo' : language === 'fr' ? 'Articles d\'équipement' : language === 'de' ? 'Ausrüstungsgegenstände' : language === 'it' ? 'Articoli di equipaggiamento' : 'Equipment Items'}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-xl shadow">
+                        <p className="text-3xl font-bold text-indigo-600">{itinerary.length}</p>
+                        <p className="text-sm text-gray-600">{language === 'he' ? 'ימים מתוכננים' : language === 'ru' ? 'Запланированные дни' : language === 'es' ? 'Días planificados' : language === 'fr' ? 'Jours planifiés' : language === 'de' ? 'Geplante Tage' : language === 'it' ? 'Giorni pianificati' : 'Planned Days'}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-xl shadow">
+                        <p className="text-3xl font-bold text-emerald-600">{waypoints.length}</p>
+                        <p className="text-sm text-gray-600">{language === 'he' ? 'נקודות ציון' : language === 'ru' ? 'Точки маршрута' : language === 'es' ? 'Puntos de referencia' : language === 'fr' ? 'Points de repère' : language === 'de' ? 'Wegpunkte' : language === 'it' ? 'Punti di riferimento' : 'Waypoints'}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               )}
             </motion.div>
           </AnimatePresence>
 
           {/* Navigation Buttons */}
-          <div className="flex justify-between mt-1 gap-1.5 flex-shrink-0 pb-1">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex justify-between mt-2 sm:mt-3 gap-2 flex-shrink-0"
+          >
             <Button
               type="button"
               variant="outline"
               onClick={prevStep}
               disabled={currentStep === 1}
-              className="px-2 py-1 text-[10px] h-7"
+              className="px-3 py-2 text-sm font-semibold"
             >
-              <ArrowLeft className="w-2.5 h-2.5" />
+              <ArrowLeft className={`w-4 h-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+              {language === 'he' ? 'אחורה' : 'Back'}
             </Button>
 
             {currentStep < steps.length ? (
               <Button
                 type="button"
                 onClick={nextStep}
-                className="px-3 py-1 text-[10px] h-7 bg-emerald-600"
+                className="px-3 py-2 text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
               >
                 {language === 'he' ? 'הבא' : 'Next'}
-                <ArrowRight className="w-2.5 h-2.5" />
+                <ArrowRight className={`w-4 h-4 ${isRTL ? 'mr-1' : 'ml-1'}`} />
               </Button>
             ) : (
               <Button
                 type="button"
                 onClick={handleSubmit}
                 disabled={saving}
-                className="px-3 py-1 text-[10px] h-7 bg-green-600"
+                className="px-4 py-2 text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
               >
-                {saving ? <Loader2 className="w-2.5 h-2.5 animate-spin" /> : <><Check className="w-2.5 h-2.5" /> {language === 'he' ? 'פרסם' : 'Publish'}</>}
+                {saving ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <Check className="w-4 h-4 mr-1" />
+                    {language === 'he' ? 'פרסם' : 'Publish'}
+                  </>
+                )}
               </Button>
             )}
-          </div>
+          </motion.div>
         </div>
       </div>
 
