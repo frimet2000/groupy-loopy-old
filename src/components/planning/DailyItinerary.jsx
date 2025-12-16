@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Calendar, Clock, Plus, Edit, Trash2, MapPin, Sparkles, Loader2 } from 'lucide-react';
+import { Calendar, Clock, Plus, Edit, Trash2, MapPin, Sparkles, Loader2, Image, Upload } from 'lucide-react';
 import { toast } from "sonner";
 
 export default function DailyItinerary({ trip, isOrganizer, onUpdate }) {
