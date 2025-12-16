@@ -1197,25 +1197,27 @@ Include water recommendation in liters and detailed equipment list.`,
                             </SelectContent>
                           </Select>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label>{t('cyclingDistance')}</Label>
+                        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                          <div className="space-y-0.5">
+                            <Label className="text-[10px] sm:text-sm">{language === 'he' ? 'מרחק' : language === 'ru' ? 'Расстояние' : language === 'es' ? 'Distancia' : language === 'fr' ? 'Distance' : language === 'de' ? 'Entfernung' : language === 'it' ? 'Distanza' : 'Distance'}</Label>
                             <Input
                               type="number"
                               min={1}
                               value={formData.cycling_distance}
                               onChange={(e) => handleChange('cycling_distance', parseInt(e.target.value))}
-                              className="p-4"
+                              placeholder="50"
+                              className="p-1.5 h-7 sm:h-9 text-xs sm:text-sm"
                             />
                           </div>
-                          <div className="space-y-2">
-                            <Label>{t('cyclingElevation')}</Label>
+                          <div className="space-y-0.5">
+                            <Label className="text-[10px] sm:text-sm">{language === 'he' ? 'עליה' : language === 'ru' ? 'Подъем' : language === 'es' ? 'Elevación' : language === 'fr' ? 'Élévation' : language === 'de' ? 'Höhe' : language === 'it' ? 'Elevazione' : 'Elevation'}</Label>
                             <Input
                               type="number"
                               min={0}
                               value={formData.cycling_elevation}
                               onChange={(e) => handleChange('cycling_elevation', parseInt(e.target.value))}
-                              className="p-4"
+                              placeholder="500"
+                              className="p-1.5 h-7 sm:h-9 text-xs sm:text-sm"
                             />
                           </div>
                         </div>
