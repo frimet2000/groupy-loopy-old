@@ -1264,14 +1264,31 @@ export default function TripDetails() {
                         {language === 'he' ? 'הבקשה ממתינה לאישור' : language === 'ru' ? 'Запрос ожидает подтверждения' : language === 'es' ? 'Solicitud pendiente de aprobación' : language === 'fr' ? 'Demande en attente d\'approbation' : language === 'de' ? 'Anfrage wartet auf Genehmigung' : language === 'it' ? 'Richiesta in attesa di approvazione' : 'Request pending approval'}
                       </Badge>
                     ) : (
-                      <Button 
-                        onClick={() => setShowJoinDialog(true)}
-                        disabled={joinMutation.isLoading || isFull}
-                        className="bg-emerald-600 hover:bg-emerald-700"
+                      <motion.div
+                        animate={{
+                          scale: [1, 1.05, 1],
+                          boxShadow: [
+                            '0 0 0 0 rgba(16, 185, 129, 0.7)',
+                            '0 0 0 10px rgba(16, 185, 129, 0)',
+                            '0 0 0 0 rgba(16, 185, 129, 0)'
+                          ]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                        className="inline-block"
                       >
-                        <Check className="w-4 h-4 mr-2" />
-                        {isFull ? t('tripFull') : (language === 'he' ? 'בקש להצטרף' : language === 'ru' ? 'Запросить присоединение' : language === 'es' ? 'Solicitar unirse' : language === 'fr' ? 'Demander à rejoindre' : language === 'de' ? 'Beitritt anfragen' : language === 'it' ? 'Richiedi di unirti' : 'Request to Join')}
-                      </Button>
+                        <Button 
+                          onClick={() => setShowJoinDialog(true)}
+                          disabled={joinMutation.isLoading || isFull}
+                          className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg text-lg font-bold px-8 h-14 touch-manipulation min-h-[44px]"
+                        >
+                          <Check className="w-5 h-5 mr-2" />
+                          {isFull ? t('tripFull') : (language === 'he' ? 'בקש להצטרף' : language === 'ru' ? 'Запросить присоединение' : language === 'es' ? 'Solicitar unirse' : language === 'fr' ? 'Demander à rejoindre' : language === 'de' ? 'Beitritt anfragen' : language === 'it' ? 'Richiedi di unirti' : 'Request to Join')}
+                        </Button>
+                      </motion.div>
                     )
                   )}
                   
