@@ -124,9 +124,9 @@ export default function TripCard({ trip }) {
 
   return (
     <>
-      <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-white via-gray-50/50 to-white border border-gray-200/50 hover:border-emerald-300/50 shadow-lg relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-emerald-500/5 before:to-teal-500/5 before:opacity-0 before:group-hover:opacity-100 before:transition-opacity before:duration-500 touch-manipulation active:scale-[0.98]">
+      <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-white via-gray-50/50 to-white border-2 border-gray-200/50 hover:border-emerald-300/50 shadow-lg relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-emerald-500/5 before:to-teal-500/5 before:opacity-0 before:group-hover:opacity-100 before:transition-opacity before:duration-500 touch-manipulation active:scale-[0.98] rounded-2xl">
         <Link to={createPageUrl('TripDetails') + `?id=${trip.id}`}>
-          <div className="relative h-48 sm:h-52 md:h-56 overflow-hidden">
+          <div className="relative h-48 sm:h-52 md:h-56 overflow-hidden rounded-t-2xl border-b-2 border-gray-100/50">
             <img
               src={trip.image_url || `https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=600`}
               alt={title}
