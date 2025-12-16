@@ -8,7 +8,7 @@ import TripCard from '../components/trips/TripCard';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Calendar, UserCircle, Compass, Bookmark } from 'lucide-react';
+import { Plus, Calendar, UserCircle, Compass, Bookmark, History } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function MyTrips() {
@@ -101,7 +101,7 @@ export default function MyTrips() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="bg-white p-1 rounded-xl border shadow-sm w-full grid grid-cols-4 h-auto touch-manipulation">
+            <TabsList className="bg-white p-1 rounded-xl border shadow-sm w-full grid grid-cols-5 h-auto touch-manipulation">
               <TabsTrigger 
                 value="upcoming" 
                 className="gap-1.5 data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 flex-col py-3 text-xs sm:text-sm min-h-[56px] touch-manipulation"
@@ -137,6 +137,18 @@ export default function MyTrips() {
                 {savedTrips.length > 0 && (
                   <span className="absolute -top-1 -right-1 bg-amber-600 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-lg">
                     {savedTrips.length}
+                  </span>
+                )}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="past" 
+                className="gap-1.5 data-[state=active]:bg-gray-50 data-[state=active]:text-gray-700 flex-col py-3 text-xs sm:text-sm min-h-[56px] touch-manipulation relative"
+              >
+                <History className="w-5 h-5" />
+                <span className="font-medium">{language === 'he' ? 'שהיו' : language === 'ru' ? 'Прошедшие' : language === 'es' ? 'Pasados' : language === 'fr' ? 'Passés' : language === 'de' ? 'Vergangene' : language === 'it' ? 'Passati' : 'Past'}</span>
+                {pastTrips.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-gray-600 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-lg">
+                    {pastTrips.length}
                   </span>
                 )}
               </TabsTrigger>
@@ -242,6 +254,32 @@ export default function MyTrips() {
                   icon={Bookmark}
                   title={t('noSavedTrips')}
                   description={language === 'he' ? 'עדיין לא שמרת טיולים' : language === 'ru' ? 'Вы еще не сохранили поездки' : language === 'es' ? 'Aún no has guardado ningún viaje' : language === 'fr' ? "Vous n'avez pas encore sauvegardé de voyages" : language === 'de' ? 'Sie haben noch keine Reisen gespeichert' : language === 'it' ? 'Non hai ancora salvato nessun viaggio' : "You haven't saved any trips yet"}
+                />
+              )}
+            </TabsContent>
+
+            <TabsContent value="past">
+              {isLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="space-y-3 md:space-y-4">
+                      <Skeleton className="h-40 md:h-48 w-full rounded-xl" />
+                      <Skeleton className="h-5 md:h-6 w-3/4" />
+                      <Skeleton className="h-3 md:h-4 w-1/2" />
+                    </div>
+                  ))}
+                </div>
+              ) : pastTrips.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+                  {pastTrips.map(trip => (
+                    <TripCard key={trip.id} trip={trip} />
+                  ))}
+                </div>
+              ) : (
+                <EmptyState 
+                  icon={History}
+                  title={language === 'he' ? 'אין טיולים שעברו' : language === 'ru' ? 'Нет прошедших поездок' : language === 'es' ? 'No hay viajes pasados' : language === 'fr' ? 'Aucun voyage passé' : language === 'de' ? 'Keine vergangenen Reisen' : language === 'it' ? 'Nessun viaggio passato' : 'No past trips'}
+                  description={language === 'he' ? 'טיולים שעברו יופיעו כאן' : language === 'ru' ? 'Прошедшие поездки появятся здесь' : language === 'es' ? 'Los viajes pasados aparecerán aquí' : language === 'fr' ? 'Les voyages passés apparaîtront ici' : language === 'de' ? 'Vergangene Reisen erscheinen hier' : language === 'it' ? 'I viaggi passati appariranno qui' : 'Past trips will appear here'}
                 />
               )}
             </TabsContent>
