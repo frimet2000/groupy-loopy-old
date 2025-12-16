@@ -1348,7 +1348,7 @@ export default function TripDetails() {
                 <Navigation className="w-4 h-4 text-green-600 hidden sm:block" />
                 <span className="hidden sm:inline">{language === 'he' ? 'נווט ליעד' : language === 'ru' ? 'Навигация' : language === 'es' ? 'Navegar' : language === 'fr' ? 'Naviguer' : language === 'de' ? 'Navigieren' : language === 'it' ? 'Navigare' : 'Navigate'}</span>
               </TabsTrigger>
-              {hasJoined && (
+              {(hasJoined || isOrganizer) && (
                 <>
                   <TabsTrigger value="itinerary" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-violet-50 data-[state=active]:text-violet-700 py-3">
                     <Calendar className="w-4 h-4 text-violet-600 sm:hidden" />
@@ -1364,7 +1364,7 @@ export default function TripDetails() {
                   </TabsTrigger>
                 </>
               )}
-              {hasJoined && (
+              {(hasJoined || isOrganizer) && (
                 <>
                   <TabsTrigger value="chat" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700 py-3">
                     <MessageSquare className="w-4 h-4 text-orange-600 sm:hidden" />
@@ -1665,7 +1665,7 @@ export default function TripDetails() {
               />
             </TabsContent>
 
-            {hasJoined && (
+            {(hasJoined || isOrganizer) && (
               <>
                 <TabsContent value="chat" className="mt-0">
                   <TripChat 
