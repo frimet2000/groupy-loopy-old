@@ -359,7 +359,7 @@ Return the response in ${language === 'he' ? 'Hebrew' : 'English'}.`;
               <Input
                 value={dayData.title}
                 onChange={(e) => setDayData({ ...dayData, title: e.target.value })}
-                placeholder={language === 'he' ? 'לדוגמה: מסלול הר מירון' : 'e.g., Mt. Meron Trail'}
+                placeholder={language === 'he' ? 'לדוגמה: מסלול הר מירון' : language === 'ru' ? 'напр., Маршрут Гора Мерон' : language === 'es' ? 'ej., Sendero Monte Meron' : language === 'fr' ? 'ex., Sentier du Mont Meron' : language === 'de' ? 'z.B., Berg Meron Weg' : language === 'it' ? 'es., Sentiero Monte Meron' : 'e.g., Mt. Meron Trail'}
               />
             </div>
           </div>
