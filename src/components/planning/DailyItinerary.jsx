@@ -312,59 +312,59 @@ Return the response in ${language === 'he' ? 'Hebrew' : 'English'}.`;
                         console.log('activity:', activity);
                         console.log('image_url:', activity.image_url);
                         return (
-                        <div key={activity.id} className="flex items-start gap-3 p-3 bg-white rounded-lg" dir={language === 'he' ? 'rtl' : 'ltr'}>
-                          {activity.image_url && (
-                            <img 
-                              src={activity.image_url} 
-                              alt={activity.activity}
-                              className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
-                            />
-                          )}
-                          <Clock className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
-                           <div className="flex-1">
-                             <div className="flex items-center gap-2 mb-1">
-                               <Badge variant="outline" className="text-xs">
-                                 {activity.time}
-                               </Badge>
-                             </div>
-                             <p className="font-medium">{activity.activity}</p>
-                             {activity.notes && (
-                               <p className="text-sm text-gray-600 mt-1">{activity.notes}</p>
+                          <div key={activity.id} className="flex items-start gap-3 p-3 bg-white rounded-lg" dir={language === 'he' ? 'rtl' : 'ltr'}>
+                            {activity.image_url && (
+                              <img 
+                                src={activity.image_url} 
+                                alt={activity.activity}
+                                className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
+                              />
+                            )}
+                            <Clock className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Badge variant="outline" className="text-xs">
+                                  {activity.time}
+                                </Badge>
+                              </div>
+                              <p className="font-medium">{activity.activity}</p>
+                              {activity.notes && (
+                                <p className="text-sm text-gray-600 mt-1">{activity.notes}</p>
+                              )}
+                            </div>
+                             {isOrganizer && (
+                               <div className="flex gap-1">
+                                 <Button
+                                   size="sm"
+                                   variant="ghost"
+                                   onClick={() => {
+                                     setSelectedDay(day.id);
+                                     setEditingActivity(activity);
+                                     setActivityData({
+                                       time: activity.time || '',
+                                       activity: activity.activity || '',
+                                       notes: activity.notes || '',
+                                       image_url: activity.image_url || ''
+                                     });
+                                     setShowAddActivity(true);
+                                   }}
+                                 >
+                                   <Edit className="w-3 h-3" />
+                                 </Button>
+                                 <Button
+                                   size="sm"
+                                   variant="ghost"
+                                   className="text-red-600"
+                                   onClick={() => handleDeleteActivity(day.id, activity.id)}
+                                 >
+                                   <Trash2 className="w-3 h-3" />
+                                 </Button>
+                               </div>
                              )}
                            </div>
-                            {isOrganizer && (
-                              <div className="flex gap-1">
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => {
-                                    setSelectedDay(day.id);
-                                    setEditingActivity(activity);
-                                    setActivityData({
-                                      time: activity.time || '',
-                                      activity: activity.activity || '',
-                                      notes: activity.notes || '',
-                                      image_url: activity.image_url || ''
-                                    });
-                                    setShowAddActivity(true);
-                                  }}
-                                >
-                                  <Edit className="w-3 h-3" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="text-red-600"
-                                  onClick={() => handleDeleteActivity(day.id, activity.id)}
-                                >
-                                  <Trash2 className="w-3 h-3" />
-                                </Button>
-                              </div>
-                            )}
-                            </div>
-                            );
-                            })}
-                            </div>
+                        );
+                      })}
+                      </div>
                     )}
                   </CardContent>
                 </Card>
