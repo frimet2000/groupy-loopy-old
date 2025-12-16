@@ -176,19 +176,14 @@ export default function OrganizerWaiver({ open, onAccept, onDecline }) {
         </div>
 
         {currentSection < content.sections.length - 1 ? (
-          <div className="flex justify-end py-4 border-t">
+          <div className="flex justify-end py-4 border-t bg-gray-50">
             <button
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const newSection = currentSection + 1;
-                setCurrentSection(newSection);
-              }}
-              className="gap-2 bg-red-600 hover:bg-red-700 px-8 py-3 text-base font-semibold text-white rounded-md inline-flex items-center justify-center"
+              onMouseDown={handleNextSection}
+              className="gap-2 bg-red-600 hover:bg-red-700 px-8 py-3 text-base font-semibold text-white rounded-md inline-flex items-center justify-center cursor-pointer transition-colors"
             >
               {language === 'he' ? 'הבא' : 'Next'}
-              {isRTL ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+              {isRTL ? <ChevronLeft className="w-5 h-5 ml-2" /> : <ChevronRight className="w-5 h-5 ml-2" />}
             </button>
           </div>
         ) : null}
