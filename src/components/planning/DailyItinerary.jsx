@@ -96,7 +96,7 @@ export default function DailyItinerary({ trip, isOrganizer, onUpdate }) {
       daily_itinerary: updatedItinerary
     });
     onUpdate();
-    toast.success(language === 'he' ? 'הפעילות נמחקה' : 'Activity deleted');
+    toast.success(language === 'he' ? 'הפעילות נמחקה' : language === 'ru' ? 'Активность удалена' : language === 'es' ? 'Actividad eliminada' : language === 'fr' ? 'Activité supprimée' : language === 'de' ? 'Aktivität gelöscht' : language === 'it' ? 'Attività eliminata' : 'Activity deleted');
   };
 
   const handleGenerateAI = async () => {
