@@ -1182,12 +1182,12 @@ Include water recommendation in liters and detailed equipment list.`,
                       </div>
 
                     {formData.activity_type === 'cycling' && (
-                      <div className="space-y-4 p-6 bg-blue-50 rounded-2xl">
-                        <h3 className="text-lg font-bold text-blue-900">{language === 'he' ? 'פרטי רכיבה' : language === 'ru' ? 'Детали велопоездки' : language === 'es' ? 'Detalles del ciclismo' : language === 'fr' ? 'Détails du cyclisme' : language === 'de' ? 'Radfahrdetails' : language === 'it' ? 'Dettagli del ciclismo' : 'Cycling Details'}</h3>
-                        <div className="space-y-2">
-                          <Label>{t('cyclingType')}</Label>
+                      <div className="space-y-1.5 p-2 sm:p-4 bg-blue-50 rounded-lg">
+                        <h3 className="text-xs sm:text-base font-bold text-blue-900">{language === 'he' ? 'פרטי רכיבה' : language === 'ru' ? 'Детали велопоездки' : language === 'es' ? 'Detalles del ciclismo' : language === 'fr' ? 'Détails du cyclisme' : language === 'de' ? 'Radfahrdetails' : language === 'it' ? 'Dettagli del ciclismo' : 'Cycling Details'}</h3>
+                        <div className="space-y-0.5">
+                          <Label className="text-[10px] sm:text-sm">{t('cyclingType')}</Label>
                           <Select value={formData.cycling_type} onValueChange={(v) => handleChange('cycling_type', v)}>
-                            <SelectTrigger className="p-4">
+                            <SelectTrigger className="p-1.5 sm:p-2 h-7 sm:h-10 text-xs sm:text-sm">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
