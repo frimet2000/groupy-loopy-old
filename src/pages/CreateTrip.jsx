@@ -1736,9 +1736,13 @@ Include water recommendation in liters and detailed equipment list.`,
             ) : (
               <Button
                 type="button"
-                onClick={handleSubmit}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleSubmit(e);
+                }}
                 disabled={saving}
-                className="px-4 py-2.5 text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 flex-1 max-w-[140px]"
+                className="px-4 py-2.5 text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 flex-1 max-w-[140px] touch-manipulation"
               >
                 {saving ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
