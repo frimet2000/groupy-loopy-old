@@ -193,8 +193,8 @@ export default function TripCard({ trip }) {
           </div>
         </Link>
         
-        <Link to={createPageUrl('TripDetails') + `?id=${trip.id}`}>
-          <CardContent className="p-4 sm:p-5" dir={isRTL ? 'rtl' : 'ltr'}>
+        <CardContent className="p-4 sm:p-5" dir={isRTL ? 'rtl' : 'ltr'}>
+          <Link to={createPageUrl('TripDetails') + `?id=${trip.id}`}>
           <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-emerald-700 transition-colors leading-tight">
             {title}
           </h3>
