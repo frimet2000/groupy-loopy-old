@@ -271,6 +271,8 @@ export default function TripCard({ trip }) {
             </div>
           </div>
 
+          </Link>
+
           {/* More Details Button */}
           <Link to={createPageUrl('TripDetails') + `?id=${trip.id}`} className="block mt-4">
             <Button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold h-11 rounded-xl shadow-md hover:shadow-lg transition-all">
@@ -280,7 +282,6 @@ export default function TripCard({ trip }) {
           </Link>
           </div>
         </CardContent>
-        </Link>
       </Card>
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
