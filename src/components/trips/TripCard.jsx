@@ -13,7 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Calendar, MapPin, Users, Clock, Mountain, Droplets, TreePine, Dog, Tent, Trash2, Heart, MessageCircle, List } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, Mountain, Droplets, TreePine, Dog, Tent, Trash2, Heart, MessageCircle, List, User } from 'lucide-react';
 import AddToListButton from './AddToListButton';
 import { formatDate } from '../utils/dateFormatter';
 import { Link } from 'react-router-dom';
@@ -229,6 +229,16 @@ export default function TripCard({ trip }) {
               </div>
               <span className="font-semibold text-sm truncate">{trip.duration_value} {t(trip.duration_type)}</span>
             </div>
+          </div>
+
+          {/* Organizer */}
+          <div className="flex items-center gap-2 text-gray-600">
+            <div className="p-1.5 bg-amber-100 rounded-lg flex-shrink-0">
+              <User className="w-4 h-4 text-amber-600" />
+            </div>
+            <span className="text-sm truncate">
+              {language === 'he' ? 'מארגן:' : 'Organizer:'} <span className="font-semibold">{trip.organizer_name}</span>
+            </span>
           </div>
 
           <div className="flex items-center justify-between pt-2.5 border-t border-gray-100 mt-3">
