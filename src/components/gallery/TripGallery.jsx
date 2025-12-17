@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Camera, Upload, Loader2, Image as ImageIcon, Trash2 } from 'lucide-react';
+import { Camera, Upload, Loader2, Image as ImageIcon, Trash2, Video } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from "sonner";
 import { base44 } from '@/api/base44Client';
@@ -105,7 +105,7 @@ export default function TripGallery({ trip, currentUserEmail, onUpdate }) {
                 size="sm"
               >
                 <Upload className="w-4 h-4" />
-                {language === 'he' ? 'העלה תמונה' : 'Upload Photo'}
+                {language === 'he' ? 'העלה תמונה/וידאו' : 'Upload Photo/Video'}
               </Button>
             )}
           </div>
@@ -122,25 +122,41 @@ export default function TripGallery({ trip, currentUserEmail, onUpdate }) {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {photos.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((photo) => (
-                <div 
-                  key={photo.id} 
-                  className="group relative aspect-square rounded-lg overflow-hidden cursor-pointer bg-gray-100"
-                  onClick={() => setSelectedPhoto(photo)}
-                >
-                  <img
-                    src={photo.url}
-                    alt={photo.caption || 'Trip photo'}
-                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  {photo.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 p-3 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                      {photo.caption}
-                    </div>
-                  )}
-                </div>
-              ))}
+              {photos.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((photo) => {
+                const isVideo = photo.url?.match(/\.(mp4|webm|mov|avi|mkv)$/i);
+                return (
+                  <div 
+                    key={photo.id} 
+                    className="group relative aspect-square rounded-lg overflow-hidden cursor-pointer bg-gray-100"
+                    onClick={() => setSelectedPhoto(photo)}
+                  >
+                    {isVideo ? (
+                      <video
+                        src={photo.url}
+                        className="w-full h-full object-cover"
+                        muted
+                      />
+                    ) : (
+                      <img
+                        src={photo.url}
+                        alt={photo.caption || 'Trip photo'}
+                        className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                      />
+                    )}
+                    {isVideo && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <Video className="w-10 h-10 text-white" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    {photo.caption && (
+                      <div className="absolute bottom-0 left-0 right-0 p-3 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                        {photo.caption}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </CardContent>
@@ -151,19 +167,23 @@ export default function TripGallery({ trip, currentUserEmail, onUpdate }) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {language === 'he' ? 'העלה תמונה' : 'Upload Photo'}
+              {language === 'he' ? 'העלה תמונה/וידאו' : 'Upload Photo/Video'}
             </DialogTitle>
             <DialogDescription>
               {language === 'he' 
-                ? 'שתף תמונה מהטיול עם שאר המשתתפים'
-                : 'Share a photo from the trip with other participants'}
+                ? 'שתף תמונה או וידאו מהטיול עם שאר המשתתפים'
+                : 'Share a photo or video from the trip with other participants'}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
             {previewUrl ? (
               <div className="relative">
-                <img src={previewUrl} alt="Preview" className="w-full rounded-lg" />
+                {selectedFile?.type?.startsWith('video/') ? (
+                  <video src={previewUrl} controls className="w-full rounded-lg max-h-64" />
+                ) : (
+                  <img src={previewUrl} alt="Preview" className="w-full rounded-lg" />
+                )}
                 <Button
                   variant="outline"
                   size="sm"
@@ -173,22 +193,25 @@ export default function TripGallery({ trip, currentUserEmail, onUpdate }) {
                   }}
                   className="absolute top-2 right-2"
                 >
-                  {language === 'he' ? 'החלף תמונה' : 'Change Photo'}
+                  {language === 'he' ? 'החלף' : 'Change'}
                 </Button>
               </div>
             ) : (
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/*,video/*"
                   onChange={handleFileSelect}
                   className="hidden"
                   id="photo-upload"
                 />
                 <label htmlFor="photo-upload" className="cursor-pointer">
-                  <Camera className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <div className="flex justify-center gap-2 mb-3">
+                    <Camera className="w-10 h-10 text-gray-400" />
+                    <Video className="w-10 h-10 text-gray-400" />
+                  </div>
                   <p className="text-sm text-gray-600">
-                    {language === 'he' ? 'לחץ לבחירת תמונה' : 'Click to select photo'}
+                    {language === 'he' ? 'לחץ לבחירת תמונה או וידאו' : 'Click to select photo or video'}
                   </p>
                 </label>
               </div>
@@ -260,7 +283,11 @@ export default function TripGallery({ trip, currentUserEmail, onUpdate }) {
                 </div>
               </DialogHeader>
               <div className="space-y-4">
-                <img src={selectedPhoto.url} alt={selectedPhoto.caption} className="w-full rounded-lg" />
+                {selectedPhoto.url?.match(/\.(mp4|webm|mov|avi|mkv)$/i) ? (
+                  <video src={selectedPhoto.url} controls className="w-full rounded-lg" />
+                ) : (
+                  <img src={selectedPhoto.url} alt={selectedPhoto.caption} className="w-full rounded-lg" />
+                )}
                 {selectedPhoto.caption && (
                   <p className="text-gray-700" dir={language === 'he' ? 'rtl' : 'ltr'}>
                     {selectedPhoto.caption}
