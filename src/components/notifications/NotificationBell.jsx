@@ -32,7 +32,6 @@ const notificationIcons = {
 export default function NotificationBell({ userEmail }) {
   const { language } = useLanguage();
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
   const [showChatDialog, setShowChatDialog] = useState(false);
   const [chatFriend, setChatFriend] = useState(null);
 
