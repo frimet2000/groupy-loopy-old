@@ -38,7 +38,8 @@ import {
         Settings as SettingsIcon,
         Mail,
         MessageSquare,
-        Share2
+        Share2,
+        BookOpen
       } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
