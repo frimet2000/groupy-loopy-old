@@ -16,11 +16,11 @@ import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { 
   Users, Heart, MapPin, Car, Activity, ChevronRight, ChevronLeft, 
-  CheckCircle2, Loader2, Accessibility, Plus, X, User, Upload, Camera
+  CheckCircle2, Loader2, Accessibility, Plus, X, User, Upload, Camera, Globe
 } from 'lucide-react';
+import { getRegionsForCountry, getAllCountries } from '../components/utils/CountryRegions';
 
 const interests = ['nature', 'history', 'photography', 'birdwatching', 'archaeology', 'geology', 'botany', 'extreme_sports', 'family_friendly', 'romantic'];
-const regions = ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'];
 const relations = ['self', 'spouse', 'boy', 'girl', 'parent', 'sibling', 'friend', 'dog'];
 
 export default function Onboarding() {
@@ -43,6 +43,7 @@ export default function Onboarding() {
     needs_accessibility: false,
     accessibility_requirements: '',
     trip_interests: [],
+    home_country: 'israel',
     home_region: '',
     vehicle_type: 'none',
     has_4x4_vehicle: false,
@@ -521,6 +522,29 @@ export default function Onboarding() {
                   {step === 4 && (
                     <div className="space-y-6">
                       <div className="space-y-3">
+                        <Label className="flex items-center gap-2">
+                          <Globe className="w-4 h-4 text-purple-600" />
+                          {language === 'he' ? 'מדינה' : 'Country'}
+                        </Label>
+                        <Select
+                          value={formData.home_country}
+                          onValueChange={(v) => {
+                            handleChange('home_country', v);
+                            handleChange('home_region', '');
+                          }}
+                        >
+                          <SelectTrigger className="h-12">
+                            <SelectValue placeholder={language === 'he' ? 'בחר מדינה' : 'Select country'} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {getAllCountries().map(country => (
+                              <SelectItem key={country} value={country}>{t(country)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-3">
                         <Label>{language === 'he' ? 'אזור מגורים' : 'Home Region'}</Label>
                         <Select
                           value={formData.home_region}
@@ -530,8 +554,8 @@ export default function Onboarding() {
                             <SelectValue placeholder={language === 'he' ? 'בחר אזור' : 'Select region'} />
                           </SelectTrigger>
                           <SelectContent>
-                            {regions.map(r => (
-                              <SelectItem key={r} value={r}>{t(r)}</SelectItem>
+                            {getRegionsForCountry(formData.home_country).map(r => (
+                              <SelectItem key={r} value={r}>{r}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
