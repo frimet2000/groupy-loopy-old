@@ -1404,21 +1404,21 @@ export default function TripDetails() {
                     <span className="hidden sm:inline">{language === 'he' ? 'מיקום חי' : language === 'ru' ? 'Локация' : language === 'es' ? 'Ubicación' : language === 'fr' ? 'Localisation' : language === 'de' ? 'Standort' : language === 'it' ? 'Posizione' : 'Live Location'}</span>
                   </TabsTrigger>
                   <TabsTrigger value="reminders" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-yellow-50 data-[state=active]:text-yellow-700 py-3">
-                    <Bell className="w-4 h-4 text-yellow-500 sm:hidden flex-shrink-0" />
+                    <Bell className="w-4 h-4 text-yellow-500 sm:hidden" />
                     <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'תזכורות' : 'Reminders'}</span>
-                    <Bell className="w-4 h-4 text-yellow-500 hidden sm:block flex-shrink-0" />
+                    <Bell className="w-4 h-4 text-yellow-500 hidden sm:inline-block sm:mr-1.5" />
                     <span className="hidden sm:inline">{language === 'he' ? 'תזכורות' : 'Reminders'}</span>
                   </TabsTrigger>
                   <TabsTrigger value="contributions" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700 py-3">
-                    <Package className="w-4 h-4 text-orange-500 sm:hidden flex-shrink-0" />
+                    <Package className="w-4 h-4 text-orange-500 sm:hidden" />
                     <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'מביא' : 'Bringing'}</span>
-                    <Package className="w-4 h-4 text-orange-500 hidden sm:block flex-shrink-0" />
+                    <Package className="w-4 h-4 text-orange-500 hidden sm:inline-block sm:mr-1.5" />
                     <span className="hidden sm:inline">{language === 'he' ? 'מה אני מביא' : "What I'm Bringing"}</span>
                   </TabsTrigger>
                   <TabsTrigger value="invite" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-cyan-50 data-[state=active]:text-cyan-700 py-3">
-                    <UserPlus className="w-4 h-4 text-cyan-500 sm:hidden flex-shrink-0" />
+                    <UserPlus className="w-4 h-4 text-cyan-500 sm:hidden" />
                     <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'הזמן' : 'Invite'}</span>
-                    <UserPlus className="w-4 h-4 text-cyan-500 hidden sm:block flex-shrink-0" />
+                    <UserPlus className="w-4 h-4 text-cyan-500 hidden sm:inline-block sm:mr-1.5" />
                     <span className="hidden sm:inline">{language === 'he' ? 'הזמן חברים' : 'Invite Friends'}</span>
                   </TabsTrigger>
                   </>
