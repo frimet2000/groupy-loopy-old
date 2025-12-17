@@ -44,8 +44,8 @@ export default function NotificationBell({ userEmail }) {
   const { data: userTrips = [] } = useQuery({
     queryKey: ['userTripsForNotifications', userEmail],
     queryFn: () => base44.entities.Trip.list(),
-    enabled: !!userEmail && open,
-    staleTime: 30000,
+    enabled: !!userEmail,
+    staleTime: 60000,
   });
 
   const { data: reminders = [] } = useQuery({
@@ -54,7 +54,7 @@ export default function NotificationBell({ userEmail }) {
       user_email: userEmail,
       sent: false
     }),
-    enabled: !!userEmail && open,
+    enabled: !!userEmail,
     staleTime: 60000,
   });
 
@@ -62,10 +62,10 @@ export default function NotificationBell({ userEmail }) {
     queryKey: ['currentUserForNotifications', userEmail],
     queryFn: () => base44.auth.me(),
     enabled: !!userEmail,
-    staleTime: 10000,
+    staleTime: 30000,
   });
 
-  // Fetch unread messages - only when popover opens
+  // Fetch unread messages
   const { data: unreadMessages = [] } = useQuery({
     queryKey: ['unreadMessages', userEmail],
     queryFn: () => base44.entities.Message.filter({ 
@@ -73,15 +73,15 @@ export default function NotificationBell({ userEmail }) {
       read: false,
       archived: false
     }, '-created_date', 10),
-    enabled: !!userEmail && open,
+    enabled: !!userEmail,
     staleTime: 30000,
   });
 
   const { data: allUsers = [] } = useQuery({
     queryKey: ['usersForNotifications'],
     queryFn: () => base44.entities.User.list(),
-    enabled: !!userEmail && open && (currentUser?.friend_requests?.length > 0),
-    staleTime: 30000,
+    enabled: !!userEmail && (currentUser?.friend_requests?.length > 0),
+    staleTime: 60000,
   });
 
   const organizedTrips = userTrips.filter(t => t.organizer_email === userEmail);
