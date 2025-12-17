@@ -1404,22 +1404,16 @@ export default function TripDetails() {
                     <span className="hidden sm:inline">{language === 'he' ? 'מיקום חי' : language === 'ru' ? 'Локация' : language === 'es' ? 'Ubicación' : language === 'fr' ? 'Localisation' : language === 'de' ? 'Standort' : language === 'it' ? 'Posizione' : 'Live Location'}</span>
                   </TabsTrigger>
                   <TabsTrigger value="reminders" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-yellow-50 data-[state=active]:text-yellow-700 py-3">
-                    <Bell className="w-4 h-4 text-yellow-500 sm:hidden" />
-                    <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'תזכורות' : language === 'ru' ? 'Напоминания' : language === 'es' ? 'Recordatorios' : language === 'fr' ? 'Rappels' : language === 'de' ? 'Erinnerungen' : language === 'it' ? 'Promemoria' : 'Reminders'}</span>
-                    <Bell className="w-4 h-4 text-yellow-500 hidden sm:block" />
-                    <span className="hidden sm:inline">{language === 'he' ? 'תזכורות' : language === 'ru' ? 'Напоминания' : language === 'es' ? 'Recordatorios' : language === 'fr' ? 'Rappels' : language === 'de' ? 'Erinnerungen' : language === 'it' ? 'Promemoria' : 'Reminders'}</span>
+                    <Bell className="w-4 h-4 text-yellow-500" />
+                    <span className="text-xs sm:text-sm">{language === 'he' ? 'תזכורות' : language === 'ru' ? 'Напоминания' : language === 'es' ? 'Recordatorios' : language === 'fr' ? 'Rappels' : language === 'de' ? 'Erinnerungen' : language === 'it' ? 'Promemoria' : 'Reminders'}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="contributions" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 py-3">
-                    <Package className="w-4 h-4 text-indigo-500 sm:hidden" />
-                    <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'מביאים' : language === 'ru' ? 'Вещи' : language === 'es' ? 'Cosas' : language === 'fr' ? 'Affaires' : language === 'de' ? 'Sachen' : language === 'it' ? 'Cose' : 'Bringing'}</span>
-                    <Package className="w-4 h-4 text-indigo-500 hidden sm:block" />
-                    <span className="hidden sm:inline">{language === 'he' ? 'מה אני מביא' : language === 'ru' ? 'Что я беру' : language === 'es' ? 'Qué traigo' : language === 'fr' ? 'Ce que j\'apporte' : language === 'de' ? 'Was ich mitbringe' : language === 'it' ? 'Cosa porto' : 'What I\'m Bringing'}</span>
+                  <TabsTrigger value="contributions" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700 py-3">
+                    <Package className="w-4 h-4 text-orange-500" />
+                    <span className="text-xs sm:text-sm">{language === 'he' ? 'מה אני מביא' : language === 'ru' ? 'Что беру' : language === 'es' ? 'Qué traigo' : language === 'fr' ? 'J\'apporte' : language === 'de' ? 'Ich bringe' : language === 'it' ? 'Porto' : 'Bringing'}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="invite" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 py-3">
-                    <UserPlus className="w-4 h-4 text-emerald-500 sm:hidden" />
-                    <span className="text-xs sm:text-sm sm:hidden">{language === 'he' ? 'הזמן' : language === 'ru' ? 'Пригл.' : language === 'es' ? 'Invitar' : language === 'fr' ? 'Inviter' : language === 'de' ? 'Einladen' : language === 'it' ? 'Invita' : 'Invite'}</span>
-                    <UserPlus className="w-4 h-4 text-emerald-500 hidden sm:block" />
-                    <span className="hidden sm:inline">{language === 'he' ? 'הזמן חברים' : language === 'ru' ? 'Пригласить' : language === 'es' ? 'Invitar amigos' : language === 'fr' ? 'Inviter amis' : language === 'de' ? 'Freunde einladen' : language === 'it' ? 'Invita amici' : 'Invite Friends'}</span>
+                  <TabsTrigger value="invite" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-cyan-50 data-[state=active]:text-cyan-700 py-3">
+                    <UserPlus className="w-4 h-4 text-cyan-500" />
+                    <span className="text-xs sm:text-sm">{language === 'he' ? 'הזמן חברים' : language === 'ru' ? 'Пригласить' : language === 'es' ? 'Invitar' : language === 'fr' ? 'Inviter' : language === 'de' ? 'Einladen' : language === 'it' ? 'Invita' : 'Invite'}</span>
                   </TabsTrigger>
                   </>
                   )}
