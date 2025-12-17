@@ -258,16 +258,12 @@ export default function NotificationBell({ userEmail }) {
         currentUser={currentUser}
       />
 
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover>
       <PopoverTrigger asChild>
         <Button 
           variant="ghost" 
           size="icon" 
           className="relative"
-          onClick={(e) => {
-            e.stopPropagation();
-            setOpen(!open);
-          }}
         >
           <Bell className="w-5 h-5" />
           {unreadCount > 0 && (
@@ -277,7 +273,7 @@ export default function NotificationBell({ userEmail }) {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
+      <PopoverContent className="w-80 p-0 z-[100]" align="end">
         <div className="p-4 border-b">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold">
