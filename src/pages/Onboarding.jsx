@@ -36,7 +36,7 @@ export default function Onboarding() {
     first_name: '',
     last_name: '',
     profile_image: '',
-    family_ages: [{ relation: 'self', age: 30 }],
+    family_ages: [{ relation: 'self', age: '' }],
     fitness_level: 'moderate',
     has_physical_disability: false,
     disability_description: '',
