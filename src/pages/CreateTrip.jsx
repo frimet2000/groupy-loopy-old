@@ -603,7 +603,11 @@ Include water recommendation in liters and detailed equipment list.`,
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (!validateStep(currentStep)) return;
     await saveTrip();
   };
