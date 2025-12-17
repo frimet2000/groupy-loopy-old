@@ -235,28 +235,27 @@ export default function CreateTrip() {
   };
 
   const fetchSubRegionsForRegion = async (region, country) => {
+    // Skip sub-regions for Israel (region is already specific enough)
+    if (country === 'israel') {
+      setDynamicSubRegions([]);
+      return;
+    }
+    
     setLoadingSubRegions(true);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: language === 'he'
-          ? `צור רשימה של 8-12 אזורים או ערים מרכזיות באזור ${region} ב-${t(country)}. החזר רק את שמות האזורים/ערים באנגלית (lowercase), מופרדים בפסיקים. לדוגמה: "los angeles, san francisco, san diego". השתמש בשמות פשוטים וקצרים.`
-          : `Create a list of 8-12 sub-regions or major cities in ${region}, ${t(country)}. Return only the sub-region/city names in English (lowercase), separated by commas. For example: "los angeles, san francisco, san diego". Use simple, short names.`,
-        add_context_from_internet: true,
+        prompt: `List 6-8 cities/areas in ${region}, ${t(country)}. Names only, English lowercase, comma-separated.`,
+        add_context_from_internet: false,
         response_json_schema: {
           type: "object",
           properties: {
-            sub_regions: {
-              type: "array",
-              items: { type: "string" }
-            }
+            sub_regions: { type: "array", items: { type: "string" } }
           }
         }
       });
-      
       setDynamicSubRegions(result.sub_regions || []);
     } catch (error) {
       console.error('Error fetching sub-regions:', error);
-      toast.error(language === 'he' ? 'שגיאה בטעינת אזורים' : 'Error loading sub-regions');
       setDynamicSubRegions([]);
     }
     setLoadingSubRegions(false);
