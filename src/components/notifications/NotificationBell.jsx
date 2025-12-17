@@ -14,7 +14,7 @@ import {
 import { Bell, Check, Trash2, X, Users, MessageSquare, Calendar, TrendingUp, UserPlus, UserCheck, Mail } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { he, enUS } from 'date-fns/locale';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import FriendChatDialog from '../chat/FriendChatDialog';
