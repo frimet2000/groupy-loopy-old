@@ -270,7 +270,6 @@ export default function TripCard({ trip }) {
               )}
             </div>
           </div>
-
           </Link>
 
           {/* More Details Button */}
