@@ -369,34 +369,37 @@ export default function NotificationBell({ userEmail }) {
                   ? 'text-amber-600'
                   : 'text-emerald-600';
 
-                return renderNotificationLink(
-                  notification,
-                  <motion.div
-                    key={notification.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
-                      notification.unread ? 'bg-blue-50' : ''
-                    }`}
-                  >
-                    <div className="flex gap-3">
-                      <div className={`w-10 h-10 ${bgColor} rounded-full flex items-center justify-center flex-shrink-0`}>
-                        <Icon className={`w-5 h-5 ${textColor}`} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 mb-1">
-                          {notification.message}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {formatDistanceToNow(new Date(notification.timestamp), {
-                            addSuffix: true,
-                            locale: language === 'he' ? he : enUS
-                          })}
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
+                return (
+                  <div key={notification.id}>
+                    {renderNotificationLink(
+                      notification,
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
+                          notification.unread ? 'bg-blue-50' : ''
+                        }`}
+                      >
+                        <div className="flex gap-3">
+                          <div className={`w-10 h-10 ${bgColor} rounded-full flex items-center justify-center flex-shrink-0`}>
+                            <Icon className={`w-5 h-5 ${textColor}`} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 mb-1">
+                              {notification.message}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {formatDistanceToNow(new Date(notification.timestamp), {
+                                addSuffix: true,
+                                locale: language === 'he' ? he : enUS
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
                 );
               })}
             </div>
