@@ -1404,15 +1404,15 @@ export default function TripDetails() {
                     <span className="hidden sm:inline">{language === 'he' ? 'מיקום חי' : language === 'ru' ? 'Локация' : language === 'es' ? 'Ubicación' : language === 'fr' ? 'Localisation' : language === 'de' ? 'Standort' : language === 'it' ? 'Posizione' : 'Live Location'}</span>
                   </TabsTrigger>
                   <TabsTrigger value="reminders" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-yellow-50 data-[state=active]:text-yellow-700 py-3">
-                    <Bell className="w-4 h-4 text-yellow-600" />
+                    <Bell className="w-4 h-4 text-yellow-600 flex-shrink-0" />
                     <span className="text-xs sm:text-sm">{language === 'he' ? 'תזכורות' : 'Reminders'}</span>
                   </TabsTrigger>
                   <TabsTrigger value="contributions" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700 py-3">
-                    <Package className="w-4 h-4 text-orange-600" />
+                    <Package className="w-4 h-4 text-orange-600 flex-shrink-0" />
                     <span className="text-xs sm:text-sm">{language === 'he' ? 'מה אני מביא' : "What I'm Bringing"}</span>
                   </TabsTrigger>
                   <TabsTrigger value="invite" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-cyan-50 data-[state=active]:text-cyan-700 py-3">
-                    <UserPlus className="w-4 h-4 text-cyan-600" />
+                    <UserPlus className="w-4 h-4 text-cyan-600 flex-shrink-0" />
                     <span className="text-xs sm:text-sm">{language === 'he' ? 'הזמן חברים' : 'Invite Friends'}</span>
                   </TabsTrigger>
                   </>
