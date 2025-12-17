@@ -638,9 +638,7 @@ export default function Onboarding() {
                     </div>
                   )}
                 </CardContent>
-              </Card>
-            </motion.div>
-          </AnimatePresence>
+          </Card>
 
           {/* Navigation Buttons */}
           <div className="flex gap-4 justify-between mt-6">
