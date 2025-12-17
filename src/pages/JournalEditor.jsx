@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from "sonner";
-import ReactQuill from 'react-quill';
+
 
 const translations = {
   en: {
@@ -407,16 +407,7 @@ ${journal.content}`,
     setSaving(false);
   };
 
-  const modules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      ['blockquote'],
-      ['link'],
-      ['clean']
-    ],
-  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50/30 pb-24">
