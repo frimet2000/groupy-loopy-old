@@ -260,22 +260,21 @@ export default function NotificationBell({ userEmail }) {
 
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="relative"
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen(!open);
+          }}
+        >
           <Bell className="w-5 h-5" />
-          <AnimatePresence>
-            {unreadCount > 0 && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-                className="absolute -top-1 -right-1"
-              >
-                <Badge className="h-5 w-5 p-0 flex items-center justify-center bg-red-500 text-white text-xs">
-                  {unreadCount > 9 ? '9+' : unreadCount}
-                </Badge>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {unreadCount > 0 && (
+            <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-red-500 text-white text-xs">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </Badge>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="end">
