@@ -38,6 +38,7 @@ const difficultyColors = {
 export default function TripCard({ trip }) {
   const { t, language, isRTL } = useLanguage();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleting, setDeleting] = useState(false);
