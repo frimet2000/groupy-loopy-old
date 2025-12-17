@@ -280,10 +280,17 @@ export default function TripCard({ trip }) {
               e.stopPropagation();
               navigate(createPageUrl('TripDetails') + `?id=${trip.id}`);
             }}
-            className="w-full mt-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold h-11 rounded-xl shadow-md hover:shadow-lg transition-all relative z-10"
+            className="group/btn w-full mt-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold h-12 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300 relative z-10 overflow-hidden"
           >
-            {language === 'he' ? 'לפרטים נוספים' : language === 'ru' ? 'Подробнее' : language === 'es' ? 'Más detalles' : language === 'fr' ? 'Plus de détails' : language === 'de' ? 'Mehr Details' : language === 'it' ? 'Maggiori dettagli' : 'More Details'}
-            {isRTL ? <ArrowLeft className="w-4 h-4 mr-2" /> : <ArrowRight className="w-4 h-4 ml-2" />}
+            <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
+            <span className="relative flex items-center justify-center gap-2">
+              {language === 'he' ? 'לפרטים נוספים' : language === 'ru' ? 'Подробнее' : language === 'es' ? 'Más detalles' : language === 'fr' ? 'Plus de détails' : language === 'de' ? 'Mehr Details' : language === 'it' ? 'Maggiori dettagli' : 'More Details'}
+              {isRTL ? (
+                <ArrowLeft className="w-4 h-4 group-hover/btn:-translate-x-1 transition-transform duration-300" />
+              ) : (
+                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
+              )}
+            </span>
           </Button>
         </CardContent>
       </Card>
