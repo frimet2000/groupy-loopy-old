@@ -44,18 +44,18 @@ export default function CookieConsent() {
 
   return (
     <AnimatePresence>
-      {showBanner && (
-        <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:max-w-md"
-          role="dialog"
-          aria-labelledby="cookie-title"
-          aria-describedby="cookie-description"
-        >
-          <Card className="shadow-2xl border-2 bg-white">
-            <div className="p-6">
+      {showBanner &&
+      <motion.div
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 100, opacity: 0 }}
+        className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:max-w-md"
+        role="dialog"
+        aria-labelledby="cookie-title"
+        aria-describedby="cookie-description">
+
+          <Card className="bg-white text-card-foreground my-16 rounded-xl shadow-2xl border-2">
+            <div className="my-3 p-6">
               <div className="flex items-start gap-3 mb-4">
                 <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
                   <Cookie className="w-5 h-5 text-amber-600" />
@@ -74,34 +74,34 @@ export default function CookieConsent() {
                   </Link>
                 </div>
                 <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleDecline}
-                  className="flex-shrink-0"
-                  aria-label={language === 'he' ? 'סגור' : 'Close'}
-                >
+                variant="ghost"
+                size="icon"
+                onClick={handleDecline}
+                className="flex-shrink-0"
+                aria-label={language === 'he' ? 'סגור' : 'Close'}>
+
                   <X className="w-4 h-4" />
                 </Button>
               </div>
               <div className="flex gap-3">
                 <Button
-                  variant="outline"
-                  onClick={handleDecline}
-                  className="flex-1"
-                >
+                variant="outline"
+                onClick={handleDecline}
+                className="flex-1">
+
                   {content.decline}
                 </Button>
                 <Button
-                  onClick={handleAccept}
-                  className="flex-1 bg-emerald-600 hover:bg-emerald-700"
-                >
+                onClick={handleAccept}
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700">
+
                   {content.accept}
                 </Button>
               </div>
             </div>
           </Card>
         </motion.div>
-      )}
-    </AnimatePresence>
-  );
+      }
+    </AnimatePresence>);
+
 }
