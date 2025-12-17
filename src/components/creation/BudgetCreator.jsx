@@ -1,25 +1,68 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLanguage } from '../LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DollarSign, User, Users } from 'lucide-react';
+
+const currencies = [
+  { code: 'ILS', symbol: '₪', name: { he: 'שקל', en: 'Shekel', ru: 'Шекель', es: 'Shéquel', fr: 'Shekel', de: 'Schekel', it: 'Shekel' } },
+  { code: 'EUR', symbol: '€', name: { he: 'יורו', en: 'Euro', ru: 'Евро', es: 'Euro', fr: 'Euro', de: 'Euro', it: 'Euro' } },
+  { code: 'USD', symbol: '$', name: { he: 'דולר', en: 'Dollar', ru: 'Доллар', es: 'Dólar', fr: 'Dollar', de: 'Dollar', it: 'Dollaro' } },
+  { code: 'GBP', symbol: '£', name: { he: 'לירה שטרלינג', en: 'Pound', ru: 'Фунт', es: 'Libra', fr: 'Livre', de: 'Pfund', it: 'Sterlina' } },
+  { code: 'RUB', symbol: '₽', name: { he: 'רובל', en: 'Ruble', ru: 'Рубль', es: 'Rublo', fr: 'Rouble', de: 'Rubel', it: 'Rublo' } },
+];
+
+const getDefaultCurrency = (lang) => {
+  switch (lang) {
+    case 'he': return 'ILS';
+    case 'ru': return 'RUB';
+    case 'de': return 'EUR';
+    case 'fr': return 'EUR';
+    case 'es': return 'EUR';
+    case 'it': return 'EUR';
+    default: return 'USD';
+  }
+};
 
 export default function BudgetCreator({ budget, setBudget }) {
   const { language } = useLanguage();
+
+  useEffect(() => {
+    if (!budget.currency) {
+      setBudget({ ...budget, currency: getDefaultCurrency(language) });
+    }
+  }, []);
 
   const handleChange = (field, value) => {
     setBudget({ ...budget, [field]: value });
   };
 
+  const currentCurrency = currencies.find(c => c.code === budget.currency) || currencies[0];
+
   return (
     <Card className="border-2 border-amber-100 shadow-xl bg-white/80">
       <CardHeader className="bg-gradient-to-r from-amber-50 to-yellow-50 border-b">
-        <CardTitle className="flex items-center gap-2 text-amber-700">
-          <DollarSign className="w-5 h-5" />
-          {language === 'he' ? 'תקציב משוער' : language === 'ru' ? 'Примерный бюджет' : language === 'es' ? 'Presupuesto estimado' : language === 'fr' ? 'Budget estimé' : language === 'de' ? 'Geschätztes Budget' : language === 'it' ? 'Budget stimato' : 'Estimated Budget'}
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-amber-700">
+            <DollarSign className="w-5 h-5" />
+            {language === 'he' ? 'תקציב משוער' : language === 'ru' ? 'Примерный бюджет' : language === 'es' ? 'Presupuesto estimado' : language === 'fr' ? 'Budget estimé' : language === 'de' ? 'Geschätztes Budget' : language === 'it' ? 'Budget stimato' : 'Estimated Budget'}
+          </CardTitle>
+          <Select value={budget.currency || 'ILS'} onValueChange={(v) => handleChange('currency', v)}>
+            <SelectTrigger className="w-[120px] h-8 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {currencies.map(curr => (
+                <SelectItem key={curr.code} value={curr.code}>
+                  {curr.symbol} {curr.name[language] || curr.name.en}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </CardHeader>
       <CardContent className="p-4 space-y-4">
         <div className="space-y-3">
@@ -29,7 +72,7 @@ export default function BudgetCreator({ budget, setBudget }) {
           </Label>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label className="text-xs text-gray-500">{language === 'he' ? 'מינימום' : language === 'ru' ? 'Мин' : language === 'es' ? 'Mín' : language === 'fr' ? 'Min' : language === 'de' ? 'Min' : language === 'it' ? 'Min' : 'Min'}</Label>
+              <Label className="text-xs text-gray-500">{language === 'he' ? 'מינימום' : language === 'ru' ? 'Мин' : language === 'es' ? 'Mín' : language === 'fr' ? 'Min' : language === 'de' ? 'Min' : language === 'it' ? 'Min' : 'Min'} ({currentCurrency.symbol})</Label>
               <Input
                 type="number"
                 value={budget.solo_min}
@@ -39,7 +82,7 @@ export default function BudgetCreator({ budget, setBudget }) {
               />
             </div>
             <div>
-              <Label className="text-xs text-gray-500">{language === 'he' ? 'מקסימום' : language === 'ru' ? 'Макс' : language === 'es' ? 'Máx' : language === 'fr' ? 'Max' : language === 'de' ? 'Max' : language === 'it' ? 'Max' : 'Max'}</Label>
+              <Label className="text-xs text-gray-500">{language === 'he' ? 'מקסימום' : language === 'ru' ? 'Макс' : language === 'es' ? 'Máx' : language === 'fr' ? 'Max' : language === 'de' ? 'Max' : language === 'it' ? 'Max' : 'Max'} ({currentCurrency.symbol})</Label>
               <Input
                 type="number"
                 value={budget.solo_max}
@@ -58,7 +101,7 @@ export default function BudgetCreator({ budget, setBudget }) {
           </Label>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label className="text-xs text-gray-500">{language === 'he' ? 'מינימום' : language === 'ru' ? 'Мин' : language === 'es' ? 'Mín' : language === 'fr' ? 'Min' : language === 'de' ? 'Min' : language === 'it' ? 'Min' : 'Min'}</Label>
+              <Label className="text-xs text-gray-500">{language === 'he' ? 'מינימום' : language === 'ru' ? 'Мин' : language === 'es' ? 'Mín' : language === 'fr' ? 'Min' : language === 'de' ? 'Min' : language === 'it' ? 'Min' : 'Min'} ({currentCurrency.symbol})</Label>
               <Input
                 type="number"
                 value={budget.family_min}
@@ -68,7 +111,7 @@ export default function BudgetCreator({ budget, setBudget }) {
               />
             </div>
             <div>
-              <Label className="text-xs text-gray-500">{language === 'he' ? 'מקסימום' : language === 'ru' ? 'Макс' : language === 'es' ? 'Máx' : language === 'fr' ? 'Max' : language === 'de' ? 'Max' : language === 'it' ? 'Max' : 'Max'}</Label>
+              <Label className="text-xs text-gray-500">{language === 'he' ? 'מקסימום' : language === 'ru' ? 'Макс' : language === 'es' ? 'Máx' : language === 'fr' ? 'Max' : language === 'de' ? 'Max' : language === 'it' ? 'Max' : 'Max'} ({currentCurrency.symbol})</Label>
               <Input
                 type="number"
                 value={budget.family_max}
