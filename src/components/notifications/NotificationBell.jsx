@@ -44,8 +44,8 @@ export default function NotificationBell({ userEmail }) {
   const { data: userTrips = [] } = useQuery({
     queryKey: ['userTripsForNotifications', userEmail],
     queryFn: () => base44.entities.Trip.list(),
-    enabled: !!userEmail,
-    refetchInterval: 30000, // Refresh every 30 seconds
+    enabled: !!userEmail && open,
+    staleTime: 30000,
   });
 
   const { data: reminders = [] } = useQuery({
@@ -54,41 +54,34 @@ export default function NotificationBell({ userEmail }) {
       user_email: userEmail,
       sent: false
     }),
-    enabled: !!userEmail,
-    refetchInterval: 60000, // Refresh every minute
+    enabled: !!userEmail && open,
+    staleTime: 60000,
   });
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUserForNotifications', userEmail],
-    queryFn: async () => {
-      const allUsers = await base44.entities.User.list();
-      const me = allUsers.find(u => u.email === userEmail);
-      console.log('Fetched current user from DB:', me?.email);
-      console.log('Friend requests from DB:', me?.friend_requests);
-      return me;
-    },
+    queryFn: () => base44.auth.me(),
     enabled: !!userEmail,
-    refetchInterval: 2000,
-    staleTime: 0,
+    staleTime: 10000,
   });
 
-  // Fetch unread messages
+  // Fetch unread messages - only when popover opens
   const { data: unreadMessages = [] } = useQuery({
     queryKey: ['unreadMessages', userEmail],
     queryFn: () => base44.entities.Message.filter({ 
       recipient_email: userEmail,
       read: false,
       archived: false
-    }, '-created_date'),
-    enabled: !!userEmail,
-    refetchInterval: 5000,
+    }, '-created_date', 10),
+    enabled: !!userEmail && open,
+    staleTime: 30000,
   });
 
   const { data: allUsers = [] } = useQuery({
     queryKey: ['usersForNotifications'],
     queryFn: () => base44.entities.User.list(),
-    enabled: !!userEmail,
-    refetchInterval: 10000, // Refresh every 10 seconds
+    enabled: !!userEmail && open && (currentUser?.friend_requests?.length > 0),
+    staleTime: 30000,
   });
 
   const organizedTrips = userTrips.filter(t => t.organizer_email === userEmail);
