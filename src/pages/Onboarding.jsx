@@ -18,7 +18,7 @@ import {
   Users, Heart, MapPin, Car, Activity, ChevronRight, ChevronLeft, 
   CheckCircle2, Loader2, Accessibility, Plus, X, User, Upload, Camera, Globe
 } from 'lucide-react';
-import { getRegionsForCountry, getAllCountries } from '../components/utils/CountryRegions';
+import { getCountryRegions, getAllCountries } from '../components/utils/CountryRegions';
 
 const interests = ['nature', 'history', 'photography', 'birdwatching', 'archaeology', 'geology', 'botany', 'extreme_sports', 'family_friendly', 'romantic'];
 const relations = ['self', 'spouse', 'boy', 'girl', 'parent', 'sibling', 'friend', 'dog'];
@@ -554,7 +554,7 @@ export default function Onboarding() {
                             <SelectValue placeholder={language === 'he' ? 'בחר אזור' : 'Select region'} />
                           </SelectTrigger>
                           <SelectContent>
-                            {getRegionsForCountry(formData.home_country).map(r => (
+                            {getCountryRegions(formData.home_country).map(r => (
                               <SelectItem key={r} value={r}>{r}</SelectItem>
                             ))}
                           </SelectContent>
