@@ -32,6 +32,18 @@ export default function Onboarding() {
   const [completed, setCompleted] = useState(false);
   const totalSteps = 5;
   
+  const getDefaultCountry = () => {
+    switch (language) {
+      case 'fr': return 'france';
+      case 'es': return 'spain';
+      case 'en': return 'uk';
+      case 'ru': return 'russia';
+      case 'it': return 'italy';
+      case 'de': return 'germany';
+      default: return 'israel';
+    }
+  };
+
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -43,7 +55,7 @@ export default function Onboarding() {
     needs_accessibility: false,
     accessibility_requirements: '',
     trip_interests: [],
-    home_country: 'israel',
+    home_country: getDefaultCountry(),
     home_region: '',
     vehicle_type: 'none',
     has_4x4_vehicle: false,
