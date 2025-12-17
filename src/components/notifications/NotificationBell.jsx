@@ -264,7 +264,7 @@ export default function NotificationBell({ userEmail }) {
           size="icon" 
           className="relative"
         >
-          <Bell className="w-5 h-5" />
+          <Bell className="w-6 h-6" />
           {unreadCount > 0 && (
             <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-red-500 text-white text-xs">
               {unreadCount > 9 ? '9+' : unreadCount}
