@@ -8,12 +8,14 @@ const libraries = ['places'];
 
 export function GoogleMapsProvider({ children }) {
   const [apiKey, setApiKey] = useState(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
 
   useEffect(() => {
     const fetchApiKey = async () => {
       try {
         const { data } = await base44.functions.invoke('getGoogleMapsKey');
         setApiKey(data.apiKey);
+        setShouldLoad(true);
       } catch (error) {
         console.error('Failed to load Google Maps API key:', error);
       }
@@ -21,10 +23,12 @@ export function GoogleMapsProvider({ children }) {
     fetchApiKey();
   }, []);
 
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: apiKey || '',
-    libraries,
-  });
+  const { isLoaded, loadError } = useJsApiLoader(
+    shouldLoad && apiKey ? {
+      googleMapsApiKey: apiKey,
+      libraries,
+    } : { id: 'google-maps-loader-skip' }
+  );
 
   return (
     <GoogleMapsContext.Provider value={{ isLoaded: isLoaded && apiKey, loadError, apiKey }}>
