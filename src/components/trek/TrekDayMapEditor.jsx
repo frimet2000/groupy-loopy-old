@@ -30,9 +30,22 @@ export default function TrekDayMapEditor({ day, setDay }) {
   }, []);
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: apiKey || '',
+    googleMapsApiKey: apiKey,
     libraries: ['places']
   });
+
+  if (!apiKey) {
+    return (
+      <Card className="border-indigo-200">
+        <CardContent className="py-20">
+          <div className="flex items-center justify-center gap-2">
+            <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
+            <span className="text-gray-600">{language === 'he' ? 'טוען מפה...' : 'Loading map...'}</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const addWaypoint = (e) => {
     const newWaypoints = [...(day.waypoints || []), { latitude: e.latLng.lat(), longitude: e.latLng.lng() }];
@@ -147,7 +160,7 @@ Search Google Maps and use real topographic/elevation data. Return precise numbe
       }
     : { lat: 32.0853, lng: 34.7818 };
 
-  if (!apiKey || !isLoaded) {
+  if (!isLoaded) {
     return (
       <Card className="border-indigo-200">
         <CardContent className="py-20">
