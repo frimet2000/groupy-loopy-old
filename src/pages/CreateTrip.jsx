@@ -10,10 +10,11 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { Loader2, Upload, MapPin, Mountain, Clock, Sparkles, Navigation, Globe, Calendar, Users, Compass, Footprints, Bike, Truck, User, Dog, Tent, ArrowRight, ArrowLeft, Check, ChevronRight, UtensilsCrossed, FileText, Shield, AlertTriangle, Scale, UserX, Copyright } from 'lucide-react';
+import { Loader2, Upload, MapPin, Mountain, Clock, Sparkles, Navigation, Globe, Calendar, Users, Compass, Footprints, Bike, Truck, User, Dog, Tent, ArrowRight, ArrowLeft, Check, ChevronRight, UtensilsCrossed, FileText, Shield, AlertTriangle, Scale, UserX, Copyright, Route } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,10 +27,11 @@ import EquipmentCreator from '../components/creation/EquipmentCreator';
 import ItineraryCreator from '../components/creation/ItineraryCreator';
 import BudgetCreator from '../components/creation/BudgetCreator';
 import TripTemplates from '../components/templates/TripTemplates';
+import TrekDaysCreator from '../components/trek/TrekDaysCreator';
 
 const difficulties = ['easy', 'moderate', 'challenging', 'hard', 'extreme'];
 const durations = ['hours', 'half_day', 'full_day', 'overnight', 'multi_day'];
-const activityTypes = ['hiking', 'cycling', 'offroad', 'running', 'culinary'];
+const activityTypes = ['hiking', 'cycling', 'offroad', 'running', 'culinary', 'trek'];
 const cyclingTypes = ['road', 'mountain', 'gravel', 'hybrid', 'bmx', 'electric'];
 const offroadVehicleTypes = ['jeep', 'atv', 'dirt_bike', 'side_by_side', 'buggy', 'truck'];
 const offroadTerrainTypes = ['sand', 'rocks', 'mud', 'hills', 'desert', 'forest_trails', 'river_crossing'];
@@ -90,7 +92,13 @@ export default function CreateTrip() {
     guide_name: '',
     guide_topic: '',
     max_participants: 10,
-    image_url: ''
+    image_url: '',
+    approval_required: false,
+    trek_days: [],
+    trek_overall_highest_point_m: null,
+    trek_overall_lowest_point_m: null,
+    trek_total_distance_km: null,
+    participants_selected_days: []
   });
 
   const [waypoints, setWaypoints] = useState([]);
@@ -105,6 +113,7 @@ export default function CreateTrip() {
     currency: 'ILS',
     notes: ''
   });
+  const [trekDays, setTrekDays] = useState([]);
 
   const steps = [
     { 
@@ -664,6 +673,21 @@ Include water recommendation in liters and detailed equipment list.`,
       if (budget.currency) cleanBudget.currency = budget.currency;
       if (budget.notes) cleanBudget.notes = budget.notes;
 
+      // Calculate trek totals if trek
+      let trekOverallHighest = null;
+      let trekOverallLowest = null;
+      let trekTotalDistance = null;
+      
+      if (formData.activity_type === 'trek' && trekDays.length > 0) {
+        const highPoints = trekDays.filter(d => d.highest_point_m).map(d => d.highest_point_m);
+        const lowPoints = trekDays.filter(d => d.lowest_point_m).map(d => d.lowest_point_m);
+        const distances = trekDays.filter(d => d.daily_distance_km).map(d => d.daily_distance_km);
+        
+        if (highPoints.length > 0) trekOverallHighest = Math.max(...highPoints);
+        if (lowPoints.length > 0) trekOverallLowest = Math.min(...lowPoints);
+        if (distances.length > 0) trekTotalDistance = distances.reduce((sum, d) => sum + d, 0);
+      }
+
       const tripData = {
         ...cleanFormData,
         current_participants: 1,
@@ -680,11 +704,15 @@ Include water recommendation in liters and detailed equipment list.`,
           waiver_accepted: true,
           waiver_timestamp: new Date().toISOString()
         }],
-        waypoints: waypoints || [],
+        waypoints: formData.activity_type === 'trek' ? [] : (waypoints || []),
         equipment_checklist: equipment || [],
         recommended_water_liters: waterRecommendation || null,
-        daily_itinerary: itinerary || [],
-        budget: Object.keys(cleanBudget).length > 0 ? cleanBudget : undefined
+        daily_itinerary: formData.activity_type === 'trek' ? [] : (itinerary || []),
+        budget: Object.keys(cleanBudget).length > 0 ? cleanBudget : undefined,
+        trek_days: formData.activity_type === 'trek' ? trekDays : [],
+        trek_overall_highest_point_m: trekOverallHighest,
+        trek_overall_lowest_point_m: trekOverallLowest,
+        trek_total_distance_km: trekTotalDistance
       };
 
       const createdTrip = await base44.entities.Trip.create(tripData);
@@ -1160,8 +1188,40 @@ Include water recommendation in liters and detailed equipment list.`,
                           <UtensilsCrossed className="w-6 h-6 sm:w-8 sm:h-8" />
                           {t('culinary')}
                           </Button>
+                          <Button
+                          type="button"
+                          variant={formData.activity_type === 'trek' ? 'default' : 'outline'}
+                          className={`h-20 sm:h-28 flex flex-col items-center justify-center gap-1.5 text-xs sm:text-base font-bold ${
+                            formData.activity_type === 'trek'
+                              ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-2xl scale-105'
+                              : 'border-2 hover:border-indigo-500 hover:bg-indigo-50'
+                          }`}
+                          onClick={() => handleChange('activity_type', 'trek')}
+                          >
+                          <Route className="w-6 h-6 sm:w-8 sm:h-8" />
+                          {language === 'he' ? 'טראק' : language === 'ru' ? 'Трек' : language === 'es' ? 'Trekking' : language === 'fr' ? 'Trekking' : language === 'de' ? 'Trekking' : language === 'it' ? 'Trekking' : 'Trek'}
+                          </Button>
                       </div>
                     </div>
+
+                    {formData.activity_type === 'trek' && (
+                      <div className="space-y-4 p-6 bg-indigo-50 rounded-2xl border-2 border-indigo-200">
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-1">
+                            <Label className="text-base font-semibold text-indigo-900">
+                              {language === 'he' ? 'דרוש אישור למצטרפים' : language === 'ru' ? 'Требуется одобрение' : language === 'es' ? 'Se requiere aprobación' : language === 'fr' ? 'Approbation requise' : language === 'de' ? 'Genehmigung erforderlich' : language === 'it' ? 'Richiesta approvazione' : 'Approval Required'}
+                            </Label>
+                            <p className="text-sm text-gray-600">
+                              {language === 'he' ? 'כבוי = הצטרפות אוטומטית, דלוק = יש לאשר כל מצטרף' : language === 'ru' ? 'Выкл = автоматическая регистрация, Вкл = требуется одобрение' : language === 'es' ? 'Off = registro automático, On = requiere aprobación' : language === 'fr' ? 'Off = inscription automatique, On = approbation requise' : language === 'de' ? 'Aus = automatische Anmeldung, Ein = Genehmigung erforderlich' : language === 'it' ? 'Off = registrazione automatica, On = approvazione richiesta' : 'Off = auto join, On = requires approval'}
+                            </p>
+                          </div>
+                          <Switch
+                            checked={formData.approval_required}
+                            onCheckedChange={(checked) => handleChange('approval_required', checked)}
+                          />
+                        </div>
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
@@ -1379,30 +1439,54 @@ Include water recommendation in liters and detailed equipment list.`,
 
               {/* Step 4: Planning */}
               {currentStep === 4 && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <EquipmentCreator
-                    equipment={equipment}
-                    setEquipment={setEquipment}
-                    waterRecommendation={waterRecommendation}
-                    setWaterRecommendation={setWaterRecommendation}
-                    onGenerateAI={generatingEquipment ? null : handleGenerateEquipment}
-                  />
-                  <ItineraryCreator
-                    itinerary={itinerary}
-                    setItinerary={setItinerary}
-                    onGenerateAI={generatingItinerary ? null : handleGenerateItinerary}
-                  />
-                  <WaypointsCreator
-                    waypoints={waypoints}
-                    setWaypoints={setWaypoints}
-                    startLat={formData.latitude}
-                    startLng={formData.longitude}
-                    locationName={formData.location}
-                  />
-                  <BudgetCreator
-                    budget={budget}
-                    setBudget={setBudget}
-                  />
+                <div className="space-y-6">
+                  {formData.activity_type === 'trek' ? (
+                    <>
+                      <TrekDaysCreator
+                        trekDays={trekDays}
+                        setTrekDays={setTrekDays}
+                      />
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <EquipmentCreator
+                          equipment={equipment}
+                          setEquipment={setEquipment}
+                          waterRecommendation={waterRecommendation}
+                          setWaterRecommendation={setWaterRecommendation}
+                          onGenerateAI={generatingEquipment ? null : handleGenerateEquipment}
+                        />
+                        <BudgetCreator
+                          budget={budget}
+                          setBudget={setBudget}
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <EquipmentCreator
+                        equipment={equipment}
+                        setEquipment={setEquipment}
+                        waterRecommendation={waterRecommendation}
+                        setWaterRecommendation={setWaterRecommendation}
+                        onGenerateAI={generatingEquipment ? null : handleGenerateEquipment}
+                      />
+                      <ItineraryCreator
+                        itinerary={itinerary}
+                        setItinerary={setItinerary}
+                        onGenerateAI={generatingItinerary ? null : handleGenerateItinerary}
+                      />
+                      <WaypointsCreator
+                        waypoints={waypoints}
+                        setWaypoints={setWaypoints}
+                        startLat={formData.latitude}
+                        startLng={formData.longitude}
+                        locationName={formData.location}
+                      />
+                      <BudgetCreator
+                        budget={budget}
+                        setBudget={setBudget}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
