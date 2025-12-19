@@ -30,6 +30,8 @@ function MapClickHandler({ onAddPoint }) {
 export default function TrekDayMapEditor({ day, setDay }) {
   const { language } = useLanguage();
   const [calculating, setCalculating] = useState(false);
+  const [loadingRoute, setLoadingRoute] = useState(false);
+  const [routePath, setRoutePath] = useState([]);
   const mapRef = useRef(null);
 
   const addWaypoint = (latlng) => {
@@ -37,9 +39,40 @@ export default function TrekDayMapEditor({ day, setDay }) {
     setDay({ ...day, waypoints: newWaypoints });
   };
 
+  // Fetch walking route from Google Maps when waypoints change
+  useEffect(() => {
+    const fetchRoute = async () => {
+      if (!day.waypoints || day.waypoints.length < 2) {
+        setRoutePath([]);
+        return;
+      }
+
+      setLoadingRoute(true);
+      try {
+        const { data } = await base44.functions.invoke('getWalkingRoute', {
+          waypoints: day.waypoints
+        });
+
+        if (data.success && data.route) {
+          setRoutePath(data.route);
+        }
+      } catch (error) {
+        console.error('Error fetching route:', error);
+        // Fallback to straight line if API fails
+        setRoutePath(day.waypoints.map(wp => [wp.latitude, wp.longitude]));
+      }
+      setLoadingRoute(false);
+    };
+
+    fetchRoute();
+  }, [day.waypoints]);
+
   const removeWaypoint = (index) => {
     const newWaypoints = day.waypoints.filter((_, i) => i !== index);
     setDay({ ...day, waypoints: newWaypoints });
+    if (newWaypoints.length < 2) {
+      setRoutePath([]);
+    }
   };
 
   const calculateRouteData = async () => {
@@ -106,7 +139,8 @@ Search Google Maps and use real topographic/elevation data. Return precise numbe
     ? day.waypoints.reduce((sum, wp) => sum + wp.longitude, 0) / day.waypoints.length 
     : 34.7818;
 
-  const polylinePositions = day.waypoints?.map(wp => [wp.latitude, wp.longitude]) || [];
+  // Use the detailed route path if available, otherwise fallback to straight lines
+  const polylinePositions = routePath.length > 0 ? routePath : (day.waypoints?.map(wp => [wp.latitude, wp.longitude]) || []);
 
   return (
     <Card className="border-indigo-200">
@@ -135,9 +169,17 @@ Search Google Maps and use real topographic/elevation data. Return precise numbe
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        <p className="text-sm text-gray-600">
-          {language === 'he' ? 'לחץ על המפה כדי להוסיף נקודות למסלול' : language === 'ru' ? 'Нажмите на карту, чтобы добавить точки' : language === 'es' ? 'Haz clic en el mapa para agregar puntos' : language === 'fr' ? 'Cliquez sur la carte pour ajouter des points' : language === 'de' ? 'Klicken Sie auf die Karte, um Punkte hinzuzufügen' : language === 'it' ? 'Clicca sulla mappa per aggiungere punti' : 'Click on map to add route points'}
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-gray-600">
+            {language === 'he' ? 'לחץ על המפה כדי להוסיף נקודות למסלול' : language === 'ru' ? 'Нажмите на карту, чтобы добавить точки' : language === 'es' ? 'Haz clic en el mapa para agregar puntos' : language === 'fr' ? 'Cliquez sur la carte pour ajouter des points' : language === 'de' ? 'Klicken Sie auf die Karte, um Punkte hinzuzufügen' : language === 'it' ? 'Clicca sulla mappa per aggiungere punti' : 'Click on map to add route points'}
+          </p>
+          {loadingRoute && (
+            <div className="flex items-center gap-2 text-sm text-indigo-600">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              {language === 'he' ? 'טוען מסלול...' : 'Loading route...'}
+            </div>
+          )}
+        </div>
 
         <div className="h-96 rounded-xl overflow-hidden border-2 border-indigo-200">
           <MapContainer
@@ -163,8 +205,9 @@ Search Google Maps and use real topographic/elevation data. Return precise numbe
               <Polyline
                 positions={polylinePositions}
                 color="#4f46e5"
-                weight={4}
-                opacity={0.7}
+                weight={routePath.length > 0 ? 3 : 4}
+                opacity={routePath.length > 0 ? 0.8 : 0.7}
+                dashArray={routePath.length > 0 ? null : "10, 5"}
               />
             )}
           </MapContainer>
