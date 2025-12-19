@@ -1,80 +1,115 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useLanguage } from '../LanguageContext';
+import { useGoogleMaps } from '../maps/GoogleMapsProvider';
+import { GoogleMap, Marker, Polyline } from '@react-google-maps/api';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Route, Mountain, TrendingUp, TrendingDown, MapPin, Trash2, Plus } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { Route, Mountain, TrendingUp, TrendingDown, MapPin, Trash2, Loader2, Navigation } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function TrekDayMapEditor({ day, setDay }) {
   const { language } = useLanguage();
-  const [apiKey, setApiKey] = useState(null);
-  const [newLat, setNewLat] = useState('');
-  const [newLng, setNewLng] = useState('');
+  const { isLoaded, loadError, apiKey } = useGoogleMaps();
+  const [mapInstance, setMapInstance] = useState(null);
+  const [routePath, setRoutePath] = useState([]);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const directionsServiceRef = useRef(null);
 
-  useEffect(() => {
-    const fetchKey = async () => {
-      try {
-        const response = await base44.functions.invoke('getGoogleMapsKey');
-        if (response?.data?.apiKey) {
-          setApiKey(response.data.apiKey);
-        }
-      } catch (err) {
-        console.error('Failed to get API key:', err);
-      }
-    };
-    fetchKey();
-  }, []);
+  const center = day.waypoints?.length > 0
+    ? { lat: day.waypoints[0].latitude, lng: day.waypoints[0].longitude }
+    : { lat: 31.7683, lng: 35.2137 };
 
   const updateField = (field, value) => {
     const numValue = value === '' ? null : parseFloat(value);
     setDay({ ...day, [field]: numValue });
   };
 
-  const addWaypoint = () => {
-    const lat = parseFloat(newLat);
-    const lng = parseFloat(newLng);
-    if (!isNaN(lat) && !isNaN(lng)) {
-      const newWaypoint = { latitude: lat, longitude: lng };
-      setDay({ ...day, waypoints: [...(day.waypoints || []), newWaypoint] });
-      setNewLat('');
-      setNewLng('');
+  const onMapLoad = useCallback((map) => {
+    setMapInstance(map);
+    if (window.google) {
+      directionsServiceRef.current = new window.google.maps.DirectionsService();
     }
-  };
+  }, []);
+
+  const handleMapClick = useCallback((e) => {
+    const newWaypoint = {
+      latitude: e.latLng.lat(),
+      longitude: e.latLng.lng()
+    };
+    const updatedWaypoints = [...(day.waypoints || []), newWaypoint];
+    setDay({ ...day, waypoints: updatedWaypoints });
+    setRoutePath([]); // Clear calculated route when adding new point
+  }, [day, setDay]);
 
   const removeWaypoint = (index) => {
     const updated = day.waypoints.filter((_, i) => i !== index);
     setDay({ ...day, waypoints: updated });
+    setRoutePath([]);
   };
 
-  // Build embed URL with markers and path
-  const getMapUrl = () => {
-    if (!apiKey) return null;
-    
-    const waypoints = day.waypoints || [];
-    if (waypoints.length === 0) {
-      // Default center on Israel
-      return `https://www.google.com/maps/embed/v1/view?key=${apiKey}&center=31.7683,35.2137&zoom=8`;
+  const calculateWalkingRoute = async () => {
+    if (!directionsServiceRef.current || !day.waypoints || day.waypoints.length < 2) {
+      toast.error(language === 'he' ? 'צריך לפחות 2 נקודות' : 'Need at least 2 points');
+      return;
     }
+
+    setIsCalculating(true);
+
+    const waypoints = day.waypoints;
+    const origin = { lat: waypoints[0].latitude, lng: waypoints[0].longitude };
+    const destination = { lat: waypoints[waypoints.length - 1].latitude, lng: waypoints[waypoints.length - 1].longitude };
     
-    if (waypoints.length === 1) {
-      return `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${waypoints[0].latitude},${waypoints[0].longitude}&zoom=12`;
+    const middleWaypoints = waypoints.slice(1, -1).map(wp => ({
+      location: { lat: wp.latitude, lng: wp.longitude },
+      stopover: true
+    }));
+
+    try {
+      directionsServiceRef.current.route(
+        {
+          origin,
+          destination,
+          waypoints: middleWaypoints,
+          travelMode: window.google.maps.TravelMode.WALKING,
+        },
+        (result, status) => {
+          setIsCalculating(false);
+          if (status === 'OK' && result.routes[0]) {
+            const route = result.routes[0];
+            const path = route.overview_path.map(p => ({ lat: p.lat(), lng: p.lng() }));
+            setRoutePath(path);
+
+            // Calculate total distance
+            let totalDistance = 0;
+            let totalElevationGain = 0;
+            route.legs.forEach(leg => {
+              totalDistance += leg.distance.value;
+            });
+
+            // Update day with calculated distance
+            setDay(prev => ({
+              ...prev,
+              daily_distance_km: parseFloat((totalDistance / 1000).toFixed(2))
+            }));
+
+            toast.success(language === 'he' ? 'המסלול חושב בהצלחה!' : 'Route calculated!');
+          } else {
+            toast.error(language === 'he' ? 'לא ניתן לחשב מסלול' : 'Could not calculate route');
+          }
+        }
+      );
+    } catch (err) {
+      setIsCalculating(false);
+      toast.error(language === 'he' ? 'שגיאה בחישוב המסלול' : 'Error calculating route');
     }
-    
-    // Multiple waypoints - show directions
-    const origin = `${waypoints[0].latitude},${waypoints[0].longitude}`;
-    const destination = `${waypoints[waypoints.length - 1].latitude},${waypoints[waypoints.length - 1].longitude}`;
-    const waypointsParam = waypoints.slice(1, -1).map(wp => `${wp.latitude},${wp.longitude}`).join('|');
-    
-    let url = `https://www.google.com/maps/embed/v1/directions?key=${apiKey}&origin=${origin}&destination=${destination}&mode=walking`;
-    if (waypointsParam) {
-      url += `&waypoints=${waypointsParam}`;
-    }
-    return url;
   };
 
-  const mapUrl = getMapUrl();
+  const waypointPath = (day.waypoints || []).map(wp => ({
+    lat: wp.latitude,
+    lng: wp.longitude
+  }));
 
   return (
     <Card className="border-indigo-200">
@@ -86,61 +121,103 @@ export default function TrekDayMapEditor({ day, setDay }) {
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Map Section */}
-        <div className="space-y-3">
-          {mapUrl ? (
-            <iframe
-              src={mapUrl}
-              width="100%"
-              height="300"
-              style={{ border: 0, borderRadius: '12px' }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          ) : (
-            <div className="h-[300px] bg-gray-100 rounded-xl flex items-center justify-center text-gray-500">
-              {language === 'he' ? 'טוען מפה...' : 'Loading map...'}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">
+            {language === 'he' ? 'לחץ על המפה להוספת נקודות מסלול' : 'Click on map to add waypoints'}
+          </Label>
+          
+          {loadError && (
+            <div className="h-64 bg-red-50 rounded-lg flex items-center justify-center text-red-600">
+              {language === 'he' ? 'שגיאה בטעינת המפה' : 'Error loading map'}
+            </div>
+          )}
+          
+          {!isLoaded && !loadError && (
+            <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+              <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+            </div>
+          )}
+          
+          {isLoaded && !loadError && (
+            <div className="rounded-xl overflow-hidden border-2 border-indigo-100">
+              <GoogleMap
+                mapContainerStyle={{ width: '100%', height: '300px' }}
+                center={center}
+                zoom={day.waypoints?.length > 0 ? 12 : 8}
+                onClick={handleMapClick}
+                onLoad={onMapLoad}
+                options={{
+                  mapTypeControl: true,
+                  streetViewControl: false,
+                  fullscreenControl: true,
+                  zoomControl: true,
+                }}
+              >
+                {/* Markers for waypoints */}
+                {day.waypoints?.map((wp, index) => (
+                  <Marker
+                    key={index}
+                    position={{ lat: wp.latitude, lng: wp.longitude }}
+                    label={{ 
+                      text: String(index + 1), 
+                      color: 'white',
+                      fontWeight: 'bold'
+                    }}
+                  />
+                ))}
+                
+                {/* Calculated walking route (blue) */}
+                {routePath.length > 1 && (
+                  <Polyline
+                    path={routePath}
+                    options={{
+                      strokeColor: '#2563eb',
+                      strokeWeight: 4,
+                      strokeOpacity: 0.9,
+                    }}
+                  />
+                )}
+
+                {/* Direct line between points (dashed, if no route calculated) */}
+                {routePath.length === 0 && waypointPath.length > 1 && (
+                  <Polyline
+                    path={waypointPath}
+                    options={{
+                      strokeColor: '#4f46e5',
+                      strokeWeight: 3,
+                      strokeOpacity: 0.6,
+                      icons: [{
+                        icon: { path: 'M 0,-1 0,1', strokeOpacity: 1, scale: 3 },
+                        offset: '0',
+                        repeat: '15px'
+                      }]
+                    }}
+                  />
+                )}
+              </GoogleMap>
             </div>
           )}
 
-          {/* Add Waypoint */}
-          <div className="flex gap-2 items-end">
-            <div className="flex-1">
-              <Label className="text-xs">{language === 'he' ? 'קו רוחב' : 'Latitude'}</Label>
-              <Input
-                type="number"
-                step="any"
-                value={newLat}
-                onChange={(e) => setNewLat(e.target.value)}
-                placeholder="31.7683"
-                className="h-9"
-              />
-            </div>
-            <div className="flex-1">
-              <Label className="text-xs">{language === 'he' ? 'קו אורך' : 'Longitude'}</Label>
-              <Input
-                type="number"
-                step="any"
-                value={newLng}
-                onChange={(e) => setNewLng(e.target.value)}
-                placeholder="35.2137"
-                className="h-9"
-              />
-            </div>
+          {/* Calculate Route Button */}
+          {day.waypoints?.length >= 2 && (
             <Button
               type="button"
-              size="sm"
-              onClick={addWaypoint}
-              disabled={!newLat || !newLng}
-              className="bg-indigo-600 hover:bg-indigo-700 h-9"
+              onClick={calculateWalkingRoute}
+              disabled={isCalculating}
+              className="w-full bg-blue-600 hover:bg-blue-700 gap-2"
             >
-              <Plus className="w-4 h-4" />
+              {isCalculating ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Navigation className="w-4 h-4" />
+              )}
+              {language === 'he' ? 'חשב מסלול הליכה' : 'Calculate Walking Route'}
             </Button>
-          </div>
+          )}
 
           {/* Waypoints List */}
           {day.waypoints?.length > 0 && (
-            <div className="space-y-1">
+            <div className="mt-3 space-y-1">
               <Label className="text-xs text-gray-500">
                 {language === 'he' ? `${day.waypoints.length} נקודות במסלול` : `${day.waypoints.length} waypoints`}
               </Label>
@@ -148,7 +225,7 @@ export default function TrekDayMapEditor({ day, setDay }) {
                 {day.waypoints.map((wp, index) => (
                   <div key={index} className="flex items-center gap-1 bg-indigo-50 px-2 py-1 rounded-lg text-xs">
                     <MapPin className="w-3 h-3 text-indigo-600" />
-                    <span>{index + 1}: {wp.latitude.toFixed(4)}, {wp.longitude.toFixed(4)}</span>
+                    <span>{index + 1}</span>
                     <Button
                       type="button"
                       variant="ghost"
