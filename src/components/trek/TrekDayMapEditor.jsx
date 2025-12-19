@@ -39,7 +39,7 @@ function MapEditorContent({ day, setDay }) {
 
   // Fetch walking route from Google Maps Directions Service when waypoints change
   useEffect(() => {
-    if (!window.google || !day.waypoints || day.waypoints.length < 2) {
+    if (!isLoaded || !window.google || !day.waypoints || day.waypoints.length < 2) {
       setDirections(null);
       return;
     }
@@ -71,7 +71,7 @@ function MapEditorContent({ day, setDay }) {
         setLoadingRoute(false);
       }
     );
-  }, [day.waypoints]);
+  }, [day.waypoints, isLoaded]);
 
   const removeWaypoint = (index) => {
     const newWaypoints = day.waypoints.filter((_, i) => i !== index);
