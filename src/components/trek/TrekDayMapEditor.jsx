@@ -196,9 +196,12 @@ Search Google Maps and use real topographic/elevation data. Return precise numbe
           )}
         </div>
 
-        <div className="rounded-xl overflow-hidden border-2 border-indigo-200">
+        <div 
+          id="trek-map-container"
+          style={{ width: '100%', height: '384px', borderRadius: '12px', overflow: 'hidden', border: '2px solid #c7d2fe' }}
+        >
           <GoogleMap
-            mapContainerStyle={{ width: '100%', height: '384px' }}
+            mapContainerStyle={{ width: '100%', height: '100%' }}
             center={center}
             zoom={13}
             onClick={addWaypoint}
