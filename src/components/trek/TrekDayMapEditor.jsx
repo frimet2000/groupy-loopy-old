@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Polyline, Marker, useMapEvents } from 'react-l
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
 import L from 'leaflet';
 import { MapPin, Trash2, Route, Mountain, TrendingUp, TrendingDown, Loader2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
