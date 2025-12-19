@@ -32,6 +32,7 @@ export default function TrekDayMapEditor({ day, setDay }) {
     setMapInstance(map);
     if (window.google) {
       directionsServiceRef.current = new window.google.maps.DirectionsService();
+      elevationServiceRef.current = new window.google.maps.ElevationService();
     }
   }, []);
 
