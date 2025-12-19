@@ -54,16 +54,18 @@ export default function TrekDayMapEditor({ day, setDay }) {
         prompt: `Given these GPS waypoints for a hiking trail (in order):
 ${day.waypoints.map((wp, i) => `Point ${i + 1}: ${wp.latitude}, ${wp.longitude}`).join('\n')}
 
-Calculate:
-1. Walking distance (km) - NOT straight line, but realistic trail distance following terrain
-2. Start altitude (meters above sea level)
-3. End altitude (meters above sea level)
-4. Highest point altitude (meters)
-5. Lowest point altitude (meters)
-6. Total elevation gain (meters climbing up)
-7. Total elevation loss (meters going down)
+CRITICAL: Use Google Maps API or real hiking/trail routing services to calculate the ACTUAL WALKING/HIKING DISTANCE along trails and paths, NOT straight-line distance.
 
-Use real topographic data. Return precise numbers.`,
+Calculate:
+1. Walking distance (km) - Use Google Maps walking route or trail routing, NOT air distance
+2. Start altitude (meters above sea level) - use real elevation data
+3. End altitude (meters above sea level) - use real elevation data
+4. Highest point altitude (meters) along the route
+5. Lowest point altitude (meters) along the route
+6. Total elevation gain (meters climbing up) - sum of all uphill sections
+7. Total elevation loss (meters going down) - sum of all downhill sections
+
+Search Google Maps and use real topographic/elevation data. Return precise numbers based on actual trail routing.`,
         add_context_from_internet: true,
         response_json_schema: {
           type: "object",
