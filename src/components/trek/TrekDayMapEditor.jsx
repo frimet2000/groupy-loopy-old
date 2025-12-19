@@ -1,77 +1,72 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../LanguageContext';
-import { MapContainer, TileLayer, Polyline, Marker, useMapEvents } from 'react-leaflet';
+import { GoogleMap, useJsApiLoader, Marker, Polyline, DirectionsRenderer } from '@react-google-maps/api';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import L from 'leaflet';
 import { MapPin, Trash2, Route, Mountain, TrendingUp, TrendingDown, Loader2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
-
-// Fix Leaflet default icon
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
-
-function MapClickHandler({ onAddPoint }) {
-  useMapEvents({
-    click(e) {
-      onAddPoint(e.latlng);
-    },
-  });
-  return null;
-}
 
 export default function TrekDayMapEditor({ day, setDay }) {
   const { language } = useLanguage();
   const [calculating, setCalculating] = useState(false);
   const [loadingRoute, setLoadingRoute] = useState(false);
-  const [routePath, setRoutePath] = useState([]);
+  const [directions, setDirections] = useState(null);
   const mapRef = useRef(null);
 
-  const addWaypoint = (latlng) => {
-    const newWaypoints = [...(day.waypoints || []), { latitude: latlng.lat, longitude: latlng.lng }];
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: 'AIzaSyDSf2cQV46EWCb9FMmILGR-LT5IMgLQBhY',
+    libraries: ['places']
+  });
+
+  const addWaypoint = (e) => {
+    const newWaypoints = [...(day.waypoints || []), { latitude: e.latLng.lat(), longitude: e.latLng.lng() }];
     setDay({ ...day, waypoints: newWaypoints });
   };
 
-  // Fetch walking route from Google Maps when waypoints change
+  // Fetch walking route from Google Maps Directions Service when waypoints change
   useEffect(() => {
-    const fetchRoute = async () => {
-      if (!day.waypoints || day.waypoints.length < 2) {
-        setRoutePath([]);
-        return;
-      }
+    if (!isLoaded || !day.waypoints || day.waypoints.length < 2) {
+      setDirections(null);
+      return;
+    }
 
-      setLoadingRoute(true);
-      try {
-        const { data } = await base44.functions.invoke('getWalkingRoute', {
-          waypoints: day.waypoints
-        });
+    setLoadingRoute(true);
+    const directionsService = new google.maps.DirectionsService();
 
-        if (data.success && data.route) {
-          setRoutePath(data.route);
+    const origin = { lat: day.waypoints[0].latitude, lng: day.waypoints[0].longitude };
+    const destination = { lat: day.waypoints[day.waypoints.length - 1].latitude, lng: day.waypoints[day.waypoints.length - 1].longitude };
+    
+    const waypoints = day.waypoints.slice(1, -1).map(wp => ({
+      location: { lat: wp.latitude, lng: wp.longitude },
+      stopover: true
+    }));
+
+    directionsService.route(
+      {
+        origin,
+        destination,
+        waypoints,
+        travelMode: google.maps.TravelMode.WALKING,
+      },
+      (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+          setDirections(result);
+        } else {
+          console.error('Directions request failed:', status);
         }
-      } catch (error) {
-        console.error('Error fetching route:', error);
-        // Fallback to straight line if API fails
-        setRoutePath(day.waypoints.map(wp => [wp.latitude, wp.longitude]));
+        setLoadingRoute(false);
       }
-      setLoadingRoute(false);
-    };
-
-    fetchRoute();
-  }, [day.waypoints]);
+    );
+  }, [day.waypoints, isLoaded]);
 
   const removeWaypoint = (index) => {
     const newWaypoints = day.waypoints.filter((_, i) => i !== index);
     setDay({ ...day, waypoints: newWaypoints });
     if (newWaypoints.length < 2) {
-      setRoutePath([]);
+      setDirections(null);
     }
   };
 
@@ -132,15 +127,25 @@ Search Google Maps and use real topographic/elevation data. Return precise numbe
     setCalculating(false);
   };
 
-  const centerLat = day.waypoints?.length > 0 
-    ? day.waypoints.reduce((sum, wp) => sum + wp.latitude, 0) / day.waypoints.length 
-    : 32.0853;
-  const centerLng = day.waypoints?.length > 0 
-    ? day.waypoints.reduce((sum, wp) => sum + wp.longitude, 0) / day.waypoints.length 
-    : 34.7818;
+  const center = day.waypoints?.length > 0 
+    ? { 
+        lat: day.waypoints.reduce((sum, wp) => sum + wp.latitude, 0) / day.waypoints.length,
+        lng: day.waypoints.reduce((sum, wp) => sum + wp.longitude, 0) / day.waypoints.length
+      }
+    : { lat: 32.0853, lng: 34.7818 };
 
-  // Use the detailed route path if available, otherwise fallback to straight lines
-  const polylinePositions = routePath.length > 0 ? routePath : (day.waypoints?.map(wp => [wp.latitude, wp.longitude]) || []);
+  if (!isLoaded) {
+    return (
+      <Card className="border-indigo-200">
+        <CardContent className="py-20">
+          <div className="flex items-center justify-center gap-2">
+            <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
+            <span className="text-gray-600">{language === 'he' ? 'טוען מפה...' : 'Loading map...'}</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="border-indigo-200">
@@ -182,35 +187,40 @@ Search Google Maps and use real topographic/elevation data. Return precise numbe
         </div>
 
         <div className="h-96 rounded-xl overflow-hidden border-2 border-indigo-200">
-          <MapContainer
-            center={[centerLat, centerLng]}
+          <GoogleMap
+            mapContainerStyle={{ width: '100%', height: '100%' }}
+            center={center}
             zoom={13}
-            style={{ height: '100%', width: '100%' }}
-            ref={mapRef}
+            onClick={addWaypoint}
+            onLoad={map => mapRef.current = map}
+            options={{
+              mapTypeControl: true,
+              streetViewControl: false,
+              fullscreenControl: false,
+            }}
           >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <MapClickHandler onAddPoint={addWaypoint} />
-            
             {day.waypoints?.map((wp, index) => (
               <Marker
                 key={index}
-                position={[wp.latitude, wp.longitude]}
+                position={{ lat: wp.latitude, lng: wp.longitude }}
+                label={(index + 1).toString()}
               />
             ))}
 
-            {polylinePositions.length > 1 && (
-              <Polyline
-                positions={polylinePositions}
-                color="#4f46e5"
-                weight={routePath.length > 0 ? 3 : 4}
-                opacity={routePath.length > 0 ? 0.8 : 0.7}
-                dashArray={routePath.length > 0 ? null : "10, 5"}
+            {directions && (
+              <DirectionsRenderer
+                directions={directions}
+                options={{
+                  suppressMarkers: true,
+                  polylineOptions: {
+                    strokeColor: '#4f46e5',
+                    strokeWeight: 4,
+                    strokeOpacity: 0.8,
+                  }
+                }}
               />
             )}
-          </MapContainer>
+          </GoogleMap>
         </div>
 
         {day.waypoints?.length > 0 && (
