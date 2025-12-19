@@ -84,10 +84,13 @@ export default function TrekDayMapEditor({ day, setDay }) {
             </div>
           )}
           
-          {isLoaded && !loadError && (
-            <div style={{ width: '100%', height: '300px', borderRadius: '12px', overflow: 'hidden' }}>
+          {isLoaded && !loadError && showMap && (
+            <div 
+              ref={containerRef}
+              style={{ width: '100%', height: '300px', borderRadius: '12px', overflow: 'hidden', background: '#e5e7eb' }}
+            >
               <GoogleMap
-                mapContainerStyle={{ width: '100%', height: '100%' }}
+                mapContainerStyle={{ width: '100%', height: '300px' }}
                 center={center}
                 zoom={10}
                 onClick={handleMapClick}
