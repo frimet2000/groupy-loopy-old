@@ -401,61 +401,35 @@ export default function TrekDayMapEditor({ day, setDay }) {
           )}
         </div>
 
-        {/* Stats Fields */}
-        <div className="grid grid-cols-2 gap-4 pt-2 border-t">
-          <div className="space-y-2">
-            <Label className="flex items-center gap-1 text-sm">
-              <Route className="w-3 h-3" />
-              {language === 'he' ? 'מרחק (ק״מ)' : 'Distance (km)'}
-            </Label>
-            <Input
-              type="number"
-              step="0.1"
-              value={day.daily_distance_km || ''}
-              onChange={(e) => updateField('daily_distance_km', e.target.value)}
-              placeholder="15.5"
-            />
+        {/* Saved Stats Summary (when no live stats showing) */}
+        {!routeStats && (day.daily_distance_km || day.elevation_gain_m || day.highest_point_m) && (
+          <div className="grid grid-cols-2 gap-2 pt-2 border-t text-sm">
+            {day.daily_distance_km && (
+              <div className="flex items-center gap-1 text-gray-600">
+                <Route className="w-3 h-3" />
+                {day.daily_distance_km} {language === 'he' ? 'ק״מ' : 'km'}
+              </div>
+            )}
+            {day.elevation_gain_m && (
+              <div className="flex items-center gap-1 text-green-600">
+                <TrendingUp className="w-3 h-3" />
+                +{day.elevation_gain_m} {language === 'he' ? 'מ\'' : 'm'}
+              </div>
+            )}
+            {day.elevation_loss_m && (
+              <div className="flex items-center gap-1 text-red-600">
+                <TrendingDown className="w-3 h-3" />
+                -{day.elevation_loss_m} {language === 'he' ? 'מ\'' : 'm'}
+              </div>
+            )}
+            {day.highest_point_m && (
+              <div className="flex items-center gap-1 text-blue-600">
+                <Mountain className="w-3 h-3" />
+                {day.highest_point_m} {language === 'he' ? 'מ\'' : 'm'}
+              </div>
+            )}
           </div>
-
-          <div className="space-y-2">
-            <Label className="flex items-center gap-1 text-sm">
-              <Mountain className="w-3 h-3" />
-              {language === 'he' ? 'נקודה גבוהה (מ\')' : 'Highest Point (m)'}
-            </Label>
-            <Input
-              type="number"
-              value={day.highest_point_m || ''}
-              onChange={(e) => updateField('highest_point_m', e.target.value)}
-              placeholder="1200"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label className="flex items-center gap-1 text-sm">
-              <TrendingUp className="w-3 h-3 text-green-600" />
-              {language === 'he' ? 'עלייה (מ\')' : 'Elevation Gain (m)'}
-            </Label>
-            <Input
-              type="number"
-              value={day.elevation_gain_m || ''}
-              onChange={(e) => updateField('elevation_gain_m', e.target.value)}
-              placeholder="800"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label className="flex items-center gap-1 text-sm">
-              <TrendingDown className="w-3 h-3 text-red-600" />
-              {language === 'he' ? 'ירידה (מ\')' : 'Elevation Loss (m)'}
-            </Label>
-            <Input
-              type="number"
-              value={day.elevation_loss_m || ''}
-              onChange={(e) => updateField('elevation_loss_m', e.target.value)}
-              placeholder="600"
-            />
-          </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );
