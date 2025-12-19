@@ -9,25 +9,12 @@ import { MapPin, Trash2, Route, Mountain, TrendingUp, TrendingDown, Loader2, Spa
 import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
 
-function MapLoader({ apiKey, children }) {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: apiKey,
-    libraries: ['places']
-  });
-
-  if (!isLoaded) {
-    return null;
-  }
-
-  return children;
-}
-
 export default function TrekDayMapEditor({ day, setDay }) {
   const { language } = useLanguage();
   const [calculating, setCalculating] = useState(false);
   const [loadingRoute, setLoadingRoute] = useState(false);
   const [directions, setDirections] = useState(null);
-  const [apiKey, setApiKey] = useState(null);
+  const [apiKey, setApiKey] = useState('');
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -42,7 +29,12 @@ export default function TrekDayMapEditor({ day, setDay }) {
     fetchApiKey();
   }, []);
 
-  if (!apiKey) {
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: apiKey,
+    libraries: ['places']
+  });
+
+  if (!apiKey || !isLoaded) {
     return (
       <Card className="border-indigo-200">
         <CardContent className="py-20">
@@ -169,8 +161,7 @@ Search Google Maps and use real topographic/elevation data. Return precise numbe
     : { lat: 32.0853, lng: 34.7818 };
 
   return (
-    <MapLoader apiKey={apiKey}>
-      <Card className="border-indigo-200">
+    <Card className="border-indigo-200">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
@@ -308,6 +299,5 @@ Search Google Maps and use real topographic/elevation data. Return precise numbe
         )}
       </CardContent>
     </Card>
-    </MapLoader>
   );
 }
