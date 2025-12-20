@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapContainer, TileLayer, Polyline, Marker } from 'react-leaflet';
 import L from 'leaflet';
-import { Route, MapPin, Mountain, TrendingUp, TrendingDown, Cloud } from 'lucide-react';
+import { Route, MapPin, Mountain, TrendingUp, TrendingDown, Cloud, Backpack, Droplets, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import WeatherWidget from '../weather/WeatherWidget';
 
