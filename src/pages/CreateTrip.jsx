@@ -765,7 +765,7 @@ Include water recommendation in liters and detailed equipment list.`,
         onConfirm={handleMapConfirm}
       />
 
-      <div className="h-screen flex flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 overflow-hidden">
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 pb-32 md:pb-0">
         <div className="max-w-5xl mx-auto w-full flex flex-col h-full px-2 sm:px-4">
           {/* Header */}
           <motion.div
