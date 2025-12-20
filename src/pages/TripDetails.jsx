@@ -498,38 +498,7 @@ export default function TripDetails() {
   };
 
   const handleStartEdit = () => {
-    setEditData({
-      title: trip.title || trip.title_he || '',
-      description: trip.description || trip.description_he || '',
-      max_participants: trip.max_participants || 10,
-      date: trip.date,
-      meeting_time: trip.meeting_time || '',
-      location: trip.location,
-      country: trip.country || 'israel',
-      region: trip.region || '',
-      sub_region: trip.sub_region || '',
-      difficulty: trip.difficulty,
-      duration_type: trip.duration_type,
-      duration_value: trip.duration_value,
-      activity_type: trip.activity_type || 'hiking',
-      cycling_type: trip.cycling_type || '',
-      cycling_distance: trip.cycling_distance || null,
-      cycling_elevation: trip.cycling_elevation || null,
-      offroad_vehicle_type: trip.offroad_vehicle_type || '',
-      offroad_distance: trip.offroad_distance || null,
-      offroad_terrain_type: trip.offroad_terrain_type || [],
-      trail_type: trip.trail_type || [],
-      interests: trip.interests || [],
-      accessibility_types: trip.accessibility_types || [],
-      pets_allowed: trip.pets_allowed || false,
-      camping_available: trip.camping_available || false,
-      has_guide: trip.has_guide || false,
-      guide_name: trip.guide_name || '',
-      guide_topic: trip.guide_topic || '',
-      parent_age_ranges: trip.parent_age_ranges || [],
-      children_age_ranges: trip.children_age_ranges || [],
-    });
-    setIsEditing(true);
+    navigate(createPageUrl('EditTrip') + '?id=' + tripId);
   };
 
   const handleCancelEdit = () => {
