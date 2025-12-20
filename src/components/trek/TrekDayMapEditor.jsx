@@ -11,7 +11,33 @@ import { Route, Mountain, TrendingUp, TrendingDown, MapPin, Trash2, Loader2, Nav
 import { toast } from 'sonner';
 
 export default function TrekDayMapEditor({ day, setDay }) {
-  const { language } = useLanguage();
+  const { language, isRTL } = useLanguage();
+  
+  const getMapLanguage = () => {
+    const langMap = {
+      'he': 'iw',
+      'en': 'en',
+      'ru': 'ru',
+      'es': 'es',
+      'fr': 'fr',
+      'de': 'de',
+      'it': 'it'
+    };
+    return langMap[language] || 'en';
+  };
+
+  const getMapRegion = () => {
+    const regionMap = {
+      'he': 'IL',
+      'en': 'US',
+      'ru': 'RU',
+      'es': 'ES',
+      'fr': 'FR',
+      'de': 'DE',
+      'it': 'IT'
+    };
+    return regionMap[language] || 'US';
+  };
   const { isLoaded, loadError, apiKey } = useGoogleMaps();
   const [mapInstance, setMapInstance] = useState(null);
   const [routePath, setRoutePath] = useState([]);
@@ -284,6 +310,8 @@ export default function TrekDayMapEditor({ day, setDay }) {
                   streetViewControl: false,
                   fullscreenControl: true,
                   zoomControl: true,
+                  language: getMapLanguage(),
+                  region: getMapRegion(),
                 }}
                 >
                 {/* Markers for waypoints */}
