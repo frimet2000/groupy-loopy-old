@@ -10,16 +10,24 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { Loader2, Upload, MapPin, Mountain, Clock, Sparkles, Navigation } from 'lucide-react';
+import { Loader2, Upload, MapPin, Mountain, Clock, Sparkles, Navigation, Globe, Calendar, Users, Compass, Footprints, Bike, Truck, User, Dog, Tent, ArrowRight, ArrowLeft, Check, UtensilsCrossed, Route, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { getRegionFromCoordinates } from '../components/utils/LocationDetector';
 import LocationPicker from '../components/maps/LocationPicker';
+import { getAllCountries } from '../components/utils/CountryRegions';
+import WaypointsCreator from '../components/creation/WaypointsCreator';
+import EquipmentCreator from '../components/creation/EquipmentCreator';
+import ItineraryCreator from '../components/creation/ItineraryCreator';
+import BudgetCreator from '../components/creation/BudgetCreator';
+import TrekDaysCreator from '../components/trek/TrekDaysCreator';
 
-const regions = ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'];
 const difficulties = ['easy', 'moderate', 'challenging', 'hard', 'extreme'];
 const durations = ['hours', 'half_day', 'full_day', 'overnight', 'multi_day'];
-const activityTypes = ['hiking', 'cycling', 'offroad'];
+const activityTypes = ['hiking', 'cycling', 'offroad', 'running', 'culinary', 'trek'];
 const cyclingTypes = ['road', 'mountain', 'gravel', 'hybrid', 'bmx', 'electric'];
 const offroadVehicleTypes = ['jeep', 'atv', 'dirt_bike', 'side_by_side', 'buggy', 'truck'];
 const offroadTerrainTypes = ['sand', 'rocks', 'mud', 'hills', 'desert', 'forest_trails', 'river_crossing'];
@@ -28,34 +36,40 @@ const interests = ['nature', 'history', 'photography', 'birdwatching', 'archaeol
 const accessibilityTypes = ['wheelchair', 'visual_impairment', 'hearing_impairment', 'mobility_aid', 'stroller_friendly', 'elderly_friendly'];
 
 export default function EditTrip() {
-  const { t, language } = useLanguage();
+  const { t, language, isRTL } = useLanguage();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [currentStep, setCurrentStep] = useState(1);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [imageUploading, setImageUploading] = useState(false);
-  const [tripId, setTripId] = useState(null);
   const [showMapPicker, setShowMapPicker] = useState(false);
+  const [searchingLocation, setSearchingLocation] = useState(false);
+  const [tripId, setTripId] = useState(null);
+  
+  const countries = getAllCountries();
   
   const [formData, setFormData] = useState({
-    title_he: '',
-    title_en: '',
-    description_he: '',
-    description_en: '',
+    title: '',
+    description: '',
     location: '',
+    country: '',
+    region: '',
+    sub_region: '',
     latitude: null,
     longitude: null,
-    region: '',
     date: '',
+    meeting_time: '',
     duration_type: 'full_day',
     duration_value: 1,
     activity_type: 'hiking',
     difficulty: 'moderate',
+    trip_character: '',
     cycling_type: '',
-    cycling_distance: '',
-    cycling_elevation: '',
+    cycling_distance: null,
+    cycling_elevation: null,
     offroad_vehicle_type: '',
-    offroad_distance: '',
+    offroad_distance: null,
     offroad_terrain_type: [],
     trail_type: [],
     interests: [],
@@ -64,9 +78,56 @@ export default function EditTrip() {
     children_age_ranges: [],
     pets_allowed: false,
     camping_available: false,
+    has_guide: false,
+    guide_name: '',
+    guide_topic: '',
     max_participants: 10,
-    image_url: ''
+    image_url: '',
+    approval_required: false,
+    additional_organizers: []
   });
+
+  const [newOrganizerEmail, setNewOrganizerEmail] = useState('');
+  const [waypoints, setWaypoints] = useState([]);
+  const [equipment, setEquipment] = useState([]);
+  const [waterRecommendation, setWaterRecommendation] = useState(null);
+  const [itinerary, setItinerary] = useState([]);
+  const [budget, setBudget] = useState({
+    solo_min: '',
+    solo_max: '',
+    family_min: '',
+    family_max: '',
+    currency: 'ILS',
+    notes: ''
+  });
+  const [trekDays, setTrekDays] = useState([]);
+
+  const steps = [
+    { 
+      id: 1, 
+      title: language === 'he' ? 'פרטים בסיסיים' : 'Basic Info',
+      icon: Sparkles,
+      color: 'from-emerald-500 to-teal-500'
+    },
+    { 
+      id: 2, 
+      title: language === 'he' ? 'מיקום וזמן' : 'Location & Time',
+      icon: MapPin,
+      color: 'from-blue-500 to-cyan-500'
+    },
+    { 
+      id: 3, 
+      title: language === 'he' ? 'פרטי הפעילות' : 'Activity Details',
+      icon: Mountain,
+      color: 'from-amber-500 to-orange-500'
+    },
+    { 
+      id: 4, 
+      title: language === 'he' ? 'תכנון' : 'Planning',
+      icon: Compass,
+      color: 'from-purple-500 to-pink-500'
+    }
+  ];
 
   useEffect(() => {
     const init = async () => {
@@ -93,31 +154,38 @@ export default function EditTrip() {
           return;
         }
 
-        if (trip.organizer_email !== userData.email) {
+        const isManager = trip.organizer_email === userData.email || 
+                          userData.role === 'admin' ||
+                          trip.additional_organizers?.some(org => org.email === userData.email);
+
+        if (!isManager) {
           toast.error(language === 'he' ? 'אין הרשאה לערוך טיול זה' : 'No permission to edit this trip');
           navigate(createPageUrl('TripDetails') + '?id=' + id);
           return;
         }
 
+        // Load trip data into form
         setFormData({
-          title_he: trip.title_he || '',
-          title_en: trip.title_en || '',
-          description_he: trip.description_he || '',
-          description_en: trip.description_en || '',
+          title: trip.title || '',
+          description: trip.description || '',
           location: trip.location || '',
+          country: trip.country || 'israel',
+          region: trip.region || '',
+          sub_region: trip.sub_region || '',
           latitude: trip.latitude || null,
           longitude: trip.longitude || null,
-          region: trip.region || '',
           date: trip.date || '',
+          meeting_time: trip.meeting_time || '',
           duration_type: trip.duration_type || 'full_day',
           duration_value: trip.duration_value || 1,
           activity_type: trip.activity_type || 'hiking',
           difficulty: trip.difficulty || 'moderate',
+          trip_character: trip.trip_character || '',
           cycling_type: trip.cycling_type || '',
-          cycling_distance: trip.cycling_distance || '',
-          cycling_elevation: trip.cycling_elevation || '',
+          cycling_distance: trip.cycling_distance || null,
+          cycling_elevation: trip.cycling_elevation || null,
           offroad_vehicle_type: trip.offroad_vehicle_type || '',
-          offroad_distance: trip.offroad_distance || '',
+          offroad_distance: trip.offroad_distance || null,
           offroad_terrain_type: trip.offroad_terrain_type || [],
           trail_type: trip.trail_type || [],
           interests: trip.interests || [],
@@ -126,12 +194,32 @@ export default function EditTrip() {
           children_age_ranges: trip.children_age_ranges || [],
           pets_allowed: trip.pets_allowed || false,
           camping_available: trip.camping_available || false,
+          has_guide: trip.has_guide || false,
+          guide_name: trip.guide_name || '',
+          guide_topic: trip.guide_topic || '',
           max_participants: trip.max_participants || 10,
-          image_url: trip.image_url || ''
+          image_url: trip.image_url || '',
+          approval_required: trip.approval_required || false,
+          additional_organizers: trip.additional_organizers || []
         });
+
+        setWaypoints(trip.waypoints || []);
+        setEquipment(trip.equipment_checklist || []);
+        setWaterRecommendation(trip.recommended_water_liters || null);
+        setItinerary(trip.daily_itinerary || []);
+        setBudget(trip.budget || {
+          solo_min: '',
+          solo_max: '',
+          family_min: '',
+          family_max: '',
+          currency: 'ILS',
+          notes: ''
+        });
+        setTrekDays(trip.trek_days || []);
 
         setLoading(false);
       } catch (e) {
+        console.error('Error loading trip:', e);
         toast.error(language === 'he' ? 'שגיאה בטעינת הטיול' : 'Error loading trip');
         navigate(createPageUrl('MyTrips'));
       }
@@ -173,12 +261,12 @@ export default function EditTrip() {
       return;
     }
 
-    setImageUploading(true);
+    setSearchingLocation(true);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: language === 'he'
-          ? `מצא קואורדינטות GPS (latitude, longitude) עבור המיקום "${formData.location}" בישראל. חפש ב-Google Maps ותן קואורדינטות מדויקות.`
-          : `Find GPS coordinates (latitude, longitude) for the location "${formData.location}" in Israel. Search Google Maps and provide exact coordinates.`,
+          ? `מצא קואורדינטות GPS (latitude, longitude) עבור המיקום "${formData.location}" ב${t(formData.country)}. חפש ב-Google Maps ותן קואורדינטות מדויקות.`
+          : `Find GPS coordinates (latitude, longitude) for the location "${formData.location}" in ${t(formData.country)}. Search Google Maps and provide exact coordinates.`,
         add_context_from_internet: true,
         response_json_schema: {
           type: "object",
@@ -189,73 +277,82 @@ export default function EditTrip() {
         }
       });
       
-      handleChange('latitude', result.latitude);
-      handleChange('longitude', result.longitude);
+      setFormData(prev => ({
+        ...prev,
+        latitude: result.latitude,
+        longitude: result.longitude
+      }));
       
-      // Auto-detect region based on coordinates
-      const detectedRegion = getRegionFromCoordinates(result.latitude, result.longitude);
-      handleChange('region', detectedRegion);
-      
-      setImageUploading(false);
-      
-      // Open map picker to confirm/adjust location
+      setSearchingLocation(false);
       setShowMapPicker(true);
     } catch (error) {
       toast.error(language === 'he' ? 'לא ניתן למצוא את המיקום' : 'Could not find location');
-      setImageUploading(false);
+      setSearchingLocation(false);
     }
   };
 
   const handleMapConfirm = (lat, lng) => {
     handleChange('latitude', lat);
     handleChange('longitude', lng);
-    
-    // Update region based on new coordinates
-    const detectedRegion = getRegionFromCoordinates(lat, lng);
-    handleChange('region', detectedRegion);
-    
     toast.success(language === 'he' ? 'מיקום נשמר' : 'Location saved');
   };
 
+  const nextStep = () => {
+    setCurrentStep(prev => Math.min(prev + 1, steps.length));
+  };
+
+  const prevStep = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 1));
+  };
+
   const saveTrip = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     
-    if (!formData.title_he || !formData.location || !formData.date) {
-      toast.error(language === 'he' ? 'נא למלא את כל השדות' : 'Please fill all fields');
+    if (!formData.title || !formData.location || !formData.date) {
+      toast.error(language === 'he' ? 'נא למלא את כל השדות' : 'Please fill all required fields');
       return;
     }
 
     setSaving(true);
     try {
+      const cleanFormData = Object.fromEntries(
+        Object.entries(formData).filter(([_, v]) => v !== undefined && v !== null && v !== '')
+      );
+
+      const cleanBudget = {};
+      if (budget.solo_min && budget.solo_min !== '') cleanBudget.solo_min = Number(budget.solo_min);
+      if (budget.solo_max && budget.solo_max !== '') cleanBudget.solo_max = Number(budget.solo_max);
+      if (budget.family_min && budget.family_min !== '') cleanBudget.family_min = Number(budget.family_min);
+      if (budget.family_max && budget.family_max !== '') cleanBudget.family_max = Number(budget.family_max);
+      if (budget.currency) cleanBudget.currency = budget.currency;
+      if (budget.notes) cleanBudget.notes = budget.notes;
+
+      // Calculate trek totals if trek
+      let trekOverallHighest = null;
+      let trekOverallLowest = null;
+      let trekTotalDistance = null;
+      
+      if (formData.activity_type === 'trek' && trekDays.length > 0) {
+        const highPoints = trekDays.filter(d => d.highest_point_m).map(d => d.highest_point_m);
+        const lowPoints = trekDays.filter(d => d.lowest_point_m).map(d => d.lowest_point_m);
+        const distances = trekDays.filter(d => d.daily_distance_km).map(d => d.daily_distance_km);
+        
+        if (highPoints.length > 0) trekOverallHighest = Math.max(...highPoints);
+        if (lowPoints.length > 0) trekOverallLowest = Math.min(...lowPoints);
+        if (distances.length > 0) trekTotalDistance = distances.reduce((sum, d) => sum + d, 0);
+      }
+
       const tripData = {
-        title_he: formData.title_he,
-        title_en: formData.title_en || formData.title_he,
-        description_he: formData.description_he,
-        description_en: formData.description_en || formData.description_he,
-        location: formData.location,
-        latitude: formData.latitude,
-        longitude: formData.longitude,
-        region: formData.region,
-        date: formData.date,
-        duration_type: formData.duration_type,
-        duration_value: formData.duration_value,
-        activity_type: formData.activity_type,
-        difficulty: formData.difficulty,
-        cycling_type: formData.cycling_type,
-        cycling_distance: formData.cycling_distance,
-        cycling_elevation: formData.cycling_elevation,
-        offroad_vehicle_type: formData.offroad_vehicle_type,
-        offroad_distance: formData.offroad_distance,
-        offroad_terrain_type: formData.offroad_terrain_type,
-        trail_type: formData.trail_type,
-        interests: formData.interests,
-        accessibility_types: formData.accessibility_types,
-        parent_age_ranges: formData.parent_age_ranges,
-        children_age_ranges: formData.children_age_ranges,
-        pets_allowed: formData.pets_allowed,
-        camping_available: formData.camping_available,
-        max_participants: formData.max_participants,
-        image_url: formData.image_url
+        ...cleanFormData,
+        waypoints: formData.activity_type === 'trek' ? [] : (waypoints || []),
+        equipment_checklist: equipment || [],
+        recommended_water_liters: waterRecommendation || null,
+        daily_itinerary: formData.activity_type === 'trek' ? [] : (itinerary || []),
+        budget: Object.keys(cleanBudget).length > 0 ? cleanBudget : undefined,
+        trek_days: formData.activity_type === 'trek' ? trekDays : [],
+        trek_overall_highest_point_m: trekOverallHighest,
+        trek_overall_lowest_point_m: trekOverallLowest,
+        trek_total_distance_km: trekTotalDistance
       };
 
       await base44.entities.Trip.update(tripId, tripData);
@@ -277,6 +374,19 @@ export default function EditTrip() {
     );
   }
 
+  if (saving) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
+        <div className="text-center">
+          <Loader2 className="w-16 h-16 animate-spin mx-auto mb-4 text-emerald-600" />
+          <p className="text-xl font-bold text-gray-800">{language === 'he' ? 'שומר שינויים...' : 'Saving changes...'}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const progressPercent = (currentStep / steps.length) * 100;
+
   return (
     <>
       <LocationPicker
@@ -287,482 +397,594 @@ export default function EditTrip() {
         locationName={formData.location}
         onConfirm={handleMapConfirm}
       />
-      
-      <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-          {language === 'he' ? 'עריכת טיול' : language === 'ru' ? 'Редактировать поездку' : language === 'es' ? 'Editar viaje' : language === 'fr' ? 'Modifier voyage' : language === 'de' ? 'Reise bearbeiten' : language === 'it' ? 'Modifica viaggio' : 'Edit Trip'}
-        </h1>
 
-        <form onSubmit={saveTrip} className="space-y-6">
-          {/* Basic Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-emerald-600" />
-                {language === 'he' ? 'פרטים בסיסיים' : language === 'ru' ? 'Основные детали' : language === 'es' ? 'Detalles básicos' : language === 'fr' ? 'Détails de base' : language === 'de' ? 'Grundlegende Details' : language === 'it' ? 'Dettagli di base' : 'Basic Details'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>{t('titleHe')}</Label>
-                <Input
-                  value={formData.title_he}
-                  onChange={(e) => handleChange('title_he', e.target.value)}
-                  placeholder="כותרת בעברית"
-                  dir="rtl"
-                  required
-                />
-              </div>
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 pb-32 md:pb-0">
+        <div className="max-w-5xl mx-auto w-full flex flex-col h-full px-2 sm:px-4">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-2 flex-shrink-0"
+          >
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-3 py-1.5 sm:px-6 sm:py-2 rounded-2xl shadow-lg">
+              <Compass className="w-4 h-4 sm:w-6 sm:h-6" />
+              <h1 className="text-base sm:text-xl font-bold">{language === 'he' ? 'עריכת טיול' : 'Edit Trip'}</h1>
+            </div>
+          </motion.div>
 
-              <div className="space-y-2">
-                <Label>{t('descriptionHe')}</Label>
-                <Textarea
-                  value={formData.description_he}
-                  onChange={(e) => handleChange('description_he', e.target.value)}
-                  placeholder="תיאור בעברית"
-                  dir="rtl"
-                  rows={4}
-                />
-              </div>
+          {/* Progress Bar */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="py-2 flex-shrink-0"
+          >
+            <Card className="overflow-hidden shadow-lg border border-emerald-100">
+              <CardContent className="p-2 sm:p-3">
+                <div className="flex items-center justify-between mb-2">
+                  {steps.map((step, idx) => {
+                    const StepIcon = step.icon;
+                    const isActive = currentStep === step.id;
+                    const isCompleted = currentStep > step.id;
+                    
+                    return (
+                      <React.Fragment key={step.id}>
+                        <div className={`flex flex-col items-center gap-1 ${isActive || isCompleted ? 'opacity-100' : 'opacity-40'}`}>
+                          <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                            isCompleted 
+                              ? 'bg-gradient-to-br from-green-500 to-emerald-500' 
+                              : isActive 
+                              ? `bg-gradient-to-br ${step.color}` 
+                              : 'bg-gray-200'
+                          }`}>
+                            {isCompleted ? (
+                              <Check className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                            ) : (
+                              <StepIcon className={`w-4 h-4 sm:w-5 sm:h-5 ${isActive ? 'text-white' : 'text-gray-500'}`} />
+                            )}
+                          </div>
+                          <span className={`text-[10px] sm:text-xs font-semibold text-center hidden sm:block ${
+                            isActive ? 'text-gray-900' : 'text-gray-500'
+                          }`}>
+                            {step.title.split(' ')[0]}
+                          </span>
+                        </div>
+                        {idx < steps.length - 1 && (
+                          <div className={`flex-1 h-1 mx-1 rounded-full transition-all duration-500 ${
+                            currentStep > step.id ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gray-200'
+                          }`} />
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
+                <Progress value={progressPercent} className="h-1.5 bg-gray-200" />
+              </CardContent>
+            </Card>
+          </motion.div>
 
-              <div className="space-y-2">
-                <Label>{t('uploadImage')}</Label>
-                <div className="flex items-center gap-4">
-                  {formData.image_url ? (
-                    <img 
-                      src={formData.image_url} 
-                      alt="Trip" 
-                      className="w-32 h-24 object-cover rounded-lg"
-                    />
+          {/* Step Content */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+              className="flex-1 pb-4"
+            >
+              {/* Step 1: Basic Info */}
+              {currentStep === 1 && (
+                <Card className="border border-emerald-100 shadow-lg">
+                  <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 py-2">
+                    <CardTitle className="flex items-center gap-2 text-sm sm:text-lg">
+                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                      {language === 'he' ? 'פרטים בסיסיים' : 'Basic Details'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-3 sm:p-4 space-y-2.5 sm:space-y-3">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-semibold">{language === 'he' ? 'כותרת הטיול' : 'Trip Title'} *</Label>
+                      <Input
+                        value={formData.title}
+                        onChange={(e) => handleChange('title', e.target.value)}
+                        dir={isRTL ? 'rtl' : 'ltr'}
+                        className="text-sm p-2"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-sm font-semibold">{language === 'he' ? 'תיאור' : 'Description'}</Label>
+                      <Textarea
+                        value={formData.description}
+                        onChange={(e) => handleChange('description', e.target.value)}
+                        dir={isRTL ? 'rtl' : 'ltr'}
+                        rows={2}
+                        className="text-sm p-2"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-sm font-semibold">{language === 'he' ? 'הוסף מנהלים לטיול' : 'Add Trip Admins'}</Label>
+                      <div className="flex gap-2 mb-2">
+                        <Input 
+                          value={newOrganizerEmail}
+                          onChange={(e) => setNewOrganizerEmail(e.target.value)}
+                          placeholder={language === 'he' ? 'אימייל של מנהל נוסף' : 'Email of additional admin'}
+                          className="flex-1 text-sm p-2"
+                        />
+                        <Button 
+                          type="button"
+                          size="sm"
+                          onClick={() => {
+                            if (newOrganizerEmail && !formData.additional_organizers.some(o => o.email === newOrganizerEmail)) {
+                              setFormData(prev => ({
+                                ...prev,
+                                additional_organizers: [...prev.additional_organizers, { email: newOrganizerEmail, name: '' }]
+                              }));
+                              setNewOrganizerEmail('');
+                            }
+                          }}
+                          className="bg-indigo-600 hover:bg-indigo-700"
+                        >
+                          {language === 'he' ? 'הוסף' : 'Add'}
+                        </Button>
+                      </div>
+                      
+                      {formData.additional_organizers.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {formData.additional_organizers.map((org, idx) => (
+                            <Badge key={idx} variant="secondary" className="flex items-center gap-1 px-3 py-1">
+                              <User className="w-3 h-3" />
+                              {org.email}
+                              <button 
+                                onClick={() => {
+                                  setFormData(prev => ({
+                                    ...prev,
+                                    additional_organizers: prev.additional_organizers.filter((_, i) => i !== idx)
+                                  }));
+                                }}
+                                className="ml-1 hover:text-red-600"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-sm font-semibold">{language === 'he' ? 'העלה תמונה' : 'Upload Image'}</Label>
+                      <div className="flex items-center gap-3">
+                        {formData.image_url ? (
+                          <img 
+                            src={formData.image_url} 
+                            alt="Trip" 
+                            className="w-20 h-16 object-cover rounded-lg"
+                          />
+                        ) : (
+                          <div className="w-20 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <Upload className="w-6 h-6 text-gray-400" />
+                          </div>
+                        )}
+                        <label className="cursor-pointer">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                          />
+                          <Button type="button" variant="outline" size="sm" disabled={imageUploading} asChild>
+                            <span className="gap-1 text-xs">
+                              {imageUploading ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Upload className="w-4 h-4" />
+                              )}
+                              {language === 'he' ? 'העלה' : 'Upload'}
+                            </span>
+                          </Button>
+                        </label>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Step 2: Location & Time */}
+              {currentStep === 2 && (
+                <Card className="border-2 border-blue-100 shadow-2xl">
+                  <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50 py-2 sm:py-3">
+                    <CardTitle className="flex items-center gap-2 text-sm sm:text-xl">
+                      <MapPin className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600" />
+                      {language === 'he' ? 'מיקום וזמן' : 'Location & Time'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-3 sm:p-6 space-y-3 sm:space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-base font-semibold">{t('location')} *</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          value={formData.location}
+                          onChange={(e) => handleChange('location', e.target.value)}
+                          className="flex-1 p-4"
+                          dir={isRTL ? 'rtl' : 'ltr'}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={handleLocationSearch}
+                          disabled={searchingLocation}
+                          className="gap-2 px-4"
+                        >
+                          {searchingLocation ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                          ) : (
+                            <Navigation className="w-5 h-5" />
+                          )}
+                        </Button>
+                      </div>
+                      {formData.latitude && formData.longitude && (
+                        <p className="text-sm text-green-600 flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          {language === 'he' ? 'מיקום נמצא במפה' : 'Location found on map'}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold flex items-center gap-2">
+                          <Calendar className="w-5 h-5" />
+                          {t('date')} *
+                        </Label>
+                        <Input
+                          type="date"
+                          value={formData.date}
+                          onChange={(e) => handleChange('date', e.target.value)}
+                          className="p-4"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold flex items-center gap-2">
+                          <Clock className="w-5 h-5" />
+                          {language === 'he' ? 'שעת התכנסות' : 'Meeting Time'}
+                        </Label>
+                        <Input
+                          type="time"
+                          value={formData.meeting_time}
+                          onChange={(e) => handleChange('meeting_time', e.target.value)}
+                          className="p-4"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold">{t('duration')}</Label>
+                        <Select value={formData.duration_type} onValueChange={(v) => handleChange('duration_type', v)}>
+                          <SelectTrigger className="p-4">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {durations.map(d => (
+                              <SelectItem key={d} value={d}>{t(d)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Step 3: Activity Details */}
+              {currentStep === 3 && (
+                <Card className="border-2 border-amber-100 shadow-2xl">
+                  <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 py-2 sm:py-3">
+                    <CardTitle className="flex items-center gap-2 text-sm sm:text-xl">
+                      <Mountain className="w-4 h-4 sm:w-6 sm:h-6 text-amber-600" />
+                      {language === 'he' ? 'פרטי הפעילות' : 'Activity Details'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-3 sm:p-6 space-y-3 sm:space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm sm:text-base font-semibold">{t('activityType')} *</Label>
+                      <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
+                        <Button
+                          type="button"
+                          variant={formData.activity_type === 'hiking' ? 'default' : 'outline'}
+                          className={`h-20 sm:h-28 flex flex-col items-center justify-center gap-1.5 text-xs sm:text-base font-bold ${
+                            formData.activity_type === 'hiking'
+                              ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-2xl scale-105'
+                              : 'border-2 hover:border-emerald-500 hover:bg-emerald-50'
+                          }`}
+                          onClick={() => handleChange('activity_type', 'hiking')}
+                        >
+                          <Footprints className="w-6 h-6 sm:w-8 sm:h-8" />
+                          {t('hiking')}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={formData.activity_type === 'running' ? 'default' : 'outline'}
+                          className={`h-20 sm:h-28 flex flex-col items-center justify-center gap-1.5 text-xs sm:text-base font-bold ${
+                            formData.activity_type === 'running'
+                              ? 'bg-gradient-to-br from-violet-500 to-purple-500 text-white shadow-2xl scale-105'
+                              : 'border-2 hover:border-violet-500 hover:bg-violet-50'
+                          }`}
+                          onClick={() => handleChange('activity_type', 'running')}
+                        >
+                          <User className="w-6 h-6 sm:w-8 sm:h-8" />
+                          {t('running')}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={formData.activity_type === 'cycling' ? 'default' : 'outline'}
+                          className={`h-20 sm:h-28 flex flex-col items-center justify-center gap-1.5 text-xs sm:text-base font-bold ${
+                            formData.activity_type === 'cycling'
+                              ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-2xl scale-105'
+                              : 'border-2 hover:border-blue-500 hover:bg-blue-50'
+                          }`}
+                          onClick={() => handleChange('activity_type', 'cycling')}
+                        >
+                          <Bike className="w-6 h-6 sm:w-8 sm:h-8" />
+                          {t('cycling')}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={formData.activity_type === 'offroad' ? 'default' : 'outline'}
+                          className={`h-20 sm:h-28 flex flex-col items-center justify-center gap-1.5 text-xs sm:text-base font-bold ${
+                            formData.activity_type === 'offroad'
+                              ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-2xl scale-105'
+                              : 'border-2 hover:border-orange-500 hover:bg-orange-50'
+                          }`}
+                          onClick={() => handleChange('activity_type', 'offroad')}
+                        >
+                          <Truck className="w-6 h-6 sm:w-8 sm:h-8" />
+                          {t('offroad')}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={formData.activity_type === 'culinary' ? 'default' : 'outline'}
+                          className={`h-20 sm:h-28 flex flex-col items-center justify-center gap-1.5 text-xs sm:text-base font-bold ${
+                            formData.activity_type === 'culinary'
+                              ? 'bg-gradient-to-br from-rose-500 to-pink-500 text-white shadow-2xl scale-105'
+                              : 'border-2 hover:border-rose-500 hover:bg-rose-50'
+                          }`}
+                          onClick={() => handleChange('activity_type', 'culinary')}
+                        >
+                          <UtensilsCrossed className="w-6 h-6 sm:w-8 sm:h-8" />
+                          {t('culinary')}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={formData.activity_type === 'trek' ? 'default' : 'outline'}
+                          className={`h-20 sm:h-28 flex flex-col items-center justify-center gap-1.5 text-xs sm:text-base font-bold ${
+                            formData.activity_type === 'trek'
+                              ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-2xl scale-105'
+                              : 'border-2 hover:border-indigo-500 hover:bg-indigo-50'
+                          }`}
+                          onClick={() => handleChange('activity_type', 'trek')}
+                        >
+                          <Route className="w-6 h-6 sm:w-8 sm:h-8" />
+                          {language === 'he' ? 'טראק' : 'Trek'}
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 p-6 bg-indigo-50 rounded-2xl border-2 border-indigo-200">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-1">
+                          <Label className="text-base font-semibold text-indigo-900">
+                            {language === 'he' ? 'דרוש אישור למצטרפים' : 'Approval Required'}
+                          </Label>
+                          <p className="text-sm text-gray-600">
+                            {language === 'he' ? 'כבוי = הצטרפות אוטומטית, דלוק = יש לאשר כל מצטרף' : 'Off = auto join, On = requires approval'}
+                          </p>
+                        </div>
+                        <Switch
+                          checked={formData.approval_required}
+                          onCheckedChange={(checked) => handleChange('approval_required', checked)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold">{t('difficulty')}</Label>
+                        <Select value={formData.difficulty} onValueChange={(v) => handleChange('difficulty', v)}>
+                          <SelectTrigger className="p-4 text-base">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {difficulties.map(d => (
+                              <SelectItem key={d} value={d}>{t(d)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold flex items-center gap-2">
+                          <Users className="w-5 h-5" />
+                          {t('maxParticipants')}
+                        </Label>
+                        <Input
+                          type="number"
+                          min={2}
+                          max={50}
+                          value={formData.max_participants}
+                          onChange={(e) => handleChange('max_participants', parseInt(e.target.value))}
+                          className="p-4"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <Label className="text-base font-semibold">{t('trailType')}</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {trailTypes.map(type => (
+                          <Badge
+                            key={type}
+                            variant={formData.trail_type.includes(type) ? 'default' : 'outline'}
+                            className={`cursor-pointer text-sm py-2 px-4 ${
+                              formData.trail_type.includes(type) 
+                                ? 'bg-emerald-600 hover:bg-emerald-700' 
+                                : 'hover:border-emerald-500'
+                            }`}
+                            onClick={() => handleArrayToggle('trail_type', type)}
+                          >
+                            {t(type)}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <Label className="text-base font-semibold">{t('interests')}</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {interests.map(interest => (
+                          <Badge
+                            key={interest}
+                            variant={formData.interests.includes(interest) ? 'default' : 'outline'}
+                            className={`cursor-pointer text-sm py-2 px-4 ${
+                              formData.interests.includes(interest) 
+                                ? 'bg-blue-600 hover:bg-blue-700' 
+                                : 'hover:border-blue-500'
+                            }`}
+                            onClick={() => handleArrayToggle('interests', interest)}
+                          >
+                            {t(interest)}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-4 pt-2">
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id="pets"
+                          checked={formData.pets_allowed}
+                          onCheckedChange={(checked) => handleChange('pets_allowed', checked)}
+                        />
+                        <Label htmlFor="pets" className="cursor-pointer text-sm flex items-center gap-1">
+                          <Dog className="w-4 h-4" />
+                          {t('petsAllowed')}
+                        </Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id="camping"
+                          checked={formData.camping_available}
+                          onCheckedChange={(checked) => handleChange('camping_available', checked)}
+                        />
+                        <Label htmlFor="camping" className="cursor-pointer text-sm flex items-center gap-1">
+                          <Tent className="w-4 h-4" />
+                          {t('campingAvailable')}
+                        </Label>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Step 4: Planning */}
+              {currentStep === 4 && (
+                <div className="space-y-6">
+                  {formData.activity_type === 'trek' ? (
+                    <>
+                      <TrekDaysCreator
+                        trekDays={trekDays}
+                        setTrekDays={setTrekDays}
+                        tripDate={formData.date}
+                        tripLocation={formData.location}
+                      />
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <EquipmentCreator
+                          equipment={equipment}
+                          setEquipment={setEquipment}
+                          waterRecommendation={waterRecommendation}
+                          setWaterRecommendation={setWaterRecommendation}
+                        />
+                        <BudgetCreator
+                          budget={budget}
+                          setBudget={setBudget}
+                        />
+                      </div>
+                    </>
                   ) : (
-                    <div className="w-32 h-24 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <Upload className="w-8 h-8 text-gray-400" />
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <EquipmentCreator
+                        equipment={equipment}
+                        setEquipment={setEquipment}
+                        waterRecommendation={waterRecommendation}
+                        setWaterRecommendation={setWaterRecommendation}
+                      />
+                      <ItineraryCreator
+                        itinerary={itinerary}
+                        setItinerary={setItinerary}
+                      />
+                      <WaypointsCreator
+                        waypoints={waypoints}
+                        setWaypoints={setWaypoints}
+                        startLat={formData.latitude}
+                        startLng={formData.longitude}
+                        locationName={formData.location}
+                      />
+                      <BudgetCreator
+                        budget={budget}
+                        setBudget={setBudget}
+                      />
                     </div>
                   )}
-                  <label className="cursor-pointer">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                    <Button type="button" variant="outline" disabled={imageUploading} asChild>
-                      <span>
-                        {imageUploading ? (
-                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                        ) : (
-                          <Upload className="w-4 h-4 mr-2" />
-                        )}
-                        {language === 'he' ? 'העלה תמונה' : language === 'ru' ? 'Загрузить' : language === 'es' ? 'Subir' : language === 'fr' ? 'Télécharger' : language === 'de' ? 'Hochladen' : language === 'it' ? 'Carica' : 'Upload'}
-                      </span>
-                    </Button>
-                  </label>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Location & Time */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-blue-600" />
-                {language === 'he' ? 'מיקום וזמן' : language === 'ru' ? 'Местоположение и время' : language === 'es' ? 'Ubicación y tiempo' : language === 'fr' ? 'Emplacement et horaire' : language === 'de' ? 'Standort & Zeit' : language === 'it' ? 'Posizione e orario' : 'Location & Time'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>{t('location')}</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={formData.location}
-                        onChange={(e) => handleChange('location', e.target.value)}
-                        placeholder={language === 'he' ? 'נחל דוד, עין גדי' : 'Nahal David, Ein Gedi'}
-                        required
-                        className="flex-1"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={handleLocationSearch}
-                        disabled={imageUploading || !formData.location}
-                        className="gap-2"
-                      >
-                        {imageUploading ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Navigation className="w-4 h-4" />
-                        )}
-                        {language === 'he' ? 'חפש במפה' : language === 'ru' ? 'Найти на карте' : language === 'es' ? 'Buscar en mapa' : language === 'fr' ? 'Trouver sur carte' : language === 'de' ? 'Auf Karte finden' : language === 'it' ? 'Trova sulla mappa' : 'Find on Map'}
-                      </Button>
-                    </div>
-                    {formData.latitude && formData.longitude && (
-                      <p className="text-xs text-green-600 flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        {language === 'he' ? 'מיקום נמצא במפה' : language === 'ru' ? 'Местоположение найдено' : language === 'es' ? 'Ubicación encontrada' : language === 'fr' ? 'Emplacement trouvé' : language === 'de' ? 'Standort gefunden' : language === 'it' ? 'Posizione trovata' : 'Location found'}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label>{t('region')}</Label>
-                    <Select value={formData.region} onValueChange={(v) => handleChange('region', v)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('selectRegion')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {regions.map(r => (
-                          <SelectItem key={r} value={r}>{t(r)}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label>{t('date')}</Label>
-                  <Input
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) => handleChange('date', e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>{t('duration')}</Label>
-                  <Select value={formData.duration_type} onValueChange={(v) => handleChange('duration_type', v)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {durations.map(d => (
-                        <SelectItem key={d} value={d}>{t(d)}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>{t('durationValue')}</Label>
-                  <Input
-                    type="number"
-                    min={1}
-                    value={formData.duration_value}
-                    onChange={(e) => handleChange('duration_value', parseInt(e.target.value))}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Trail Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Mountain className="w-5 h-5 text-amber-600" />
-                {language === 'he' ? 'פרטי המסלול' : language === 'ru' ? 'Детали маршрута' : language === 'es' ? 'Detalles del recorrido' : language === 'fr' ? 'Détails du parcours' : language === 'de' ? 'Routendetails' : language === 'it' ? 'Dettagli del percorso' : 'Trail Details'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>{t('activityType')} *</Label>
-                  <Select value={formData.activity_type} onValueChange={(v) => handleChange('activity_type', v)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {activityTypes.map(type => (
-                        <SelectItem key={type} value={type}>{t(type)}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label>{t('difficulty')}</Label>
-                  <Select value={formData.difficulty} onValueChange={(v) => handleChange('difficulty', v)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {difficulties.map(d => (
-                        <SelectItem key={d} value={d}>{t(d)}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Cycling Specific Fields */}
-              {formData.activity_type === 'cycling' && (
-                <>
-                  <div className="space-y-2">
-                    <Label>{t('cyclingType')} *</Label>
-                    <Select value={formData.cycling_type} onValueChange={(v) => handleChange('cycling_type', v)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('cyclingType')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cyclingTypes.map(type => (
-                          <SelectItem key={type} value={type}>{t(type)}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>{t('cyclingDistance')}</Label>
-                      <Input
-                        type="number"
-                        min={1}
-                        value={formData.cycling_distance}
-                        onChange={(e) => handleChange('cycling_distance', parseInt(e.target.value))}
-                        placeholder="50"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>{t('cyclingElevation')}</Label>
-                      <Input
-                        type="number"
-                        min={0}
-                        value={formData.cycling_elevation}
-                        onChange={(e) => handleChange('cycling_elevation', parseInt(e.target.value))}
-                        placeholder="500"
-                      />
-                    </div>
-                  </div>
-                </>
               )}
+            </motion.div>
+          </AnimatePresence>
 
-              {/* Off-road Specific Fields */}
-              {formData.activity_type === 'offroad' && (
-                <>
-                  <div className="space-y-2">
-                    <Label>{t('offroadVehicleType')} *</Label>
-                    <Select value={formData.offroad_vehicle_type} onValueChange={(v) => handleChange('offroad_vehicle_type', v)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('offroadVehicleType')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {offroadVehicleTypes.map(type => (
-                          <SelectItem key={type} value={type}>{t(type)}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>{t('offroadDistance')}</Label>
-                    <Input
-                      type="number"
-                      min={1}
-                      value={formData.offroad_distance}
-                      onChange={(e) => handleChange('offroad_distance', parseInt(e.target.value))}
-                      placeholder="80"
-                    />
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label>{t('offroadTerrainType')}</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {offroadTerrainTypes.map(type => (
-                        <Badge
-                          key={type}
-                          variant={formData.offroad_terrain_type.includes(type) ? 'default' : 'outline'}
-                          className={`cursor-pointer transition-all ${
-                            formData.offroad_terrain_type.includes(type) 
-                              ? 'bg-orange-600 hover:bg-orange-700' 
-                              : 'hover:border-orange-500'
-                          }`}
-                          onClick={() => handleArrayToggle('offroad_terrain_type', type)}
-                        >
-                          {t(type)}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-
-              <div className="space-y-2">
-                <Label>{t('maxParticipants')}</Label>
-                <Input
-                  type="number"
-                  min={2}
-                  max={50}
-                  value={formData.max_participants}
-                  onChange={(e) => handleChange('max_participants', parseInt(e.target.value))}
-                />
-              </div>
-
-              <div className="space-y-3">
-                <Label>{t('trailType')}</Label>
-                <div className="flex flex-wrap gap-2">
-                  {trailTypes.map(type => (
-                    <Badge
-                      key={type}
-                      variant={formData.trail_type.includes(type) ? 'default' : 'outline'}
-                      className={`cursor-pointer transition-all ${
-                        formData.trail_type.includes(type) 
-                          ? 'bg-emerald-600 hover:bg-emerald-700' 
-                          : 'hover:border-emerald-500'
-                      }`}
-                      onClick={() => handleArrayToggle('trail_type', type)}
-                    >
-                      {t(type)}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <Label>{t('interests')}</Label>
-                <div className="flex flex-wrap gap-2">
-                  {interests.map(interest => (
-                    <Badge
-                      key={interest}
-                      variant={formData.interests.includes(interest) ? 'default' : 'outline'}
-                      className={`cursor-pointer transition-all ${
-                        formData.interests.includes(interest) 
-                          ? 'bg-blue-600 hover:bg-blue-700' 
-                          : 'hover:border-blue-500'
-                      }`}
-                      onClick={() => handleArrayToggle('interests', interest)}
-                    >
-                      {t(interest)}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <Label>{t('accessibilityTypes')}</Label>
-                <div className="flex flex-wrap gap-2">
-                  {accessibilityTypes.map(type => (
-                    <Badge
-                      key={type}
-                      variant={formData.accessibility_types.includes(type) ? 'default' : 'outline'}
-                      className={`cursor-pointer transition-all ${
-                        formData.accessibility_types.includes(type) 
-                          ? 'bg-purple-600 hover:bg-purple-700' 
-                          : 'hover:border-purple-500'
-                      }`}
-                      onClick={() => handleArrayToggle('accessibility_types', type)}
-                    >
-                      {t(type)}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-6 pt-2">
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id="pets"
-                    checked={formData.pets_allowed}
-                    onCheckedChange={(checked) => handleChange('pets_allowed', checked)}
-                  />
-                  <Label htmlFor="pets" className="cursor-pointer">{t('petsAllowed')}</Label>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    id="camping"
-                    checked={formData.camping_available}
-                    onCheckedChange={(checked) => handleChange('camping_available', checked)}
-                  />
-                  <Label htmlFor="camping" className="cursor-pointer">{t('campingAvailable')}</Label>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Age Ranges */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-purple-600" />
-                {language === 'he' ? 'גילאים' : language === 'ru' ? 'Возрастные группы' : language === 'es' ? 'Rangos de edad' : language === 'fr' ? 'Tranches d\'âge' : language === 'de' ? 'Altersgruppen' : language === 'it' ? 'Fasce d\'età' : 'Age Ranges'}
-              </CardTitle>
-              <CardDescription>
-                {language === 'he' ? 'בחר טווחי גילאים מתאימים לטיול' : language === 'ru' ? 'Выберите подходящие возрастные группы для поездки' : language === 'es' ? 'Selecciona rangos de edad apropiados para el viaje' : language === 'fr' ? 'Sélectionnez les tranches d\'âge appropriées pour le voyage' : language === 'de' ? 'Wählen Sie geeignete Altersgruppen für die Reise' : language === 'it' ? 'Seleziona le fasce d\'età appropriate per il viaggio' : 'Select appropriate age ranges for the trip'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-3">
-                <Label>{language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : language === 'es' ? 'Rangos de edad de padres' : language === 'fr' ? 'Tranches d\'âge des parents' : language === 'de' ? 'Altersgruppen Eltern' : language === 'it' ? 'Fasce d\'età genitori' : 'Parent Age Ranges'}</Label>
-                <div className="flex flex-wrap gap-2">
-                  {['30-40', '40-50', '50-60', '60+'].map(range => (
-                    <Badge
-                      key={range}
-                      variant={formData.parent_age_ranges.includes(range) ? 'default' : 'outline'}
-                      className={`cursor-pointer transition-all ${
-                        formData.parent_age_ranges.includes(range) 
-                          ? 'bg-purple-600 hover:bg-purple-700' 
-                          : 'hover:border-purple-500'
-                      }`}
-                      onClick={() => handleArrayToggle('parent_age_ranges', range)}
-                    >
-                      {range}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <Label>{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : language === 'es' ? 'Rangos de edad de niños' : language === 'fr' ? 'Tranches d\'âge des enfants' : language === 'de' ? 'Altersgruppen Kinder' : language === 'it' ? 'Fasce d\'età bambini' : 'Children Age Ranges'}</Label>
-                <div className="flex flex-wrap gap-2">
-                  {['0-2', '3-6', '7-10', '11-14', '15-18', '18-21', '21+'].map(range => (
-                    <Badge
-                      key={range}
-                      variant={formData.children_age_ranges.includes(range) ? 'default' : 'outline'}
-                      className={`cursor-pointer transition-all ${
-                        formData.children_age_ranges.includes(range) 
-                          ? 'bg-pink-600 hover:bg-pink-700' 
-                          : 'hover:border-pink-500'
-                      }`}
-                      onClick={() => handleArrayToggle('children_age_ranges', range)}
-                    >
-                      {range}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Submit */}
-          <div className="flex gap-4 justify-end">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => navigate(createPageUrl('TripDetails') + '?id=' + tripId)}
-              disabled={saving}
+          {/* Navigation Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="fixed bottom-20 left-0 right-0 bg-white/95 backdrop-blur-md py-3 px-4 flex justify-between gap-2 z-20 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] md:relative md:bottom-auto md:shadow-none md:px-2"
+          >
+            <Button
+              type="button"
+              variant="outline"
+              onClick={prevStep}
+              disabled={currentStep === 1}
+              className="px-4 py-2.5 text-sm font-semibold flex-1 max-w-[140px]"
             >
-              {t('cancel')}
+              <ArrowLeft className={`w-4 h-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+              {language === 'he' ? 'אחורה' : 'Back'}
             </Button>
-            <Button 
-              type="submit"
-              className="bg-emerald-600 hover:bg-emerald-700 min-w-[140px]"
-              disabled={saving}
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  {language === 'he' ? 'שומר...' : language === 'ru' ? 'Сохранение...' : language === 'es' ? 'Guardando...' : language === 'fr' ? 'Enregistrement...' : language === 'de' ? 'Speichern...' : language === 'it' ? 'Salvataggio...' : 'Saving...'}
-                </>
-              ) : (
-                language === 'he' ? 'עדכן טיול' : language === 'ru' ? 'Обновить поездку' : language === 'es' ? 'Actualizar viaje' : language === 'fr' ? 'Mettre à jour voyage' : language === 'de' ? 'Reise aktualisieren' : language === 'it' ? 'Aggiorna viaggio' : 'Update Trip'
-              )}
-            </Button>
-          </div>
-        </form>
+
+            {currentStep < steps.length ? (
+              <Button
+                type="button"
+                onClick={nextStep}
+                className="px-4 py-2.5 text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 flex-1 max-w-[140px]"
+              >
+                {language === 'he' ? 'הבא' : 'Next'}
+                <ArrowRight className={`w-4 h-4 ${isRTL ? 'mr-1' : 'ml-1'}`} />
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={saveTrip}
+                disabled={saving}
+                className="px-4 py-2.5 text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 flex-1 max-w-[140px]"
+              >
+                {saving ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <Check className="w-4 h-4 mr-1" />
+                    {language === 'he' ? 'שמור' : 'Save'}
+                  </>
+                )}
+              </Button>
+            )}
+          </motion.div>
+        </div>
       </div>
-    </div>
     </>
   );
 }
