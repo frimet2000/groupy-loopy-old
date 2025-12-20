@@ -165,11 +165,26 @@ export default function CreateTrip() {
           'ru': 'israel'
         };
         const defaultCountry = languageToCountry[language] || 'israel';
-        setFormData(prev => ({ ...prev, country: defaultCountry }));
-        fetchRegionsForCountry(defaultCountry);
+        setFormData(prev => ({ 
+          ...prev, 
+          country: defaultCountry,
+          region: userData.home_region || ''
+        }));
         
-        if (userData.home_region) {
-          setFormData(prev => ({ ...prev, region: userData.home_region }));
+        // Load regions synchronously from predefined list (no async call needed for common countries)
+        const predefinedRegions = {
+          israel: language === 'he' 
+            ? ['תל אביב', 'ירושלים', 'חיפה', 'אילת', 'באר שבע', 'נתניה', 'הרצליה', 'רמת גן', 'פתח תקווה', 'אשדוד', 'גליל', 'גולן', 'נגב', 'כרמל', 'שרון']
+            : ['tel aviv', 'jerusalem', 'haifa', 'eilat', 'beer sheva', 'netanya', 'herzliya', 'galilee', 'golan', 'negev', 'carmel', 'sharon', 'dead sea'],
+          usa: ['california', 'texas', 'florida', 'new york', 'colorado', 'arizona', 'utah', 'washington', 'oregon', 'hawaii', 'alaska', 'montana'],
+          france: ['paris', 'provence', 'normandy', 'brittany', 'alsace', 'loire valley', 'french alps', 'cote d\'azur', 'bordeaux', 'burgundy'],
+          spain: ['barcelona', 'madrid', 'andalusia', 'basque country', 'valencia', 'galicia', 'canary islands', 'balearic islands', 'catalonia'],
+          germany: ['bavaria', 'berlin', 'black forest', 'hamburg', 'munich', 'cologne', 'saxon switzerland', 'rhine valley', 'alps'],
+          italy: ['rome', 'tuscany', 'amalfi coast', 'cinque terre', 'dolomites', 'lake como', 'sicily', 'sardinia', 'venice', 'milan'],
+          uk: ['london', 'scotland', 'wales', 'lake district', 'cornwall', 'cotswolds', 'yorkshire', 'peak district', 'highlands']
+        };
+        if (predefinedRegions[defaultCountry]) {
+          setDynamicRegions(predefinedRegions[defaultCountry]);
         }
       } catch (e) {
         toast.error(language === 'he' ? 'יש להתחבר' : 'Please login');
