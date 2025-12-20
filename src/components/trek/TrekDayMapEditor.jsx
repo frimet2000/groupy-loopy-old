@@ -82,18 +82,54 @@ export default function TrekDayMapEditor({ day, setDay }) {
       setIsSearching(false);
       if (status === 'OK' && results[0]) {
         const location = results[0].geometry.location;
+        const lat = location.lat();
+        const lng = location.lng();
         const newWaypoint = {
-          latitude: location.lat(),
-          longitude: location.lng()
+          latitude: lat,
+          longitude: lng
         };
         const updatedWaypoints = [...(day.waypoints || []), newWaypoint];
         setDay({ ...day, waypoints: updatedWaypoints });
         setRoutePath([]);
+        setDirectionsResponse(null);
+        setRouteStats(null);
         setSearchQuery('');
         
         if (mapInstance) {
           mapInstance.panTo(location);
           mapInstance.setZoom(14);
+        }
+
+        // Fetch elevation
+        if (elevationServiceRef.current) {
+          elevationServiceRef.current.getElevationForLocations(
+            { locations: [{ lat, lng }] },
+            (results, status) => {
+              if (status === 'OK' && results[0]) {
+                const ele = Math.round(results[0].elevation);
+                setDay(prev => {
+                  const waypointsCount = prev.waypoints?.length || 0;
+                  const isFirst = waypointsCount === 1;
+                  const updated = { ...prev };
+                  
+                  if (isFirst) {
+                    updated.start_altitude_m = ele;
+                    updated.end_altitude_m = ele;
+                    updated.highest_point_m = ele;
+                    updated.lowest_point_m = ele;
+                    updated.elevation_gain_m = 0;
+                    updated.elevation_loss_m = 0;
+                    updated.daily_distance_km = 0;
+                  } else {
+                    updated.end_altitude_m = ele;
+                    if (updated.highest_point_m === null || ele > updated.highest_point_m) updated.highest_point_m = ele;
+                    if (updated.lowest_point_m === null || ele < updated.lowest_point_m) updated.lowest_point_m = ele;
+                  }
+                  return updated;
+                });
+              }
+            }
+          );
         }
       }
     });
@@ -150,15 +186,50 @@ export default function TrekDayMapEditor({ day, setDay }) {
   }, [startPoint, endPoint, day, setDay, mapInstance, language]);
 
   const handleMapClick = useCallback((e) => {
+    const lat = e.latLng.lat();
+    const lng = e.latLng.lng();
     const newWaypoint = {
-      latitude: e.latLng.lat(),
-      longitude: e.latLng.lng()
+      latitude: lat,
+      longitude: lng
     };
     const updatedWaypoints = [...(day.waypoints || []), newWaypoint];
     setDay({ ...day, waypoints: updatedWaypoints });
     setRoutePath([]); 
-    setDirectionsResponse(null); // Clear directions when manually adding points
-    }, [day, setDay]);
+    setDirectionsResponse(null); 
+    setRouteStats(null);
+
+    // Fetch elevation for the new point
+    if (elevationServiceRef.current) {
+      elevationServiceRef.current.getElevationForLocations(
+        { locations: [{ lat, lng }] },
+        (results, status) => {
+          if (status === 'OK' && results[0]) {
+            const ele = Math.round(results[0].elevation);
+            setDay(prev => {
+              const waypointsCount = prev.waypoints?.length || 0;
+              const isFirst = waypointsCount === 1; // It was just added
+              const updated = { ...prev };
+              
+              if (isFirst) {
+                updated.start_altitude_m = ele;
+                updated.end_altitude_m = ele;
+                updated.highest_point_m = ele;
+                updated.lowest_point_m = ele;
+                updated.elevation_gain_m = 0;
+                updated.elevation_loss_m = 0;
+                updated.daily_distance_km = 0;
+              } else {
+                updated.end_altitude_m = ele;
+                if (updated.highest_point_m === null || ele > updated.highest_point_m) updated.highest_point_m = ele;
+                if (updated.lowest_point_m === null || ele < updated.lowest_point_m) updated.lowest_point_m = ele;
+              }
+              return updated;
+            });
+          }
+        }
+      );
+    }
+  }, [day, setDay]);
 
   const removeWaypoint = (index) => {
     const updated = day.waypoints.filter((_, i) => i !== index);
@@ -686,7 +757,7 @@ export default function TrekDayMapEditor({ day, setDay }) {
         </div>
 
         {/* Saved Stats Summary (when no live stats showing) */}
-        {!routeStats && (day.daily_distance_km || day.elevation_gain_m || day.highest_point_m) && (
+        {!routeStats && (day.daily_distance_km !== null || day.elevation_gain_m !== null || day.highest_point_m !== null) && (
           <div className="grid grid-cols-2 gap-2 pt-2 border-t text-sm">
             {day.daily_distance_km && (
               <div className="flex items-center gap-1 text-gray-600">
