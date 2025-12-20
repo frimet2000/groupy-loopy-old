@@ -17,8 +17,12 @@ export default function TrekDayMapEditor({ day, setDay }) {
   const [routePath, setRoutePath] = useState([]);
   const [isCalculating, setIsCalculating] = useState(false);
   const [routeStats, setRouteStats] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   const directionsServiceRef = useRef(null);
   const elevationServiceRef = useRef(null);
+  const autocompleteRef = useRef(null);
+  const searchInputRef = useRef(null);
 
   const center = day.waypoints?.length > 0
     ? { lat: day.waypoints[0].latitude, lng: day.waypoints[0].longitude }
