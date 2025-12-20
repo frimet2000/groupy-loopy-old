@@ -85,12 +85,22 @@ export default function TrekDaysDisplay({ trip }) {
               const dayDate = getDayDate();
               
               return (
-                <TabsTrigger key={day.id || index} value={index.toString()} className="data-[state=active]:bg-indigo-100 flex flex-col items-center py-2" dir={isRTL ? 'rtl' : 'ltr'}>
-                  <span className="font-semibold">
+                <TabsTrigger 
+                  key={day.id || index} 
+                  value={index.toString()} 
+                  className="relative overflow-hidden data-[state=active]:bg-indigo-100 flex flex-col items-center py-2 min-h-[72px]" 
+                  dir={isRTL ? 'rtl' : 'ltr'}
+                  style={day.image_url ? {
+                    backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url(${day.image_url})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  } : {}}
+                >
+                  <span className={`font-semibold z-10 ${day.image_url ? 'text-white drop-shadow-lg' : ''}`}>
                     {language === 'he' ? `יום ${day.day_number}` : `Day ${day.day_number}`}
                   </span>
                   {dayDate && (
-                    <span className="text-xs text-gray-600">
+                    <span className={`text-xs z-10 ${day.image_url ? 'text-white/90 drop-shadow' : 'text-gray-600'}`}>
                       {dayDate.toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US', { 
                         day: 'numeric', 
                         month: 'numeric' 
