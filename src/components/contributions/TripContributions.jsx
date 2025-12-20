@@ -6,17 +6,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Package, Plus, Trash2, Coffee, Utensils, Music, Tent, Flashlight } from 'lucide-react';
+import { Package, Plus, Trash2, Coffee, Utensils, Music, Tent, Flashlight, Eye, EyeOff, Users, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function TripContributions({ trip, currentUserEmail, onUpdate }) {
   const { language, isRTL } = useLanguage();
   const [newItem, setNewItem] = useState('');
   const [adding, setAdding] = useState(false);
+  const [visibility, setVisibility] = useState('everyone'); // 'everyone', 'only_me', 'selected'
+  const [selectedParticipants, setSelectedParticipants] = useState([]);
+  const [showVisibilityDialog, setShowVisibilityDialog] = useState(false);
 
+  // Get all my contributions with visibility settings
   const myContributions = trip.contributions?.filter(c => c.participant_email === currentUserEmail) || [];
-  const otherContributions = trip.contributions?.filter(c => c.participant_email !== currentUserEmail) || [];
+  
+  // Filter other participants' contributions based on visibility
+  const otherContributions = trip.contributions?.filter(c => {
+    if (c.participant_email === currentUserEmail) return false;
+    
+    // Check visibility
+    if (c.visibility === 'only_me') return false;
+    if (c.visibility === 'selected') {
+      return c.visible_to?.includes(currentUserEmail);
+    }
+    return true; // 'everyone' or no visibility set (default)
+  }) || [];
 
   const handleAddContribution = async () => {
     if (!newItem.trim()) {
@@ -40,13 +59,17 @@ export default function TripContributions({ trip, currentUserEmail, onUpdate }) 
         participant_email: currentUserEmail,
         participant_name: userName,
         item: newItem.trim(),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        visibility: visibility,
+        visible_to: visibility === 'selected' ? selectedParticipants : []
       };
 
       const updatedContributions = [...(trip.contributions || []), newContribution];
       await base44.entities.Trip.update(trip.id, { contributions: updatedContributions });
       
       setNewItem('');
+      setVisibility('everyone');
+      setSelectedParticipants([]);
       onUpdate();
       toast.success(language === 'he' ? 'הפריט נוסף בהצלחה' :
                      language === 'ru' ? 'Предмет успешно добавлен' :
@@ -90,6 +113,20 @@ export default function TripContributions({ trip, currentUserEmail, onUpdate }) 
     }
   };
 
+  const getVisibilityIcon = (contrib) => {
+    if (contrib.visibility === 'only_me') return <Lock className="w-3 h-3 text-gray-500" />;
+    if (contrib.visibility === 'selected') return <Users className="w-3 h-3 text-blue-500" />;
+    return <Eye className="w-3 h-3 text-green-500" />;
+  };
+
+  const getVisibilityLabel = (contrib) => {
+    if (contrib.visibility === 'only_me') return language === 'he' ? 'רק אני' : 'Only Me';
+    if (contrib.visibility === 'selected') return language === 'he' ? 'נבחרים' : 'Selected';
+    return language === 'he' ? 'כולם' : 'Everyone';
+  };
+
+  const otherParticipants = trip.participants?.filter(p => p.email !== currentUserEmail) || [];
+
   const suggestedItems = [
     { icon: Coffee, label: language === 'he' ? 'קפה' : language === 'ru' ? 'Кофе' : language === 'es' ? 'Café' : language === 'fr' ? 'Café' : language === 'de' ? 'Kaffee' : language === 'it' ? 'Caffè' : 'Coffee' },
     { icon: Utensils, label: language === 'he' ? 'אוכל' : language === 'ru' ? 'Еда' : language === 'es' ? 'Comida' : language === 'fr' ? 'Nourriture' : language === 'de' ? 'Essen' : language === 'it' ? 'Cibo' : 'Food' },
@@ -130,9 +167,43 @@ export default function TripContributions({ trip, currentUserEmail, onUpdate }) 
               className="flex-1"
               dir={isRTL ? 'rtl' : 'ltr'}
             />
+            <Select value={visibility} onValueChange={setVisibility}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="everyone">
+                  <div className="flex items-center gap-2">
+                    <Eye className="w-4 h-4" />
+                    <span>{language === 'he' ? 'כולם' : 'Everyone'}</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="only_me">
+                  <div className="flex items-center gap-2">
+                    <Lock className="w-4 h-4" />
+                    <span>{language === 'he' ? 'רק אני' : 'Only Me'}</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="selected">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4" />
+                    <span>{language === 'he' ? 'נבחרים' : 'Selected'}</span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            {visibility === 'selected' && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setShowVisibilityDialog(true)}
+              >
+                <Users className="w-4 h-4" />
+              </Button>
+            )}
             <Button 
               onClick={handleAddContribution}
-              disabled={adding || !newItem.trim()}
+              disabled={adding || !newItem.trim() || (visibility === 'selected' && selectedParticipants.length === 0)}
               className="bg-indigo-600 hover:bg-indigo-700"
             >
               <Plus className="w-4 h-4" />
@@ -178,13 +249,17 @@ export default function TripContributions({ trip, currentUserEmail, onUpdate }) 
                   animate={{ opacity: 1, x: 0 }}
                   className="flex items-center justify-between p-3 bg-indigo-50 rounded-lg border border-indigo-200"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 flex-1">
                     <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
                       <Package className="w-4 h-4 text-white" />
                     </div>
                     <span className="font-medium text-gray-800" dir={isRTL ? 'rtl' : 'ltr'}>
                       {contribution.item}
                     </span>
+                    <Badge variant="outline" className="ml-auto text-xs gap-1">
+                      {getVisibilityIcon(contribution)}
+                      {getVisibilityLabel(contribution)}
+                    </Badge>
                   </div>
                   <Button
                     variant="ghost"
@@ -257,6 +332,49 @@ export default function TripContributions({ trip, currentUserEmail, onUpdate }) 
           </div>
         )}
       </CardContent>
+
+      {/* Select Participants Dialog */}
+      <Dialog open={showVisibilityDialog} onOpenChange={setShowVisibilityDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle dir={isRTL ? 'rtl' : 'ltr'}>
+              {language === 'he' ? 'בחר משתתפים' : 'Select Participants'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {otherParticipants.map((participant) => (
+              <div key={participant.email} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg">
+                <Checkbox
+                  checked={selectedParticipants.includes(participant.email)}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      setSelectedParticipants([...selectedParticipants, participant.email]);
+                    } else {
+                      setSelectedParticipants(selectedParticipants.filter(e => e !== participant.email));
+                    }
+                  }}
+                />
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback className="bg-indigo-600 text-white text-xs">
+                    {participant.name?.charAt(0) || 'P'}
+                  </AvatarFallback>
+                </Avatar>
+                <Label className="flex-1 cursor-pointer" dir={isRTL ? 'rtl' : 'ltr'}>
+                  {participant.name}
+                </Label>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setShowVisibilityDialog(false)}>
+              {language === 'he' ? 'ביטול' : 'Cancel'}
+            </Button>
+            <Button onClick={() => setShowVisibilityDialog(false)} className="bg-indigo-600 hover:bg-indigo-700">
+              {language === 'he' ? 'אישור' : 'Confirm'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
