@@ -326,10 +326,11 @@ export default function TrekDayMapEditor({ day, setDay }) {
                       }]
                     }}
                   />
-                )}
-              </GoogleMap>
-            </div>
-          )}
+                  )}
+                  </GoogleMap>
+                  </div>
+                  </>
+                  )}
 
           {/* Calculate Route Button */}
           {day.waypoints?.length >= 2 && (
