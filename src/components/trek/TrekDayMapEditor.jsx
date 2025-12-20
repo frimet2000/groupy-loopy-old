@@ -560,6 +560,7 @@ export default function TrekDayMapEditor({ day, setDay }) {
             )}
             <div className="rounded-xl overflow-hidden border-2 border-indigo-100">
               <GoogleMap
+                key={`map-${language}`}
                 mapContainerStyle={{ width: '100%', height: '300px' }}
                 center={center}
                 zoom={day.waypoints?.length > 0 ? 12 : 8}
