@@ -45,6 +45,9 @@ export default function TrekDayMapEditor({ day, setDay }) {
   const [routeStats, setRouteStats] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [searchMode, setSearchMode] = useState('single'); // 'single' or 'route'
+  const [startPoint, setStartPoint] = useState('');
+  const [endPoint, setEndPoint] = useState('');
   const directionsServiceRef = useRef(null);
   const elevationServiceRef = useRef(null);
   const autocompleteRef = useRef(null);
@@ -93,6 +96,56 @@ export default function TrekDayMapEditor({ day, setDay }) {
       }
     });
   }, [searchQuery, day, setDay, mapInstance]);
+
+  const handleRouteSearch = useCallback(() => {
+    if (!startPoint.trim() || !endPoint.trim() || !window.google) return;
+    
+    setIsSearching(true);
+    const geocoder = new window.google.maps.Geocoder();
+    
+    // Geocode both points
+    Promise.all([
+      new Promise((resolve) => {
+        geocoder.geocode({ address: startPoint }, (results, status) => {
+          if (status === 'OK' && results[0]) {
+            resolve({ lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng() });
+          } else {
+            resolve(null);
+          }
+        });
+      }),
+      new Promise((resolve) => {
+        geocoder.geocode({ address: endPoint }, (results, status) => {
+          if (status === 'OK' && results[0]) {
+            resolve({ lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng() });
+          } else {
+            resolve(null);
+          }
+        });
+      })
+    ]).then(([start, end]) => {
+      setIsSearching(false);
+      if (start && end) {
+        const newWaypoints = [
+          { latitude: start.lat, longitude: start.lng },
+          { latitude: end.lat, longitude: end.lng }
+        ];
+        setDay({ ...day, waypoints: newWaypoints });
+        setRoutePath([]);
+        setStartPoint('');
+        setEndPoint('');
+        
+        if (mapInstance) {
+          const bounds = new window.google.maps.LatLngBounds();
+          bounds.extend(start);
+          bounds.extend(end);
+          mapInstance.fitBounds(bounds);
+        }
+      } else {
+        toast.error(language === 'he' ? 'לא נמצאו המיקומים' : 'Locations not found');
+      }
+    });
+  }, [startPoint, endPoint, day, setDay, mapInstance, language]);
 
   const handleMapClick = useCallback((e) => {
     const newWaypoint = {
@@ -275,29 +328,93 @@ export default function TrekDayMapEditor({ day, setDay }) {
           
           {isLoaded && !loadError && (
             <>
+            {/* Search Mode Toggle */}
             <div className="flex gap-2 mb-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <Input
-                  ref={searchInputRef}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handlePlaceSearch()}
-                  placeholder={language === 'he' ? 'חפש מיקום...' : 'Search location...'}
-                  className="pl-9 text-sm"
-                  dir={language === 'he' ? 'rtl' : 'ltr'}
-                />
-              </div>
               <Button
                 type="button"
                 size="sm"
-                onClick={handlePlaceSearch}
-                disabled={isSearching || !searchQuery.trim()}
-                className="bg-indigo-600 hover:bg-indigo-700"
+                variant={searchMode === 'single' ? 'default' : 'outline'}
+                onClick={() => setSearchMode('single')}
+                className={searchMode === 'single' ? 'bg-indigo-600' : ''}
               >
-                {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                <MapPin className="w-4 h-4 mr-1" />
+                {language === 'he' ? 'נקודה' : 'Point'}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={searchMode === 'route' ? 'default' : 'outline'}
+                onClick={() => setSearchMode('route')}
+                className={searchMode === 'route' ? 'bg-indigo-600' : ''}
+              >
+                <Route className="w-4 h-4 mr-1" />
+                {language === 'he' ? 'מסלול' : 'Route'}
               </Button>
             </div>
+
+            {searchMode === 'single' ? (
+              <div className="flex gap-2 mb-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    ref={searchInputRef}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handlePlaceSearch()}
+                    placeholder={language === 'he' ? 'חפש מיקום...' : 'Search location...'}
+                    className="pl-9 text-sm"
+                    dir={language === 'he' ? 'rtl' : 'ltr'}
+                  />
+                </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handlePlaceSearch}
+                  disabled={isSearching || !searchQuery.trim()}
+                  className="bg-indigo-600 hover:bg-indigo-700"
+                >
+                  {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-2 mb-2 p-3 bg-indigo-50 rounded-lg">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 bg-green-500 rounded-full" />
+                    <Input
+                      value={startPoint}
+                      onChange={(e) => setStartPoint(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && endPoint && handleRouteSearch()}
+                      placeholder={language === 'he' ? 'נקודת התחלה (למשל: אילת)' : 'Start point (e.g., Eilat)'}
+                      className="pl-9 text-sm"
+                      dir={language === 'he' ? 'rtl' : 'ltr'}
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 bg-red-500 rounded-full" />
+                    <Input
+                      value={endPoint}
+                      onChange={(e) => setEndPoint(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && startPoint && handleRouteSearch()}
+                      placeholder={language === 'he' ? 'נקודת סיום (למשל: אילות)' : 'End point (e.g., Eilot)'}
+                      className="pl-9 text-sm"
+                      dir={language === 'he' ? 'rtl' : 'ltr'}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={handleRouteSearch}
+                    disabled={isSearching || !startPoint.trim() || !endPoint.trim()}
+                    className="bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Route className="w-4 h-4" />}
+                  </Button>
+                </div>
+              </div>
+            )}
             <div className="rounded-xl overflow-hidden border-2 border-indigo-100">
               <GoogleMap
                 mapContainerStyle={{ width: '100%', height: '300px' }}
