@@ -1687,17 +1687,41 @@ export default function TripDetails() {
                       
                       {/* Day Selector */}
                       <div className="flex gap-2 overflow-x-auto pb-2">
-                        {trip.trek_days.sort((a, b) => a.day_number - b.day_number).map((day, idx) => (
-                          <Button
-                            key={idx}
-                            variant={selectedEquipmentDay === idx ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setSelectedEquipmentDay(idx)}
-                            className={`min-w-fit ${selectedEquipmentDay === idx ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
-                          >
-                            {language === 'he' ? `יום ${day.day_number}` : `Day ${day.day_number}`}
-                          </Button>
-                        ))}
+                        {trip.trek_days.sort((a, b) => a.day_number - b.day_number).map((day, idx) => {
+                          const getDayDate = () => {
+                            if (day.date) return new Date(day.date);
+                            if (trip.date && day.day_number) {
+                              const date = new Date(trip.date);
+                              date.setDate(date.getDate() + (day.day_number - 1));
+                              return date;
+                            }
+                            return null;
+                          };
+                          const dayDate = getDayDate();
+                          
+                          return (
+                            <Button
+                              key={idx}
+                              variant={selectedEquipmentDay === idx ? "default" : "outline"}
+                              onClick={() => setSelectedEquipmentDay(idx)}
+                              className={`min-w-fit flex flex-col items-center py-2 h-auto ${selectedEquipmentDay === idx ? 'bg-indigo-600 hover:bg-indigo-700' : ''}`}
+                            >
+                              <span className="font-semibold">
+                                {language === 'he' ? `יום ${day.day_number}` : `Day ${day.day_number}`}
+                              </span>
+                              {dayDate && (
+                                <>
+                                  <span className="text-xs opacity-90">
+                                    {dayDate.toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US', { weekday: 'short' })}
+                                  </span>
+                                  <span className="text-xs opacity-80">
+                                    {dayDate.toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US', { day: 'numeric', month: 'numeric' })}
+                                  </span>
+                                </>
+                              )}
+                            </Button>
+                          );
+                        })}
                       </div>
 
                       {/* Selected Day Equipment */}
