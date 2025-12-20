@@ -1456,6 +1456,8 @@ Include water recommendation in liters and detailed equipment list.`,
                       <TrekDaysCreator
                         trekDays={trekDays}
                         setTrekDays={setTrekDays}
+                        tripDate={formData.date}
+                        tripLocation={formData.location}
                       />
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <EquipmentCreator

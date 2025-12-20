@@ -13,8 +13,18 @@ import { motion } from 'framer-motion';
 import TrekDayMapEditor from './TrekDayMapEditor';
 import WeatherFetcher from './WeatherFetcher';
 
-export default function TrekDaysCreator({ trekDays, setTrekDays, onGenerateAI }) {
+export default function TrekDaysCreator({ trekDays, setTrekDays, onGenerateAI, tripDate, tripLocation }) {
   const { language, isRTL } = useLanguage();
+  
+  const getDayDate = (day) => {
+    if (day.date) return new Date(day.date);
+    if (tripDate && day.day_number) {
+      const date = new Date(tripDate);
+      date.setDate(date.getDate() + (day.day_number - 1));
+      return date;
+    }
+    return null;
+  };
   const [editingDay, setEditingDay] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
 
@@ -115,10 +125,16 @@ export default function TrekDaysCreator({ trekDays, setTrekDays, onGenerateAI })
                         </Badge>
                         <h4 className="font-bold text-gray-900">{day.daily_title}</h4>
                       </div>
-                      {day.date && (
+                      {getDayDate(day) && (
                         <div className="flex items-center gap-1 text-xs text-gray-500 mb-2">
                           <Calendar className="w-3 h-3" />
-                          {new Date(day.date).toLocaleDateString()}
+                          <span>
+                            {getDayDate(day).toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US', { 
+                              weekday: 'long', 
+                              day: 'numeric', 
+                              month: 'numeric' 
+                            })}
+                          </span>
                         </div>
                       )}
                       {day.daily_description && (
@@ -240,6 +256,8 @@ export default function TrekDaysCreator({ trekDays, setTrekDays, onGenerateAI })
                 <WeatherFetcher
                     day={editingDay}
                     setDay={setEditingDay}
+                    tripDate={tripDate}
+                    tripLocation={tripLocation}
                   />
 
                 <div className="flex justify-end gap-2 pt-4 border-t">
