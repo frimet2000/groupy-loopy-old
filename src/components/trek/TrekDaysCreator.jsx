@@ -295,7 +295,14 @@ export default function TrekDaysCreator({ trekDays, setTrekDays, onGenerateAI, t
 
                 <DayImageUploader 
                   imageUrl={editingDay.image_url} 
-                  onImageChange={(url) => setEditingDay(prev => ({...prev, image_url: url}))} 
+                  onImageChange={(url) => {
+                    console.log('DayImageUploader onImageChange called with:', url);
+                    setEditingDay(prev => {
+                      const newDay = {...prev, image_url: url};
+                      console.log('New editingDay state:', newDay);
+                      return newDay;
+                    });
+                  }} 
                 />
 
                 <TrekDayMapEditor
