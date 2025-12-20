@@ -65,21 +65,25 @@ export default function TrekDaysCreator({ trekDays, setTrekDays, onGenerateAI, t
   };
 
   const saveDay = () => {
-    if (!editingDay.daily_title) {
-      return;
-    }
+      if (!editingDay.daily_title) {
+        return;
+      }
 
-    if (editingDay.id && trekDays.find(d => d.id === editingDay.id)) {
-      // Update existing
-      setTrekDays(trekDays.map(d => d.id === editingDay.id ? editingDay : d));
-    } else {
-      // Add new
-      setTrekDays([...trekDays, editingDay]);
-    }
+      console.log('Saving day with data:', JSON.stringify(editingDay, null, 2));
 
-    setShowDialog(false);
-    setEditingDay(null);
-  };
+      if (editingDay.id && trekDays.find(d => d.id === editingDay.id)) {
+        // Update existing - create a new array with the updated day
+        const updatedDays = trekDays.map(d => d.id === editingDay.id ? {...editingDay} : d);
+        console.log('Updated days array:', JSON.stringify(updatedDays, null, 2));
+        setTrekDays(updatedDays);
+      } else {
+        // Add new
+        setTrekDays([...trekDays, {...editingDay}]);
+      }
+
+      setShowDialog(false);
+      setEditingDay(null);
+    };
 
   const deleteDay = (dayId) => {
     if (confirm(language === 'he' ? 'למחוק את היום?' : 'Delete this day?')) {
