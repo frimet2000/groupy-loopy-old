@@ -158,6 +158,7 @@ export default function TripDetails() {
   });
 
   // Fetch user profiles for all participants to show updated names and family info
+  // Available to everyone viewing the trip
   const { data: userProfiles = {} } = useQuery({
     queryKey: ['userProfiles', trip?.participants?.map(p => p.email).join(',')],
     queryFn: async () => {
@@ -198,7 +199,8 @@ export default function TripDetails() {
             name: (userProfile.first_name && userProfile.last_name)
               ? `${userProfile.first_name} ${userProfile.last_name}`
               : userProfile.full_name,
-            children_age_ranges: childrenRanges
+            children_age_ranges: childrenRanges,
+            parent_age_range: userProfile.parent_age_range || userProfile.age_range
           };
         }
       });
