@@ -224,6 +224,12 @@ export default function TripDetails() {
         ? `${user.first_name} ${user.last_name}` 
         : user.full_name;
 
+      console.log('=== JOIN MUTATION START ===');
+      console.log('User:', userName, user.email);
+      console.log('Family Members:', familyMembers);
+      console.log('Selected Children:', selectedChildren);
+      console.log('Other Member Name:', otherMemberName);
+
       // For treks, validate day selection
       if (trip.activity_type === 'trek' && selectedTrekDays.length === 0) {
         throw new Error(language === 'he' ? 'נא לבחור לפחות יום אחד' : 'Please select at least one day');
@@ -249,23 +255,30 @@ export default function TripDetails() {
       if (selectedChildren.length > 0) totalPeopleJoining += selectedChildren.length;
       if (familyMembers.other && otherMemberName) totalPeopleJoining++;
       // Note: pets are not counted in total people
+      
+      console.log('Total People Joining:', totalPeopleJoining);
+      console.log('Family Message:', familyMessage);
 
       // If approval_required is false, join directly
       if (trip.approval_required === false) {
+        const participantData = {
+          email: user.email,
+          name: userName,
+          joined_at: new Date().toISOString(),
+          accessibility_needs: accessibilityNeeds,
+          waiver_accepted: true,
+          waiver_timestamp: new Date().toISOString(),
+          family_members: familyMembers,
+          selected_children: selectedChildren,
+          other_member_name: otherMemberName,
+          total_people: totalPeopleJoining
+        };
+        
+        console.log('Participant Data Being Saved:', participantData);
+        
         const updatedParticipants = [
           ...(trip.participants || []),
-          {
-            email: user.email,
-            name: userName,
-            joined_at: new Date().toISOString(),
-            accessibility_needs: accessibilityNeeds,
-            waiver_accepted: true,
-            waiver_timestamp: new Date().toISOString(),
-            family_members: familyMembers,
-            selected_children: selectedChildren,
-            other_member_name: otherMemberName,
-            total_people: totalPeopleJoining
-          }
+          participantData
         ];
 
         // Calculate total participants across all families
@@ -2040,37 +2053,56 @@ export default function TripDetails() {
                               </thead>
                               <tbody className="divide-y divide-gray-200">
                                 {trip.participants.filter(p => p.email !== trip.organizer_email).map((participant, index) => {
-                                  const participantProfile = userProfiles[participant.email];
-                                  
-                                  // Calculate breakdown
-                                  let adultsCount = 1; // The participant themselves
-                                  if (participant.family_members?.spouse) adultsCount++;
-                                  
-                                  // Count children
-                                  let childrenCount = participant.selected_children?.length || 0;
-                                  const childrenDetails = [];
+                                 const participantProfile = userProfiles[participant.email];
 
-                                  if (childrenCount > 0 && participantProfile?.children_birth_dates) {
-                                    participant.selected_children.forEach((childId, idx) => {
-                                      const child = participantProfile.children_birth_dates.find(c => c.id === childId);
-                                      if (child) {
-                                        childrenDetails.push({
-                                          birth_date: child.birth_date,
-                                          gender: child.gender
-                                        });
-                                      }
-                                    });
-                                  }
-                                  
-                                  let otherCount = 0;
-                                  const otherDetails = [];
-                                  if (participant.family_members?.other && participant.other_member_name) {
-                                    otherCount++;
-                                    otherDetails.push(participant.other_member_name);
-                                  }
+                                 console.log(`=== PARTICIPANT ${index + 1} ===`);
+                                 console.log('Participant:', participant);
+                                 console.log('Profile:', participantProfile);
 
-                                  const hasPets = participant.family_members?.pets;
-                                  const totalPeople = adultsCount + childrenCount + otherCount;
+                                 // Calculate breakdown
+                                 let adultsCount = 1; // The participant themselves
+                                 if (participant.family_members?.spouse) adultsCount++;
+
+                                 console.log('Adults Count:', adultsCount);
+
+                                 // Count children
+                                 let childrenCount = participant.selected_children?.length || 0;
+                                 const childrenDetails = [];
+
+                                 console.log('Children Count:', childrenCount);
+                                 console.log('Selected Children IDs:', participant.selected_children);
+
+                                 if (childrenCount > 0 && participantProfile?.children_birth_dates) {
+                                   participant.selected_children.forEach((childId, idx) => {
+                                     const child = participantProfile.children_birth_dates.find(c => c.id === childId);
+                                     console.log(`Child ${idx + 1}:`, child);
+                                     if (child) {
+                                       childrenDetails.push({
+                                         birth_date: child.birth_date,
+                                         gender: child.gender
+                                       });
+                                     }
+                                   });
+                                 }
+
+                                 console.log('Children Details:', childrenDetails);
+
+                                 let otherCount = 0;
+                                 const otherDetails = [];
+                                 if (participant.family_members?.other && participant.other_member_name) {
+                                   otherCount++;
+                                   otherDetails.push(participant.other_member_name);
+                                 }
+
+                                 console.log('Other Count:', otherCount);
+                                 console.log('Other Details:', otherDetails);
+
+                                 const hasPets = participant.family_members?.pets;
+                                 console.log('Has Pets:', hasPets);
+
+                                 const totalPeople = adultsCount + childrenCount + otherCount;
+                                 console.log('Total People:', totalPeople);
+                                 console.log('===================');
                                   
                                   return (
                                     <tr key={index} className="hover:bg-gray-50 transition-colors">
