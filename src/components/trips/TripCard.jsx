@@ -246,7 +246,12 @@ export default function TripCard({ trip }) {
               <div className="p-1.5 bg-purple-100 rounded-lg flex-shrink-0">
                 <Clock className="w-4 h-4 text-purple-600" />
               </div>
-              <span className="font-semibold text-sm truncate">{trip.duration_value} {t(trip.duration_type)}</span>
+              <span className="font-semibold text-sm truncate">
+                {trip.activity_type === 'trek' && trip.trek_days?.length > 0 
+                  ? `${trip.trek_days.length} ${language === 'he' ? 'ימים' : language === 'ru' ? 'дней' : language === 'es' ? 'días' : language === 'fr' ? 'jours' : language === 'de' ? 'Tage' : language === 'it' ? 'giorni' : 'days'}`
+                  : `${trip.duration_value} ${t(trip.duration_type)}`
+                }
+              </span>
             </div>
           </div>
 
