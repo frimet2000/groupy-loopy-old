@@ -1603,11 +1603,11 @@ export default function TripDetails() {
                   )}
 
                   {canEdit && (
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center flex-wrap">
                       <Button 
                         onClick={handleAddToCalendar}
                         disabled={addingToCalendar}
-                        className="bg-blue-600 hover:bg-blue-700 gap-2"
+                        className="bg-blue-600 hover:bg-blue-700 gap-2 h-11 shadow-lg"
                       >
                         {addingToCalendar ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
@@ -1616,7 +1616,7 @@ export default function TripDetails() {
                         )}
                         {language === 'he' ? 'הוסף ליומן' : language === 'ru' ? 'В календарь' : language === 'es' ? 'Agregar a calendario' : language === 'fr' ? 'Ajouter au calendrier' : language === 'de' ? 'Zum Kalender' : language === 'it' ? 'Aggiungi al calendario' : 'Add to Calendar'}
                       </Button>
-                      <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 h-10 flex items-center">
+                      <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 h-11 flex items-center px-4 font-semibold shadow-lg">
                         {language === 'he' ? 'אתה המארגן' : language === 'ru' ? 'Вы организатор' : language === 'es' ? 'Eres el organizador' : language === 'fr' ? 'Vous êtes l\'organisateur' : language === 'de' ? 'Sie sind der Organisator' : language === 'it' ? 'Sei l\'organizzatore' : "You're the organizer"}
                       </Badge>
                     </div>
