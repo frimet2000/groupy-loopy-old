@@ -160,55 +160,14 @@ export default function TripDetails() {
   });
 
   // Fetch user profiles for all participants to show updated names and family info
-  // Available to everyone viewing the trip
+  // Available to everyone viewing the trip - uses backend function with service role
   const { data: userProfiles = {} } = useQuery({
     queryKey: ['userProfiles', trip?.participants?.map(p => p.email).join(',')],
     queryFn: async () => {
       if (!trip?.participants) return {};
-      const users = await base44.entities.User.list();
-      const toRange = (birthDate) => {
-        if (!birthDate) return null;
-        const d = new Date(birthDate);
-        if (isNaN(d.getTime())) return null;
-        const today = new Date();
-        let age = today.getFullYear() - d.getFullYear();
-        const m = today.getMonth() - d.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--;
-        if (age < 0) return null;
-        if (age < 3) return '0-2';
-        if (age < 7) return '3-6';
-        if (age < 11) return '7-10';
-        if (age < 15) return '11-14';
-        if (age < 19) return '15-18';
-        if (age < 22) return '18-21';
-        return '21+';
-      };
-      const profileMap = {};
-      
-      // Build profiles for all participants
-      trip.participants.forEach(participant => {
-        const userProfile = users.find(u => u.email === participant.email);
-        if (userProfile) {
-          // Prefer explicit children_age_ranges; otherwise, derive from children_birth_dates
-          let childrenRanges = Array.isArray(userProfile.children_age_ranges) ? userProfile.children_age_ranges : [];
-          if ((!childrenRanges || childrenRanges.length === 0) && Array.isArray(userProfile.children_birth_dates) && userProfile.children_birth_dates.length > 0) {
-            childrenRanges = userProfile.children_birth_dates
-              .map(c => {
-                const range = toRange(c.birth_date);
-                return range ? { id: c.id, name: c.name, age_range: range, gender: c.gender } : null;
-              })
-              .filter(Boolean);
-          }
-          profileMap[participant.email] = {
-            name: (userProfile.first_name && userProfile.last_name)
-              ? `${userProfile.first_name} ${userProfile.last_name}`
-              : userProfile.full_name,
-            children_age_ranges: childrenRanges,
-            parent_age_range: userProfile.parent_age_range || userProfile.age_range
-          };
-        }
-      });
-      return profileMap;
+      const emails = trip.participants.map(p => p.email);
+      const response = await base44.functions.invoke('getUserProfiles', { emails });
+      return response.data.profiles || {};
     },
     enabled: !!trip?.participants?.length,
   });
