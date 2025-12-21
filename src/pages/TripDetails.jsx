@@ -1495,31 +1495,31 @@ export default function TripDetails() {
                           </span>
                         ) : trip.max_participants}
                         </span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-rose-600 font-semibold">
                           {trip.participants?.length || 0} {language === 'he' ? 'משפחות' : 'families'}
                         </span>
                       </div>
                     </motion.div>
                     {trip.activity_type === 'cycling' && (
                       <motion.div 
-                        className="flex items-center gap-2 bg-cyan-50 px-3 py-2 rounded-lg"
-                        whileHover={{ scale: 1.05 }}
+                        className="flex items-center gap-3 bg-gradient-to-br from-cyan-50 to-blue-50 px-4 py-3 rounded-xl border-2 border-cyan-100 shadow-md hover:shadow-xl transition-all"
+                        whileHover={{ scale: 1.05, y: -2 }}
                       >
-                        <div className="p-1 bg-cyan-100 rounded">
-                          <Bike className="w-5 h-5 text-cyan-600" />
+                        <div className="p-2 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg shadow-lg">
+                          <Bike className="w-5 h-5 text-white" />
                         </div>
-                        <span className="font-semibold text-gray-700">{t(trip.cycling_type || 'cycling')}</span>
+                        <span className="font-bold text-gray-800">{t(trip.cycling_type || 'cycling')}</span>
                       </motion.div>
                     )}
                     {trip.activity_type === 'offroad' && (
                       <motion.div 
-                        className="flex items-center gap-2 bg-orange-50 px-3 py-2 rounded-lg"
-                        whileHover={{ scale: 1.05 }}
+                        className="flex items-center gap-3 bg-gradient-to-br from-orange-50 to-red-50 px-4 py-3 rounded-xl border-2 border-orange-100 shadow-md hover:shadow-xl transition-all"
+                        whileHover={{ scale: 1.05, y: -2 }}
                       >
-                        <div className="p-1 bg-orange-100 rounded">
-                          <Truck className="w-5 h-5 text-orange-600" />
+                        <div className="p-2 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg shadow-lg">
+                          <Truck className="w-5 h-5 text-white" />
                         </div>
-                        <span className="font-semibold text-gray-700">{t(trip.offroad_vehicle_type || 'offroad')}</span>
+                        <span className="font-bold text-gray-800">{t(trip.offroad_vehicle_type || 'offroad')}</span>
                       </motion.div>
                     )}
                   </div>
