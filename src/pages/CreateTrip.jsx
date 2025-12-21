@@ -1332,6 +1332,20 @@ Include water recommendation in liters and detailed equipment list.`,
                           onChange={(e) => handleChange('max_participants', parseInt(e.target.value))}
                           className="p-4"
                         />
+                        <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg border border-emerald-200 mt-2">
+                          <div className="flex-1">
+                            <Label className="text-sm font-semibold text-emerald-900 mb-0">
+                              {language === 'he' ? 'מספר משתתפים גמיש' : 'Flexible Participants'}
+                            </Label>
+                            <p className="text-xs text-gray-600">
+                              {language === 'he' ? 'אפשר הצטרפות גם מעבר למכסה' : 'Allow joining even when limit is reached'}
+                            </p>
+                          </div>
+                          <Switch
+                            checked={formData.flexible_participants}
+                            onCheckedChange={(checked) => handleChange('flexible_participants', checked)}
+                          />
+                        </div>
                       </div>
                     </div>
 
