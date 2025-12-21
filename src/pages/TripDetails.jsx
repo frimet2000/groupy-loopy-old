@@ -1859,6 +1859,17 @@ export default function TripDetails() {
                         </p>
                         <p className="text-sm text-emerald-600">{t('organizer')}</p>
                         </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedProfileEmail(trip.organizer_email);
+                            setShowProfileDialog(true);
+                          }}
+                          className="gap-2"
+                        >
+                          <User className="w-4 h-4" />
+                        </Button>
                         {isOrganizer && (
                         <Button
                           size="sm"
@@ -1887,6 +1898,17 @@ export default function TripDetails() {
                             {language === 'he' ? 'מארגן משותף' : 'Co-organizer'}
                           </p>
                         </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedProfileEmail(organizer.email);
+                            setShowProfileDialog(true);
+                          }}
+                          className="gap-2 ml-auto"
+                        >
+                          <User className="w-4 h-4" />
+                        </Button>
                         {isOrganizer && (
                           <Button
                             variant="ghost"
