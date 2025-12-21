@@ -2083,16 +2083,33 @@ export default function TripDetails() {
                                       </td>
                                       <td className="px-4 py-3">
                                         {childrenCount > 0 ? (
-                                          <div>
-                                            <Badge variant="secondary" className="bg-pink-100 text-pink-700">
+                                          <div className="group relative">
+                                            <Badge variant="secondary" className="bg-pink-100 text-pink-700 cursor-help">
                                               {childrenCount}
                                             </Badge>
-                                            <div className="flex flex-wrap gap-1 mt-1">
-                                              {childrenDetails.map((detail, idx) => (
-                                                <span key={idx} className="text-xs text-gray-600">
-                                                  {detail}{idx < childrenDetails.length - 1 ? ',' : ''}
-                                                </span>
-                                              ))}
+                                            {/* Tooltip on hover */}
+                                            <div className="absolute z-50 hidden group-hover:block bg-gray-900 text-white text-xs rounded-lg p-3 min-w-[180px] shadow-xl -top-2 left-full ml-2">
+                                              <div className="space-y-1.5">
+                                                {participant.selected_children?.map((childId, idx) => {
+                                                  const child = participantProfile?.children_birth_dates?.find(c => c.id === childId);
+                                                  if (!child) return null;
+                                                  const age = calculateAge(child.birth_date);
+                                                  const genderLabel = child.gender === 'male' 
+                                                    ? (language === 'he' ? 'בן' : 'Boy')
+                                                    : child.gender === 'female'
+                                                    ? (language === 'he' ? 'בת' : 'Girl')
+                                                    : '';
+                                                  return (
+                                                    <div key={idx} className="flex items-center gap-2">
+                                                      <span className={`w-2 h-2 rounded-full ${child.gender === 'male' ? 'bg-blue-400' : child.gender === 'female' ? 'bg-pink-400' : 'bg-gray-400'}`}></span>
+                                                      <span>{child.name || (language === 'he' ? 'ילד' : 'Child')}</span>
+                                                      {age && <span className="text-gray-300">({age})</span>}
+                                                      {genderLabel && <span className="text-gray-400">- {genderLabel}</span>}
+                                                    </div>
+                                                  );
+                                                })}
+                                              </div>
+                                              <div className="absolute top-3 -left-1 w-2 h-2 bg-gray-900 rotate-45"></div>
                                             </div>
                                           </div>
                                         ) : (
