@@ -2529,42 +2529,53 @@ export default function TripDetails() {
                   </label>
                 </div>
 
-                {user?.children_age_ranges && user.children_age_ranges.length > 0 && (
-                <div className="space-y-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
-                  <Label className="text-sm font-semibold">
-                    {language === 'he' ? 'ילדים' : 'Children'}
-                  </Label>
-                    {user.children_age_ranges.map((child, idx) => {
-                      const refId = child?.id || `idx_${idx}`;
-                      console.log(`Rendering child ${idx}:`, child, 'refId:', refId);
-                      return (
-                        <div key={refId} className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
-                          <Checkbox
-                            id={`child-${refId}`}
-                            checked={selectedChildren.includes(refId)}
-                            onCheckedChange={(checked) => {
-                              console.log('Checkbox changed:', refId, checked);
-                              setSelectedChildren(prev => 
-                                checked 
-                                  ? [...prev, refId]
-                                  : prev.filter(id => id !== refId)
-                              );
-                            }}
-                            className="data-[state=checked]:bg-pink-600"
-                          />
-                          <label htmlFor={`child-${refId}`} className="flex-1 font-medium cursor-pointer">
-                            {child?.name || `${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}
-                            {child?.age_range && (
-                              <Badge variant="outline" className="ml-2 bg-pink-50 text-pink-700">
-                                {child.age_range}
-                              </Badge>
-                            )}
-                          </label>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+                {user?.children_age_ranges && user.children_age_ranges.length > 0 && (() => {
+                  // Normalize children data - handle both old format (strings) and new format (objects)
+                  const normalizedChildren = user.children_age_ranges.map((child, idx) => {
+                    if (typeof child === 'string') {
+                      // Old format - just age range string
+                      return { id: `idx_${idx}`, name: null, age_range: child, gender: null };
+                    }
+                    // New format - object with id, name, age_range, gender
+                    return { ...child, id: child?.id || `idx_${idx}` };
+                  });
+                  console.log('Normalized children:', normalizedChildren);
+                  
+                  return (
+                    <div className="space-y-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
+                      <Label className="text-sm font-semibold">
+                        {language === 'he' ? 'ילדים' : 'Children'}
+                      </Label>
+                      {normalizedChildren.map((child, idx) => {
+                        const refId = child.id;
+                        return (
+                          <div key={refId} className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
+                            <Checkbox
+                              id={`child-${refId}`}
+                              checked={selectedChildren.includes(refId)}
+                              onCheckedChange={(checked) => {
+                                setSelectedChildren(prev => 
+                                  checked 
+                                    ? [...prev, refId]
+                                    : prev.filter(id => id !== refId)
+                                );
+                              }}
+                              className="data-[state=checked]:bg-pink-600"
+                            />
+                            <label htmlFor={`child-${refId}`} className="flex-1 font-medium cursor-pointer">
+                              {child.name || `${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}
+                              {child.age_range && (
+                                <Badge variant="outline" className="ml-2 bg-pink-50 text-pink-700">
+                                  {child.age_range}
+                                </Badge>
+                              )}
+                            </label>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
 
                 <div className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
                   <Checkbox
