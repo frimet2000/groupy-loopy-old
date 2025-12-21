@@ -1525,11 +1525,11 @@ export default function TripDetails() {
                   </div>
 
                   {user && hasJoined && (
-                    <div className="flex gap-2 flex-wrap">
+                    <div className="flex gap-2 flex-wrap items-center">
                       <Button 
                         onClick={handleAddToCalendar}
                         disabled={addingToCalendar}
-                        className="bg-blue-600 hover:bg-blue-700 gap-2"
+                        className="bg-blue-600 hover:bg-blue-700 gap-2 h-11 shadow-lg"
                       >
                         {addingToCalendar ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
@@ -1540,7 +1540,7 @@ export default function TripDetails() {
                       </Button>
                       <Button 
                         onClick={() => setShowEditParticipantDialog(true)}
-                        className="bg-emerald-600 hover:bg-emerald-700 gap-2"
+                        className="bg-emerald-600 hover:bg-emerald-700 gap-2 h-11 shadow-lg"
                       >
                         <Edit className="w-4 h-4" />
                         {language === 'he' ? 'ערוך משפחה' : 'Edit Family'}
@@ -1550,7 +1550,7 @@ export default function TripDetails() {
                           variant="outline" 
                           onClick={() => leaveMutation.mutate()}
                           disabled={leaveMutation.isLoading}
-                          className="text-red-600 border-red-200 hover:bg-red-50"
+                          className="text-red-600 border-red-200 hover:bg-red-50 h-11 shadow-lg"
                         >
                           <X className="w-4 h-4 mr-2" />
                           {t('leave')}
