@@ -135,7 +135,7 @@ export default function MyTrips() {
               </TabsTrigger>
               <TabsTrigger 
                 value="organized" 
-                className="gap-1.5 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700 flex-col py-3 text-xs sm:text-sm min-h-[56px] touch-manipulation"
+                className="gap-1.5 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:border-2 data-[state=active]:border-purple-700 flex-col py-3 text-xs sm:text-sm min-h-[56px] touch-manipulation rounded-lg font-bold transition-all"
               >
                 <UserCircle className="w-5 h-5" />
                 <span className="font-medium">{language === 'he' ? 'ארגנתי' : language === 'ru' ? 'Мои' : language === 'es' ? 'Míos' : language === 'fr' ? 'Mes' : language === 'de' ? 'Meine' : language === 'it' ? 'Miei' : 'My'}</span>
