@@ -22,6 +22,7 @@ import InviteFriends from '../components/collaboration/InviteFriends';
 import TrekDaysDisplay from '../components/trek/TrekDaysDisplay';
 import TrekDaySelector from '../components/trek/TrekDaySelector';
 import ProfilePreviewDialog from '../components/profile/ProfilePreviewDialog';
+import ParticipantStats from '../components/participants/ParticipantStats';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -2083,40 +2084,41 @@ export default function TripDetails() {
                                       </td>
                                       <td className="px-4 py-3">
                                         {childrenCount > 0 ? (
-                                          <TooltipProvider>
-                                            <Tooltip delayDuration={200}>
-                                              <TooltipTrigger asChild>
-                                                <div className="cursor-help inline-flex">
-                                                  <Badge variant="secondary" className="bg-pink-100 text-pink-700">
-                                                    {childrenCount}
-                                                  </Badge>
-                                                </div>
-                                              </TooltipTrigger>
-                                              <TooltipContent className="bg-white border-slate-300" side="top">
-                                                <div className="space-y-1.5">
-                                                  {participant.selected_children?.map((childId, idx) => {
-                                                    const child = participantProfile?.children_birth_dates?.find(c => c.id === childId);
-                                                    if (!child) return null;
-                                                    const age = calculateAge(child.birth_date);
-                                                    const genderLabel = child.gender === 'male' 
-                                                      ? (language === 'he' ? 'בן' : 'Boy')
-                                                      : child.gender === 'female'
-                                                      ? (language === 'he' ? 'בת' : 'Girl')
-                                                      : '';
-                                                    return (
-                                                      <div key={idx} className="flex items-center gap-2 text-slate-800">
-                                                        <span className={`w-2 h-2 rounded-full ${child.gender === 'male' ? 'bg-blue-500' : child.gender === 'female' ? 'bg-pink-500' : 'bg-gray-400'}`}></span>
-                                                        <span className="font-medium">{child.name || (language === 'he' ? 'ילד' : 'Child')}</span>
-                                                        <span className="text-slate-500 text-xs">
-                                                          {age && `(${age})`} {genderLabel && `${genderLabel}`}
-                                                        </span>
-                                                      </div>
-                                                    );
-                                                  })}
-                                                </div>
-                                              </TooltipContent>
-                                            </Tooltip>
-                                          </TooltipProvider>
+                                          <Tooltip delayDuration={200}>
+                                            <TooltipTrigger asChild>
+                                              <div className="cursor-pointer inline-flex">
+                                                <Badge variant="secondary" className="bg-pink-100 text-pink-700 hover:bg-pink-200 transition-colors">
+                                                  {childrenCount}
+                                                </Badge>
+                                              </div>
+                                            </TooltipTrigger>
+                                            <TooltipContent className="bg-white border-2 border-pink-300 shadow-xl p-4" side="top">
+                                              <div className="space-y-2">
+                                                <p className="font-bold text-pink-700 mb-2 border-b border-pink-200 pb-1">
+                                                  {language === 'he' ? 'פרטי הילדים' : 'Children Details'}
+                                                </p>
+                                                {participant.selected_children?.map((childId, idx) => {
+                                                  const child = participantProfile?.children_birth_dates?.find(c => c.id === childId);
+                                                  if (!child) return null;
+                                                  const age = calculateAge(child.birth_date);
+                                                  const genderLabel = child.gender === 'male' 
+                                                    ? (language === 'he' ? 'בן' : 'Boy')
+                                                    : child.gender === 'female'
+                                                    ? (language === 'he' ? 'בת' : 'Girl')
+                                                    : '';
+                                                  return (
+                                                    <div key={idx} className="flex items-center gap-2 p-2 bg-pink-50 rounded-lg">
+                                                      <span className={`w-3 h-3 rounded-full ${child.gender === 'male' ? 'bg-blue-500' : child.gender === 'female' ? 'bg-pink-500' : 'bg-gray-400'}`}></span>
+                                                      <span className="font-semibold text-gray-800">{child.name || (language === 'he' ? 'ילד' : 'Child')}</span>
+                                                      <span className="text-gray-600 text-sm">
+                                                        {age && `${age} ${language === 'he' ? 'שנים' : 'years'}`} {genderLabel && `• ${genderLabel}`}
+                                                      </span>
+                                                    </div>
+                                                  );
+                                                })}
+                                              </div>
+                                            </TooltipContent>
+                                          </Tooltip>
                                         ) : (
                                           <span className="text-xs text-gray-400">-</span>
                                         )}
@@ -2133,7 +2135,7 @@ export default function TripDetails() {
                                       <td className="px-4 py-3">
                                         {otherCount > 0 ? (
                                           <div>
-                                            <Badge variant="secondary" className="bg-amber-100 text-amber-700">
+                                            <Badge variant="secondary" className="bg-purple-100 text-purple-700">
                                               {otherCount}
                                             </Badge>
                                             <div className="flex flex-wrap gap-1 mt-1">
@@ -2149,7 +2151,7 @@ export default function TripDetails() {
                                         )}
                                       </td>
                                       <td className="px-4 py-3">
-                                        <Badge variant="secondary" className="bg-purple-100 text-purple-700 font-bold">
+                                        <Badge variant="secondary" className="bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-800 font-bold border border-emerald-300">
                                           {totalPeople}
                                         </Badge>
                                       </td>
