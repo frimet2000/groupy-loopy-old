@@ -126,36 +126,46 @@ function LayoutContent({ children, currentPageName }) {
   return (
     <div className={`min-h-screen bg-gray-50 ${isRTL ? 'rtl' : 'ltr'}`}>
       {/* Desktop Header */}
-      <header className="bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+      <header className="bg-gradient-to-r from-white via-emerald-50/30 to-white backdrop-blur-xl border-b-2 border-emerald-200/50 sticky top-0 z-50 shadow-lg shadow-emerald-100/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to={createPageUrl('Home')} className="flex items-center gap-2 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:shadow-emerald-500/30 transition-shadow">
-                <Mountain className="w-5 h-5 text-white" />
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-xl blur-md opacity-40 group-hover:opacity-60 transition-opacity"></div>
+                <div className="relative w-10 h-10 bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 rounded-xl flex items-center justify-center shadow-xl shadow-emerald-500/30 group-hover:shadow-2xl group-hover:shadow-emerald-500/40 transition-all group-hover:scale-105">
+                  <Mountain className="w-5 h-5 text-white drop-shadow-lg" />
+                </div>
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-800 bg-clip-text text-transparent hidden sm:block">
+              <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 bg-clip-text text-transparent hidden sm:block drop-shadow-sm">
                 Groupy Loopy
               </span>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-2">
+            <nav className="hidden md:flex items-center gap-1.5">
               {navItems.map(item => (
                 <Link key={item.name} to={createPageUrl(item.name)}>
-                  <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                  <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }}>
                     <Button
                       variant={isActive(item.name) ? "secondary" : "ghost"}
-                      className={`gap-2 transition-all duration-300 ${
+                      className={`gap-2 transition-all duration-300 relative overflow-hidden ${
                         isActive(item.name) 
-                          ? 'bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 font-semibold shadow-sm' 
-                          : 'text-gray-600 hover:text-emerald-700 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50'
+                          ? 'bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 text-white font-bold shadow-xl shadow-emerald-500/40 border-2 border-emerald-400/50' 
+                          : 'text-gray-600 hover:text-emerald-700 hover:bg-gradient-to-br hover:from-emerald-50/80 hover:to-teal-50/80 hover:shadow-lg hover:shadow-emerald-200/50 hover:border hover:border-emerald-200'
                       }`}
                     >
-                      <div className={`p-1 rounded-lg ${isActive(item.name) ? 'bg-emerald-100' : ''}`}>
-                        <item.icon className={`w-4 h-4 ${item.color}`} />
+                      {isActive(item.name) && (
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                          animate={{ x: ['-100%', '200%'] }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        />
+                      )}
+                      <div className={`relative p-1.5 rounded-lg ${isActive(item.name) ? 'bg-white/20 shadow-inner' : ''}`}>
+                        <item.icon className={`w-4 h-4 ${isActive(item.name) ? 'text-white drop-shadow' : item.color}`} />
                       </div>
-                      {item.label}
+                      <span className="relative">{item.label}</span>
                     </Button>
                   </motion.div>
                 </Link>
