@@ -104,10 +104,10 @@ export default function TripDetails() {
   const [familyMembers, setFamilyMembers] = useState({
     me: true,
     spouse: false,
-    children: false,
     pets: false,
     other: false
   });
+  const [selectedChildren, setSelectedChildren] = useState([]);
   const [otherMemberName, setOtherMemberName] = useState('');
   
   const accessibilityTypes = ['wheelchair', 'visual_impairment', 'hearing_impairment', 'mobility_aid', 'stroller_friendly', 'elderly_friendly'];
@@ -209,7 +209,13 @@ export default function TripDetails() {
       // Build family members info
       const familyInfo = [];
       if (familyMembers.spouse) familyInfo.push(language === 'he' ? 'בן/בת זוג' : 'Spouse');
-      if (familyMembers.children) familyInfo.push(language === 'he' ? 'ילדים' : 'Children');
+      if (selectedChildren.length > 0) {
+        const childrenNames = selectedChildren.map(childId => {
+          const child = user.children_birth_dates?.find(c => c.id === childId);
+          return child?.name || (language === 'he' ? 'ילד' : 'Child');
+        }).join(', ');
+        familyInfo.push(childrenNames);
+      }
       if (familyMembers.pets) familyInfo.push(language === 'he' ? 'בעלי חיים' : 'Pets');
       if (familyMembers.other && otherMemberName) familyInfo.push(otherMemberName);
       
@@ -230,6 +236,7 @@ export default function TripDetails() {
             waiver_accepted: true,
             waiver_timestamp: new Date().toISOString(),
             family_members: familyMembers,
+            selected_children: selectedChildren,
             other_member_name: otherMemberName
           }
         ];
@@ -269,6 +276,7 @@ export default function TripDetails() {
           waiver_timestamp: null,
           selected_days: trip.activity_type === 'trek' ? selectedTrekDays : [],
           family_members: familyMembers,
+          selected_children: selectedChildren,
           other_member_name: otherMemberName
         }
       ];
@@ -308,7 +316,8 @@ export default function TripDetails() {
       setJoinMessage('');
       setAccessibilityNeeds([]);
       setSelectedTrekDays([]);
-      setFamilyMembers({ me: true, spouse: false, children: false, pets: false, other: false });
+      setFamilyMembers({ me: true, spouse: false, pets: false, other: false });
+      setSelectedChildren([]);
       setOtherMemberName('');
       setShowJoinDialog(false);
       
@@ -2113,32 +2122,51 @@ export default function TripDetails() {
                   </label>
                 </div>
 
+                {user?.children_birth_dates && user.children_birth_dates.length > 0 && (
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold">
+                      {language === 'he' ? 'ילדים' : 'Children'}
+                    </Label>
+                    {user.children_birth_dates.map((child, idx) => {
+                      const age = calculateAge(child.birth_date);
+                      return (
+                        <div key={child.id} className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
+                          <Checkbox
+                            id={`child-${child.id}`}
+                            checked={selectedChildren.includes(child.id)}
+                            onCheckedChange={(checked) => {
+                              setSelectedChildren(prev => 
+                                checked 
+                                  ? [...prev, child.id]
+                                  : prev.filter(id => id !== child.id)
+                              );
+                            }}
+                            className="data-[state=checked]:bg-pink-600"
+                          />
+                          <label htmlFor={`child-${child.id}`} className="flex-1 font-medium cursor-pointer">
+                            {child.name || `${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}
+                            {age && ` (${age} ${language === 'he' ? 'שנים' : 'years'})`}
+                          </label>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
                 <div className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
                   <Checkbox
-                    id="children"
-                    checked={familyMembers.children}
-                    onCheckedChange={(checked) => setFamilyMembers({...familyMembers, children: checked})}
-                    className="data-[state=checked]:bg-emerald-600"
+                    id="pets"
+                    checked={familyMembers.pets}
+                    onCheckedChange={(checked) => setFamilyMembers({...familyMembers, pets: checked})}
+                    className="data-[state=checked]:bg-amber-600"
                   />
-                  <label htmlFor="children" className="flex-1 font-medium cursor-pointer">
-                    {language === 'he' ? 'ילדים' : 'Children'}
+                  <label htmlFor="pets" className="flex-1 font-medium cursor-pointer flex items-center gap-2">
+                    <Dog className="w-4 h-4" />
+                    {language === 'he' ? 'בעלי חיים' : 'Pets'}
                   </label>
                 </div>
 
-                {trip.pets_allowed && (
-                  <div className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
-                    <Checkbox
-                      id="pets"
-                      checked={familyMembers.pets}
-                      onCheckedChange={(checked) => setFamilyMembers({...familyMembers, pets: checked})}
-                      className="data-[state=checked]:bg-amber-600"
-                    />
-                    <label htmlFor="pets" className="flex-1 font-medium cursor-pointer flex items-center gap-2">
-                      <Dog className="w-4 h-4" />
-                      {language === 'he' ? 'בעלי חיים' : 'Pets'}
-                    </label>
-                  </div>
-                )}
+
 
                 <div className="space-y-2">
                   <div className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
@@ -2193,7 +2221,8 @@ export default function TripDetails() {
               setJoinMessage('');
               setAccessibilityNeeds([]);
               setSelectedTrekDays([]);
-              setFamilyMembers({ me: true, spouse: false, children: false, pets: false, other: false });
+              setFamilyMembers({ me: true, spouse: false, pets: false, other: false });
+              setSelectedChildren([]);
               setOtherMemberName('');
             }}
           >
