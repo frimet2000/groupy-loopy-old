@@ -1475,14 +1475,14 @@ export default function TripDetails() {
                       </span>
                     </motion.div>
                     <motion.div 
-                      className="flex items-center gap-3 bg-gradient-to-br from-rose-50 to-orange-50 px-4 py-3 rounded-xl border-2 border-rose-100 shadow-md hover:shadow-xl transition-all"
-                      whileHover={{ scale: 1.05, y: -2 }}
+                      className="flex items-center gap-3 bg-rose-600 px-5 py-3 rounded-xl shadow-2xl hover:shadow-[0_8px_30px_rgba(225,29,72,0.5)] transition-all border-2 border-rose-700"
+                      whileHover={{ scale: 1.05, y: -3 }}
                     >
-                      <div className="p-2 bg-gradient-to-br from-rose-500 to-orange-600 rounded-lg shadow-lg">
+                      <div className="p-2 bg-white/20 rounded-lg shadow-lg backdrop-blur-sm">
                         <Users className="w-5 h-5 text-white" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="font-bold text-gray-800">
+                        <span className="font-bold text-white text-lg">
                          {(() => {
                           let total = 0;
                           (trip.participants || []).forEach(p => {
