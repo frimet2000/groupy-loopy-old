@@ -21,6 +21,7 @@ import TripContributions from '../components/contributions/TripContributions';
 import InviteFriends from '../components/collaboration/InviteFriends';
 import TrekDaysDisplay from '../components/trek/TrekDaysDisplay';
 import TrekDaySelector from '../components/trek/TrekDaySelector';
+import ProfilePreviewDialog from '../components/profile/ProfilePreviewDialog';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -109,6 +110,8 @@ export default function TripDetails() {
   });
   const [selectedChildren, setSelectedChildren] = useState([]);
   const [otherMemberName, setOtherMemberName] = useState('');
+  const [showProfileDialog, setShowProfileDialog] = useState(false);
+  const [selectedProfileEmail, setSelectedProfileEmail] = useState(null);
 
   // Calculate age from birth date
   const calculateAge = (birthDate) => {
@@ -1918,7 +1921,10 @@ export default function TripDetails() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => navigate(createPageUrl('Profile') + '?email=' + participant.email)}
+                          onClick={() => {
+                            setSelectedProfileEmail(participant.email);
+                            setShowProfileDialog(true);
+                          }}
                           className="gap-2"
                         >
                           <User className="w-4 h-4" />
@@ -2302,7 +2308,10 @@ export default function TripDetails() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate(createPageUrl('Profile') + '?email=' + trip.pending_requests[currentRequestIndex].email)}
+                    onClick={() => {
+                      setSelectedProfileEmail(trip.pending_requests[currentRequestIndex].email);
+                      setShowProfileDialog(true);
+                    }}
                     className="gap-2"
                   >
                     <User className="w-4 h-4" />
