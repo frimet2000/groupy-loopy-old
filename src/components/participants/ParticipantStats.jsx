@@ -143,39 +143,45 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
           </div>
         </div>
 
-        {/* Age Distribution - Compact */}
-        {(stats.totalChildren > 0 && Object.keys(stats.childrenByAge).length > 0) || Object.keys(stats.parentsByAge).length > 0 ? (
-          <div className="grid grid-cols-2 gap-3 text-right text-xs">
-            {stats.totalChildren > 0 && Object.keys(stats.childrenByAge).length > 0 && (
-              <div>
-                <p className="font-semibold text-gray-700 mb-1.5 text-[11px]">
-                  {language === 'he' ? 'גילאי ילדים' : 'Kids Ages'}
-                </p>
-                <div className="flex flex-wrap gap-1">
-                  {Object.entries(stats.childrenByAge).map(([range, count]) => (
-                    <span key={range} className="bg-pink-100 text-pink-700 px-1.5 py-0.5 rounded text-[10px] font-medium">
-                      {count}×{range}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            {Object.keys(stats.parentsByAge).length > 0 && (
-              <div>
-                <p className="font-semibold text-gray-700 mb-1.5 text-[11px]">
-                  {language === 'he' ? 'גילאי הורים' : 'Parent Ages'}
-                </p>
-                <div className="flex flex-wrap gap-1">
-                  {Object.entries(stats.parentsByAge).map(([range, count]) => (
-                    <span key={range} className="bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded text-[10px] font-medium">
-                      {count}×{range}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+        {/* Children Age Distribution - Prominent */}
+        {stats.totalChildren > 0 && Object.keys(stats.childrenByAge).length > 0 && (
+          <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-xl p-4 border-2 border-pink-200 shadow-md">
+            <div className="flex items-center gap-2 mb-3">
+              <Baby className="w-5 h-5 text-pink-600" />
+              <p className="font-bold text-pink-900 text-base">
+                {language === 'he' ? 'התפלגות גילאי ילדים' : 'Children Age Distribution'}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {Object.entries(stats.childrenByAge).map(([range, count]) => (
+                <motion.div
+                  key={range}
+                  whileHover={{ scale: 1.05 }}
+                  className="bg-white rounded-lg p-3 text-center border-2 border-pink-300 shadow-sm"
+                >
+                  <p className="text-2xl font-bold text-pink-700">{count}</p>
+                  <p className="text-xs text-pink-600 font-semibold mt-1">{range}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
-        ) : null}
+        )}
+
+        {/* Parent Age Distribution */}
+        {Object.keys(stats.parentsByAge).length > 0 && (
+          <div className="bg-indigo-50 rounded-lg p-3 border border-indigo-200">
+            <p className="font-semibold text-gray-700 mb-2 text-xs">
+              {language === 'he' ? 'גילאי הורים' : 'Parent Ages'}
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {Object.entries(stats.parentsByAge).map(([range, count]) => (
+                <span key={range} className="bg-indigo-200 text-indigo-800 px-2 py-1 rounded-md text-xs font-semibold">
+                  {count}×{range}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Family Composition - Compact */}
         <div className="space-y-2 text-right">
