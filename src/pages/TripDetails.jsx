@@ -2084,36 +2084,40 @@ export default function TripDetails() {
                                       </td>
                                       <td className="px-4 py-3">
                                         {childrenCount > 0 ? (
-                                          <div className="group relative inline-block">
-                                            <Badge variant="secondary" className="bg-pink-100 text-pink-700 cursor-help">
-                                              {childrenCount}
-                                            </Badge>
-                                            {/* Tooltip on hover - appears above */}
-                                            <div className="absolute z-50 hidden group-hover:block bg-white text-gray-800 text-xs rounded-lg p-3 min-w-[180px] shadow-xl border border-gray-200 bottom-full left-1/2 -translate-x-1/2 mb-2">
-                                              <div className="space-y-1.5">
-                                                {participant.selected_children?.map((childId, idx) => {
-                                                  const child = participantProfile?.children_birth_dates?.find(c => c.id === childId);
-                                                  if (!child) return null;
-                                                  const age = calculateAge(child.birth_date);
-                                                  const genderLabel = child.gender === 'male' 
-                                                    ? (language === 'he' ? 'בן' : 'Boy')
-                                                    : child.gender === 'female'
-                                                    ? (language === 'he' ? 'בת' : 'Girl')
-                                                    : '';
-                                                  return (
-                                                    <div key={idx} className="flex items-center gap-2">
-                                                      <span className={`w-2 h-2 rounded-full ${child.gender === 'male' ? 'bg-blue-500' : child.gender === 'female' ? 'bg-pink-500' : 'bg-gray-400'}`}></span>
-                                                      <span className="font-medium">{child.name || (language === 'he' ? 'ילד' : 'Child')}</span>
-                                                      {age && <span className="text-gray-500">({age})</span>}
-                                                      {genderLabel && <span className="text-gray-400">- {genderLabel}</span>}
-                                                    </div>
-                                                  );
-                                                })}
-                                              </div>
-                                              {/* Arrow pointing down */}
-                                              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 bg-white border-b border-r border-gray-200 rotate-45"></div>
-                                            </div>
-                                          </div>
+                                          <TooltipProvider>
+                                            <Tooltip delayDuration={200}>
+                                              <TooltipTrigger asChild>
+                                                <div className="cursor-help inline-flex">
+                                                  <Badge variant="secondary" className="bg-pink-100 text-pink-700">
+                                                    {childrenCount}
+                                                  </Badge>
+                                                </div>
+                                              </TooltipTrigger>
+                                              <TooltipContent className="bg-white border-slate-300" side="top">
+                                                <div className="space-y-1.5">
+                                                  {participant.selected_children?.map((childId, idx) => {
+                                                    const child = participantProfile?.children_birth_dates?.find(c => c.id === childId);
+                                                    if (!child) return null;
+                                                    const age = calculateAge(child.birth_date);
+                                                    const genderLabel = child.gender === 'male' 
+                                                      ? (language === 'he' ? 'בן' : 'Boy')
+                                                      : child.gender === 'female'
+                                                      ? (language === 'he' ? 'בת' : 'Girl')
+                                                      : '';
+                                                    return (
+                                                      <div key={idx} className="flex items-center gap-2 text-slate-800">
+                                                        <span className={`w-2 h-2 rounded-full ${child.gender === 'male' ? 'bg-blue-500' : child.gender === 'female' ? 'bg-pink-500' : 'bg-gray-400'}`}></span>
+                                                        <span className="font-medium">{child.name || (language === 'he' ? 'ילד' : 'Child')}</span>
+                                                        <span className="text-slate-500 text-xs">
+                                                          {age && `(${age})`} {genderLabel && `${genderLabel}`}
+                                                        </span>
+                                                      </div>
+                                                    );
+                                                  })}
+                                                </div>
+                                              </TooltipContent>
+                                            </Tooltip>
+                                          </TooltipProvider>
                                         ) : (
                                           <span className="text-xs text-gray-400">-</span>
                                         )}
