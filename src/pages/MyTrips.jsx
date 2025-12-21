@@ -116,7 +116,7 @@ export default function MyTrips() {
             <TabsList className="bg-white p-1.5 rounded-xl border-2 border-gray-200 shadow-xl w-full grid grid-cols-5 h-auto touch-manipulation" dir="rtl">
               <TabsTrigger 
                 value="upcoming" 
-                className="gap-1.5 data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 flex-col py-3 text-xs sm:text-sm min-h-[56px] touch-manipulation"
+                className="gap-1.5 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:border-2 data-[state=active]:border-emerald-700 flex-col py-3 text-xs sm:text-sm min-h-[56px] touch-manipulation rounded-lg font-bold transition-all"
               >
                 <Calendar className="w-5 h-5" />
                 <span className="font-medium">{language === 'he' ? 'קרובים' : language === 'ru' ? 'Скоро' : language === 'es' ? 'Próximos' : language === 'fr' ? 'À venir' : language === 'de' ? 'Bald' : language === 'it' ? 'Imminenti' : 'Upcoming'}</span>
