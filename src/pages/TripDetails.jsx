@@ -1475,19 +1475,24 @@ export default function TripDetails() {
                       <div className="p-1 bg-rose-100 rounded">
                         <Users className="w-5 h-5 text-rose-600" />
                       </div>
-                      <span className="font-semibold text-gray-700">
-                       {(() => {
-                        let total = 0;
-                        (trip.participants || []).forEach(p => {
-                          total += (p.total_people || 1);
-                        });
-                        return total;
-                      })()}/{trip.flexible_participants ? (
-                        <span>
-                          {trip.max_participants} <span className="text-xs text-rose-500">{language === 'he' ? 'גמיש' : 'Flexible'}</span>
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-gray-700">
+                         {(() => {
+                          let total = 0;
+                          (trip.participants || []).forEach(p => {
+                            total += (p.total_people || 1);
+                          });
+                          return total;
+                        })()}/{trip.flexible_participants ? (
+                          <span>
+                            {trip.max_participants} <span className="text-xs text-rose-500">{language === 'he' ? 'גמיש' : 'Flexible'}</span>
+                          </span>
+                        ) : trip.max_participants}
                         </span>
-                      ) : trip.max_participants}
-                      </span>
+                        <span className="text-xs text-gray-500">
+                          {trip.participants?.length || 0} {language === 'he' ? 'משפחות' : 'families'}
+                        </span>
+                      </div>
                     </motion.div>
                     {trip.activity_type === 'cycling' && (
                       <motion.div 
