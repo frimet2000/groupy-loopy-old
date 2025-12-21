@@ -29,8 +29,18 @@ import {
 
 const interests = ['nature', 'history', 'photography', 'birdwatching', 'archaeology', 'geology', 'botany', 'extreme_sports', 'family_friendly', 'romantic'];
 const regions = ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'];
-const parentAgeRanges = ['20-30', '30-40', '40-50', '50-60', '60+'];
-const childrenAgeRanges = ['0-2', '3-6', '7-10', '11-14', '15-18', '18-21', '21+'];
+
+const calculateAge = (birthDate) => {
+  if (!birthDate) return null;
+  const today = new Date();
+  const birth = new Date(birthDate);
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+};
 
 export default function Profile() {
   const { t, language, isRTL } = useLanguage();
@@ -53,8 +63,9 @@ export default function Profile() {
     home_region: '',
     fitness_level: 'moderate',
     vehicle_type: 'none',
-    parent_age_ranges: [],
-    children_age_ranges: [],
+    birth_date: '',
+    spouse_birth_date: '',
+    children_birth_dates: [],
     travels_with_dog: false,
   });
   const [preferences, setPreferences] = useState({
@@ -96,8 +107,9 @@ export default function Profile() {
           home_region: userData.home_region || '',
           fitness_level: userData.fitness_level || 'moderate',
           vehicle_type: userData.vehicle_type || 'none',
-          parent_age_ranges: userData.parent_age_ranges || [],
-          children_age_ranges: userData.children_age_ranges || [],
+          birth_date: userData.birth_date || '',
+          spouse_birth_date: userData.spouse_birth_date || '',
+          children_birth_dates: userData.children_birth_dates || [],
           travels_with_dog: userData.travels_with_dog || false,
         });
         
@@ -410,26 +422,33 @@ export default function Profile() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      {viewingUser.parent_age_ranges && viewingUser.parent_age_ranges.length > 0 && (
-                        <div className="space-y-2">
-                          <Label>{language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : language === 'es' ? 'Rangos de edad de padres' : language === 'fr' ? 'Tranches d\'âge des parents' : language === 'de' ? 'Altersgruppen Eltern' : language === 'it' ? 'Fasce d\'età genitori' : 'Parent Age Ranges'}</Label>
-                          <div className="flex flex-wrap gap-2">
-                            {viewingUser.parent_age_ranges.map(range => (
-                              <Badge key={range} variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
-                                {range}
-                              </Badge>
-                            ))}
-                          </div>
+                      {viewingUser.birth_date && (
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <span className="font-medium">{language === 'he' ? 'גילי:' : language === 'ru' ? 'Мой возраст:' : language === 'es' ? 'Mi edad:' : language === 'fr' ? 'Mon âge :' : language === 'de' ? 'Mein Alter:' : language === 'it' ? 'La mia età:' : 'My age:'}</span>
+                          <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                            {calculateAge(viewingUser.birth_date)} {language === 'he' ? 'שנים' : language === 'ru' ? 'лет' : language === 'es' ? 'años' : language === 'fr' ? 'ans' : language === 'de' ? 'Jahre' : language === 'it' ? 'anni' : 'years'}
+                          </Badge>
                         </div>
                       )}
-                      {viewingUser.children_age_ranges && viewingUser.children_age_ranges.length > 0 && (
+                      {viewingUser.spouse_birth_date && (
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <span className="font-medium">{language === 'he' ? 'גיל בן/בת הזוג:' : language === 'ru' ? 'Возраст партнера:' : language === 'es' ? 'Edad pareja:' : language === 'fr' ? 'Âge conjoint :' : language === 'de' ? 'Alter Partner:' : language === 'it' ? 'Età coniuge:' : 'Spouse age:'}</span>
+                          <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                            {calculateAge(viewingUser.spouse_birth_date)} {language === 'he' ? 'שנים' : language === 'ru' ? 'лет' : language === 'es' ? 'años' : language === 'fr' ? 'ans' : language === 'de' ? 'Jahre' : language === 'it' ? 'anni' : 'years'}
+                          </Badge>
+                        </div>
+                      )}
+                      {viewingUser.children_birth_dates && viewingUser.children_birth_dates.length > 0 && (
                         <div className="space-y-2">
-                          <Label>{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : language === 'es' ? 'Rangos de edad de niños' : language === 'fr' ? 'Tranches d\'âge des enfants' : language === 'de' ? 'Altersgruppen Kinder' : language === 'it' ? 'Fasce d\'età bambini' : 'Children Age Ranges'}</Label>
-                          <div className="flex flex-wrap gap-2">
-                            {viewingUser.children_age_ranges.map(range => (
-                              <Badge key={range} variant="outline" className="bg-pink-50 text-pink-700 border-pink-200">
-                                {range}
-                              </Badge>
+                          <Label>{language === 'he' ? 'ילדים:' : language === 'ru' ? 'Дети:' : language === 'es' ? 'Hijos:' : language === 'fr' ? 'Enfants :' : language === 'de' ? 'Kinder:' : language === 'it' ? 'Bambini:' : 'Children:'}</Label>
+                          <div className="space-y-2">
+                            {viewingUser.children_birth_dates.map((child, idx) => (
+                              <div key={idx} className="flex items-center gap-2">
+                                <span className="text-gray-700">{child.name || `${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}:</span>
+                                <Badge variant="outline" className="bg-pink-50 text-pink-700 border-pink-200">
+                                  {calculateAge(child.birth_date)} {language === 'he' ? 'שנים' : language === 'ru' ? 'лет' : language === 'es' ? 'años' : language === 'fr' ? 'ans' : language === 'de' ? 'Jahre' : language === 'it' ? 'anni' : 'years'}
+                                </Badge>
+                              </div>
                             ))}
                           </div>
                         </div>
@@ -648,45 +667,108 @@ export default function Profile() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-3">
-                  <Label>{language === 'he' ? 'טווחי גילאי הורים' : language === 'ru' ? 'Возраст родителей' : language === 'es' ? 'Rangos de edad de padres' : language === 'fr' ? 'Tranches d\'âge des parents' : language === 'de' ? 'Altersgruppen Eltern' : language === 'it' ? 'Fasce d\'età genitori' : 'Parent Age Ranges'}</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {parentAgeRanges.map(range => (
-                      <Badge
-                        key={range}
-                        variant={formData.parent_age_ranges.includes(range) ? 'default' : 'outline'}
-                        className={`cursor-pointer transition-all py-2 px-3 ${
-                          formData.parent_age_ranges.includes(range) 
-                            ? 'bg-purple-600 hover:bg-purple-700' 
-                            : 'hover:border-purple-500 hover:text-purple-600'
-                        }`}
-                        onClick={() => togglePreference('parent_age_ranges', range)}
-                      >
-                        {range}
-                      </Badge>
-                    ))}
-                  </div>
+                  <Label>{language === 'he' ? 'תאריך הלידה שלי' : language === 'ru' ? 'Моя дата рождения' : language === 'es' ? 'Mi fecha de nacimiento' : language === 'fr' ? 'Ma date de naissance' : language === 'de' ? 'Mein Geburtsdatum' : language === 'it' ? 'La mia data di nascita' : 'My Birth Date'}</Label>
+                  <Input
+                    type="date"
+                    value={formData.birth_date}
+                    onChange={(e) => handleChange('birth_date', e.target.value)}
+                  />
+                  {formData.birth_date && (
+                    <p className="text-sm text-gray-600">
+                      {language === 'he' ? 'גיל:' : language === 'ru' ? 'Возраст:' : language === 'es' ? 'Edad:' : language === 'fr' ? 'Âge :' : language === 'de' ? 'Alter:' : language === 'it' ? 'Età:' : 'Age:'} {calculateAge(formData.birth_date)} {language === 'he' ? 'שנים' : language === 'ru' ? 'лет' : language === 'es' ? 'años' : language === 'fr' ? 'ans' : language === 'de' ? 'Jahre' : language === 'it' ? 'anni' : 'years'}
+                    </p>
+                  )}
                 </div>
 
                 <Separator />
 
                 <div className="space-y-3">
-                  <Label>{language === 'he' ? 'טווחי גילאי ילדים' : language === 'ru' ? 'Возраст детей' : language === 'es' ? 'Rangos de edad de niños' : language === 'fr' ? 'Tranches d\'âge des enfants' : language === 'de' ? 'Altersgruppen Kinder' : language === 'it' ? 'Fasce d\'età bambini' : 'Children Age Ranges'}</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {childrenAgeRanges.map(range => (
-                      <Badge
-                        key={range}
-                        variant={formData.children_age_ranges.includes(range) ? 'default' : 'outline'}
-                        className={`cursor-pointer transition-all py-2 px-3 ${
-                          formData.children_age_ranges.includes(range) 
-                            ? 'bg-pink-600 hover:bg-pink-700' 
-                            : 'hover:border-pink-500 hover:text-pink-600'
-                        }`}
-                        onClick={() => togglePreference('children_age_ranges', range)}
-                      >
-                        {range}
-                      </Badge>
-                    ))}
+                  <Label>{language === 'he' ? 'תאריך לידה של בן/בת זוג' : language === 'ru' ? 'Дата рождения партнера' : language === 'es' ? 'Fecha de nacimiento de pareja' : language === 'fr' ? 'Date de naissance du conjoint' : language === 'de' ? 'Geburtsdatum des Partners' : language === 'it' ? 'Data di nascita del coniuge' : 'Spouse Birth Date'}</Label>
+                  <Input
+                    type="date"
+                    value={formData.spouse_birth_date}
+                    onChange={(e) => handleChange('spouse_birth_date', e.target.value)}
+                  />
+                  {formData.spouse_birth_date && (
+                    <p className="text-sm text-gray-600">
+                      {language === 'he' ? 'גיל:' : language === 'ru' ? 'Возраст:' : language === 'es' ? 'Edad:' : language === 'fr' ? 'Âge :' : language === 'de' ? 'Alter:' : language === 'it' ? 'Età:' : 'Age:'} {calculateAge(formData.spouse_birth_date)} {language === 'he' ? 'שנים' : language === 'ru' ? 'лет' : language === 'es' ? 'años' : language === 'fr' ? 'ans' : language === 'de' ? 'Jahre' : language === 'it' ? 'anni' : 'years'}
+                    </p>
+                  )}
+                </div>
+
+                <Separator />
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label>{language === 'he' ? 'ילדים' : language === 'ru' ? 'Дети' : language === 'es' ? 'Hijos' : language === 'fr' ? 'Enfants' : language === 'de' ? 'Kinder' : language === 'it' ? 'Bambini' : 'Children'}</Label>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const newChild = {
+                          id: Date.now().toString(),
+                          name: '',
+                          birth_date: ''
+                        };
+                        handleChange('children_birth_dates', [...formData.children_birth_dates, newChild]);
+                      }}
+                    >
+                      {language === 'he' ? '+ הוסף ילד' : language === 'ru' ? '+ Добавить ребенка' : language === 'es' ? '+ Agregar hijo' : language === 'fr' ? '+ Ajouter enfant' : language === 'de' ? '+ Kind hinzufügen' : language === 'it' ? '+ Aggiungi bambino' : '+ Add Child'}
+                    </Button>
                   </div>
+                  
+                  {formData.children_birth_dates.map((child, idx) => (
+                    <div key={child.id} className="bg-pink-50 p-4 rounded-lg border border-pink-200 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-sm font-semibold">
+                          {language === 'he' ? `ילד ${idx + 1}` : `Child ${idx + 1}`}
+                        </Label>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            const updated = formData.children_birth_dates.filter((_, i) => i !== idx);
+                            handleChange('children_birth_dates', updated);
+                          }}
+                          className="text-red-600 hover:bg-red-100"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <Label className="text-xs">{language === 'he' ? 'שם' : language === 'ru' ? 'Имя' : language === 'es' ? 'Nombre' : language === 'fr' ? 'Nom' : language === 'de' ? 'Name' : language === 'it' ? 'Nome' : 'Name'}</Label>
+                          <Input
+                            value={child.name || ''}
+                            onChange={(e) => {
+                              const updated = [...formData.children_birth_dates];
+                              updated[idx] = { ...updated[idx], name: e.target.value };
+                              handleChange('children_birth_dates', updated);
+                            }}
+                            placeholder={language === 'he' ? 'שם הילד' : language === 'ru' ? 'Имя ребенка' : language === 'es' ? 'Nombre del niño' : language === 'fr' ? 'Nom de l\'enfant' : language === 'de' ? 'Name des Kindes' : language === 'it' ? 'Nome del bambino' : 'Child name'}
+                            dir={language === 'he' ? 'rtl' : 'ltr'}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">{language === 'he' ? 'תאריך לידה' : language === 'ru' ? 'Дата рождения' : language === 'es' ? 'Fecha de nacimiento' : language === 'fr' ? 'Date de naissance' : language === 'de' ? 'Geburtsdatum' : language === 'it' ? 'Data di nascita' : 'Birth Date'}</Label>
+                          <Input
+                            type="date"
+                            value={child.birth_date || ''}
+                            onChange={(e) => {
+                              const updated = [...formData.children_birth_dates];
+                              updated[idx] = { ...updated[idx], birth_date: e.target.value };
+                              handleChange('children_birth_dates', updated);
+                            }}
+                          />
+                        </div>
+                      </div>
+                      {child.birth_date && (
+                        <p className="text-sm text-pink-700 font-medium">
+                          {language === 'he' ? 'גיל:' : language === 'ru' ? 'Возраст:' : language === 'es' ? 'Edad:' : language === 'fr' ? 'Âge :' : language === 'de' ? 'Alter:' : language === 'it' ? 'Età:' : 'Age:'} {calculateAge(child.birth_date)} {language === 'he' ? 'שנים' : language === 'ru' ? 'лет' : language === 'es' ? 'años' : language === 'fr' ? 'ans' : language === 'de' ? 'Jahre' : language === 'it' ? 'anni' : 'years'}
+                        </p>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -790,8 +872,9 @@ export default function Profile() {
                     home_region: user.home_region || '',
                     fitness_level: user.fitness_level || 'moderate',
                     vehicle_type: user.vehicle_type || 'none',
-                    parent_age_ranges: user.parent_age_ranges || [],
-                    children_age_ranges: user.children_age_ranges || [],
+                    birth_date: user.birth_date || '',
+                    spouse_birth_date: user.spouse_birth_date || '',
+                    children_birth_dates: user.children_birth_dates || [],
                     travels_with_dog: user.travels_with_dog || false,
                   });
                 }}
