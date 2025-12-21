@@ -218,7 +218,8 @@ function LayoutContent({ children, currentPageName }) {
                 <Share2 className="w-5 h-5 text-emerald-600" />
               </Button>
               <LanguageSwitcher />
-              
+              <AccessibilityButton />
+
               {user ? (
                 <>
                   <DropdownMenu>
