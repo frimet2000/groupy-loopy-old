@@ -444,7 +444,10 @@ export default function Profile() {
                           <div className="space-y-2">
                             {viewingUser.children_birth_dates.map((child, idx) => (
                               <div key={idx} className="flex items-center gap-2">
-                                <span className="text-gray-700">{child.name || `${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}:</span>
+                                <span className="text-gray-700">
+                                  {child.name || `${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}
+                                  {child.gender && ` (${child.gender === 'male' ? (language === 'he' ? 'בן' : 'Boy') : child.gender === 'female' ? (language === 'he' ? 'בת' : 'Girl') : (language === 'he' ? 'אחר' : 'Other')})`}:
+                                </span>
                                 <Badge variant="outline" className="bg-pink-50 text-pink-700 border-pink-200">
                                   {calculateAge(child.birth_date)} {language === 'he' ? 'שנים' : language === 'ru' ? 'лет' : language === 'es' ? 'años' : language === 'fr' ? 'ans' : language === 'de' ? 'Jahre' : language === 'it' ? 'anni' : 'years'}
                                 </Badge>
@@ -708,7 +711,8 @@ export default function Profile() {
                         const newChild = {
                           id: Date.now().toString(),
                           name: '',
-                          birth_date: ''
+                          birth_date: '',
+                          gender: ''
                         };
                         handleChange('children_birth_dates', [...formData.children_birth_dates, newChild]);
                       }}
@@ -735,7 +739,7 @@ export default function Profile() {
                           <X className="w-4 h-4" />
                         </Button>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div className="space-y-1">
                           <Label className="text-xs">{language === 'he' ? 'שם' : language === 'ru' ? 'Имя' : language === 'es' ? 'Nombre' : language === 'fr' ? 'Nom' : language === 'de' ? 'Name' : language === 'it' ? 'Nome' : 'Name'}</Label>
                           <Input
@@ -760,6 +764,26 @@ export default function Profile() {
                               handleChange('children_birth_dates', updated);
                             }}
                           />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">{language === 'he' ? 'מין' : language === 'ru' ? 'Пол' : language === 'es' ? 'Género' : language === 'fr' ? 'Sexe' : language === 'de' ? 'Geschlecht' : language === 'it' ? 'Sesso' : 'Gender'}</Label>
+                          <Select 
+                            value={child.gender || ''} 
+                            onValueChange={(value) => {
+                              const updated = [...formData.children_birth_dates];
+                              updated[idx] = { ...updated[idx], gender: value };
+                              handleChange('children_birth_dates', updated);
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder={language === 'he' ? 'בחר' : language === 'ru' ? 'Выбрать' : language === 'es' ? 'Seleccionar' : language === 'fr' ? 'Sélectionner' : language === 'de' ? 'Wählen' : language === 'it' ? 'Seleziona' : 'Select'} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="male">{language === 'he' ? 'זכר' : language === 'ru' ? 'Мальчик' : language === 'es' ? 'Niño' : language === 'fr' ? 'Garçon' : language === 'de' ? 'Junge' : language === 'it' ? 'Maschio' : 'Male'}</SelectItem>
+                              <SelectItem value="female">{language === 'he' ? 'נקבה' : language === 'ru' ? 'Девочка' : language === 'es' ? 'Niña' : language === 'fr' ? 'Fille' : language === 'de' ? 'Mädchen' : language === 'it' ? 'Femmina' : 'Female'}</SelectItem>
+                              <SelectItem value="other">{language === 'he' ? 'אחר' : language === 'ru' ? 'Другое' : language === 'es' ? 'Otro' : language === 'fr' ? 'Autre' : language === 'de' ? 'Andere' : language === 'it' ? 'Altro' : 'Other'}</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
                       {child.birth_date && (
