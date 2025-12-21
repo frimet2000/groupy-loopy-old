@@ -210,82 +210,109 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
               >
                 <div className="flex items-center gap-3 justify-center flex-wrap">
                   {/* Adults */}
-                  {[...Array(family.adults)].map((_, i) => (
-                    <motion.div
-                      key={`adult-${i}`}
-                      initial={{ scale: 0, rotate: -360 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ 
-                        delay: 0.9 + idx * 0.15 + i * 0.1,
-                        type: "spring",
-                        stiffness: 200
-                      }}
-                      whileHover={{ scale: 1.2, rotate: 10 }}
-                      className="relative"
-                    >
-                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-lg">
-                        <User className="w-7 h-7 text-white" />
-                      </div>
+                  {[...Array(family.adults)].map((_, i) => {
+                    const participant = participants[idx];
+                    const parentAge = participant?.parent_age_range || userProfiles[participant?.email]?.parent_age_range;
+
+                    return (
                       <motion.div
-                        className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center"
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
+                        key={`adult-${i}`}
+                        initial={{ scale: 0, rotate: -360 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ 
+                          delay: 0.9 + idx * 0.15 + i * 0.1,
+                          type: "spring",
+                          stiffness: 200
+                        }}
+                        whileHover={{ scale: 1.2, rotate: 10 }}
+                        className="relative"
                       >
-                        <span className="text-white text-xs font-bold">✓</span>
+                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center shadow-lg">
+                          <User className="w-7 h-7 text-white" />
+                        </div>
+                        <motion.div
+                          className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center"
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        >
+                          <span className="text-white text-xs font-bold">✓</span>
+                        </motion.div>
+                        {/* Parent Age Badge - show only on first adult */}
+                        {i === 0 && parentAge && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="absolute -top-1 left-1/2 -translate-x-1/2 bg-white rounded-full px-2 py-0.5 shadow-md border border-indigo-200"
+                          >
+                            <span className="text-[10px] font-bold text-indigo-700">{parentAge}</span>
+                          </motion.div>
+                        )}
                       </motion.div>
-                    </motion.div>
-                  ))}
+                    );
+                  })}
 
                   {/* Children */}
-                  {[...Array(family.children)].map((_, i) => (
-                    <motion.div
-                      key={`child-${i}`}
-                      initial={{ scale: 0, y: -50 }}
-                      animate={{ scale: 1, y: 0 }}
-                      transition={{ 
-                        delay: 1.0 + idx * 0.15 + i * 0.1,
-                        type: "spring",
-                        stiffness: 250,
-                        damping: 10
-                      }}
-                      whileHover={{ scale: 1.3, y: -5 }}
-                      className="relative"
-                    >
-                      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center shadow-lg">
-                        <Baby className="w-6 h-6 text-white" />
-                      </div>
+                  {[...Array(family.children)].map((_, i) => {
+                    const participant = participants[idx];
+                    let childAgeRange = null;
+
+                    // Try to get age from children_details on participant
+                    if (participant?.children_details?.[i]?.age_range) {
+                      childAgeRange = participant.children_details[i].age_range;
+                    } 
+                    // Fallback to user profile
+                    else if (participant?.selected_children?.[i] && userProfiles[participant.email]?.children_age_ranges) {
+                      const childId = participant.selected_children[i];
+                      const child = userProfiles[participant.email].children_age_ranges.find(c => c.id === childId);
+                      if (child?.age_range) {
+                        childAgeRange = child.age_range;
+                      }
+                    }
+
+                    return (
                       <motion.div
-                        animate={{ 
-                          rotate: [0, 10, -10, 0],
-                          scale: [1, 1.1, 1]
-                        }}
+                        key={`child-${i}`}
+                        initial={{ scale: 0, y: -50 }}
+                        animate={{ scale: 1, y: 0 }}
                         transition={{ 
-                          duration: 2,
-                          repeat: Infinity,
-                          delay: i * 0.3
+                          delay: 1.0 + idx * 0.15 + i * 0.1,
+                          type: "spring",
+                          stiffness: 250,
+                          damping: 10
                         }}
-                        className="absolute -top-1 -right-1 text-xl"
+                        whileHover={{ scale: 1.3, y: -5 }}
+                        className="relative"
                       >
-                        ✨
+                        <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center shadow-lg">
+                          <Baby className="w-6 h-6 text-white" />
+                        </div>
+                        <motion.div
+                          animate={{ 
+                            rotate: [0, 10, -10, 0],
+                            scale: [1, 1.1, 1]
+                          }}
+                          transition={{ 
+                            duration: 2,
+                            repeat: Infinity,
+                            delay: i * 0.3
+                          }}
+                          className="absolute -top-1 -right-1 text-xl"
+                        >
+                          ✨
+                        </motion.div>
+                        {/* Age Badge */}
+                        {childAgeRange && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-white rounded-full px-2 py-0.5 shadow-md border border-pink-200"
+                          >
+                            <span className="text-[10px] font-bold text-pink-700">{childAgeRange}</span>
+                          </motion.div>
+                        )}
                       </motion.div>
-                      {/* Age Badge */}
-                      {(() => {
-                        const child = participants[idx]?.children_details?.[i];
-                        if (child && child.age_range) {
-                          return (
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-white rounded-full px-2 py-0.5 shadow-md border border-pink-200"
-                            >
-                              <span className="text-[10px] font-bold text-pink-700">{child.age_range}</span>
-                            </motion.div>
-                          );
-                        }
-                        return null;
-                      })()}
-                    </motion.div>
-                  ))}
+                    );
+                  })}
 
                   {/* Pets */}
                   {family.pets > 0 && (
