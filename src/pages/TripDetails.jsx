@@ -2090,7 +2090,7 @@ export default function TripDetails() {
                     {/* Participants Table */}
                     <div className="space-y-2">
                       <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                        <span>{language === 'he' ? 'משתתפים' : 'Participants'} ({trip.participants?.filter(p => p.email !== trip.organizer_email).length || 0})</span>
+                        <span>{language === 'he' ? 'כל המשתתפים' : 'All Participants'} ({trip.participants?.length || 0})</span>
                         <span className="text-xs text-gray-500">
                           ({(() => {
                             let total = 0;
@@ -2105,7 +2105,7 @@ export default function TripDetails() {
                         </span>
                       </h3>
                       
-                      {trip.participants?.filter(p => p.email !== trip.organizer_email).length > 0 ? (
+                      {trip.participants?.length > 0 ? (
                         <div className="border rounded-lg overflow-hidden">
                           <div className="overflow-x-auto">
                             <table className="w-full">
@@ -2140,7 +2140,7 @@ export default function TripDetails() {
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-gray-200">
-                                {trip.participants.filter(p => p.email !== trip.organizer_email).map((participant, index) => {
+                                {trip.participants.map((participant, index) => {
                                  const participantProfile = userProfiles[participant.email];
 
                                  console.log(`\n\n=== RENDERING PARTICIPANT ${index + 1} ===`);
@@ -2203,20 +2203,29 @@ export default function TripDetails() {
                                  console.log('Total People:', totalPeople);
                                  console.log('===================');
                                   
+                                  const isOrganizerRow = participant.email === trip.organizer_email;
+
                                   return (
-                                    <tr key={index} className="hover:bg-gray-50 transition-colors">
-                                      <td className="px-4 py-3">
-                                        <div className="flex items-center gap-3">
-                                          <Avatar className="h-9 w-9">
-                                            <AvatarFallback className="bg-blue-100 text-blue-700">
-                                              {(participantProfile?.name || participant.name)?.charAt(0) || 'P'}
-                                            </AvatarFallback>
-                                          </Avatar>
-                                          <p className="font-medium text-sm" dir={language === 'he' ? 'rtl' : 'ltr'}>
-                                            {participantProfile?.name || participant.name}
-                                          </p>
-                                        </div>
-                                      </td>
+                                   <tr key={index} className={`hover:bg-gray-50 transition-colors ${isOrganizerRow ? 'bg-emerald-50/50' : ''}`}>
+                                     <td className="px-4 py-3">
+                                       <div className="flex items-center gap-3">
+                                         <Avatar className="h-9 w-9">
+                                           <AvatarFallback className={isOrganizerRow ? 'bg-emerald-600 text-white' : 'bg-blue-100 text-blue-700'}>
+                                             {(participantProfile?.name || participant.name)?.charAt(0) || 'P'}
+                                           </AvatarFallback>
+                                         </Avatar>
+                                         <div className="flex-1">
+                                           <p className="font-medium text-sm" dir={language === 'he' ? 'rtl' : 'ltr'}>
+                                             {participantProfile?.name || participant.name}
+                                           </p>
+                                           {isOrganizerRow && (
+                                             <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 text-xs mt-0.5">
+                                               {language === 'he' ? 'מארגן' : 'Organizer'}
+                                             </Badge>
+                                           )}
+                                         </div>
+                                       </div>
+                                     </td>
                                       <td className="px-4 py-3">
                                         <Badge variant="secondary" className="bg-indigo-100 text-indigo-700">
                                           {adultsCount}
@@ -2333,9 +2342,9 @@ export default function TripDetails() {
                           </div>
                         </div>
                       ) : (
-                        <div className="text-center py-8 text-gray-500">
-                          {language === 'he' ? 'אין משתתפים נוספים עדיין' : 'No other participants yet'}
-                        </div>
+                      <div className="text-center py-8 text-gray-500">
+                        {language === 'he' ? 'אין משתתפים עדיין' : 'No participants yet'}
+                      </div>
                       )}
                     </div>
                   </div>
