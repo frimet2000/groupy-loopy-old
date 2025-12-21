@@ -1495,7 +1495,7 @@ export default function TripDetails() {
                           </span>
                         ) : trip.max_participants}
                         </span>
-                        <span className="text-xs text-rose-600 font-semibold">
+                        <span className="text-xs text-white/90 font-bold">
                           {trip.participants?.length || 0} {language === 'he' ? 'משפחות' : 'families'}
                         </span>
                       </div>
