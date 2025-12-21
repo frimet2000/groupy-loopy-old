@@ -92,6 +92,7 @@ export default function CreateTrip() {
     guide_name: '',
     guide_topic: '',
     max_participants: 10,
+    flexible_participants: false,
     image_url: '',
     approval_required: false,
     trek_days: [],
