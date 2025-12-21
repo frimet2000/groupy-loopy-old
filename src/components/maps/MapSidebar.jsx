@@ -52,7 +52,7 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
   const [editDialog, setEditDialog] = useState(false);
   const [editingWaypoint, setEditingWaypoint] = useState(null);
   const [waypointForm, setWaypointForm] = useState({ name: '', description: '', latitude: 0, longitude: 0 });
-  const [showMap, setShowMap] = useState(false);
+  const [showMap, setShowMap] = useState(true);
 
   const waypoints = trip.waypoints || [];
 
@@ -122,11 +122,10 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
       <Card className="border-0 shadow-lg overflow-hidden">
         <CardContent className="p-4 space-y-4">
           {/* Interactive Map Section */}
-          {showMap ? (
-            <Card className="overflow-hidden border-2 border-emerald-200">
-              <div className="relative">
-                <div className="h-[400px] w-full">
-                  <MapContainer
+          <Card className="overflow-hidden border-2 border-emerald-200">
+            <div className="relative">
+              <div className="h-[400px] w-full">
+                <MapContainer
                     center={[trip.latitude || 31.5, trip.longitude || 34.75]}
                     zoom={13}
                     style={{ height: '100%', width: '100%' }}
@@ -228,27 +227,11 @@ export default function MapSidebar({ trip, isOrganizer, onUpdate }) {
                           ? '💡 לחץ על המפה להוספת נקודת ציון' 
                           : '💡 Click on map to add waypoint'}
                       </span>
-                      <button
-                        onClick={() => setShowMap(false)}
-                        className="bg-white/20 hover:bg-white/30 rounded p-1"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
                     </div>
                   </div>
                 )}
               </div>
             </Card>
-          ) : (
-            <Button
-              onClick={() => setShowMap(true)}
-              className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 gap-2 shadow-lg"
-              size="lg"
-            >
-              <MapPin className="w-5 h-5" />
-              {language === 'he' ? 'הצג מפה אינטראקטיבית' : 'Show Interactive Map'}
-            </Button>
-          )}
 
           <ScrollArea className="h-[300px]">
             <div className="space-y-2">
