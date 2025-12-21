@@ -101,6 +101,14 @@ export default function TripDetails() {
   const [showAddOrganizerDialog, setShowAddOrganizerDialog] = useState(false);
   const [newOrganizerEmail, setNewOrganizerEmail] = useState('');
   const [selectedEquipmentDay, setSelectedEquipmentDay] = useState(0);
+  const [familyMembers, setFamilyMembers] = useState({
+    me: true,
+    spouse: false,
+    children: false,
+    pets: false,
+    other: false
+  });
+  const [otherMemberName, setOtherMemberName] = useState('');
   
   const accessibilityTypes = ['wheelchair', 'visual_impairment', 'hearing_impairment', 'mobility_aid', 'stroller_friendly', 'elderly_friendly'];
 
@@ -198,6 +206,18 @@ export default function TripDetails() {
         throw new Error(language === 'he' ? 'נא לבחור לפחות יום אחד' : 'Please select at least one day');
       }
 
+      // Build family members info
+      const familyInfo = [];
+      if (familyMembers.spouse) familyInfo.push(language === 'he' ? 'בן/בת זוג' : 'Spouse');
+      if (familyMembers.children) familyInfo.push(language === 'he' ? 'ילדים' : 'Children');
+      if (familyMembers.pets) familyInfo.push(language === 'he' ? 'בעלי חיים' : 'Pets');
+      if (familyMembers.other && otherMemberName) familyInfo.push(otherMemberName);
+      
+      const familyMessage = familyInfo.length > 0 
+        ? `\n${language === 'he' ? 'מצטרפים:' : 'Joining:'} ${familyInfo.join(', ')}`
+        : '';
+      const fullMessage = joinMessage + familyMessage;
+
       // If approval_required is false, join directly
       if (trip.approval_required === false) {
         const updatedParticipants = [
@@ -208,7 +228,9 @@ export default function TripDetails() {
             joined_at: new Date().toISOString(),
             accessibility_needs: accessibilityNeeds,
             waiver_accepted: true,
-            waiver_timestamp: new Date().toISOString()
+            waiver_timestamp: new Date().toISOString(),
+            family_members: familyMembers,
+            other_member_name: otherMemberName
           }
         ];
 
@@ -241,11 +263,13 @@ export default function TripDetails() {
           email: user.email,
           name: userName,
           requested_at: new Date().toISOString(),
-          message: joinMessage,
+          message: fullMessage,
           accessibility_needs: accessibilityNeeds,
           waiver_accepted: false,
           waiver_timestamp: null,
-          selected_days: trip.activity_type === 'trek' ? selectedTrekDays : []
+          selected_days: trip.activity_type === 'trek' ? selectedTrekDays : [],
+          family_members: familyMembers,
+          other_member_name: otherMemberName
         }
       ];
       
@@ -284,6 +308,8 @@ export default function TripDetails() {
       setJoinMessage('');
       setAccessibilityNeeds([]);
       setSelectedTrekDays([]);
+      setFamilyMembers({ me: true, spouse: false, children: false, pets: false, other: false });
+      setOtherMemberName('');
       setShowJoinDialog(false);
       
       if (result?.autoJoined) {
@@ -2057,6 +2083,92 @@ export default function TripDetails() {
               </div>
             </div>
 
+            {/* Family Members Selection */}
+            <div className="space-y-3">
+              <Label className="text-base font-semibold">
+                {language === 'he' ? 'מי מצטרף לטיול?' : 'Who is joining the trip?'}
+              </Label>
+              <div className="grid grid-cols-1 gap-3 bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center gap-3 p-3 bg-white rounded-lg border-2 border-emerald-200">
+                  <Checkbox
+                    id="me"
+                    checked={familyMembers.me}
+                    disabled
+                    className="data-[state=checked]:bg-emerald-600"
+                  />
+                  <label htmlFor="me" className="flex-1 font-medium cursor-not-allowed opacity-70">
+                    {language === 'he' ? 'אני' : 'Me'}
+                  </label>
+                </div>
+                
+                <div className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
+                  <Checkbox
+                    id="spouse"
+                    checked={familyMembers.spouse}
+                    onCheckedChange={(checked) => setFamilyMembers({...familyMembers, spouse: checked})}
+                    className="data-[state=checked]:bg-emerald-600"
+                  />
+                  <label htmlFor="spouse" className="flex-1 font-medium cursor-pointer">
+                    {language === 'he' ? 'בן/בת זוג' : 'Spouse/Partner'}
+                  </label>
+                </div>
+
+                <div className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
+                  <Checkbox
+                    id="children"
+                    checked={familyMembers.children}
+                    onCheckedChange={(checked) => setFamilyMembers({...familyMembers, children: checked})}
+                    className="data-[state=checked]:bg-emerald-600"
+                  />
+                  <label htmlFor="children" className="flex-1 font-medium cursor-pointer">
+                    {language === 'he' ? 'ילדים' : 'Children'}
+                  </label>
+                </div>
+
+                {trip.pets_allowed && (
+                  <div className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
+                    <Checkbox
+                      id="pets"
+                      checked={familyMembers.pets}
+                      onCheckedChange={(checked) => setFamilyMembers({...familyMembers, pets: checked})}
+                      className="data-[state=checked]:bg-amber-600"
+                    />
+                    <label htmlFor="pets" className="flex-1 font-medium cursor-pointer flex items-center gap-2">
+                      <Dog className="w-4 h-4" />
+                      {language === 'he' ? 'בעלי חיים' : 'Pets'}
+                    </label>
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
+                    <Checkbox
+                      id="other"
+                      checked={familyMembers.other}
+                      onCheckedChange={(checked) => {
+                        setFamilyMembers({...familyMembers, other: checked});
+                        if (!checked) setOtherMemberName('');
+                      }}
+                      className="data-[state=checked]:bg-purple-600"
+                    />
+                    <label htmlFor="other" className="flex-1 font-medium cursor-pointer">
+                      {language === 'he' ? 'נוסף' : 'Other'}
+                    </label>
+                  </div>
+                  
+                  {familyMembers.other && (
+                    <Input
+                      value={otherMemberName}
+                      onChange={(e) => setOtherMemberName(e.target.value)}
+                      placeholder={language === 'he' ? 'שם האדם/ים הנוסף/ים' : 'Name of other person(s)'}
+                      dir={language === 'he' ? 'rtl' : 'ltr'}
+                      className="mr-8"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+
             {/* Terms Link */}
             <div className="bg-blue-50 p-3 rounded-lg text-center border border-blue-200">
               <p className="text-xs text-gray-700 mb-2">
@@ -2081,6 +2193,8 @@ export default function TripDetails() {
               setJoinMessage('');
               setAccessibilityNeeds([]);
               setSelectedTrekDays([]);
+              setFamilyMembers({ me: true, spouse: false, children: false, pets: false, other: false });
+              setOtherMemberName('');
             }}
           >
             {t('cancel')}
