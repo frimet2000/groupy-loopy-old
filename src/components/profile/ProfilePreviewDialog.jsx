@@ -21,6 +21,15 @@ const calculateAge = (birthDate) => {
   return age;
 };
 
+const toAdultAgeRange = (age) => {
+  if (age == null || isNaN(age)) return null;
+  if (age < 30) return '20-30';
+  if (age < 40) return '30-40';
+  if (age < 50) return '40-50';
+  if (age < 60) return '50-60';
+  return '60+';
+};
+
 export default function ProfilePreviewDialog({ open, onOpenChange, userEmail }) {
   const { t, language } = useLanguage();
   const [userProfile, setUserProfile] = useState(null);
@@ -153,7 +162,7 @@ export default function ProfilePreviewDialog({ open, onOpenChange, userEmail }) 
                           {language === 'he' ? 'גילי:' : 'My age:'}
                         </span>
                         <Badge variant="outline" className="bg-purple-50 text-purple-700">
-                          {calculateAge(userProfile.birth_date)} {language === 'he' ? 'שנים' : 'years'}
+                          {toAdultAgeRange(calculateAge(userProfile.birth_date))}
                         </Badge>
                       </div>
                     )}
@@ -163,7 +172,7 @@ export default function ProfilePreviewDialog({ open, onOpenChange, userEmail }) 
                           {language === 'he' ? 'גיל בן/בת הזוג:' : 'Spouse age:'}
                         </span>
                         <Badge variant="outline" className="bg-purple-50 text-purple-700">
-                          {calculateAge(userProfile.spouse_birth_date)} {language === 'he' ? 'שנים' : 'years'}
+                          {toAdultAgeRange(calculateAge(userProfile.spouse_birth_date))}
                         </Badge>
                       </div>
                     )}
