@@ -240,7 +240,7 @@ export default function TrekDaysDisplay({ trip, selectedDay: externalSelectedDay
 
               {/* Day Equipment */}
               {day.equipment && day.equipment.length > 0 && (
-                <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-200">
+                <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-200" dir={isRTL ? 'rtl' : 'ltr'}>
                   <h4 className="font-semibold text-indigo-900 mb-3 flex items-center gap-2">
                     <Backpack className="w-4 h-4" />
                     {language === 'he' ? 'ציוד ליום זה' : language === 'ru' ? 'Снаряжение на день' : language === 'es' ? 'Equipo del día' : language === 'fr' ? 'Équipement du jour' : language === 'de' ? 'Ausrüstung des Tages' : language === 'it' ? 'Attrezzatura del giorno' : 'Equipment for this day'}
