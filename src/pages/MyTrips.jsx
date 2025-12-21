@@ -142,7 +142,7 @@ export default function MyTrips() {
               </TabsTrigger>
               <TabsTrigger 
                 value="saved" 
-                className="gap-1.5 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700 flex-col py-3 text-xs sm:text-sm min-h-[56px] touch-manipulation relative"
+                className="gap-1.5 data-[state=active]:bg-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:border-2 data-[state=active]:border-amber-700 flex-col py-3 text-xs sm:text-sm min-h-[56px] touch-manipulation relative rounded-lg font-bold transition-all"
               >
                 <Bookmark className="w-5 h-5" />
                 <span className="font-medium">{language === 'he' ? 'שמורים' : language === 'ru' ? 'Избранное' : language === 'es' ? 'Guardados' : language === 'fr' ? 'Sauvegardés' : language === 'de' ? 'Gespeichert' : language === 'it' ? 'Salvati' : 'Saved'}</span>
