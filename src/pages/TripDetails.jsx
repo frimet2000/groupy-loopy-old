@@ -2030,7 +2030,7 @@ export default function TripDetails() {
 
       {/* Join Request Dialog */}
       <Dialog open={showJoinDialog} onOpenChange={setShowJoinDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl max-h-[85vh]">
           <DialogHeader>
             <DialogTitle>
               {language === 'he' ? 'בקשה להצטרפות לטיול' : language === 'ru' ? 'Запрос на присоединение к поездке' : language === 'es' ? 'Solicitud para unirse al viaje' : language === 'fr' ? 'Demande pour rejoindre le voyage' : language === 'de' ? 'Anfrage zur Teilnahme an der Reise' : language === 'it' ? 'Richiesta di unirsi al viaggio' : 'Request to Join Trip'}
@@ -2047,6 +2047,7 @@ export default function TripDetails() {
             </DialogDescription>
           </DialogHeader>
           
+          <ScrollArea className="max-h-[55vh] pr-4">
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>
@@ -2223,13 +2224,14 @@ export default function TripDetails() {
               >
                 {language === 'he' ? 'תנאי השימוש וכתב הויתור' : language === 'ru' ? 'Условия и отказ' : language === 'es' ? 'Términos y exención' : language === 'fr' ? 'Conditions et décharge' : language === 'de' ? 'Bedingungen und Haftungsausschluss' : language === 'it' ? 'Termini e liberatoria' : 'Terms and Waiver'}
               </Button>
-            </div>
-          </div>
+              </div>
+              </div>
+              </ScrollArea>
 
-          <DialogFooter>
-          <Button 
-            variant="outline" 
-            onClick={() => {
+              <DialogFooter>
+              <Button 
+              variant="outline" 
+              onClick={() => {
               setShowJoinDialog(false);
               setJoinMessage('');
               setAccessibilityNeeds([]);
@@ -2237,28 +2239,28 @@ export default function TripDetails() {
               setFamilyMembers({ me: true, spouse: false, pets: false, other: false });
               setSelectedChildren([]);
               setOtherMemberName('');
-            }}
-          >
-            {t('cancel')}
-          </Button>
-          <Button 
-            onClick={handleJoinClick}
-            disabled={joinMutation.isLoading || (trip.activity_type === 'trek' && selectedTrekDays.length === 0)}
-            className="bg-emerald-600 hover:bg-emerald-700"
-          >
-            {joinMutation.isLoading ? (
+              }}
+              >
+              {t('cancel')}
+              </Button>
+              <Button 
+              onClick={handleJoinClick}
+              disabled={joinMutation.isLoading || (trip.activity_type === 'trek' && selectedTrekDays.length === 0)}
+              className="bg-emerald-600 hover:bg-emerald-700"
+              >
+              {joinMutation.isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin mr-2" />
-            ) : (
+              ) : (
               <Check className="w-4 h-4 mr-2" />
-            )}
-            {trip.approval_required === false
+              )}
+              {trip.approval_required === false
               ? (language === 'he' ? 'הצטרף עכשיו' : language === 'ru' ? 'Присоединиться' : language === 'es' ? 'Unirse ahora' : language === 'fr' ? 'Rejoindre maintenant' : language === 'de' ? 'Jetzt beitreten' : language === 'it' ? 'Unisciti ora' : 'Join Now')
               : (language === 'he' ? 'שלח בקשה' : language === 'ru' ? 'Отправить запрос' : language === 'es' ? 'Enviar solicitud' : language === 'fr' ? 'Envoyer demande' : language === 'de' ? 'Anfrage senden' : language === 'it' ? 'Invia richiesta' : 'Send Request')
-            }
-          </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+              }
+              </Button>
+              </DialogFooter>
+              </DialogContent>
+              </Dialog>
 
       {/* Join Request Notification Dialog */}
       {trip && trip.pending_requests && trip.pending_requests.length > 0 && (
