@@ -2083,12 +2083,12 @@ export default function TripDetails() {
                                       </td>
                                       <td className="px-4 py-3">
                                         {childrenCount > 0 ? (
-                                          <div className="group relative">
+                                          <div className="group relative inline-block">
                                             <Badge variant="secondary" className="bg-pink-100 text-pink-700 cursor-help">
                                               {childrenCount}
                                             </Badge>
-                                            {/* Tooltip on hover */}
-                                            <div className="absolute z-50 hidden group-hover:block bg-gray-900 text-white text-xs rounded-lg p-3 min-w-[180px] shadow-xl -top-2 left-full ml-2">
+                                            {/* Tooltip on hover - appears above */}
+                                            <div className="absolute z-50 hidden group-hover:block bg-gray-900 text-white text-xs rounded-lg p-3 min-w-[180px] shadow-xl bottom-full left-1/2 -translate-x-1/2 mb-2">
                                               <div className="space-y-1.5">
                                                 {participant.selected_children?.map((childId, idx) => {
                                                   const child = participantProfile?.children_birth_dates?.find(c => c.id === childId);
@@ -2109,7 +2109,8 @@ export default function TripDetails() {
                                                   );
                                                 })}
                                               </div>
-                                              <div className="absolute top-3 -left-1 w-2 h-2 bg-gray-900 rotate-45"></div>
+                                              {/* Arrow pointing down */}
+                                              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
                                             </div>
                                           </div>
                                         ) : (
