@@ -1513,13 +1513,13 @@ export default function TripDetails() {
                     )}
                     {trip.activity_type === 'offroad' && (
                       <motion.div 
-                        className="flex items-center gap-3 bg-gradient-to-br from-orange-50 to-red-50 px-4 py-3 rounded-xl border-2 border-orange-100 shadow-md hover:shadow-xl transition-all"
-                        whileHover={{ scale: 1.05, y: -2 }}
+                        className="flex items-center gap-3 bg-orange-600 px-5 py-3 rounded-xl shadow-2xl hover:shadow-[0_8px_30px_rgba(234,88,12,0.5)] transition-all border-2 border-orange-700"
+                        whileHover={{ scale: 1.05, y: -3 }}
                       >
-                        <div className="p-2 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg shadow-lg">
+                        <div className="p-2 bg-white/20 rounded-lg shadow-lg backdrop-blur-sm">
                           <Truck className="w-5 h-5 text-white" />
                         </div>
-                        <span className="font-bold text-gray-800">{t(trip.offroad_vehicle_type || 'offroad')}</span>
+                        <span className="font-bold text-white text-lg">{t(trip.offroad_vehicle_type || 'offroad')}</span>
                       </motion.div>
                     )}
                   </div>
