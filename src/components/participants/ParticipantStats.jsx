@@ -316,7 +316,22 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
                   className="mt-3 text-center"
                 >
                   <Badge variant="secondary" className="bg-gray-200 text-gray-700 font-bold">
-                    {language === 'he' ? 'משפחה' : 'Family'} {idx + 1}: {family.adults + family.children + family.others} {language === 'he' ? 'אנשים' : 'people'}
+                    {(() => {
+                      const participant = participants[idx];
+                      const participantProfile = userProfiles[participant?.email];
+                      const participantName = participantProfile?.name || participant?.name;
+                      const totalInFamily = family.adults + family.children + family.others;
+                      
+                      if (totalInFamily === 1) {
+                        return language === 'he' 
+                          ? `משתתף: ${participantName}`
+                          : `Participant: ${participantName}`;
+                      } else {
+                        return language === 'he'
+                          ? `המשפחה של ${participantName}: ${totalInFamily} אנשים`
+                          : `${participantName}'s Family: ${totalInFamily} people`;
+                      }
+                    })()}
                   </Badge>
                 </motion.div>
               </motion.div>
