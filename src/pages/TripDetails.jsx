@@ -1964,8 +1964,8 @@ export default function TripDetails() {
             </TabsContent>
 
             <TabsContent value="participants" className="mt-0">
-              <div className="space-y-6">
-              {/* Participant Statistics */}
+              <div className="space-y-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
+              {/* Participant Statistics - visible to everyone */}
               <ParticipantStats 
                 trip={trip}
                 userProfiles={userProfiles}
