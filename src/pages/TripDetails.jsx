@@ -2084,41 +2084,53 @@ export default function TripDetails() {
                                       </td>
                                       <td className="px-4 py-3">
                                         {childrenCount > 0 ? (
-                                          <Tooltip delayDuration={200}>
-                                            <TooltipTrigger asChild>
-                                              <div className="cursor-pointer inline-flex">
-                                                <Badge variant="secondary" className="bg-pink-100 text-pink-700 hover:bg-pink-200 transition-colors">
-                                                  {childrenCount}
-                                                </Badge>
-                                              </div>
-                                            </TooltipTrigger>
-                                            <TooltipContent className="bg-white border-2 border-pink-300 shadow-xl p-4" side="top">
-                                              <div className="space-y-2">
-                                                <p className="font-bold text-pink-700 mb-2 border-b border-pink-200 pb-1">
-                                                  {language === 'he' ? 'פרטי הילדים' : 'Children Details'}
-                                                </p>
-                                                {participant.selected_children?.map((childId, idx) => {
-                                                  const child = participantProfile?.children_birth_dates?.find(c => c.id === childId);
-                                                  if (!child) return null;
-                                                  const age = calculateAge(child.birth_date);
-                                                  const genderLabel = child.gender === 'male' 
-                                                    ? (language === 'he' ? 'בן' : 'Boy')
-                                                    : child.gender === 'female'
-                                                    ? (language === 'he' ? 'בת' : 'Girl')
-                                                    : '';
-                                                  return (
-                                                    <div key={idx} className="flex items-center gap-2 p-2 bg-pink-50 rounded-lg">
-                                                      <span className={`w-3 h-3 rounded-full ${child.gender === 'male' ? 'bg-blue-500' : child.gender === 'female' ? 'bg-pink-500' : 'bg-gray-400'}`}></span>
-                                                      <span className="font-semibold text-gray-800">{child.name || (language === 'he' ? 'ילד' : 'Child')}</span>
-                                                      <span className="text-gray-600 text-sm">
-                                                        {age && `${age} ${language === 'he' ? 'שנים' : 'years'}`} {genderLabel && `• ${genderLabel}`}
-                                                      </span>
-                                                    </div>
-                                                  );
-                                                })}
-                                              </div>
-                                            </TooltipContent>
-                                          </Tooltip>
+                                          <TooltipProvider>
+                                            <Tooltip delayDuration={100}>
+                                              <TooltipTrigger asChild>
+                                                <button className="cursor-pointer inline-flex focus:outline-none">
+                                                  <Badge variant="secondary" className="bg-pink-100 text-pink-700 hover:bg-pink-200 transition-colors">
+                                                    {childrenCount}
+                                                  </Badge>
+                                                </button>
+                                              </TooltipTrigger>
+                                              <TooltipContent className="bg-white border-2 border-pink-300 shadow-xl p-4 max-w-xs" side="top">
+                                                <div className="space-y-2">
+                                                  <p className="font-bold text-pink-700 mb-2 border-b border-pink-200 pb-1">
+                                                    {language === 'he' ? 'פרטי הילדים' : 'Children Details'}
+                                                  </p>
+                                                  {childrenDetails.length > 0 ? (
+                                                    childrenDetails.map((detail, idx) => {
+                                                      const child = participantProfile?.children_birth_dates?.find(c => c.id === participant.selected_children[idx]);
+                                                      if (!child) return (
+                                                        <div key={idx} className="p-2 bg-pink-50 rounded-lg text-sm text-gray-700">
+                                                          {detail}
+                                                        </div>
+                                                      );
+                                                      const age = calculateAge(child.birth_date);
+                                                      const genderLabel = child.gender === 'male' 
+                                                        ? (language === 'he' ? 'בן' : 'Boy')
+                                                        : child.gender === 'female'
+                                                        ? (language === 'he' ? 'בת' : 'Girl')
+                                                        : '';
+                                                      return (
+                                                        <div key={idx} className="flex items-center gap-2 p-2 bg-pink-50 rounded-lg">
+                                                          <span className={`w-3 h-3 rounded-full flex-shrink-0 ${child.gender === 'male' ? 'bg-blue-500' : child.gender === 'female' ? 'bg-pink-500' : 'bg-gray-400'}`}></span>
+                                                          <div className="flex-1">
+                                                            <p className="font-semibold text-gray-800 text-sm">{child.name || (language === 'he' ? 'ילד' : 'Child')}</p>
+                                                            <p className="text-gray-600 text-xs">
+                                                              {age && `${age} ${language === 'he' ? 'שנים' : 'years'}`} {genderLabel && `• ${genderLabel}`}
+                                                            </p>
+                                                          </div>
+                                                        </div>
+                                                      );
+                                                    })
+                                                  ) : (
+                                                    <p className="text-sm text-gray-500">{language === 'he' ? 'אין פרטי ילדים זמינים' : 'No children details available'}</p>
+                                                  )}
+                                                </div>
+                                              </TooltipContent>
+                                            </Tooltip>
+                                          </TooltipProvider>
                                         ) : (
                                           <span className="text-xs text-gray-400">-</span>
                                         )}
@@ -2186,9 +2198,9 @@ export default function TripDetails() {
                       )}
                     </div>
                   </div>
-                  </TooltipProvider>
                 </CardContent>
               </Card>
+              </div>
             </TabsContent>
 
             <TabsContent value="map" className="mt-0">
