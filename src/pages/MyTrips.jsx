@@ -69,12 +69,12 @@ export default function MyTrips() {
   }, [allTrips, user]);
 
   const EmptyState = ({ icon: Icon, title, description }) => (
-    <div className="text-center py-16 sm:py-20 bg-white rounded-2xl border border-gray-100 shadow-sm">
+    <div className="text-center py-16 sm:py-20 bg-white rounded-2xl border-2 border-gray-200 shadow-2xl">
       <Icon className="w-16 h-16 sm:w-20 sm:h-20 text-gray-300 mx-auto mb-4" />
       <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 px-4">{title}</h3>
       <p className="text-sm sm:text-base text-gray-500 mb-6 sm:mb-8 px-4 leading-relaxed">{description}</p>
       <Link to={createPageUrl('CreateTrip')}>
-        <Button className="bg-emerald-600 hover:bg-emerald-700 h-12 px-8 text-base font-semibold touch-manipulation min-h-[44px]">
+        <Button className="bg-emerald-600 hover:bg-emerald-700 h-12 px-8 text-base font-semibold touch-manipulation min-h-[44px] shadow-xl border-2 border-emerald-700 hover:border-emerald-800 transition-all">
           <Plus className="w-5 h-5 mr-2" />
           {t('createTrip')}
         </Button>
