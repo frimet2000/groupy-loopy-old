@@ -1029,8 +1029,9 @@ export default function TripDetails() {
           transition={{ duration: 0.5 }}
         >
           {/* Action Card */}
-          <Card className="mb-6 shadow-lg border-0">
-            <CardContent className="p-6">
+          <Card className="mb-6 shadow-2xl border-0 bg-gradient-to-br from-white via-gray-50 to-white overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-teal-500/5 pointer-events-none" />
+            <CardContent className="p-6 sm:p-8 relative">
               {isEditing ? (
                 <div className="space-y-4">
                   <div className="space-y-2">
