@@ -2535,13 +2535,15 @@ export default function TripDetails() {
                     {language === 'he' ? 'ילדים' : 'Children'}
                   </Label>
                     {user.children_age_ranges.map((child, idx) => {
-                      const refId = child.id || `idx_${idx}`;
+                      const refId = child?.id || `idx_${idx}`;
+                      console.log(`Rendering child ${idx}:`, child, 'refId:', refId);
                       return (
                         <div key={refId} className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
                           <Checkbox
                             id={`child-${refId}`}
                             checked={selectedChildren.includes(refId)}
                             onCheckedChange={(checked) => {
+                              console.log('Checkbox changed:', refId, checked);
                               setSelectedChildren(prev => 
                                 checked 
                                   ? [...prev, refId]
@@ -2551,9 +2553,9 @@ export default function TripDetails() {
                             className="data-[state=checked]:bg-pink-600"
                           />
                           <label htmlFor={`child-${refId}`} className="flex-1 font-medium cursor-pointer">
-                            {child.name || `${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}
-                            {child.age_range && (
-                              <Badge variant="outline" className="mr-2 bg-pink-50 text-pink-700">
+                            {child?.name || `${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}
+                            {child?.age_range && (
+                              <Badge variant="outline" className="ml-2 bg-pink-50 text-pink-700">
                                 {child.age_range}
                               </Badge>
                             )}
