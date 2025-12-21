@@ -2062,9 +2062,14 @@ export default function TripDetails() {
                                 {trip.participants.filter(p => p.email !== trip.organizer_email).map((participant, index) => {
                                  const participantProfile = userProfiles[participant.email];
 
-                                 console.log(`=== PARTICIPANT ${index + 1} ===`);
-                                 console.log('Participant FULL OBJECT:', JSON.stringify(participant, null, 2));
-                                 console.log('Profile:', participantProfile);
+                                 console.log(`\n\n=== RENDERING PARTICIPANT ${index + 1} ===`);
+                                 console.log('Raw participant object:');
+                                 console.dir(participant);
+                                 console.log('\nParticipant.family_members:', participant.family_members);
+                                 console.log('Participant.selected_children:', participant.selected_children);
+                                 console.log('Participant.other_member_name:', participant.other_member_name);
+                                 console.log('\nProfile data:');
+                                 console.dir(participantProfile);
 
                                  // Calculate breakdown
                                  let adultsCount = 1; // The participant themselves
