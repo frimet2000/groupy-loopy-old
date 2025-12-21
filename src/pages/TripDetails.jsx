@@ -1399,7 +1399,6 @@ export default function TripDetails() {
                             let pTotal = 1;
                             if (p.family_members?.spouse) pTotal++;
                             if (p.selected_children?.length > 0) pTotal += p.selected_children.length;
-                            if (p.family_members?.pets) pTotal++;
                             if (p.family_members?.other && p.other_member_name) pTotal++;
                             total += pTotal;
                           });
@@ -1987,7 +1986,6 @@ export default function TripDetails() {
                               total += 1; // participant
                               if (p.family_members?.spouse) total++;
                               if (p.selected_children?.length > 0) total += p.selected_children.length;
-                              if (p.family_members?.pets) total++;
                               if (p.family_members?.other && p.other_member_name) total++;
                             });
                             return total;
@@ -2119,31 +2117,30 @@ export default function TripDetails() {
                                         )}
                                       </td>
                                       <td className="px-4 py-3">
-                                        {otherCount > 0 || hasPets ? (
-                                          <div className="flex flex-col gap-1">
-                                            {otherCount > 0 && (
-                                              <div>
-                                                <Badge variant="secondary" className="bg-amber-100 text-amber-700">
-                                                  {otherCount}
-                                                </Badge>
-                                                <div className="flex flex-wrap gap-1 mt-1">
-                                                  {otherDetails.map((detail, idx) => (
-                                                    <span key={idx} className="text-xs text-gray-600">
-                                                      {detail}{idx < otherDetails.length - 1 ? ',' : ''}
-                                                    </span>
-                                                  ))}
-                                                </div>
+                                        <div className="flex flex-col gap-1.5">
+                                          {otherCount > 0 && (
+                                            <div>
+                                              <Badge variant="secondary" className="bg-amber-100 text-amber-700">
+                                                {otherCount}
+                                              </Badge>
+                                              <div className="flex flex-wrap gap-1 mt-1">
+                                                {otherDetails.map((detail, idx) => (
+                                                  <span key={idx} className="text-xs text-gray-600">
+                                                    {detail}{idx < otherDetails.length - 1 ? ',' : ''}
+                                                  </span>
+                                                ))}
                                               </div>
-                                            )}
-                                            {hasPets && (
-                                              <div className="flex items-center gap-1">
-                                                <Dog className="w-4 h-4 text-amber-600" />
-                                              </div>
-                                            )}
-                                          </div>
-                                        ) : (
-                                          <span className="text-xs text-gray-400">-</span>
-                                        )}
+                                            </div>
+                                          )}
+                                          {hasPets && (
+                                            <div className="flex items-center gap-0.5">
+                                              <Dog className="w-4 h-4 text-amber-600" />
+                                            </div>
+                                          )}
+                                          {!otherCount && !hasPets && (
+                                            <span className="text-xs text-gray-400">-</span>
+                                          )}
+                                        </div>
                                       </td>
                                       <td className="px-4 py-3">
                                         <Badge variant="secondary" className="bg-purple-100 text-purple-700 font-bold">
