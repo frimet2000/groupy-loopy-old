@@ -42,13 +42,12 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
         const child = participantProfile?.children_birth_dates?.find(c => c.id === childId);
         if (child) {
           const age = calculateAge(child.birth_date);
-          if (age !== null) {
+          if (age !== null && age < 18) {
             if (age < 3) stats.childrenByAge['0-2'] = (stats.childrenByAge['0-2'] || 0) + 1;
             else if (age < 7) stats.childrenByAge['3-6'] = (stats.childrenByAge['3-6'] || 0) + 1;
             else if (age < 11) stats.childrenByAge['7-10'] = (stats.childrenByAge['7-10'] || 0) + 1;
             else if (age < 15) stats.childrenByAge['11-14'] = (stats.childrenByAge['11-14'] || 0) + 1;
-            else if (age < 19) stats.childrenByAge['15-18'] = (stats.childrenByAge['15-18'] || 0) + 1;
-            else stats.childrenByAge['18+'] = (stats.childrenByAge['18+'] || 0) + 1;
+            else stats.childrenByAge['15-18'] = (stats.childrenByAge['15-18'] || 0) + 1;
           }
         }
       });
