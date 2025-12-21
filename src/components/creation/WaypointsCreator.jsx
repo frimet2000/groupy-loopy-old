@@ -7,28 +7,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import { GoogleMap, Marker as GMarker, Polyline as GPolyline, Autocomplete, DirectionsRenderer } from '@react-google-maps/api';
+import { useGoogleMaps } from '../maps/GoogleMapsProvider';
 import { MapPin, Edit, Trash2, Navigation, X, Plus } from 'lucide-react';
 import { toast } from "sonner";
 
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
 
-function MapClickHandler({ onMapClick }) {
-  useMapEvents({
-    click: (e) => onMapClick(e.latlng.lat, e.latlng.lng),
-  });
-  return null;
-}
+
+
 
 export default function WaypointsCreator({ waypoints, setWaypoints, startLat, startLng, locationName }) {
   const { language } = useLanguage();
+  const { isLoaded } = useGoogleMaps();
+  const [searchBox, setSearchBox] = useState(null);
+  const [directions, setDirections] = useState(null);
+  const [showDirections, setShowDirections] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [editDialog, setEditDialog] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
@@ -69,6 +62,26 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
     toast.success(language === 'he' ? 'נקודת ציון נמחקה' : 'Waypoint deleted');
   };
 
+  const computeRoute = async () => {
+    if (!isLoaded || !window.google) return;
+    if (!startLat || !startLng || waypoints.length === 0) return;
+    const sorted = [...waypoints].sort((a, b) => a.order - b.order);
+    const directionsService = new window.google.maps.DirectionsService();
+    const result = await directionsService.route({
+      origin: { lat: startLat, lng: startLng },
+      destination: { lat: sorted[sorted.length - 1].latitude, lng: sorted[sorted.length - 1].longitude },
+      waypoints: sorted.slice(0, -1).map(w => ({ location: { lat: w.latitude, lng: w.longitude }, stopover: true })),
+      travelMode: window.google.maps.TravelMode.WALKING,
+    });
+    setDirections(result);
+    setShowDirections(true);
+  };
+
+  const clearRoute = () => {
+    setDirections(null);
+    setShowDirections(false);
+  };
+
   const googleMapsUrl = waypoints.length > 0 && startLat && startLng ? (() => {
     const sorted = [...waypoints].sort((a, b) => a.order - b.order);
     
@@ -96,64 +109,78 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
             <Card className="overflow-hidden border-2 border-emerald-200">
               <div className="relative">
                 <div className="h-[350px] w-full">
-                  <MapContainer
-                    center={[startLat || 31.5, startLng || 34.75]}
-                    zoom={13}
-                    style={{ height: '100%', width: '100%' }}
-                  >
-                    <TileLayer
-                      attribution='&copy; OpenStreetMap'
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    
-                    {startLat && startLng && (
-                      <Marker position={[startLat, startLng]}>
-                        <Popup>
-                          <div className="text-center">
-                            <p className="font-bold text-emerald-700">
-                              {language === 'he' ? 'התחלה' : 'Start'}
-                            </p>
-                            <p className="text-sm">{locationName}</p>
-                          </div>
-                        </Popup>
-                      </Marker>
-                    )}
+                  {isLoaded ? (
+                    <GoogleMap
+                      center={{ lat: startLat || 31.5, lng: startLng || 34.75 }}
+                      zoom={13}
+                      mapContainerStyle={{ height: '100%', width: '100%' }}
+                      onClick={(e) => handleMapClick(e.latLng.lat(), e.latLng.lng())}
+                      options={{ streetViewControl: false, mapTypeControl: false }}
+                    >
+                      {startLat && startLng && (
+                        <GMarker position={{ lat: startLat, lng: startLng }} />
+                      )}
 
-                    {waypoints.sort((a, b) => a.order - b.order).map((wp, idx) => (
-                      <Marker key={idx} position={[wp.latitude, wp.longitude]}>
-                        <Popup>
-                          <div className="text-center">
-                            <p className="font-bold">{idx + 1}. {wp.name}</p>
-                            {wp.description && <p className="text-xs text-gray-600">{wp.description}</p>}
-                          </div>
-                        </Popup>
-                      </Marker>
-                    ))}
+                      {waypoints.sort((a, b) => a.order - b.order).map((wp, idx) => (
+                        <GMarker key={idx} position={{ lat: wp.latitude, lng: wp.longitude }} />
+                      ))}
 
-                    {waypoints.length > 0 && startLat && startLng && (
-                      <Polyline
-                        positions={[
-                          [startLat, startLng],
-                          ...waypoints.sort((a, b) => a.order - b.order).map(w => [w.latitude, w.longitude])
-                        ]}
-                        color="#10b981"
-                        weight={3}
-                        opacity={0.7}
-                      />
-                    )}
-
-                    <MapClickHandler onMapClick={handleMapClick} />
-                  </MapContainer>
+                      {showDirections && directions ? (
+                        <DirectionsRenderer directions={directions} />
+                      ) : (
+                        waypoints.length > 0 && startLat && startLng && (
+                          <GPolyline
+                            path={[
+                              { lat: startLat, lng: startLng },
+                              ...waypoints
+                                .sort((a, b) => a.order - b.order)
+                                .map((w) => ({ lat: w.latitude, lng: w.longitude }))
+                            ]}
+                            options={{ strokeColor: '#10b981', strokeOpacity: 0.7, strokeWeight: 3 }}
+                          />
+                        )
+                      )}
+                    </GoogleMap>
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center text-gray-500 text-sm">
+                      {language === 'he' ? 'טוען מפה...' : 'Loading map...'}
+                    </div>
+                  )
                 </div>
                 
                 <div className="absolute top-2 left-2 right-2 bg-emerald-600 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-medium z-[400]">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
                     <span>
                       {language === 'he' ? '💡 לחץ על המפה להוספת נקודה' : '💡 Click to add waypoint'}
                     </span>
-                    <button onClick={() => setShowMap(false)} className="bg-white/20 hover:bg-white/30 rounded p-1">
-                      <X className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <Button type="button" size="sm" variant="secondary" className="bg-white/20 hover:bg-white/30" onClick={computeRoute}>
+                        <Navigation className="w-4 h-4 mr-1" />
+                        {language === 'he' ? 'מסלול' : 'Route'}
+                      </Button>
+                      {showDirections && (
+                        <Button type="button" size="sm" variant="secondary" className="bg-white/20 hover:bg-white/30" onClick={clearRoute}>
+                          {language === 'he' ? 'נקה' : 'Clear'}
+                        </Button>
+                      )}
+                      <div className="bg-white rounded-lg overflow-hidden">
+                        <Autocomplete onLoad={setSearchBox} onPlaceChanged={() => {
+                          const place = searchBox?.getPlace();
+                          if (!place || !place.geometry) return;
+                          const lat = place.geometry.location.lat();
+                          const lng = place.geometry.location.lng();
+                          handleMapClick(lat, lng);
+                        }}>
+                          <input
+                            className="px-3 py-2 w-60 text-sm text-gray-800 outline-none"
+                            placeholder={language === 'he' ? 'חיפוש מקום...' : 'Search place...'}
+                          />
+                        </Autocomplete>
+                      </div>
+                      <button onClick={() => setShowMap(false)} className="bg-white/20 hover:bg-white/30 rounded p-1">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
