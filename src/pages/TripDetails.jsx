@@ -1434,7 +1434,7 @@ export default function TripDetails() {
                 <TabsTrigger value="details" className="flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-500/50 data-[state=active]:border-2 data-[state=active]:border-emerald-400 text-gray-600 py-3 px-4 rounded-xl transition-all duration-300 hover:scale-105">
                   <Info className="w-4 h-4" />
                   <span className="text-sm">{language === 'he' ? 'פרטים' : language === 'ru' ? 'Детали' : language === 'es' ? 'Detalles' : language === 'fr' ? 'Détails' : language === 'de' ? 'Details' : language === 'it' ? 'Dettagli' : 'Details'}</span>
-                  </TabsTrigger>
+                </TabsTrigger>
                 <TabsTrigger value="map" className="flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-purple-500/50 data-[state=active]:border-2 data-[state=active]:border-purple-400 text-gray-600 py-3 px-4 rounded-xl transition-all duration-300 hover:scale-105">
                   <MapPin className="w-4 h-4" />
                   <span className="text-sm">{language === 'he' ? 'מפה' : language === 'ru' ? 'Карта' : language === 'es' ? 'Mapa' : language === 'fr' ? 'Carte' : language === 'de' ? 'Karte' : language === 'it' ? 'Mappa' : 'Map'}</span>
