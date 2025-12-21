@@ -735,25 +735,7 @@ export default function Profile() {
                           <X className="w-4 h-4" />
                         </Button>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div className="space-y-1">
-                          <Label className="text-xs">
-                            {language === 'he' ? 'שם' : language === 'ru' ? 'Имя' : language === 'es' ? 'Nombre' : language === 'fr' ? 'Nom' : language === 'de' ? 'Name' : language === 'it' ? 'Nome' : 'Name'}
-                            <span className="text-gray-400 font-normal mr-1">
-                              ({language === 'he' ? 'אופציונלי' : language === 'ru' ? 'необязательно' : language === 'es' ? 'opcional' : language === 'fr' ? 'optionnel' : language === 'de' ? 'optional' : language === 'it' ? 'opzionale' : 'optional'})
-                            </span>
-                          </Label>
-                          <Input
-                            value={child.name || ''}
-                            onChange={(e) => {
-                              const updated = [...formData.children_birth_dates];
-                              updated[idx] = { ...updated[idx], name: e.target.value };
-                              handleChange('children_birth_dates', updated);
-                            }}
-                            placeholder={language === 'he' ? `ילד ${idx + 1}` : `Child ${idx + 1}`}
-                            dir={language === 'he' ? 'rtl' : 'ltr'}
-                          />
-                        </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div className="space-y-1">
                           <Label className="text-xs">{language === 'he' ? 'שנת לידה' : language === 'ru' ? 'Год рождения' : language === 'es' ? 'Año de nacimiento' : language === 'fr' ? 'Année de naissance' : language === 'de' ? 'Geburtsjahr' : language === 'it' ? 'Anno di nascita' : 'Birth Year'}</Label>
                           <Input
