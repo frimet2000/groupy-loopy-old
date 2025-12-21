@@ -2056,7 +2056,7 @@ export default function TripDetails() {
                                  const participantProfile = userProfiles[participant.email];
 
                                  console.log(`=== PARTICIPANT ${index + 1} ===`);
-                                 console.log('Participant:', participant);
+                                 console.log('Participant FULL OBJECT:', JSON.stringify(participant, null, 2));
                                  console.log('Profile:', participantProfile);
 
                                  // Calculate breakdown
