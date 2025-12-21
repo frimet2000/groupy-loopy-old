@@ -302,7 +302,14 @@ export default function TripDetails() {
           updateData.participants_selected_days = updatedSelectedDays;
         }
 
-        await base44.entities.Trip.update(tripId, updateData);
+        console.log('=== UPDATE DATA BEING SENT ===');
+        console.log(JSON.stringify(updateData, null, 2));
+        
+        const result = await base44.entities.Trip.update(tripId, updateData);
+        
+        console.log('=== UPDATE RESULT ===');
+        console.log(JSON.stringify(result, null, 2));
+        
         return { autoJoined: true };
       }
 
