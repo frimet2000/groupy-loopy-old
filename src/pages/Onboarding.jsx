@@ -391,7 +391,12 @@ export default function Onboarding() {
                           <div key={child.id} className="bg-pink-50 p-4 rounded-lg border border-pink-200 space-y-3">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                               <div className="space-y-1">
-                                <Label className="text-xs">{language === 'he' ? 'שם' : 'Name'}</Label>
+                                <Label className="text-xs">
+                                  {language === 'he' ? 'שם' : 'Name'}
+                                  <span className="text-gray-400 font-normal mr-1">
+                                    ({language === 'he' ? 'אופציונלי' : 'optional'})
+                                  </span>
+                                </Label>
                                 <Input
                                   value={child.name || ''}
                                   onChange={(e) => {
@@ -399,7 +404,7 @@ export default function Onboarding() {
                                     updated[idx] = { ...updated[idx], name: e.target.value };
                                     handleChange('children_birth_dates', updated);
                                   }}
-                                  placeholder={language === 'he' ? 'שם הילד' : 'Child name'}
+                                  placeholder={language === 'he' ? `ילד ${idx + 1}` : `Child ${idx + 1}`}
                                   dir={language === 'he' ? 'rtl' : 'ltr'}
                                 />
                               </div>

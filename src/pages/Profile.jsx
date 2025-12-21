@@ -741,7 +741,12 @@ export default function Profile() {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div className="space-y-1">
-                          <Label className="text-xs">{language === 'he' ? 'שם' : language === 'ru' ? 'Имя' : language === 'es' ? 'Nombre' : language === 'fr' ? 'Nom' : language === 'de' ? 'Name' : language === 'it' ? 'Nome' : 'Name'}</Label>
+                          <Label className="text-xs">
+                            {language === 'he' ? 'שם' : language === 'ru' ? 'Имя' : language === 'es' ? 'Nombre' : language === 'fr' ? 'Nom' : language === 'de' ? 'Name' : language === 'it' ? 'Nome' : 'Name'}
+                            <span className="text-gray-400 font-normal mr-1">
+                              ({language === 'he' ? 'אופציונלי' : language === 'ru' ? 'необязательно' : language === 'es' ? 'opcional' : language === 'fr' ? 'optionnel' : language === 'de' ? 'optional' : language === 'it' ? 'opzionale' : 'optional'})
+                            </span>
+                          </Label>
                           <Input
                             value={child.name || ''}
                             onChange={(e) => {
@@ -749,7 +754,7 @@ export default function Profile() {
                               updated[idx] = { ...updated[idx], name: e.target.value };
                               handleChange('children_birth_dates', updated);
                             }}
-                            placeholder={language === 'he' ? 'שם הילד' : language === 'ru' ? 'Имя ребенка' : language === 'es' ? 'Nombre del niño' : language === 'fr' ? 'Nom de l\'enfant' : language === 'de' ? 'Name des Kindes' : language === 'it' ? 'Nome del bambino' : 'Child name'}
+                            placeholder={language === 'he' ? `ילד ${idx + 1}` : `Child ${idx + 1}`}
                             dir={language === 'he' ? 'rtl' : 'ltr'}
                           />
                         </div>
