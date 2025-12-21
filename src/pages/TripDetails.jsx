@@ -1965,8 +1965,22 @@ export default function TripDetails() {
 
                     {/* Participants Table */}
                     <div className="space-y-2">
-                      <h3 className="text-sm font-semibold text-gray-700">
-                        {language === 'he' ? 'משתתפים' : 'Participants'} ({trip.participants?.filter(p => p.email !== trip.organizer_email).length || 0})
+                      <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                        <span>{language === 'he' ? 'משתתפים' : 'Participants'} ({trip.participants?.filter(p => p.email !== trip.organizer_email).length || 0})</span>
+                        <span className="text-xs text-gray-500">
+                          ({(() => {
+                            let total = 0;
+                            (trip.participants || []).filter(p => p.email !== trip.organizer_email).forEach(p => {
+                              let participantTotal = 1;
+                              if (p.family_members?.spouse) participantTotal++;
+                              if (p.selected_children?.length > 0) participantTotal += p.selected_children.length;
+                              if (p.family_members?.pets) participantTotal++;
+                              if (p.family_members?.other && p.other_member_name) participantTotal++;
+                              total += participantTotal;
+                            });
+                            return total;
+                          })()} {language === 'he' ? 'אנשים סה"כ' : 'total people'})
+                        </span>
                       </h3>
                       
                       {trip.participants?.filter(p => p.email !== trip.organizer_email).length > 0 ? (
