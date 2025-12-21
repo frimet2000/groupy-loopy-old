@@ -470,7 +470,7 @@ export default function Home() {
               <div className="grid grid-cols-2 gap-3">
                 <Link to={createPageUrl('CreateTrip')} className="w-full">
                   <motion.div whileTap={{ scale: 0.95 }} className="w-full">
-                    <Button className="w-full bg-gradient-to-r from-white to-emerald-50 text-emerald-900 hover:from-emerald-50 hover:to-white h-12 px-4 text-sm font-bold shadow-xl border-2 border-white/50 touch-manipulation">
+                    <Button className="w-full bg-white text-emerald-700 hover:bg-emerald-50 h-12 px-4 text-sm font-bold shadow-2xl border-2 border-emerald-200 hover:border-emerald-300 touch-manipulation hover:shadow-[0_8px_30px_rgba(16,185,129,0.4)] transition-all">
                       <Plus className="w-5 h-5 mr-2" />
                       {t('createTrip')}
                     </Button>
@@ -479,7 +479,7 @@ export default function Home() {
                 <motion.div whileTap={{ scale: 0.95 }} className="w-full">
                   <Button 
                     onClick={() => document.getElementById('trips-section')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="w-full bg-gradient-to-r from-teal-500 to-emerald-600 text-white hover:from-teal-600 hover:to-emerald-700 h-12 px-4 text-sm font-bold shadow-xl border-2 border-white/20 touch-manipulation"
+                    className="w-full bg-emerald-600 text-white hover:bg-emerald-700 h-12 px-4 text-sm font-bold shadow-2xl border-2 border-emerald-700 hover:border-emerald-800 touch-manipulation hover:shadow-[0_8px_30px_rgba(16,185,129,0.5)] transition-all"
                   >
                     <Users className="w-5 h-5 mr-2" />
                     {language === 'he' ? 'הצטרף' : 'Join'}
