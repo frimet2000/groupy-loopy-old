@@ -30,6 +30,71 @@ import {
 const interests = ['nature', 'history', 'photography', 'birdwatching', 'archaeology', 'geology', 'botany', 'extreme_sports', 'family_friendly', 'romantic'];
 const regions = ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'];
 
+const countryPhonePrefixes = {
+  israel: '+972',
+  usa: '+1',
+  italy: '+39',
+  spain: '+34',
+  france: '+33',
+  germany: '+49',
+  uk: '+44',
+  japan: '+81',
+  australia: '+61',
+  canada: '+1',
+  switzerland: '+41',
+  austria: '+43',
+  new_zealand: '+64',
+  norway: '+47',
+  sweden: '+46',
+  greece: '+30',
+  portugal: '+351',
+  netherlands: '+31',
+  belgium: '+32',
+  denmark: '+45',
+  ireland: '+353',
+  iceland: '+354',
+  croatia: '+385',
+  poland: '+48',
+  czech_republic: '+420',
+  thailand: '+66',
+  indonesia: '+62',
+  malaysia: '+60',
+  vietnam: '+84',
+  south_korea: '+82',
+  china: '+86',
+  india: '+91',
+  nepal: '+977',
+  turkey: '+90',
+  egypt: '+20',
+  morocco: '+212',
+  south_africa: '+27',
+  kenya: '+254',
+  tanzania: '+255',
+  brazil: '+55',
+  argentina: '+54',
+  chile: '+56',
+  peru: '+51',
+  mexico: '+52',
+  costa_rica: '+506',
+  finland: '+358',
+  romania: '+40',
+  hungary: '+36',
+  slovakia: '+421',
+  bulgaria: '+359',
+  serbia: '+381',
+  slovenia: '+386',
+  montenegro: '+382',
+  bosnia_herzegovina: '+387',
+  albania: '+355',
+  north_macedonia: '+389',
+  luxembourg: '+352',
+  malta: '+356',
+  cyprus: '+357',
+  estonia: '+372',
+  latvia: '+371',
+  lithuania: '+370'
+};
+
 const calculateAge = (birthDate) => {
   if (!birthDate) return null;
   const today = new Date();
@@ -54,6 +119,7 @@ export default function Profile() {
     profile_image: '',
     bio: '',
     phone: '',
+    country: 'israel',
     preferred_regions: [],
     preferred_interests: [],
     home_region: '',
@@ -106,6 +172,7 @@ export default function Profile() {
           profile_image: userData.profile_image || '',
           bio: userData.bio || '',
           phone: userData.phone || '',
+          country: userData.country || 'israel',
           preferred_regions: userData.preferred_regions || [],
           preferred_interests: userData.preferred_interests || [],
           home_region: userData.home_region || '',
@@ -550,14 +617,42 @@ export default function Profile() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>{language === 'he' ? 'טלפון' : language === 'ru' ? 'Телефон' : language === 'es' ? 'Teléfono' : language === 'fr' ? 'Téléphone' : language === 'de' ? 'Telefon' : language === 'it' ? 'Telefono' : 'Phone'}</Label>
-                  <Input
-                    value={formData.phone}
-                    onChange={(e) => handleChange('phone', e.target.value)}
-                    placeholder={language === 'he' ? '050-1234567' : '050-1234567'}
-                    dir="ltr"
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>{language === 'he' ? 'מדינה' : language === 'ru' ? 'Страна' : language === 'es' ? 'País' : language === 'fr' ? 'Pays' : language === 'de' ? 'Land' : language === 'it' ? 'Paese' : 'Country'}</Label>
+                    <Select value={formData.country} onValueChange={(v) => handleChange('country', v)}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="israel">{t('israel')}</SelectItem>
+                        <SelectItem value="usa">{t('usa')}</SelectItem>
+                        <SelectItem value="italy">{t('italy')}</SelectItem>
+                        <SelectItem value="spain">{t('spain')}</SelectItem>
+                        <SelectItem value="france">{t('france')}</SelectItem>
+                        <SelectItem value="germany">{t('germany')}</SelectItem>
+                        <SelectItem value="uk">{t('uk')}</SelectItem>
+                        <SelectItem value="canada">{t('canada')}</SelectItem>
+                        <SelectItem value="australia">{t('australia')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>{language === 'he' ? 'טלפון' : language === 'ru' ? 'Телефон' : language === 'es' ? 'Teléfono' : language === 'fr' ? 'Téléphone' : language === 'de' ? 'Telefon' : language === 'it' ? 'Telefono' : 'Phone'}</Label>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 px-3 h-10 border border-input rounded-md bg-muted text-sm font-medium whitespace-nowrap">
+                        {countryPhonePrefixes[formData.country]}
+                      </div>
+                      <Input
+                        value={formData.phone}
+                        onChange={(e) => handleChange('phone', e.target.value)}
+                        placeholder=""
+                        dir="ltr"
+                        className="flex-1"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -915,6 +1010,7 @@ export default function Profile() {
                     profile_image: user.profile_image || '',
                     bio: user.bio || '',
                     phone: user.phone || '',
+                    country: user.country || 'israel',
                     preferred_regions: user.preferred_regions || [],
                     preferred_interests: user.preferred_interests || [],
                     home_region: user.home_region || '',
