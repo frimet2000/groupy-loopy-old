@@ -184,6 +184,8 @@ export default function TripDetails() {
         return '21+';
       };
       const profileMap = {};
+      
+      // Build profiles for all participants
       trip.participants.forEach(participant => {
         const userProfile = users.find(u => u.email === participant.email);
         if (userProfile) {
