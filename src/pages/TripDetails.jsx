@@ -54,6 +54,7 @@ import {
   Info, GalleryHorizontal, Heart, MessageSquare, Radio, Backpack, Bookmark, DollarSign, Image, Loader2, Camera, Upload, Bell, Package, UserPlus, FileText, Shield, AlertTriangle
 } from 'lucide-react';
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const difficultyColors = {
   easy: 'bg-green-100 text-green-700 border-green-200',
