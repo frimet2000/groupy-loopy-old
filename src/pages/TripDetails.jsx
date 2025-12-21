@@ -1517,7 +1517,13 @@ export default function TripDetails() {
                         <Users className="w-5 h-5 text-rose-600" />
                       </div>
                       <span className="font-semibold text-gray-700">
-                       {trip.current_participants || 1}/{trip.flexible_participants ? (
+                       {(() => {
+                        let total = 0;
+                        (trip.participants || []).forEach(p => {
+                          total += (p.total_people || 1);
+                        });
+                        return total;
+                      })()}/{trip.flexible_participants ? (
                         <span>
                           {trip.max_participants} <span className="text-xs text-rose-500">{language === 'he' ? 'גמיש' : 'Flexible'}</span>
                         </span>
