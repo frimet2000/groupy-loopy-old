@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapContainer, TileLayer, Polyline, Marker } from 'react-leaflet';
 import L from 'leaflet';
-import { Route, MapPin, Mountain, TrendingUp, TrendingDown, Cloud, Backpack, Droplets, CheckCircle2 } from 'lucide-react';
+import { Route, MapPin, Mountain, TrendingUp, TrendingDown, Cloud, Backpack, Droplets, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import WeatherWidget from '../weather/WeatherWidget';
 
@@ -140,6 +140,33 @@ export default function TrekDaysDisplay({ trip }) {
 
           {sortedDays.map((day, index) =>
           <TabsContent key={day.id || index} value={index.toString()} className="mt-4 pt-12 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 space-y-4">
+              {/* Day Navigation */}
+              <div className="flex items-center justify-between mb-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedDay(Math.max(0, selectedDay - 1))}
+                  disabled={selectedDay === 0}
+                  className="gap-1"
+                >
+                  {isRTL ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                  {language === 'he' ? 'יום קודם' : language === 'ru' ? 'Предыдущий' : language === 'es' ? 'Anterior' : language === 'fr' ? 'Précédent' : language === 'de' ? 'Zurück' : language === 'it' ? 'Precedente' : 'Previous'}
+                </Button>
+                <span className="text-sm text-gray-600">
+                  {language === 'he' ? `יום ${day.day_number} מתוך ${sortedDays.length}` : `Day ${day.day_number} of ${sortedDays.length}`}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedDay(Math.min(sortedDays.length - 1, selectedDay + 1))}
+                  disabled={selectedDay === sortedDays.length - 1}
+                  className="gap-1"
+                >
+                  {language === 'he' ? 'יום הבא' : language === 'ru' ? 'Следующий' : language === 'es' ? 'Siguiente' : language === 'fr' ? 'Suivant' : language === 'de' ? 'Weiter' : language === 'it' ? 'Successivo' : 'Next'}
+                  {isRTL ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                </Button>
+              </div>
+
               {/* Day Header */}
               <div>
                 {day.image_url &&
