@@ -216,6 +216,11 @@ export default function TripCard({ trip }) {
           <Link to={createPageUrl('TripDetails') + `?id=${trip.id}`}>
           <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-emerald-700 transition-colors leading-tight">
             {title}
+            {trip.flexible_participants && (
+              <Badge variant="outline" className="ml-2 bg-emerald-50 text-emerald-700 border-emerald-300 text-xs">
+                {language === 'he' ? 'גמיש' : 'Flexible'}
+              </Badge>
+            )}
           </h3>
           
           {description && (

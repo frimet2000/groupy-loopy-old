@@ -212,7 +212,7 @@ export default function TripDetails() {
   const canEdit = isOrganizer || isAdditionalOrganizer;
   const hasJoined = trip?.participants?.some(p => p.email === user?.email);
   const hasPendingRequest = trip?.pending_requests?.some(r => r.email === user?.email);
-  const isFull = trip?.current_participants >= trip?.max_participants;
+  const isFull = !trip?.flexible_participants && trip?.current_participants >= trip?.max_participants;
 
   // Track view
   useEffect(() => {
@@ -1008,7 +1008,14 @@ export default function TripDetails() {
               </Badge>
             )}
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white">{title}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-white">
+            {title}
+            {trip.flexible_participants && (
+              <Badge variant="outline" className="ml-3 bg-white/20 backdrop-blur-sm text-white border-white/40 text-sm">
+                {language === 'he' ? 'מספר משתתפים גמיש' : 'Flexible'}
+              </Badge>
+            )}
+          </h1>
         </div>
       </div>
 
@@ -1472,16 +1479,16 @@ export default function TripDetails() {
                       </div>
                       <span className="font-semibold text-gray-700">
                        {(() => {
-                         let total = 0;
-                         (trip.participants || []).filter(p => p.email !== trip.organizer_email).forEach(p => {
-                           let pTotal = 1;
-                           if (p.family_members?.spouse) pTotal++;
-                           if (p.selected_children?.length > 0) pTotal += p.selected_children.length;
-                           if (p.family_members?.other && p.other_member_name) pTotal++;
-                           total += pTotal;
-                         });
-                         return total;
-                       })()}/{trip.max_participants}
+                        let total = 0;
+                        (trip.participants || []).filter(p => p.email !== trip.organizer_email).forEach(p => {
+                          let pTotal = 1;
+                          if (p.family_members?.spouse) pTotal++;
+                          if (p.selected_children?.length > 0) pTotal += p.selected_children.length;
+                          if (p.family_members?.other && p.other_member_name) pTotal++;
+                          total += pTotal;
+                        });
+                        return total;
+                      })()}/{trip.flexible_participants ? '∞' : trip.max_participants}
                       </span>
                     </motion.div>
                     {trip.activity_type === 'cycling' && (
