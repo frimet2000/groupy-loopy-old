@@ -2626,6 +2626,13 @@ export default function TripDetails() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Profile Preview Dialog */}
+      <ProfilePreviewDialog
+        open={showProfileDialog}
+        onOpenChange={setShowProfileDialog}
+        userEmail={selectedProfileEmail}
+      />
       </div>
       );
       }
