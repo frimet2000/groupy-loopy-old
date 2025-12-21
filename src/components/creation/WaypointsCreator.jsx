@@ -145,7 +145,7 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
                     <div className="h-full w-full flex items-center justify-center text-gray-500 text-sm">
                       {language === 'he' ? 'טוען מפה...' : 'Loading map...'}
                     </div>
-                  )
+                  )}
                 </div>
                 
                 <div className="absolute top-2 left-2 right-2 bg-emerald-600 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-medium z-[400]">
