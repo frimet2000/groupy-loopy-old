@@ -1890,6 +1890,7 @@ export default function TripDetails() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent dir={language === 'he' ? 'rtl' : 'ltr'}>
+                  <TooltipProvider>
                   <div className="space-y-4">
                     {/* Organizers Section */}
                     <div className="space-y-2">
@@ -2176,6 +2177,7 @@ export default function TripDetails() {
                       )}
                     </div>
                   </div>
+                  </TooltipProvider>
                 </CardContent>
               </Card>
             </TabsContent>
