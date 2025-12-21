@@ -821,7 +821,7 @@ Include water recommendation in liters and detailed equipment list.`,
             animate={{ opacity: 1, scale: 1 }}
             className="py-2 flex-shrink-0"
           >
-            <Card className="overflow-hidden shadow-lg border border-emerald-100">
+            <Card className="overflow-hidden shadow-2xl border-2 border-emerald-200">
               <CardContent className="p-2 sm:p-3">
                 <div className="flex items-center justify-between mb-2">
                   {steps.map((step, idx) => {
@@ -877,11 +877,11 @@ Include water recommendation in liters and detailed equipment list.`,
             >
               {/* Step 1: Basic Info */}
               {currentStep === 1 && (
-                <Card className="border border-emerald-100 shadow-lg">
-                  <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50 py-2 flex-shrink-0">
+                <Card className="border-2 border-emerald-200 shadow-2xl">
+                  <CardHeader className="bg-emerald-600 py-2 flex-shrink-0">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center gap-2 text-sm sm:text-lg">
-                        <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                      <CardTitle className="flex items-center gap-2 text-sm sm:text-lg text-white font-bold">
+                        <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                         {language === 'he' ? 'פרטים בסיסיים' : language === 'ru' ? 'Основная информация' : language === 'es' ? 'Información básica' : language === 'fr' ? 'Informations de base' : language === 'de' ? 'Grundinformationen' : language === 'it' ? 'Informazioni di base' : 'Basic Details'}
                       </CardTitle>
                       <Button
@@ -889,7 +889,7 @@ Include water recommendation in liters and detailed equipment list.`,
                         variant="outline"
                         size="sm"
                         onClick={() => setShowTemplates(true)}
-                        className="gap-2 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200 hover:from-purple-100 hover:to-pink-100"
+                        className="gap-2 bg-purple-600 text-white border-2 border-purple-700 hover:bg-purple-700 shadow-lg"
                       >
                         <Sparkles className="w-4 h-4 text-purple-600" />
                         <span className="hidden sm:inline">{language === 'he' ? 'השתמש בתבנית' : 'Use Template'}</span>
@@ -1066,10 +1066,10 @@ Include water recommendation in liters and detailed equipment list.`,
 
               {/* Step 2: Location & Time */}
               {currentStep === 2 && (
-                <Card className="border-2 border-blue-100 shadow-2xl">
-                  <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50 py-2 sm:py-3">
-                    <CardTitle className="flex items-center gap-2 text-sm sm:text-xl">
-                      <MapPin className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600" />
+                <Card className="border-2 border-blue-200 shadow-2xl">
+                  <CardHeader className="bg-blue-600 py-2 sm:py-3">
+                    <CardTitle className="flex items-center gap-2 text-sm sm:text-xl text-white font-bold">
+                      <MapPin className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                       {language === 'he' ? 'מיקום וזמן' : language === 'ru' ? 'Место и время' : language === 'es' ? 'Ubicación y hora' : language === 'fr' ? 'Lieu et heure' : language === 'de' ? 'Ort und Zeit' : language === 'it' ? 'Luogo e orario' : 'Location & Time'}
                     </CardTitle>
                   </CardHeader>
@@ -1217,10 +1217,10 @@ Include water recommendation in liters and detailed equipment list.`,
 
               {/* Step 3: Activity Details */}
               {currentStep === 3 && (
-                <Card className="border-2 border-amber-100 shadow-2xl">
-                  <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 py-2 sm:py-3">
-                    <CardTitle className="flex items-center gap-2 text-sm sm:text-xl">
-                      <Mountain className="w-4 h-4 sm:w-6 sm:h-6 text-amber-600" />
+                <Card className="border-2 border-amber-200 shadow-2xl">
+                  <CardHeader className="bg-amber-600 py-2 sm:py-3">
+                    <CardTitle className="flex items-center gap-2 text-sm sm:text-xl text-white font-bold">
+                      <Mountain className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                       {language === 'he' ? 'פרטי הפעילות' : language === 'ru' ? 'Детали активности' : language === 'es' ? 'Detalles de la actividad' : language === 'fr' ? 'Détails de l\'activité' : language === 'de' ? 'Aktivitätsdetails' : language === 'it' ? 'Dettagli dell\'attività' : 'Activity Details'}
                     </CardTitle>
                   </CardHeader>
@@ -1233,7 +1233,7 @@ Include water recommendation in liters and detailed equipment list.`,
                           variant={formData.activity_type === 'hiking' ? 'default' : 'outline'}
                           className={`h-20 sm:h-28 flex flex-col items-center justify-center gap-1.5 text-xs sm:text-base font-bold ${
                             formData.activity_type === 'hiking'
-                              ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-2xl scale-105'
+                              ? 'bg-emerald-600 text-white shadow-2xl scale-105 border-2 border-emerald-700'
                               : 'border-2 hover:border-emerald-500 hover:bg-emerald-50'
                           }`}
                           onClick={() => handleChange('activity_type', 'hiking')}
@@ -1246,7 +1246,7 @@ Include water recommendation in liters and detailed equipment list.`,
                           variant={formData.activity_type === 'running' ? 'default' : 'outline'}
                           className={`h-20 sm:h-28 flex flex-col items-center justify-center gap-1.5 text-xs sm:text-base font-bold ${
                             formData.activity_type === 'running'
-                              ? 'bg-gradient-to-br from-violet-500 to-purple-500 text-white shadow-2xl scale-105'
+                              ? 'bg-violet-600 text-white shadow-2xl scale-105 border-2 border-violet-700'
                               : 'border-2 hover:border-violet-500 hover:bg-violet-50'
                           }`}
                           onClick={() => handleChange('activity_type', 'running')}
@@ -1259,7 +1259,7 @@ Include water recommendation in liters and detailed equipment list.`,
                           variant={formData.activity_type === 'cycling' ? 'default' : 'outline'}
                           className={`h-20 sm:h-28 flex flex-col items-center justify-center gap-1.5 text-xs sm:text-base font-bold ${
                             formData.activity_type === 'cycling'
-                              ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-2xl scale-105'
+                              ? 'bg-blue-600 text-white shadow-2xl scale-105 border-2 border-blue-700'
                               : 'border-2 hover:border-blue-500 hover:bg-blue-50'
                           }`}
                           onClick={() => handleChange('activity_type', 'cycling')}
@@ -1272,7 +1272,7 @@ Include water recommendation in liters and detailed equipment list.`,
                           variant={formData.activity_type === 'offroad' ? 'default' : 'outline'}
                           className={`h-20 sm:h-28 flex flex-col items-center justify-center gap-1.5 text-xs sm:text-base font-bold ${
                             formData.activity_type === 'offroad'
-                              ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-2xl scale-105'
+                              ? 'bg-orange-600 text-white shadow-2xl scale-105 border-2 border-orange-700'
                               : 'border-2 hover:border-orange-500 hover:bg-orange-50'
                           }`}
                           onClick={() => handleChange('activity_type', 'offroad')}
@@ -1285,7 +1285,7 @@ Include water recommendation in liters and detailed equipment list.`,
                           variant={formData.activity_type === 'culinary' ? 'default' : 'outline'}
                           className={`h-20 sm:h-28 flex flex-col items-center justify-center gap-1.5 text-xs sm:text-base font-bold ${
                             formData.activity_type === 'culinary'
-                              ? 'bg-gradient-to-br from-rose-500 to-pink-500 text-white shadow-2xl scale-105'
+                              ? 'bg-rose-600 text-white shadow-2xl scale-105 border-2 border-rose-700'
                               : 'border-2 hover:border-rose-500 hover:bg-rose-50'
                           }`}
                           onClick={() => handleChange('activity_type', 'culinary')}
@@ -1298,7 +1298,7 @@ Include water recommendation in liters and detailed equipment list.`,
                           variant={formData.activity_type === 'trek' ? 'default' : 'outline'}
                           className={`h-20 sm:h-28 flex flex-col items-center justify-center gap-1.5 text-xs sm:text-base font-bold ${
                             formData.activity_type === 'trek'
-                              ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-2xl scale-105'
+                              ? 'bg-indigo-700 text-white shadow-2xl scale-105 border-2 border-indigo-800'
                               : 'border-2 hover:border-indigo-500 hover:bg-indigo-50'
                           }`}
                           onClick={() => handleChange('activity_type', 'trek')}
@@ -1309,13 +1309,13 @@ Include water recommendation in liters and detailed equipment list.`,
                       </div>
                     </div>
 
-                    <div className="space-y-4 p-6 bg-indigo-50 rounded-2xl border-2 border-indigo-200">
+                    <div className="space-y-4 p-6 bg-indigo-600 rounded-2xl border-2 border-indigo-700 shadow-xl">
                       <div className="flex items-center justify-between">
                         <div className="space-y-1">
-                          <Label className="text-base font-semibold text-indigo-900">
+                          <Label className="text-base font-semibold text-white">
                             {language === 'he' ? 'דרוש אישור למצטרפים' : language === 'ru' ? 'Требуется одобрение' : language === 'es' ? 'Se requiere aprobación' : language === 'fr' ? 'Approbation requise' : language === 'de' ? 'Genehmigung erforderlich' : language === 'it' ? 'Richiesta approvazione' : 'Approval Required'}
                           </Label>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-indigo-100">
                             {language === 'he' ? 'כבוי = הצטרפות אוטומטית, דלוק = יש לאשר כל מצטרף' : language === 'ru' ? 'Выкл = автоматическая регистрация, Вкл = требуется одобрение' : language === 'es' ? 'Off = registro automático, On = requiere aprobación' : language === 'fr' ? 'Off = inscription automatique, On = approbation requise' : language === 'de' ? 'Aus = automatische Anmeldung, Ein = Genehmigung erforderlich' : language === 'it' ? 'Off = registrazione automatica, On = approvazione richiesta' : 'Off = auto join, On = requires approval'}
                           </p>
                         </div>
@@ -1354,12 +1354,12 @@ Include water recommendation in liters and detailed equipment list.`,
                           onChange={(e) => handleChange('max_participants', parseInt(e.target.value))}
                           className="p-4"
                         />
-                        <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg border border-emerald-200 mt-2">
+                        <div className="flex items-center justify-between p-3 bg-emerald-600 rounded-lg border-2 border-emerald-700 mt-2 shadow-lg">
                           <div className="flex-1">
-                            <Label className="text-sm font-semibold text-emerald-900 mb-0">
+                            <Label className="text-sm font-semibold text-white mb-0">
                               {language === 'he' ? 'מספר משתתפים גמיש' : 'Flexible Participants'}
                             </Label>
-                            <p className="text-xs text-gray-600">
+                            <p className="text-xs text-emerald-100">
                               {language === 'he' ? 'אפשר הצטרפות גם מעבר למכסה' : 'Allow joining even when limit is reached'}
                             </p>
                           </div>
@@ -1372,8 +1372,8 @@ Include water recommendation in liters and detailed equipment list.`,
                     </div>
 
                     {formData.activity_type === 'cycling' && (
-                      <div className="space-y-4 p-6 bg-blue-50 rounded-2xl">
-                        <h3 className="text-lg font-bold text-blue-900">{language === 'he' ? 'פרטי רכיבה' : language === 'ru' ? 'Детали велопоездки' : language === 'es' ? 'Detalles del ciclismo' : language === 'fr' ? 'Détails du cyclisme' : language === 'de' ? 'Radfahrdetails' : language === 'it' ? 'Dettagli del ciclismo' : 'Cycling Details'}</h3>
+                      <div className="space-y-4 p-6 bg-blue-600 rounded-2xl border-2 border-blue-700 shadow-xl">
+                        <h3 className="text-lg font-bold text-white">{language === 'he' ? 'פרטי רכיבה' : language === 'ru' ? 'Детали велопоездки' : language === 'es' ? 'Detalles del ciclismo' : language === 'fr' ? 'Détails du cyclisme' : language === 'de' ? 'Radfahrdetails' : language === 'it' ? 'Dettagli del ciclismo' : 'Cycling Details'}</h3>
                         <div className="space-y-2">
                           <Label>{t('cyclingType')}</Label>
                           <Select value={formData.cycling_type} onValueChange={(v) => handleChange('cycling_type', v)}>
@@ -1413,8 +1413,8 @@ Include water recommendation in liters and detailed equipment list.`,
                     )}
 
                     {formData.activity_type === 'offroad' && (
-                      <div className="space-y-4 p-6 bg-orange-50 rounded-2xl">
-                        <h3 className="text-lg font-bold text-orange-900">{language === 'he' ? 'פרטי שטח' : language === 'ru' ? 'Детали внедорожной поездки' : language === 'es' ? 'Detalles del todoterreno' : language === 'fr' ? 'Détails du tout-terrain' : language === 'de' ? 'Offroad-Details' : language === 'it' ? 'Dettagli del fuoristrada' : 'Off-Road Details'}</h3>
+                      <div className="space-y-4 p-6 bg-orange-600 rounded-2xl border-2 border-orange-700 shadow-xl">
+                        <h3 className="text-lg font-bold text-white">{language === 'he' ? 'פרטי שטח' : language === 'ru' ? 'Детали внедорожной поездки' : language === 'es' ? 'Detalles del todoterreno' : language === 'fr' ? 'Détails du tout-terrain' : language === 'de' ? 'Offroad-Details' : language === 'it' ? 'Dettagli del fuoristrada' : 'Off-Road Details'}</h3>
                         <div className="space-y-2">
                           <Label>{t('offroadVehicleType')}</Label>
                           <Select value={formData.offroad_vehicle_type} onValueChange={(v) => handleChange('offroad_vehicle_type', v)}>
@@ -1607,13 +1607,13 @@ Include water recommendation in liters and detailed equipment list.`,
 
               {/* Step 5: Summary */}
               {currentStep === 5 && (
-                <Card className="border-2 border-green-100 shadow-2xl">
-                  <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50">
-                    <CardTitle className="flex items-center gap-3 text-2xl">
-                      <Check className="w-7 h-7 text-green-600" />
+                <Card className="border-2 border-green-200 shadow-2xl">
+                  <CardHeader className="bg-green-600">
+                    <CardTitle className="flex items-center gap-3 text-2xl text-white font-bold">
+                      <Check className="w-7 h-7 text-white" />
                       {language === 'he' ? 'סיכום הטיול' : language === 'ru' ? 'Резюме поездки' : language === 'es' ? 'Resumen del viaje' : language === 'fr' ? 'Résumé du voyage' : language === 'de' ? 'Reisezusammenfassung' : language === 'it' ? 'Riepilogo del viaggio' : 'Trip Summary'}
                     </CardTitle>
-                    <CardDescription>{language === 'he' ? 'בדוק שהכל נכון לפני פרסום' : language === 'ru' ? 'Проверьте все перед публикацией' : language === 'es' ? 'Revisa todo antes de publicar' : language === 'fr' ? 'Vérifiez tout avant de publier' : language === 'de' ? 'Überprüfen Sie alles vor der Veröffentlichung' : language === 'it' ? 'Rivedi tutto prima di pubblicare' : 'Review everything before publishing'}</CardDescription>
+                    <CardDescription className="text-green-100">{language === 'he' ? 'בדוק שהכל נכון לפני פרסום' : language === 'ru' ? 'Проверьте все перед публикацией' : language === 'es' ? 'Revisa todo antes de publicar' : language === 'fr' ? 'Vérifiez tout avant de publier' : language === 'de' ? 'Überprüfen Sie alles vor der Veröffentlichung' : language === 'it' ? 'Rivedi tutto prima di pubblicare' : 'Review everything before publishing'}</CardDescription>
                   </CardHeader>
                   <CardContent className="p-8 space-y-8">
                     {/* Main Info */}
@@ -1934,7 +1934,7 @@ Include water recommendation in liters and detailed equipment list.`,
               <Button
                 type="button"
                 onClick={nextStep}
-                className="px-4 py-2.5 text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 flex-1 max-w-[140px]"
+                className="px-4 py-2.5 text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white flex-1 max-w-[140px] shadow-xl border-2 border-emerald-700 hover:border-emerald-800 transition-all"
               >
                 {language === 'he' ? 'הבא' : language === 'ru' ? 'Далее' : language === 'es' ? 'Siguiente' : language === 'fr' ? 'Suivant' : language === 'de' ? 'Weiter' : language === 'it' ? 'Avanti' : 'Next'}
                 <ArrowRight className={`w-4 h-4 ${isRTL ? 'mr-1' : 'ml-1'}`} />
@@ -1948,7 +1948,7 @@ Include water recommendation in liters and detailed equipment list.`,
                   setShowOrganizerFamilyDialog(true);
                 }}
                 disabled={saving}
-                className="px-4 py-2.5 text-sm font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 flex-1 max-w-[140px] touch-manipulation"
+                className="px-4 py-2.5 text-sm font-bold bg-green-600 hover:bg-green-700 text-white flex-1 max-w-[140px] touch-manipulation shadow-xl border-2 border-green-700 hover:border-green-800 transition-all"
               >
                 {saving ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
