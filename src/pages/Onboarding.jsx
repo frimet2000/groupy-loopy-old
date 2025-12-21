@@ -50,7 +50,7 @@ export default function Onboarding() {
     profile_image: '',
     birth_date: '',
     spouse_birth_date: '',
-    children_birth_dates: [],
+    children_age_ranges: [],
     fitness_level: 'moderate',
     accessibility_needs: [],
     preferred_interests: [],
@@ -387,7 +387,7 @@ export default function Onboarding() {
                         <Label className="text-sm font-semibold">
                           {language === 'he' ? 'ילדים' : 'Children'}
                         </Label>
-                        {formData.children_birth_dates.map((child, idx) => (
+                        {formData.children_age_ranges.map((child, idx) => (
                           <div key={child.id} className="bg-pink-50 p-4 rounded-lg border border-pink-200 space-y-3">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                               <div className="space-y-1">
@@ -400,34 +400,44 @@ export default function Onboarding() {
                                 <Input
                                   value={child.name || ''}
                                   onChange={(e) => {
-                                    const updated = [...formData.children_birth_dates];
+                                    const updated = [...formData.children_age_ranges];
                                     updated[idx] = { ...updated[idx], name: e.target.value };
-                                    handleChange('children_birth_dates', updated);
+                                    handleChange('children_age_ranges', updated);
                                   }}
                                   placeholder={language === 'he' ? `ילד ${idx + 1}` : `Child ${idx + 1}`}
                                   dir={language === 'he' ? 'rtl' : 'ltr'}
                                 />
                               </div>
                               <div className="space-y-1">
-                                <Label className="text-xs">{language === 'he' ? 'תאריך לידה' : 'Birth Date'}</Label>
-                                <Input
-                                  type="date"
-                                  value={child.birth_date || ''}
-                                  onChange={(e) => {
-                                    const updated = [...formData.children_birth_dates];
-                                    updated[idx] = { ...updated[idx], birth_date: e.target.value };
-                                    handleChange('children_birth_dates', updated);
+                                <Label className="text-xs">{language === 'he' ? 'טווח גיל' : 'Age Range'}</Label>
+                                <Select 
+                                  value={child.age_range || ''} 
+                                  onValueChange={(value) => {
+                                    const updated = [...formData.children_age_ranges];
+                                    updated[idx] = { ...updated[idx], age_range: value };
+                                    handleChange('children_age_ranges', updated);
                                   }}
-                                />
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder={language === 'he' ? 'בחר' : 'Select'} />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="0-2">0-2</SelectItem>
+                                    <SelectItem value="3-6">3-6</SelectItem>
+                                    <SelectItem value="7-10">7-10</SelectItem>
+                                    <SelectItem value="11-14">11-14</SelectItem>
+                                    <SelectItem value="15-18">15-18</SelectItem>
+                                  </SelectContent>
+                                </Select>
                               </div>
                               <div className="space-y-1">
                                 <Label className="text-xs">{language === 'he' ? 'מין' : 'Gender'}</Label>
                                 <Select 
                                   value={child.gender || ''} 
                                   onValueChange={(value) => {
-                                    const updated = [...formData.children_birth_dates];
+                                    const updated = [...formData.children_age_ranges];
                                     updated[idx] = { ...updated[idx], gender: value };
-                                    handleChange('children_birth_dates', updated);
+                                    handleChange('children_age_ranges', updated);
                                   }}
                                 >
                                   <SelectTrigger>
@@ -445,8 +455,8 @@ export default function Onboarding() {
                               variant="ghost"
                               size="sm"
                               onClick={() => {
-                                const updated = formData.children_birth_dates.filter((_, i) => i !== idx);
-                                handleChange('children_birth_dates', updated);
+                                const updated = formData.children_age_ranges.filter((_, i) => i !== idx);
+                                handleChange('children_age_ranges', updated);
                               }}
                               className="text-red-500 hover:text-red-700 hover:bg-red-50 w-full"
                             >
@@ -461,10 +471,10 @@ export default function Onboarding() {
                             const newChild = {
                               id: Date.now().toString(),
                               name: '',
-                              birth_date: '',
+                              age_range: '',
                               gender: ''
                             };
-                            handleChange('children_birth_dates', [...formData.children_birth_dates, newChild]);
+                            handleChange('children_age_ranges', [...formData.children_age_ranges, newChild]);
                           }}
                           className="w-full border-dashed border-2"
                         >

@@ -171,7 +171,7 @@ export default function TripDetails() {
             name: (userProfile.first_name && userProfile.last_name)
               ? `${userProfile.first_name} ${userProfile.last_name}`
               : userProfile.full_name,
-            children_birth_dates: userProfile.children_birth_dates || []
+            children_age_ranges: userProfile.children_age_ranges || []
           };
         }
       });
@@ -2084,14 +2084,15 @@ export default function TripDetails() {
                                  console.log('Children Count:', childrenCount);
                                  console.log('Selected Children IDs:', participant.selected_children);
 
-                                 if (childrenCount > 0 && participantProfile?.children_birth_dates) {
+                                 if (childrenCount > 0 && participantProfile?.children_age_ranges) {
                                    participant.selected_children.forEach((childId, idx) => {
-                                     const child = participantProfile.children_birth_dates.find(c => c.id === childId);
+                                     const child = participantProfile.children_age_ranges.find(c => c.id === childId);
                                      console.log(`Child ${idx + 1}:`, child);
                                      if (child) {
                                        childrenDetails.push({
-                                         birth_date: child.birth_date,
-                                         gender: child.gender
+                                         age_range: child.age_range,
+                                         gender: child.gender,
+                                         name: child.name
                                        });
                                      }
                                    });
@@ -2156,7 +2157,6 @@ export default function TripDetails() {
                                                   </p>
                                                   {childrenDetails.length > 0 ? (
                                                     childrenDetails.map((childData, idx) => {
-                                                      const age = calculateAge(childData.birth_date);
                                                       const genderLabel = childData.gender === 'male' 
                                                         ? (language === 'he' ? 'בן' : 'Boy')
                                                         : childData.gender === 'female'
@@ -2166,10 +2166,12 @@ export default function TripDetails() {
                                                         <div key={idx} className="flex items-center gap-2 p-2 bg-pink-50 rounded-lg">
                                                           <span className={`w-3 h-3 rounded-full flex-shrink-0 ${childData.gender === 'male' ? 'bg-blue-500' : childData.gender === 'female' ? 'bg-pink-500' : 'bg-gray-400'}`}></span>
                                                           <div className="flex-1">
-                                                            <p className="font-semibold text-gray-800 text-sm">{language === 'he' ? `ילד ${idx + 1}` : `Child ${idx + 1}`}</p>
+                                                            <p className="font-semibold text-gray-800 text-sm">
+                                                              {childData.name || `${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}
+                                                            </p>
                                                             <p className="text-gray-600 text-xs">
-                                                              {age !== null && typeof age === 'number' && (
-                                                                <span className="font-bold text-pink-700">{language === 'he' ? `גיל ${age}` : `Age ${age}`}</span>
+                                                              {childData.age_range && (
+                                                                <span className="font-bold text-pink-700">{language === 'he' ? `גיל ` : 'Age '}{childData.age_range}</span>
                                                               )}
                                                               {genderLabel && ` • ${genderLabel}`}
                                                             </p>
@@ -2465,12 +2467,12 @@ export default function TripDetails() {
                   </label>
                 </div>
 
-                {user?.children_birth_dates && user.children_birth_dates.length > 0 && (
+                {user?.children_age_ranges && user.children_age_ranges.length > 0 && (
                 <div className="space-y-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
                   <Label className="text-sm font-semibold">
                     {language === 'he' ? 'ילדים' : 'Children'}
                   </Label>
-                    {user.children_birth_dates.map((child, idx) => {
+                    {user.children_age_ranges.map((child, idx) => {
                       return (
                         <div key={child.id} className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
                           <Checkbox
@@ -2486,8 +2488,12 @@ export default function TripDetails() {
                             className="data-[state=checked]:bg-pink-600"
                           />
                           <label htmlFor={`child-${child.id}`} className="flex-1 font-medium cursor-pointer">
-                            {`${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}
-                            {child.birth_date && ` (${child.birth_date})`}
+                            {child.name || `${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}
+                            {child.age_range && (
+                              <Badge variant="outline" className="mr-2 bg-pink-50 text-pink-700">
+                                {child.age_range}
+                              </Badge>
+                            )}
                           </label>
                         </div>
                       );

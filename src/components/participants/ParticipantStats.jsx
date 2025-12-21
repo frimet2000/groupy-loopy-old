@@ -39,16 +39,9 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
     if (childrenCount > 0) {
       const participantProfile = userProfiles[participant.email];
       participant.selected_children?.forEach(childId => {
-        const child = participantProfile?.children_birth_dates?.find(c => c.id === childId);
-        if (child) {
-          const age = calculateAge(child.birth_date);
-          if (age !== null && age < 18) {
-            if (age < 3) stats.childrenByAge['0-2'] = (stats.childrenByAge['0-2'] || 0) + 1;
-            else if (age < 7) stats.childrenByAge['3-6'] = (stats.childrenByAge['3-6'] || 0) + 1;
-            else if (age < 11) stats.childrenByAge['7-10'] = (stats.childrenByAge['7-10'] || 0) + 1;
-            else if (age < 15) stats.childrenByAge['11-14'] = (stats.childrenByAge['11-14'] || 0) + 1;
-            else stats.childrenByAge['15-18'] = (stats.childrenByAge['15-18'] || 0) + 1;
-          }
+        const child = participantProfile?.children_age_ranges?.find(c => c.id === childId);
+        if (child && child.age_range) {
+          stats.childrenByAge[child.age_range] = (stats.childrenByAge[child.age_range] || 0) + 1;
         }
       });
     }
@@ -241,20 +234,17 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
                       {/* Age Badge */}
                       {(() => {
                         const participantProfile = userProfiles[participants[idx]?.email];
-                        const child = participantProfile?.children_birth_dates?.[i];
-                        if (child) {
-                          const age = calculateAge(child.birth_date);
-                          if (age !== null) {
-                            return (
-                              <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-white rounded-full px-2 py-0.5 shadow-md border border-pink-200"
-                              >
-                                <span className="text-[10px] font-bold text-pink-700">{age}</span>
-                              </motion.div>
-                            );
-                          }
+                        const child = participantProfile?.children_age_ranges?.[i];
+                        if (child && child.age_range) {
+                          return (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-white rounded-full px-2 py-0.5 shadow-md border border-pink-200"
+                            >
+                              <span className="text-[10px] font-bold text-pink-700">{child.age_range}</span>
+                            </motion.div>
+                          );
                         }
                         return null;
                       })()}

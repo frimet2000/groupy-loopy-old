@@ -140,7 +140,7 @@ export default function ProfilePreviewDialog({ open, onOpenChange, userEmail }) 
               )}
 
               {/* Family */}
-              {(userProfile.birth_date || userProfile.spouse_birth_date || (userProfile.children_birth_dates && userProfile.children_birth_dates.length > 0)) && (
+              {(userProfile.birth_date || userProfile.spouse_birth_date || (userProfile.children_age_ranges && userProfile.children_age_ranges.length > 0)) && (
                 <>
                   <Separator />
                   <div className="space-y-3" dir={language === 'he' ? 'rtl' : 'ltr'}>
@@ -167,20 +167,20 @@ export default function ProfilePreviewDialog({ open, onOpenChange, userEmail }) 
                         </Badge>
                       </div>
                     )}
-                    {userProfile.children_birth_dates && userProfile.children_birth_dates.length > 0 && (
+                    {userProfile.children_age_ranges && userProfile.children_age_ranges.length > 0 && (
                       <div className="space-y-2">
                         <Label className="text-sm">
                           {language === 'he' ? 'ילדים:' : 'Children:'}
                         </Label>
                         <div className="space-y-1">
-                          {userProfile.children_birth_dates.map((child, idx) => (
+                          {userProfile.children_age_ranges.map((child, idx) => (
                             <div key={idx} className="flex items-center gap-2 text-sm">
                               <span className="text-gray-700">
                                 {child.name || `${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}
                                 {child.gender && ` (${child.gender === 'male' ? (language === 'he' ? 'בן' : 'Boy') : child.gender === 'female' ? (language === 'he' ? 'בת' : 'Girl') : (language === 'he' ? 'אחר' : 'Other')})`}:
                               </span>
                               <Badge variant="outline" className="bg-pink-50 text-pink-700">
-                                {calculateAge(child.birth_date)} {language === 'he' ? 'שנים' : 'years'}
+                                {child.age_range}
                               </Badge>
                             </div>
                           ))}
