@@ -2117,30 +2117,31 @@ export default function TripDetails() {
                                         )}
                                       </td>
                                       <td className="px-4 py-3">
-                                        <div className="flex flex-col gap-1.5">
-                                          {otherCount > 0 && (
-                                            <div>
-                                              <Badge variant="secondary" className="bg-amber-100 text-amber-700">
-                                                {otherCount}
-                                              </Badge>
-                                              <div className="flex flex-wrap gap-1 mt-1">
-                                                {otherDetails.map((detail, idx) => (
-                                                  <span key={idx} className="text-xs text-gray-600">
-                                                    {detail}{idx < otherDetails.length - 1 ? ',' : ''}
-                                                  </span>
-                                                ))}
+                                        {otherCount > 0 || hasPets ? (
+                                          <div className="flex flex-col gap-1.5">
+                                            {otherCount > 0 && (
+                                              <div>
+                                                <Badge variant="secondary" className="bg-amber-100 text-amber-700">
+                                                  {otherCount}
+                                                </Badge>
+                                                <div className="flex flex-wrap gap-1 mt-1">
+                                                  {otherDetails.map((detail, idx) => (
+                                                    <span key={idx} className="text-xs text-gray-600">
+                                                      {detail}{idx < otherDetails.length - 1 ? ',' : ''}
+                                                    </span>
+                                                  ))}
+                                                </div>
                                               </div>
-                                            </div>
-                                          )}
-                                          {hasPets && (
-                                            <div className="flex items-center gap-0.5">
-                                              <Dog className="w-4 h-4 text-amber-600" />
-                                            </div>
-                                          )}
-                                          {!otherCount && !hasPets && (
-                                            <span className="text-xs text-gray-400">-</span>
-                                          )}
-                                        </div>
+                                            )}
+                                            {hasPets && (
+                                              <div className="flex items-center gap-0.5">
+                                                <Dog className="w-4 h-4 text-amber-600" />
+                                              </div>
+                                            )}
+                                          </div>
+                                        ) : (
+                                          <span className="text-xs text-gray-400">-</span>
+                                        )}
                                       </td>
                                       <td className="px-4 py-3">
                                         <Badge variant="secondary" className="bg-purple-100 text-purple-700 font-bold">
