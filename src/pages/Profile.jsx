@@ -441,11 +441,11 @@ export default function Profile() {
                             {viewingUser.children_birth_dates.map((child, idx) => (
                               <div key={idx} className="flex items-center gap-2">
                                 <span className="text-gray-700">
-                                  {child.name || `${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}
+                                  {`${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}
                                   {child.gender && ` (${child.gender === 'male' ? (language === 'he' ? 'בן' : 'Boy') : child.gender === 'female' ? (language === 'he' ? 'בת' : 'Girl') : (language === 'he' ? 'אחר' : 'Other')})`}:
                                 </span>
                                 <Badge variant="outline" className="bg-pink-50 text-pink-700 border-pink-200">
-                                  {calculateAge(child.birth_date)} {language === 'he' ? 'שנים' : language === 'ru' ? 'лет' : language === 'es' ? 'años' : language === 'fr' ? 'ans' : language === 'de' ? 'Jahre' : language === 'it' ? 'anni' : 'years'}
+                                  {child.birth_date} {language === 'he' ? 'שנים' : language === 'ru' ? 'лет' : language === 'es' ? 'años' : language === 'fr' ? 'ans' : language === 'de' ? 'Jahre' : language === 'it' ? 'anni' : 'years'}
                                 </Badge>
                               </div>
                             ))}
@@ -737,20 +737,26 @@ export default function Profile() {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div className="space-y-1">
-                          <Label className="text-xs">{language === 'he' ? 'שנת לידה' : language === 'ru' ? 'Год рождения' : language === 'es' ? 'Año de nacimiento' : language === 'fr' ? 'Année de naissance' : language === 'de' ? 'Geburtsjahr' : language === 'it' ? 'Anno di nascita' : 'Birth Year'}</Label>
-                          <Input
-                            type="number"
-                            min="1990"
-                            max={new Date().getFullYear()}
-                            value={child.birth_date ? new Date(child.birth_date).getFullYear() : ''}
-                            onChange={(e) => {
-                              const year = e.target.value;
+                          <Label className="text-xs">{language === 'he' ? 'קבוצת גיל' : language === 'ru' ? 'Возрастная группа' : language === 'es' ? 'Grupo de edad' : language === 'fr' ? 'Groupe d\'âge' : language === 'de' ? 'Altersgruppe' : language === 'it' ? 'Fascia d\'età' : 'Age Group'}</Label>
+                          <Select 
+                            value={child.birth_date || ''} 
+                            onValueChange={(value) => {
                               const updated = [...formData.children_birth_dates];
-                              updated[idx] = { ...updated[idx], birth_date: year ? `${year}-01-01` : '' };
+                              updated[idx] = { ...updated[idx], birth_date: value };
                               handleChange('children_birth_dates', updated);
                             }}
-                            placeholder={language === 'he' ? 'לדוגמה: 2015' : 'e.g., 2015'}
-                          />
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder={language === 'he' ? 'בחר גיל' : language === 'ru' ? 'Выбрать возраст' : language === 'es' ? 'Seleccionar edad' : language === 'fr' ? 'Sélectionner l\'âge' : language === 'de' ? 'Alter wählen' : language === 'it' ? 'Seleziona età' : 'Select age'} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="0-2">{language === 'he' ? '0-2 שנים' : '0-2 years'}</SelectItem>
+                              <SelectItem value="3-6">{language === 'he' ? '3-6 שנים' : '3-6 years'}</SelectItem>
+                              <SelectItem value="7-10">{language === 'he' ? '7-10 שנים' : '7-10 years'}</SelectItem>
+                              <SelectItem value="11-14">{language === 'he' ? '11-14 שנים' : '11-14 years'}</SelectItem>
+                              <SelectItem value="15-18">{language === 'he' ? '15-18 שנים' : '15-18 years'}</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div className="space-y-1">
                           <Label className="text-xs">{language === 'he' ? 'מין' : language === 'ru' ? 'Пол' : language === 'es' ? 'Género' : language === 'fr' ? 'Sexe' : language === 'de' ? 'Geschlecht' : language === 'it' ? 'Sesso' : 'Gender'}</Label>
@@ -775,7 +781,7 @@ export default function Profile() {
                       </div>
                       {child.birth_date && (
                         <p className="text-sm text-pink-700 font-medium">
-                          {language === 'he' ? 'גיל:' : language === 'ru' ? 'Возраст:' : language === 'es' ? 'Edad:' : language === 'fr' ? 'Âge :' : language === 'de' ? 'Alter:' : language === 'it' ? 'Età:' : 'Age:'} {calculateAge(child.birth_date)} {language === 'he' ? 'שנים' : language === 'ru' ? 'лет' : language === 'es' ? 'años' : language === 'fr' ? 'ans' : language === 'de' ? 'Jahre' : language === 'it' ? 'anni' : 'years'}
+                          {language === 'he' ? 'גיל:' : language === 'ru' ? 'Возраст:' : language === 'es' ? 'Edad:' : language === 'fr' ? 'Âge :' : language === 'de' ? 'Alter:' : language === 'it' ? 'Età:' : 'Age:'} {child.birth_date} {language === 'he' ? 'שנים' : language === 'ru' ? 'лет' : language === 'es' ? 'años' : language === 'fr' ? 'ans' : language === 'de' ? 'Jahre' : language === 'it' ? 'anni' : 'years'}
                         </p>
                       )}
                     </div>
