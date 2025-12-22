@@ -105,8 +105,8 @@ function LayoutContent({ children, currentPageName }) {
   const allNavItems = [
         { name: 'Home', icon: Home, label: t('home'), color: 'text-emerald-600' },
         { name: 'MyTrips', icon: Map, label: t('myTrips'), color: 'text-blue-600' },
-        { name: 'Weather', icon: CloudSun, label: language === 'he' ? 'מזג אוויר' : language === 'ru' ? 'Погода' : language === 'es' ? 'Clima' : language === 'fr' ? 'Météo' : language === 'de' ? 'Wetter' : language === 'it' ? 'Meteo' : 'Weather', color: 'text-sky-500' },
         { name: 'CreateTrip', icon: Plus, label: t('createTrip'), color: 'text-purple-600' },
+        { name: 'Weather', icon: CloudSun, label: language === 'he' ? 'מזג אוויר' : language === 'ru' ? 'Погода' : language === 'es' ? 'Clima' : language === 'fr' ? 'Météo' : language === 'de' ? 'Wetter' : language === 'it' ? 'Meteo' : 'Weather', color: 'text-sky-500' },
         { name: 'TravelJournal', icon: BookOpen, label: language === 'he' ? 'יומן מסע' : language === 'ru' ? 'Дневник' : language === 'es' ? 'Diario' : language === 'fr' ? 'Journal' : language === 'de' ? 'Tagebuch' : language === 'it' ? 'Diario' : 'Journal', color: 'text-rose-600' },
         { name: 'AIRecommendations', icon: Sparkles, label: t('aiRecommendations'), color: 'text-indigo-600' },
         { name: 'Community', icon: Users, label: language === 'he' ? 'קהילה' : language === 'ru' ? 'Сообщество' : language === 'es' ? 'Comunidad' : language === 'fr' ? 'Communauté' : language === 'de' ? 'Gemeinschaft' : language === 'it' ? 'Comunità' : 'Community', color: 'text-pink-600' },
