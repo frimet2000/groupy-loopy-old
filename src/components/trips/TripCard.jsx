@@ -141,23 +141,25 @@ export default function TripCard({ trip }) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
             
-            <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} flex gap-1.5`}>
+            <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} flex flex-col gap-2 max-w-[50%]`}>
               {trip.activity_type && (
-                <Badge className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-2 border-white font-bold text-sm px-4 py-1.5 shadow-xl flex items-center gap-1.5">
+                <Badge className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-2 border-white font-bold text-sm px-4 py-1.5 shadow-xl flex items-center gap-1.5 w-fit">
                   {trip.activity_type === 'hiking' && <Mountain className="w-4 h-4" />}
                   {trip.activity_type === 'cycling' && <Bike className="w-4 h-4" />}
                   {trip.activity_type === 'offroad' && <Truck className="w-4 h-4" />}
                   {t(trip.activity_type)}
                 </Badge>
               )}
-              <Badge className={`${difficultyColors[trip.difficulty]} border-0 font-semibold text-xs px-2.5 py-1 shadow-sm`}>
-                {t(trip.difficulty)}
-              </Badge>
-              {trip.status !== 'open' && (
-                <Badge variant="secondary" className="bg-white/90 text-gray-700 text-xs px-2.5 py-1 font-semibold shadow-sm">
-                  {t(trip.status)}
+              <div className="flex gap-1.5 flex-wrap">
+                <Badge className={`${difficultyColors[trip.difficulty]} border-0 font-semibold text-xs px-2.5 py-1 shadow-sm`}>
+                  {t(trip.difficulty)}
                 </Badge>
-              )}
+                {trip.status !== 'open' && (
+                  <Badge variant="secondary" className="bg-white/90 text-gray-700 text-xs px-2.5 py-1 font-semibold shadow-sm">
+                    {t(trip.status)}
+                  </Badge>
+                )}
+              </div>
             </div>
 
             <div className={`absolute top-3 ${isRTL ? 'left-3' : 'right-3'} flex gap-2`}>
