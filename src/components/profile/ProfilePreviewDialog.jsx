@@ -156,23 +156,23 @@ export default function ProfilePreviewDialog({ open, onOpenChange, userEmail }) 
                     <Label className="text-base font-semibold">
                       {language === 'he' ? 'משפחה' : 'Family'}
                     </Label>
-                    {(userProfile.birth_date || userProfile.parent_age_range) && (
+                    {userProfile.parent_age_range && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <span className="font-medium">
                           {language === 'he' ? 'גילי:' : 'My age:'}
                         </span>
                         <Badge variant="outline" className="bg-purple-50 text-purple-700">
-                          {userProfile.parent_age_range || toAdultAgeRange(calculateAge(userProfile.birth_date))}
+                          {userProfile.parent_age_range}
                         </Badge>
                       </div>
                     )}
-                    {userProfile.spouse_birth_date && (
+                    {userProfile.spouse_age_range && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <span className="font-medium">
                           {language === 'he' ? 'גיל בן/בת הזוג:' : 'Spouse age:'}
                         </span>
                         <Badge variant="outline" className="bg-purple-50 text-purple-700">
-                          {toAdultAgeRange(calculateAge(userProfile.spouse_birth_date))}
+                          {userProfile.spouse_age_range}
                         </Badge>
                       </div>
                     )}
