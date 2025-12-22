@@ -200,8 +200,8 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
             <div className="bg-white rounded-lg p-4 text-center border border-indigo-200">
               <p className="text-sm text-indigo-600">
                 {language === 'he' 
-                  ? 'אין נתונים זמינים - המשתתפים לא מילאו את תאריך הלידה בפרופיל שלהם'
-                  : 'No data available - participants haven\'t filled their birth date in their profile'}
+                  ? 'אין נתונים זמינים - המשתתפים לא מילאו את טווח הגילאים בפרופיל שלהם'
+                  : 'No data available - participants haven\'t filled their age range in their profile'}
               </p>
             </div>
           )}
