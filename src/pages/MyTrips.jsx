@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Calendar, UserCircle, Compass, Bookmark, History } from 'lucide-react';
-import { motion } from 'framer-motion';
+
 
 export default function MyTrips() {
   const { t, language, isRTL } = useLanguage();
@@ -120,11 +120,7 @@ export default function MyTrips() {
   return (
     <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 pb-24 sm:pb-8">
       <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }}
-        >
+        <div>
           <div className="flex items-center justify-between mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('myTrips')}</h1>
             <Link to={createPageUrl('CreateTrip')}>
@@ -319,7 +315,7 @@ export default function MyTrips() {
               )}
             </TabsContent>
             </Tabs>
-            </motion.div>
+            </div>
             </div>
             </div>
             );
