@@ -43,3 +43,64 @@ export function detectUserLocation(onSuccess, onError) {
     if (onError) onError(new Error('Geolocation not supported'));
   }
 }
+
+// Detect country from user's location coordinates
+export async function detectCountryFromLocation() {
+  return new Promise((resolve) => {
+    if (!('geolocation' in navigator)) {
+      resolve('israel');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        
+        // Map coordinates to countries
+        if (latitude >= 29 && latitude <= 33.5 && longitude >= 34 && longitude <= 36) {
+          resolve('israel');
+        } else if (latitude >= 41 && latitude <= 51 && longitude >= -5 && longitude <= 10) {
+          if (longitude >= -5 && longitude <= 3) {
+            if (latitude >= 43 && latitude <= 51 && longitude >= -5 && longitude <= 5) {
+              resolve('france');
+            } else if (latitude >= 36 && latitude <= 44 && longitude >= -10 && longitude <= 4) {
+              resolve('spain');
+            } else {
+              resolve('france');
+            }
+          } else if (latitude >= 47 && latitude <= 55 && longitude >= 5 && longitude <= 15) {
+            resolve('germany');
+          } else if (latitude >= 36 && latitude <= 48 && longitude >= 6 && longitude <= 19) {
+            resolve('italy');
+          } else {
+            resolve('israel');
+          }
+        } else if (latitude >= 36 && latitude <= 48 && longitude >= 6 && longitude <= 19) {
+          resolve('italy');
+        } else if (latitude >= 47 && latitude <= 55 && longitude >= 5 && longitude <= 15) {
+          resolve('germany');
+        } else if (latitude >= 36 && latitude <= 44 && longitude >= -10 && longitude <= 4) {
+          resolve('spain');
+        } else if (latitude >= 41 && latitude <= 51 && longitude >= -5 && longitude <= 6) {
+          resolve('france');
+        } else if (latitude >= 24 && latitude <= 49 && longitude >= -125 && longitude <= -66) {
+          resolve('usa');
+        } else if (latitude >= 41 && latitude <= 83 && longitude >= -141 && longitude <= -52) {
+          resolve('canada');
+        } else if (latitude >= 36 && latitude <= 43 && longitude >= 25 && longitude <= 29) {
+          resolve('greece');
+        } else if (latitude >= 36 && latitude <= 42 && longitude >= -9 && longitude <= -6) {
+          resolve('portugal');
+        } else if (latitude >= 50 && latitude <= 53 && longitude >= -10 && longitude <= 2) {
+          resolve('uk');
+        } else {
+          resolve('israel');
+        }
+      },
+      () => {
+        resolve('israel');
+      },
+      { timeout: 5000 }
+    );
+  });
+}
