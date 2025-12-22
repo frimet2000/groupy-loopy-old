@@ -130,22 +130,16 @@ export default function TripCard({ trip }) {
 
   return (
     <>
-      <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-white via-gray-50/50 to-white border-2 border-gray-200/50 hover:border-emerald-300/50 shadow-lg relative before:absolute before:inset-0 before:bg-gradient-to-br before:from-emerald-500/5 before:to-teal-500/5 before:opacity-0 before:group-hover:opacity-100 before:transition-opacity before:duration-500 touch-manipulation active:scale-[0.98] rounded-2xl">
+      <Card className="group overflow-hidden hover:shadow-xl transition-shadow bg-white border-2 border-gray-200 hover:border-emerald-300 shadow-md touch-manipulation rounded-2xl">
         <Link to={createPageUrl('TripDetails') + `?id=${trip.id}`}>
           <div className="relative h-48 sm:h-52 md:h-56 overflow-hidden rounded-t-2xl border-b-2 border-gray-100/50">
             <img
-              src={trip.image_url || `https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=600`}
+              src={trip.image_url || `https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=600&q=70`}
               alt={title}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 group-hover:brightness-110"
+              className="w-full h-full object-cover"
+              loading="lazy"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent group-hover:from-black/60" />
-            
-            {/* Animated Corner Accent */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-teal-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
-            
-            {/* Shimmer effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             
             <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} flex gap-1.5`}>
               <Badge className={`${difficultyColors[trip.difficulty]} border-0 font-semibold text-xs px-2.5 py-1 shadow-sm`}>
@@ -163,7 +157,7 @@ export default function TripCard({ trip }) {
                 <Button
                   size="icon"
                   variant="ghost"
-                  className={`h-10 w-10 rounded-full ${isLiked ? 'bg-rose-600 hover:bg-rose-700' : 'bg-white/95 hover:bg-white'} transition-all shadow-lg backdrop-blur-sm touch-manipulation min-h-[44px] min-w-[44px]`}
+                  className={`h-10 w-10 rounded-full ${isLiked ? 'bg-rose-600 hover:bg-rose-700' : 'bg-white hover:bg-gray-50'} transition-colors shadow-md touch-manipulation min-h-[44px] min-w-[44px]`}
                   onClick={handleLike}
                 >
                   <Heart className={`h-5 w-5 ${isLiked ? 'fill-white text-white' : 'text-rose-600'}`} />
@@ -173,7 +167,7 @@ export default function TripCard({ trip }) {
                 <Button
                   size="icon"
                   variant="secondary"
-                  className="h-10 w-10 rounded-full bg-white/95 hover:bg-white sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-lg backdrop-blur-sm touch-manipulation min-h-[44px] min-w-[44px]"
+                  className="h-10 w-10 rounded-full bg-white hover:bg-gray-50 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-md touch-manipulation min-h-[44px] min-w-[44px]"
                   onClick={(e) => {
                     e.preventDefault();
                     navigate(createPageUrl('EditTrip') + `?id=${trip.id}`);
@@ -186,7 +180,7 @@ export default function TripCard({ trip }) {
                 <Button
                   size="icon"
                   variant="destructive"
-                  className="h-10 w-10 rounded-full bg-red-600/95 hover:bg-red-700 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-lg backdrop-blur-sm touch-manipulation min-h-[44px] min-w-[44px]"
+                  className="h-10 w-10 rounded-full bg-red-600 hover:bg-red-700 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-md touch-manipulation min-h-[44px] min-w-[44px]"
                   onClick={(e) => {
                     e.preventDefault();
                     setShowDeleteDialog(true);
@@ -308,15 +302,14 @@ export default function TripCard({ trip }) {
               e.stopPropagation();
               navigate(createPageUrl('TripDetails') + `?id=${trip.id}`);
             }}
-            className="group/btn w-full mt-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold h-12 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300 relative z-10 overflow-hidden"
+            className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold h-12 rounded-xl shadow-lg border-2 border-emerald-700 hover:border-emerald-800 transition-all"
           >
-            <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
-            <span className="relative flex items-center justify-center gap-2">
+            <span className="flex items-center justify-center gap-2">
               {language === 'he' ? 'לפרטים נוספים' : language === 'ru' ? 'Подробнее' : language === 'es' ? 'Más detalles' : language === 'fr' ? 'Plus de détails' : language === 'de' ? 'Mehr Details' : language === 'it' ? 'Maggiori dettagli' : 'More Details'}
               {isRTL ? (
-                <ArrowLeft className="w-4 h-4 group-hover/btn:-translate-x-1 transition-transform duration-300" />
+                <ArrowLeft className="w-4 h-4" />
               ) : (
-                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                <ArrowRight className="w-4 h-4" />
               )}
             </span>
           </Button>
