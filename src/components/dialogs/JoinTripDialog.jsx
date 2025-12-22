@@ -47,26 +47,19 @@ export default function JoinTripDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-w-2xl h-[100dvh] sm:h-auto sm:max-h-[85vh] p-0 flex flex-col gap-0 m-0 sm:m-4">
-        {/* Header - Fixed */}
-        <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 border-b flex-shrink-0">
-          <DialogTitle className="text-base sm:text-lg">
-            {language === 'he' ? 'בקשה להצטרפות לטיול' : language === 'ru' ? 'Запрос на присоединение к поездке' : language === 'es' ? 'Solicitud para unirse al viaje' : language === 'fr' ? 'Demande pour rejoindre le voyage' : language === 'de' ? 'Anfrage zur Teilnahme an der Reise' : language === 'it' ? 'Richiesta di unirsi al viaggio' : 'Request to Join Trip'}
-          </DialogTitle>
-          <DialogDescription className="text-xs sm:text-sm">
-            {language === 'he' 
-              ? 'ספר למארגן מעט על עצמך או שאל שאלות על הטיול'
-              : language === 'ru' ? 'Расскажите организатору о себе или задайте вопросы о поездке'
-              : language === 'es' ? 'Cuéntale al organizador sobre ti o haz preguntas sobre el viaje'
-              : language === 'fr' ? 'Parlez de vous à l\'organisateur ou posez des questions sur le voyage'
-              : language === 'de' ? 'Erzählen Sie dem Organisator über sich oder stellen Sie Fragen zur Reise'
-              : language === 'it' ? 'Racconta all\'organizzatore di te o fai domande sul viaggio'
-              : 'Tell the organizer about yourself or ask questions about the trip'}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="w-full max-w-2xl h-[100dvh] sm:h-auto sm:max-h-[85vh] p-0 flex flex-col gap-0 m-0 sm:m-4 overflow-hidden">
+        {/* Header */}
+        <div className="px-4 sm:px-6 pt-4 pb-3 border-b flex-shrink-0">
+          <h2 className="text-base sm:text-lg font-semibold">
+            {language === 'he' ? 'בקשה להצטרפות לטיול' : 'Request to Join Trip'}
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-600 mt-1">
+            {language === 'he' ? 'ספר למארגן מעט על עצמך' : 'Tell the organizer about yourself'}
+          </p>
+        </div>
 
         {/* Content - Scrollable */}
-        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 overscroll-contain">
           <div className="space-y-4">
             {/* Message */}
             <div className="space-y-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
@@ -263,19 +256,19 @@ export default function JoinTripDialog({
           </div>
         </div>
 
-        {/* Footer - Fixed */}
-        <div className="flex gap-3 px-4 sm:px-6 py-3 sm:py-4 border-t flex-shrink-0 bg-white">
+        {/* Footer - Always Visible */}
+        <div className="flex gap-3 px-4 sm:px-6 py-4 border-t flex-shrink-0 bg-white sticky bottom-0 z-10 shadow-[0_-4px_12px_rgba(0,0,0,0.1)]">
           <Button 
             variant="outline" 
             onClick={handleClose}
-            className="flex-1 h-11 sm:h-12 text-sm sm:text-base"
+            className="flex-1 h-12 text-sm sm:text-base font-semibold border-2"
           >
             {t('cancel')}
           </Button>
           <Button 
             onClick={onJoin}
             disabled={isLoading || (trip.activity_type === 'trek' && selectedTrekDays.length === 0)}
-            className="bg-emerald-600 hover:bg-emerald-700 flex-1 h-11 sm:h-12 text-sm sm:text-base font-semibold"
+            className="bg-emerald-600 hover:bg-emerald-700 flex-1 h-12 text-sm sm:text-base font-bold shadow-lg"
           >
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin mr-2" />
