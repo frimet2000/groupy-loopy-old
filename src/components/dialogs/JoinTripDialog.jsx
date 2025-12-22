@@ -47,7 +47,7 @@ export default function JoinTripDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-w-2xl max-h-[85vh] p-0 flex flex-col gap-0 overflow-hidden">
+      <DialogContent className="w-full max-w-2xl h-auto max-h-[70vh] p-0 flex flex-col gap-0 overflow-hidden">
         {/* Header */}
         <div className="px-4 sm:px-6 pt-4 pb-3 border-b flex-shrink-0">
           <h2 className="text-base sm:text-lg font-semibold">
