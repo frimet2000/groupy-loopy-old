@@ -8,6 +8,7 @@ import TripCard from '../components/trips/TripCard';
 import TripFilters from '../components/trips/TripFilters';
 import TripsMap from '../components/maps/TripsMap';
 import { getContinentForCountry, continents } from '../components/utils/ContinentMapping';
+import OrganizerAlerts from '../components/organizer/OrganizerAlerts';
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
@@ -347,7 +348,14 @@ export default function Home() {
     <div className="pb-8">
       {/* Announcement Toast */}
       <AnnouncementToast />
-      
+
+      {/* Organizer Alerts */}
+      {user && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
+          <OrganizerAlerts userEmail={user.email} />
+        </section>
+      )}
+
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-teal-900 to-emerald-950 text-white min-h-[60vh] md:min-h-[85vh] flex items-center touch-manipulation mx-4 sm:mx-6 my-6 rounded-[2.5rem] shadow-[0_20px_80px_rgba(0,0,0,0.5),0_0_60px_rgba(16,185,129,0.3),inset_0_1px_0_rgba(255,255,255,0.1)]">
         {/* Animated Background Elements */}
