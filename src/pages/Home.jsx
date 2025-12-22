@@ -353,67 +353,40 @@ export default function Home() {
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <img
-            src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=80"
+            src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=60"
             alt="landscape"
             className="w-full h-full object-cover opacity-20"
+            loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/95 via-teal-900/90 to-emerald-950/95" />
 
-          {/* Animated Particles */}
-          {[...Array(15)].map((_, i) => (
+          {/* Animated Particles - Reduced for performance */}
+          {[...Array(5)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-2 h-2 bg-emerald-400/30 rounded-full"
+              className="absolute w-2 h-2 bg-emerald-400/20 rounded-full hidden md:block"
               animate={{
                 x: [Math.random() * window.innerWidth, Math.random() * window.innerWidth],
                 y: [Math.random() * 600, Math.random() * 600],
                 scale: [1, 1.5, 1],
-                opacity: [0.3, 0.6, 0.3]
+                opacity: [0.2, 0.4, 0.2]
               }}
               transition={{
-                duration: 10 + Math.random() * 10,
+                duration: 15 + Math.random() * 10,
                 repeat: Infinity,
-                ease: "easeInOut",
-                delay: i * 0.2
+                ease: "linear",
+                delay: i * 0.3
               }}
               style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}
             />
           ))}
 
-          {/* Floating Orbs */}
-          <motion.div
-            animate={{
-              x: [0, 100, 0],
-              y: [0, -100, 0],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-20 left-20 w-96 h-96 bg-emerald-400/20 rounded-full blur-3xl"
-          />
-          <motion.div
-            animate={{
-              x: [0, -80, 0],
-              y: [0, 100, 0],
-              scale: [1, 1.3, 1],
-            }}
-            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="absolute bottom-20 right-32 w-80 h-80 bg-teal-400/20 rounded-full blur-3xl"
-          />
-          <motion.div
-            animate={{
-              x: [0, 60, 0],
-              y: [0, -60, 0],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            className="absolute top-1/2 right-20 w-72 h-72 bg-emerald-300/15 rounded-full blur-3xl"
-          />
+          {/* Floating Orbs - Desktop only for performance */}
+          <div className="absolute top-20 left-20 w-96 h-96 bg-emerald-400/15 rounded-full blur-3xl hidden md:block" />
+          <div className="absolute bottom-20 right-32 w-80 h-80 bg-teal-400/15 rounded-full blur-3xl hidden md:block" />
 
-          {/* Animated Mesh Gradient */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.15),transparent_50%)]" />
-
-          {/* Grid Pattern Overlay */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
+          {/* Static overlays for better performance */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.1),transparent_50%)]" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-20">
@@ -552,24 +525,18 @@ export default function Home() {
                 whileHover={{ scale: 1.05, y: -6 }}
                 className="group relative flex-1 min-w-[90px]"
               >
-                <div className="absolute inset-0 bg-emerald-400/30 rounded-2xl blur-2xl group-hover:blur-3xl transition-all" />
-                <div className="relative flex items-center gap-2 sm:gap-4 bg-white rounded-2xl px-3 sm:px-8 py-3 sm:py-5 border-2 border-emerald-200 shadow-2xl hover:shadow-[0_12px_40px_rgba(16,185,129,0.4)] transition-all">
+                <div className="relative flex items-center gap-2 sm:gap-4 bg-white rounded-2xl px-3 sm:px-8 py-3 sm:py-5 border-2 border-emerald-200 shadow-xl">
                   <div className="p-1.5 sm:p-3 bg-emerald-600 rounded-lg sm:rounded-xl shadow-lg">
                     <stat.icon className="w-5 h-5 sm:w-8 sm:h-8 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 1, delay: 1 + index * 0.1 }}
-                      className="text-xl sm:text-3xl font-bold text-gray-900"
-                    >
+                    <div className="text-xl sm:text-3xl font-bold text-gray-900">
                       {stat.value}
-                    </motion.div>
+                    </div>
                     <div className="text-xs sm:text-sm text-emerald-700 font-bold truncate">{stat.label}</div>
                   </div>
                 </div>
-              </motion.div>
+                </div>
             ))}
           </motion.div>
         </div>
@@ -819,28 +786,11 @@ export default function Home() {
                       <motion.div
                         key={trip.id}
                         variants={{
-                          hidden: { opacity: 0, y: 30, scale: 0.95 },
-                          visible: { 
-                            opacity: 1, 
-                            y: 0,
-                            scale: 1,
-                            transition: {
-                              type: "spring",
-                              stiffness: 100,
-                              damping: 12
-                            }
-                          }
+                          hidden: { opacity: 0 },
+                          visible: { opacity: 1 }
                         }}
-                        whileHover={{ 
-                          y: -8,
-                          transition: { duration: 0.3 }
-                        }}
-                        className="group relative"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/0 to-teal-400/0 group-hover:from-emerald-400/20 group-hover:to-teal-400/20 rounded-2xl blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
-                        <div className="relative">
-                          <TripCard trip={trip} />
-                        </div>
+                        >
+                        <TripCard trip={trip} />
                       </motion.div>
                     ))}
                   </motion.div>
@@ -972,16 +922,9 @@ export default function Home() {
                         }
                       }
                     }}
-                    whileHover={{ 
-                      y: -8,
-                      transition: { duration: 0.3 }
-                    }}
-                    className="group relative opacity-75 hover:opacity-100 transition-opacity"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-gray-400/0 to-gray-400/0 group-hover:from-gray-400/20 group-hover:to-gray-500/20 rounded-2xl blur-xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
-                    <div className="relative">
-                      <TripCard trip={trip} />
-                    </div>
+                    className="opacity-75 hover:opacity-100 transition-opacity"
+                    >
+                    <TripCard trip={trip} />
                   </motion.div>
                 ))}
               </motion.div>
