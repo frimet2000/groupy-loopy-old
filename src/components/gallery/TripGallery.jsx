@@ -179,11 +179,13 @@ export default function TripGallery({ trip, currentUserEmail, onUpdate }) {
           <div className="space-y-4 py-4">
             {previewUrl ? (
               <div className="relative">
-                {selectedFile?.type?.startsWith('video/') ? (
-                  <video src={previewUrl} controls className="w-full rounded-lg max-h-64" />
-                ) : (
-                  <img src={previewUrl} alt="Preview" className="w-full rounded-lg" />
-                )}
+                <ScrollArea className="h-[400px] w-full rounded-lg border">
+                  {selectedFile?.type?.startsWith('video/') ? (
+                    <video src={previewUrl} controls className="w-full rounded-lg" />
+                  ) : (
+                    <img src={previewUrl} alt="Preview" className="w-full rounded-lg" />
+                  )}
+                </ScrollArea>
                 <Button
                   variant="outline"
                   size="sm"
@@ -282,18 +284,20 @@ export default function TripGallery({ trip, currentUserEmail, onUpdate }) {
                   )}
                 </div>
               </DialogHeader>
-              <div className="space-y-4">
-                {selectedPhoto.url?.match(/\.(mp4|webm|mov|avi|mkv)$/i) ? (
-                  <video src={selectedPhoto.url} controls className="w-full rounded-lg" />
-                ) : (
-                  <img src={selectedPhoto.url} alt={selectedPhoto.caption} className="w-full rounded-lg" />
-                )}
-                {selectedPhoto.caption && (
-                  <p className="text-gray-700" dir={language === 'he' ? 'rtl' : 'ltr'}>
-                    {selectedPhoto.caption}
-                  </p>
-                )}
-              </div>
+              <ScrollArea className="h-[500px] w-full">
+                <div className="space-y-4">
+                  {selectedPhoto.url?.match(/\.(mp4|webm|mov|avi|mkv)$/i) ? (
+                    <video src={selectedPhoto.url} controls className="w-full rounded-lg" />
+                  ) : (
+                    <img src={selectedPhoto.url} alt={selectedPhoto.caption} className="w-full rounded-lg" />
+                  )}
+                  {selectedPhoto.caption && (
+                    <p className="text-gray-700" dir={language === 'he' ? 'rtl' : 'ltr'}>
+                      {selectedPhoto.caption}
+                    </p>
+                  )}
+                </div>
+              </ScrollArea>
             </>
           )}
         </DialogContent>
