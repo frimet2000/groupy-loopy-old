@@ -728,10 +728,12 @@ export default function Home() {
           <>
             {Object.entries(tripsByCountry).map(([country, countryTrips]) => {
               const visibleCountryTrips = countryTrips.slice(0, visibleCount);
-              
+
               return (
-                <div
+                <motion.div
                   key={country}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   className="mb-12"
                 >
                   {/* Country Header */}
@@ -756,8 +758,8 @@ export default function Home() {
                         <TripCard trip={trip} />
                       </div>
                     ))}
-                  </div>
-                </div>
+                    </div>
+                    </motion.div>
               );
             })}
 
@@ -816,8 +818,10 @@ export default function Home() {
             acc[country].push(trip);
             return acc;
           }, {})).map(([country, countryTrips]) => (
-            <div
+            <motion.div
               key={country}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               className="mb-8"
             >
               {/* Country Header */}
@@ -835,15 +839,19 @@ export default function Home() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {countryTrips.map((trip) => (
-                  <div
+                  <motion.div
                     key={trip.id}
+                    variants={{
+                      hidden: { opacity: 0 },
+                      visible: { opacity: 1 }
+                    }}
                     className="opacity-75 hover:opacity-100 transition-opacity"
                   >
                     <TripCard trip={trip} />
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
-            </div>
+                </motion.div>
+                </motion.div>
           ))}
         </section>
       )}
