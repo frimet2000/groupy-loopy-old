@@ -357,7 +357,7 @@ export default function Home() {
       )}
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-teal-900 to-emerald-950 text-white min-h-[40vh] md:min-h-[50vh] flex items-center touch-manipulation mx-4 sm:mx-6 my-4 rounded-2xl sm:rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.4),0_0_30px_rgba(16,185,129,0.2),inset_0_1px_0_rgba(255,255,255,0.1)]">
+      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-teal-900 to-emerald-950 text-white min-h-[60vh] md:min-h-[85vh] flex items-center touch-manipulation mx-4 sm:mx-6 my-6 rounded-[2.5rem] shadow-[0_20px_80px_rgba(0,0,0,0.5),0_0_60px_rgba(16,185,129,0.3),inset_0_1px_0_rgba(255,255,255,0.1)]">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <img
@@ -397,7 +397,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.1),transparent_50%)]" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 md:py-12">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-20">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -425,7 +425,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.3 }}
-              className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-2 sm:mb-4"
+              className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-3 sm:mb-6"
             >
               <span className="bg-gradient-to-r from-white via-emerald-100 to-teal-200 bg-clip-text text-transparent">
                 {t('heroTitle')}
@@ -436,7 +436,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.5 }}
-              className="text-sm sm:text-lg md:text-xl text-emerald-100/90 mb-4 sm:mb-6 leading-relaxed max-w-2xl"
+              className="text-base sm:text-xl md:text-2xl text-emerald-100/90 mb-6 sm:mb-12 leading-relaxed max-w-2xl"
             >
               {t('heroSubtitle')}
             </motion.p>
@@ -522,7 +522,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.9 }}
-            className="flex flex-wrap gap-2 sm:gap-4 mt-6 sm:mt-10"
+            className="flex flex-wrap gap-3 sm:gap-6 mt-8 sm:mt-20"
           >
             {stats.map((stat, index) => (
               <div
