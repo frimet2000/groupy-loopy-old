@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, Share2, SlidersHorizontal, List, Globe, Heart, Radio, Bike, Mountain, Truck, History, Sparkles } from 'lucide-react';
+import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, Share2, SlidersHorizontal, List, Globe, Heart, Radio, Bike, Mountain, Truck, History } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from 'framer-motion';
@@ -357,7 +357,7 @@ export default function Home() {
       )}
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-teal-900 to-emerald-950 text-white min-h-[35vh] sm:min-h-[40vh] flex items-center touch-manipulation mx-4 sm:mx-6 my-3 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.3),0_0_20px_rgba(16,185,129,0.15)]">
+      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-teal-900 to-emerald-950 text-white min-h-[40vh] md:min-h-[50vh] flex items-center touch-manipulation mx-4 sm:mx-6 my-4 rounded-2xl sm:rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.4),0_0_30px_rgba(16,185,129,0.2),inset_0_1px_0_rgba(255,255,255,0.1)]">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <img
@@ -397,7 +397,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.1),transparent_50%)]" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-5 sm:py-8">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 md:py-12">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -409,13 +409,13 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="inline-flex items-center gap-1.5 bg-emerald-500/20 backdrop-blur-sm border border-emerald-400/30 rounded-full px-3 py-1 sm:px-4 sm:py-1.5 mb-3 sm:mb-4"
+              className="inline-flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-emerald-500/30 to-teal-500/30 backdrop-blur-md border border-emerald-400/40 rounded-full px-3 py-1.5 sm:px-5 sm:py-2 mb-4 sm:mb-8 shadow-[0_4px_20px_rgba(16,185,129,0.4)]"
             >
-              <span className="relative flex h-1.5 w-1.5">
+              <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-emerald-500"></span>
               </span>
-              <span className="text-[10px] sm:text-xs font-medium text-emerald-100">
+              <span className="text-xs sm:text-sm font-medium text-emerald-100">
                 {language === 'he' ? 'פלטפורמת הטיולים המתקדמת של ישראל' : language === 'ru' ? 'Международная платформа для путешествий' : language === 'es' ? 'Plataforma Internacional de Viajes' : language === 'fr' ? 'Plateforme de voyage internationale' : language === 'de' ? 'Internationale Reiseplattform' : language === 'it' ? 'Piattaforma di viaggio internazionale' : 'International Trip Platform'}
               </span>
             </motion.div>
@@ -425,7 +425,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.3 }}
-              className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-2 sm:mb-3"
+              className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-2 sm:mb-4"
             >
               <span className="bg-gradient-to-r from-white via-emerald-100 to-teal-200 bg-clip-text text-transparent">
                 {t('heroTitle')}
@@ -436,7 +436,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.5 }}
-              className="text-xs sm:text-base md:text-lg text-emerald-100/90 mb-3 sm:mb-5 leading-relaxed max-w-xl"
+              className="text-sm sm:text-lg md:text-xl text-emerald-100/90 mb-4 sm:mb-6 leading-relaxed max-w-2xl"
             >
               {t('heroSubtitle')}
             </motion.p>
@@ -445,14 +445,14 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.7 }}
-              className="flex flex-col gap-2 sm:gap-3 w-full max-w-md"
+              className="flex flex-col gap-3 sm:gap-4 w-full max-w-md"
             >
               {/* Primary Actions Row */}
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <Link to={createPageUrl('CreateTrip')} className="w-full">
                   <motion.div whileTap={{ scale: 0.95 }} className="w-full">
-                    <Button className="w-full bg-white/95 backdrop-blur-sm text-emerald-700 hover:bg-white h-10 sm:h-11 px-3 text-xs sm:text-sm font-bold shadow-lg border border-white/50 hover:shadow-xl touch-manipulation transition-all">
-                      <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+                    <Button className="w-full bg-white text-emerald-700 hover:bg-emerald-50 h-12 px-4 text-sm font-bold shadow-2xl border-2 border-emerald-200 hover:border-emerald-300 touch-manipulation hover:shadow-[0_8px_30px_rgba(16,185,129,0.4)] transition-all">
+                      <Plus className="w-5 h-5 mr-2" />
                       {t('createTrip')}
                     </Button>
                   </motion.div>
@@ -460,23 +460,23 @@ export default function Home() {
                 <motion.div whileTap={{ scale: 0.95 }} className="w-full">
                   <Button 
                     onClick={() => document.getElementById('trips-section')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="w-full bg-emerald-600/90 backdrop-blur-sm text-white hover:bg-emerald-600 h-10 sm:h-11 px-3 text-xs sm:text-sm font-bold shadow-lg border border-emerald-500/50 hover:shadow-xl touch-manipulation transition-all"
+                    className="w-full bg-emerald-600 text-white hover:bg-emerald-700 h-12 px-4 text-sm font-bold shadow-2xl border-2 border-emerald-700 hover:border-emerald-800 touch-manipulation hover:shadow-[0_8px_30px_rgba(16,185,129,0.5)] transition-all"
                   >
-                    <Users className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+                    <Users className="w-5 h-5 mr-2" />
                     {language === 'he' ? 'הצטרף' : 'Join'}
                   </Button>
                 </motion.div>
               </div>
 
               {/* Secondary Actions Row */}
-              <div className="grid grid-cols-3 gap-2 sm:gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <motion.div whileTap={{ scale: 0.95 }} className="w-full">
                   <Button 
                     onClick={handleShare}
-                    className="w-full bg-emerald-500/80 backdrop-blur-sm text-white hover:bg-emerald-500 h-9 sm:h-10 px-2 text-xs sm:text-sm font-semibold shadow-md border border-emerald-400/50 hover:shadow-lg touch-manipulation transition-all"
+                    className="w-full bg-rose-600 text-white hover:bg-rose-700 h-11 px-4 text-sm font-bold shadow-2xl border-2 border-rose-700 hover:border-rose-800 touch-manipulation hover:shadow-[0_8px_30px_rgba(225,29,72,0.5)] transition-all"
                   >
-                    <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1.5" />
-                    <span className="hidden sm:inline">{language === 'he' ? 'שתף' : 'Share'}</span>
+                    <Share2 className="w-4 h-4 mr-2" />
+                    {language === 'he' ? 'שתף' : 'Share'}
                   </Button>
                 </motion.div>
                 <motion.div whileTap={{ scale: 0.95 }} className="w-full">
@@ -495,21 +495,25 @@ export default function Home() {
                         toast.info(language === 'he' ? 'אין טיולים חיים כרגע' : 'No live trips right now');
                       }
                     }}
-                    className="w-full relative bg-emerald-400/80 backdrop-blur-sm text-white hover:bg-emerald-400 h-9 sm:h-10 px-2 text-xs sm:text-sm font-semibold shadow-md border border-emerald-300/50 hover:shadow-lg touch-manipulation transition-all"
+                    className="w-full relative bg-green-600 text-white hover:bg-green-700 h-11 px-4 text-sm font-bold shadow-2xl border-2 border-green-700 hover:border-green-800 touch-manipulation hover:shadow-[0_8px_30px_rgba(22,163,74,0.5)] transition-all"
                   >
-                    <Radio className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-pulse sm:mr-1.5" />
-                    <span className="hidden sm:inline">{language === 'he' ? 'חיים' : 'Live'}</span>
+                    <Radio className="w-4 h-4 mr-2 animate-pulse" />
+                    {language === 'he' ? 'טיולים חיים' : 'Live'}
                   </Button>
                 </motion.div>
-                <Link to={createPageUrl('AIRecommendations')} className="w-full">
-                  <motion.div whileTap={{ scale: 0.95 }} className="w-full">
-                    <Button className="w-full bg-emerald-300/80 backdrop-blur-sm text-emerald-900 hover:bg-emerald-300 h-9 sm:h-10 px-2 text-xs sm:text-sm font-semibold shadow-md border border-emerald-200/50 hover:shadow-lg touch-manipulation transition-all">
-                      <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1.5" />
-                      <span className="hidden sm:inline">{language === 'he' ? 'AI' : 'AI'}</span>
-                    </Button>
-                  </motion.div>
-                </Link>
               </div>
+
+              {/* AI Recommendations - Desktop only */}
+              <Link to={createPageUrl('AIRecommendations')} className="hidden sm:block w-full">
+                <motion.div whileTap={{ scale: 0.95 }} className="w-full">
+                  <Button className="w-full bg-purple-600 border-2 border-purple-700 text-white hover:bg-purple-700 hover:border-purple-800 h-12 px-6 text-sm font-bold shadow-2xl hover:shadow-[0_8px_30px_rgba(147,51,234,0.5)] touch-manipulation transition-all">
+                    <span className="font-bold">
+                      {t('aiRecommendations')}
+                    </span>
+                    <ArrowRight className={`w-5 h-5 ${isRTL ? 'mr-2 rotate-180' : 'ml-2'}`} />
+                  </Button>
+                </motion.div>
+              </Link>
             </motion.div>
           </motion.div>
 
@@ -518,22 +522,22 @@ export default function Home() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.9 }}
-            className="flex flex-wrap gap-2 sm:gap-3 mt-4 sm:mt-6"
+            className="flex flex-wrap gap-2 sm:gap-4 mt-6 sm:mt-10"
           >
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="flex-1 min-w-[80px]"
+                className="flex-1 min-w-[90px]"
               >
-                <div className="flex items-center gap-2 bg-white/95 backdrop-blur-sm rounded-xl px-2 sm:px-4 py-2 sm:py-3 border border-white/50 shadow-lg">
-                  <div className="p-1.5 sm:p-2 bg-emerald-500/90 rounded-lg">
-                    <stat.icon className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
+                <div className="flex items-center gap-2 sm:gap-4 bg-white rounded-2xl px-3 sm:px-8 py-3 sm:py-5 border-2 border-emerald-200 shadow-xl">
+                  <div className="p-1.5 sm:p-3 bg-emerald-600 rounded-lg sm:rounded-xl">
+                    <stat.icon className="w-5 h-5 sm:w-8 sm:h-8 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-base sm:text-2xl font-bold text-gray-900">
+                    <div className="text-xl sm:text-3xl font-bold text-gray-900">
                       {stat.value}
                     </div>
-                    <div className="text-[10px] sm:text-xs text-emerald-700 font-bold truncate">{stat.label}</div>
+                    <div className="text-xs sm:text-sm text-emerald-700 font-bold truncate">{stat.label}</div>
                   </div>
                 </div>
               </div>
