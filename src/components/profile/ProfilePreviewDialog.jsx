@@ -130,40 +130,45 @@ export default function ProfilePreviewDialog({ open, onOpenChange, userEmail }) 
               )}
 
               {/* Family */}
-              {(userProfile.parent_age_range || userProfile.spouse_age_range || (userProfile.children_age_ranges && userProfile.children_age_ranges.length > 0) || (userProfile.children_birth_dates && userProfile.children_birth_dates.length > 0)) && (
+              {(userProfile.parent_age_range || userProfile.birth_date || userProfile.spouse_age_range || userProfile.spouse_birth_date || (userProfile.children_age_ranges && userProfile.children_age_ranges.length > 0) || (userProfile.children_birth_dates && userProfile.children_birth_dates.length > 0)) && (
                 <>
                   <Separator />
                   <div className="space-y-3" dir={language === 'he' ? 'rtl' : 'ltr'}>
                     <Label className="text-base font-semibold">
                       {language === 'he' ? 'משפחה' : 'Family'}
                     </Label>
-                    {userProfile.parent_age_range && (
+                    {(userProfile.parent_age_range || userProfile.birth_date) && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <span className="font-medium">
                           {language === 'he' ? 'גילי:' : 'My age:'}
                         </span>
                         <Badge variant="outline" className="bg-purple-50 text-purple-700">
-                          {userProfile.parent_age_range}
+                          {userProfile.parent_age_range || userProfile.birth_date}
                         </Badge>
                       </div>
                     )}
-                    {userProfile.spouse_age_range && (
+                    {(userProfile.spouse_age_range || userProfile.spouse_birth_date) && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <span className="font-medium">
                           {language === 'he' ? 'גיל בן/בת הזוג:' : 'Spouse age:'}
                         </span>
                         <Badge variant="outline" className="bg-purple-50 text-purple-700">
-                          {userProfile.spouse_age_range}
+                          {userProfile.spouse_age_range || userProfile.spouse_birth_date}
                         </Badge>
                       </div>
                     )}
-                    {userProfile.children_age_ranges && userProfile.children_age_ranges.length > 0 && (
+                    {/* Unified Children List */}
+                    {((userProfile.children_age_ranges && userProfile.children_age_ranges.length > 0) || (userProfile.children_birth_dates && userProfile.children_birth_dates.length > 0)) && (
                       <div className="space-y-2">
                         <Label className="text-sm">
                           {language === 'he' ? 'ילדים:' : 'Children:'}
                         </Label>
                         <div className="space-y-1">
-                          {userProfile.children_age_ranges.map((child, idx) => {
+                          {(userProfile.children_age_ranges && userProfile.children_age_ranges.length > 0 
+                            ? userProfile.children_age_ranges 
+                            : userProfile.children_birth_dates
+                          ).map((child, idx) => {
+                            const range = child.age_range || child.birth_date;
                             const genderLabel = child.gender === 'male' 
                               ? (language === 'he' ? 'בן' : 'Boy')
                               : child.gender === 'female'
@@ -173,38 +178,8 @@ export default function ProfilePreviewDialog({ open, onOpenChange, userEmail }) 
                               <div key={idx} className="flex items-center gap-2 text-sm">
                                 <span className={`w-2 h-2 rounded-full flex-shrink-0 ${child.gender === 'male' ? 'bg-blue-500' : child.gender === 'female' ? 'bg-pink-500' : 'bg-gray-400'}`}></span>
                                 <Badge variant="outline" className="bg-pink-50 text-pink-700 font-bold">
-                                  {child.age_range}
+                                  {range}
                                 </Badge>
-                                {genderLabel && (
-                                  <span className="text-xs text-gray-500">{genderLabel}</span>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                    {userProfile.children_birth_dates && userProfile.children_birth_dates.length > 0 && (
-                      <div className="space-y-2">
-                        <Label className="text-sm">
-                          {language === 'he' ? 'ילדים:' : 'Children:'}
-                        </Label>
-                        <div className="space-y-1">
-                          {userProfile.children_birth_dates.map((child, idx) => {
-                            const range = child.birth_date;
-                            const genderLabel = child.gender === 'male' 
-                              ? (language === 'he' ? 'בן' : 'Boy')
-                              : child.gender === 'female'
-                              ? (language === 'he' ? 'בת' : 'Girl')
-                              : '';
-                            return (
-                              <div key={idx} className="flex items-center gap-2 text-sm">
-                                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${child.gender === 'male' ? 'bg-blue-500' : child.gender === 'female' ? 'bg-pink-500' : 'bg-gray-400'}`}></span>
-                                {range && (
-                                  <Badge variant="outline" className="bg-pink-50 text-pink-700 font-bold">
-                                    {range}
-                                  </Badge>
-                                )}
                                 {genderLabel && (
                                   <span className="text-xs text-gray-500">{genderLabel}</span>
                                 )}
