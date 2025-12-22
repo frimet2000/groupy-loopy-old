@@ -2747,21 +2747,38 @@ export default function TripDetails() {
       </div>
 
       {/* Join Request Dialog */}
-      <Dialog open={showJoinDialog} onOpenChange={setShowJoinDialog}>
+      <JoinTripDialog
+        open={showJoinDialog}
+        onOpenChange={setShowJoinDialog}
+        trip={trip}
+        user={user}
+        joinMessage={joinMessage}
+        setJoinMessage={setJoinMessage}
+        accessibilityNeeds={accessibilityNeeds}
+        setAccessibilityNeeds={setAccessibilityNeeds}
+        familyMembers={familyMembers}
+        setFamilyMembers={setFamilyMembers}
+        selectedChildren={selectedChildren}
+        setSelectedChildren={setSelectedChildren}
+        otherMemberName={otherMemberName}
+        setOtherMemberName={setOtherMemberName}
+        selectedTrekDays={selectedTrekDays}
+        setSelectedTrekDays={setSelectedTrekDays}
+        onJoin={handleJoinClick}
+        isLoading={joinMutation.isLoading}
+        onShowTerms={() => setShowTermsDialog(true)}
+      />
+
+      {/* Old Dialog Code Removed */}
+      {false && (
+        <Dialog open={showJoinDialog} onOpenChange={setShowJoinDialog}>
         <DialogContent className="w-[95vw] max-w-2xl p-0 gap-0 h-[90vh] max-h-[90vh] flex flex-col overflow-hidden">
           <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 flex-shrink-0 border-b">
             <DialogTitle className="text-lg sm:text-xl">
-              {language === 'he' ? 'בקשה להצטרפות לטיול' : language === 'ru' ? 'Запрос на присоединение к поездке' : language === 'es' ? 'Solicitud para unirse al viaje' : language === 'fr' ? 'Demande pour rejoindre le voyage' : language === 'de' ? 'Anfrage zur Teilnahme an der Reise' : language === 'it' ? 'Richiesta di unirsi al viaggio' : 'Request to Join Trip'}
+              placeholder
             </DialogTitle>
             <DialogDescription className="text-sm">
-              {language === 'he' 
-                ? 'ספר למארגן מעט על עצמך או שאל שאלות על הטיול'
-                : language === 'ru' ? 'Расскажите организатору о себе или задайте вопросы о поездке'
-                : language === 'es' ? 'Cuéntale al organizador sobre ti o haz preguntas sobre el viaje'
-                : language === 'fr' ? 'Parlez de vous à l\'organisateur ou posez des questions sur le voyage'
-                : language === 'de' ? 'Erzählen Sie dem Organisator über sich oder stellen Sie Fragen zur Reise'
-                : language === 'it' ? 'Racconta all\'organizzatore di te o fai domande sul viaggio'
-                : 'Tell the organizer about yourself or ask questions about the trip'}
+              placeholder
             </DialogDescription>
           </DialogHeader>
           
@@ -2943,57 +2960,16 @@ export default function TripDetails() {
               </div>
             </div>
 
-            {/* Terms Link */}
-            <div className="bg-blue-50 p-3 rounded-lg text-center border border-blue-200" dir={language === 'he' ? 'rtl' : 'ltr'}>
-              <p className="text-xs text-gray-700 mb-2">
-                {language === 'he' ? 'מומלץ לקרוא את' : language === 'ru' ? 'Рекомендуем прочитать' : language === 'es' ? 'Recomendamos leer' : language === 'fr' ? 'Nous recommandons de lire' : language === 'de' ? 'Wir empfehlen zu lesen' : language === 'it' ? 'Si consiglia di leggere' : 'We recommend reading'}
-              </p>
-              <Button 
-                type="button"
-                variant="link"
-                onClick={() => setShowTermsDialog(true)}
-                className="text-blue-600 hover:text-blue-800 font-semibold underline h-auto p-0 text-xs"
-              >
-                {language === 'he' ? 'תנאי השימוש וכתב הויתור' : language === 'ru' ? 'Условия и отказ' : language === 'es' ? 'Términos y exención' : language === 'fr' ? 'Conditions et décharge' : language === 'de' ? 'Bedingungen und Haftungsausschluss' : language === 'it' ? 'Termini e liberatoria' : 'Terms and Waiver'}
-              </Button>
-            </div>
+            placeholder
           </div>
           </div>
 
           <div className="flex gap-3 px-4 sm:px-6 py-3 sm:py-4 border-t flex-shrink-0 bg-white">
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setShowJoinDialog(false);
-                setJoinMessage('');
-                setAccessibilityNeeds([]);
-                setSelectedTrekDays([]);
-                setFamilyMembers({ me: true, spouse: false, pets: false, other: false });
-                setSelectedChildren([]);
-                setOtherMemberName('');
-              }}
-              className="flex-1 h-11 sm:h-12 min-h-[44px]"
-            >
-              {t('cancel')}
-            </Button>
-            <Button 
-              onClick={handleJoinClick}
-              disabled={joinMutation.isLoading || (trip.activity_type === 'trek' && selectedTrekDays.length === 0)}
-              className="bg-emerald-600 hover:bg-emerald-700 flex-1 h-11 sm:h-12 min-h-[44px]"
-            >
-              {joinMutation.isLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              ) : (
-                <Check className="w-4 h-4 mr-2" />
-              )}
-              {trip.approval_required === false
-                ? (language === 'he' ? 'הצטרף עכשיו' : language === 'ru' ? 'Присоединиться' : language === 'es' ? 'Unirse ahora' : language === 'fr' ? 'Rejoindre maintenant' : language === 'de' ? 'Jetzt beitreten' : language === 'it' ? 'Unisciti ora' : 'Join Now')
-                : (language === 'he' ? 'שלח בקשה' : language === 'ru' ? 'Отправить запрос' : language === 'es' ? 'Enviar solicitud' : language === 'fr' ? 'Envoyer demande' : language === 'de' ? 'Anfrage senden' : language === 'it' ? 'Invia richiesta' : 'Send Request')
-              }
-            </Button>
+            placeholder
           </div>
         </DialogContent>
       </Dialog>
+      )}
 
       {/* Join Request Notification Dialog */}
       {trip && trip.pending_requests && trip.pending_requests.length > 0 && (
