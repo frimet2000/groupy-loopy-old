@@ -120,17 +120,7 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
   });
   console.log('=== END DEBUG ===\n\n');
 
-  // Create family composition examples for animation
-  const familyCompositions = [];
-  participants.forEach(participant => {
-    const comp = {
-      adults: participant.family_members?.spouse ? 2 : 1,
-      children: participant.selected_children?.length || 0,
-      pets: participant.family_members?.pets ? 1 : 0,
-      others: (participant.family_members?.other && participant.other_member_name) ? 1 : 0
-    };
-    familyCompositions.push(comp);
-  });
+
 
   return (
     <Card className="border-2 border-emerald-200 shadow-lg">
@@ -223,50 +213,7 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
           )}
         </div>
 
-        {/* Family Composition - Compact */}
-        <div className="space-y-2 text-right">
-          <p className="font-semibold text-gray-700 text-xs">
-            {language === 'he' ? 'משפחות' : 'Families'}
-          </p>
-          <div className="space-y-2">
-            {familyCompositions.map((family, idx) => {
-              const participant = participants[idx];
-              const participantName = participant?.name;
-              const totalInFamily = family.adults + family.children + family.others;
 
-              return (
-                <div
-                  key={idx}
-                  className="bg-gray-50 rounded-lg p-2 border border-gray-200 flex items-center justify-between text-xs"
-                >
-                  <span className="font-medium text-gray-700">{participantName}</span>
-                  <div className="flex items-center gap-1.5">
-                    {family.adults > 0 && (
-                      <span className="bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded text-[10px] font-medium">
-                        {family.adults}👤
-                      </span>
-                    )}
-                    {family.children > 0 && (
-                      <span className="bg-pink-100 text-pink-700 px-1.5 py-0.5 rounded text-[10px] font-medium">
-                        {family.children}👶
-                      </span>
-                    )}
-                    {family.pets > 0 && (
-                      <span className="bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded text-[10px] font-medium">
-                        🐕
-                      </span>
-                    )}
-                    {family.others > 0 && (
-                      <span className="bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded text-[10px] font-medium">
-                        +{family.others}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
 
 
       </CardContent>
