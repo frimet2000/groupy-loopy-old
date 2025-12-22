@@ -168,7 +168,7 @@ export default function TripFilters({ filters, setFilters, onSearch, showAdvance
                     <SelectTrigger className="h-12 border-2 hover:border-emerald-400 rounded-xl transition-all">
                       <SelectValue placeholder={t('selectCountry')} />
                     </SelectTrigger>
-                    <SelectContent className="max-h-[300px]">
+                    <SelectContent className="max-h-[300px] z-[150]">
                       {filteredCountries.map(c => (
                         <SelectItem key={c} value={c}>{t(c)}</SelectItem>
                       ))}
@@ -190,7 +190,7 @@ export default function TripFilters({ filters, setFilters, onSearch, showAdvance
                   <SelectTrigger className="h-12 border-2 hover:border-blue-400 rounded-xl transition-all">
                     <SelectValue placeholder={t('allRegions')} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="z-[150]">
                     <SelectItem value="all">{t('allRegions')}</SelectItem>
                     {regions.map(r => (
                       <SelectItem key={r} value={r}>{t(r)}</SelectItem>
@@ -212,7 +212,7 @@ export default function TripFilters({ filters, setFilters, onSearch, showAdvance
                   <SelectTrigger className="h-12 border-2 hover:border-orange-400 rounded-xl transition-all">
                     <SelectValue placeholder={t('allDifficulties')} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="z-[150]">
                     <SelectItem value="all">{t('allDifficulties')}</SelectItem>
                     {difficulties.map(d => (
                       <SelectItem key={d} value={d}>{t(d)}</SelectItem>
@@ -234,7 +234,7 @@ export default function TripFilters({ filters, setFilters, onSearch, showAdvance
                   <SelectTrigger className="h-12 border-2 hover:border-purple-400 rounded-xl transition-all">
                     <SelectValue placeholder={t('allDurations')} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="z-[150]">
                     <SelectItem value="all">{t('allDurations')}</SelectItem>
                     {durations.map(d => (
                       <SelectItem key={d} value={d}>{t(d)}</SelectItem>
@@ -256,7 +256,7 @@ export default function TripFilters({ filters, setFilters, onSearch, showAdvance
                   <SelectTrigger className="h-12 border-2 hover:border-pink-400 rounded-xl transition-all">
                     <SelectValue placeholder={t('activityType')} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="z-[150]">
                     <SelectItem value="all">{language === 'he' ? 'כל הסוגים' : 'All Types'}</SelectItem>
                     {activityTypes.map(a => (
                       <SelectItem key={a} value={a}>{t(a)}</SelectItem>
