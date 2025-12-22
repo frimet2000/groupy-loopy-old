@@ -81,7 +81,9 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
     console.log(`Parent age for ${participant.email}:`, {
       from_participant: participant.parent_age_range,
       from_profile: userProfiles[participant.email]?.parent_age_range,
-      final: parentAge
+      final: parentAge,
+      type: typeof parentAge,
+      stringified: JSON.stringify(parentAge)
     });
     if (parentAge) {
       stats.parentsByAge[parentAge] = (stats.parentsByAge[parentAge] || 0) + 1;
