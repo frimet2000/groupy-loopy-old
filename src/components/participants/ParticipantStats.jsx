@@ -77,15 +77,21 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
     if (participant.family_members?.other && participant.other_member_name) stats.totalOthers++;
 
     // Parent age range - try participant first, fallback to profile
-    const parentAge = participant.parent_age_range || userProfiles[participant.email]?.parent_age_range;
+    let parentAge = participant.parent_age_range || userProfiles[participant.email]?.parent_age_range;
+
+    // Handle both string and object formats
+    if (parentAge && typeof parentAge === 'object') {
+      parentAge = parentAge.age_range || parentAge.value || null;
+    }
+
     console.log(`Parent age for ${participant.email}:`, {
       from_participant: participant.parent_age_range,
       from_profile: userProfiles[participant.email]?.parent_age_range,
       final: parentAge,
-      type: typeof parentAge,
-      stringified: JSON.stringify(parentAge)
+      type: typeof parentAge
     });
-    if (parentAge) {
+
+    if (parentAge && typeof parentAge === 'string') {
       stats.parentsByAge[parentAge] = (stats.parentsByAge[parentAge] || 0) + 1;
     }
   });
