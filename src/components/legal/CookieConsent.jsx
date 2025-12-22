@@ -25,22 +25,64 @@ export default function CookieConsent() {
 
   const handleDecline = () => {
     localStorage.setItem('cookie_consent', 'declined');
+    // Clear any non-essential storage if needed
+    sessionStorage.clear();
     setShowBanner(false);
   };
 
-  const content = language === 'he' ? {
-    title: 'עוגיות ופרטיות',
-    message: 'אנחנו משתמשים בעוגיות כדי לשפר את החוויה שלך באתר, לנתח תנועה ולספק תכונות מותאמות אישית.',
-    learnMore: 'קרא עוד',
-    accept: 'אני מסכים',
-    decline: 'דחה'
-  } : {
-    title: 'Cookies & Privacy',
-    message: 'We use cookies to improve your experience, analyze traffic, and provide personalized features.',
-    learnMore: 'Learn more',
-    accept: 'Accept',
-    decline: 'Decline'
+  const translations = {
+    he: {
+      title: 'עוגיות ופרטיות',
+      message: 'אנחנו משתמשים בעוגיות כדי לשפר את החוויה שלך באתר, לנתח תנועה ולספק תכונות מותאמות אישית.',
+      learnMore: 'קרא עוד',
+      accept: 'אני מסכים',
+      decline: 'דחה'
+    },
+    en: {
+      title: 'Cookies & Privacy',
+      message: 'We use cookies to improve your experience, analyze traffic, and provide personalized features.',
+      learnMore: 'Read more',
+      accept: 'Accept',
+      decline: 'Decline'
+    },
+    fr: {
+      title: 'Cookies et confidentialité',
+      message: 'Nous utilisons des cookies pour améliorer votre expérience, analyser le trafic et fournir des fonctionnalités personnalisées.',
+      learnMore: 'En savoir plus',
+      accept: 'Accepter',
+      decline: 'Refuser'
+    },
+    es: {
+      title: 'Cookies y privacidad',
+      message: 'Utilizamos cookies para mejorar su experiencia, analizar el tráfico y proporcionar funciones personalizadas.',
+      learnMore: 'Leer más',
+      accept: 'Aceptar',
+      decline: 'Rechazar'
+    },
+    de: {
+      title: 'Cookies & Datenschutz',
+      message: 'Wir verwenden Cookies, um Ihre Erfahrung zu verbessern, den Verkehr zu analysieren und personalisierte Funktionen bereitzustellen.',
+      learnMore: 'Mehr lesen',
+      accept: 'Akzeptieren',
+      decline: 'Ablehnen'
+    },
+    it: {
+      title: 'Cookie e privacy',
+      message: 'Utilizziamo i cookie per migliorare la tua esperienza, analizzare il traffico e fornire funzionalità personalizzate.',
+      learnMore: 'Leggi di più',
+      accept: 'Accetta',
+      decline: 'Rifiuta'
+    },
+    ru: {
+      title: 'Файлы cookie и конфиденциальность',
+      message: 'Мы используем файлы cookie для улучшения вашего опыта, анализа трафика и предоставления персонализированных функций.',
+      learnMore: 'Читать далее',
+      accept: 'Принять',
+      decline: 'Отклонить'
+    }
   };
+
+  const content = translations[language] || translations.en;
 
   return (
     <AnimatePresence>
@@ -67,10 +109,8 @@ export default function CookieConsent() {
                   <p id="cookie-description" className="text-sm text-gray-600 mb-3" dir={isRTL ? 'rtl' : 'ltr'}>
                     {content.message}
                   </p>
-                  <Link to={createPageUrl('CookiePolicy')}>
-                    <Button variant="link" className="p-0 h-auto text-sm text-emerald-600 hover:text-emerald-700">
-                      {content.learnMore}
-                    </Button>
+                  <Link to={createPageUrl('CookiePolicy')} className="text-sm text-emerald-600 hover:text-emerald-700 hover:underline font-medium inline-block mt-1">
+                    {content.learnMore}
                   </Link>
                 </div>
                 <Button
