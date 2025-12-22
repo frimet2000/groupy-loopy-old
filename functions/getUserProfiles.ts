@@ -37,6 +37,22 @@ Deno.serve(async (req) => {
       return '21+';
     };
 
+    const toParentAgeRange = (birthDate) => {
+      if (!birthDate) return null;
+      const d = new Date(birthDate);
+      if (isNaN(d.getTime())) return null;
+      const today = new Date();
+      let age = today.getFullYear() - d.getFullYear();
+      const m = today.getMonth() - d.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--;
+      if (age < 0) return null;
+      if (age < 30) return '20-30';
+      if (age < 40) return '30-40';
+      if (age < 50) return '40-50';
+      if (age < 60) return '50-60';
+      return '60+';
+    };
+
     const profileMap = {};
     
     emails.forEach(email => {
@@ -51,12 +67,18 @@ Deno.serve(async (req) => {
             })
             .filter(Boolean);
         }
+        // Calculate parent age range from birth_date if not set
+        let parentAgeRange = userProfile.parent_age_range || userProfile.age_range;
+        if (!parentAgeRange && userProfile.birth_date) {
+          parentAgeRange = toParentAgeRange(userProfile.birth_date);
+        }
+
         profileMap[email] = {
           name: (userProfile.first_name && userProfile.last_name)
             ? `${userProfile.first_name} ${userProfile.last_name}`
             : userProfile.full_name,
           children_age_ranges: childrenRanges,
-          parent_age_range: userProfile.parent_age_range || userProfile.age_range
+          parent_age_range: parentAgeRange
         };
       }
     });
