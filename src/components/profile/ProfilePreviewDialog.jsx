@@ -149,24 +149,33 @@ export default function ProfilePreviewDialog({ open, onOpenChange, userEmail }) 
               )}
 
               {/* Family */}
-              {(userProfile.parent_age_range || userProfile.birth_date || userProfile.spouse_birth_date || (userProfile.children_age_ranges && userProfile.children_age_ranges.length > 0) || (userProfile.children_birth_dates && userProfile.children_birth_dates.length > 0)) && (
+              {(userProfile.birth_date || userProfile.spouse_birth_date || (userProfile.children_age_ranges && userProfile.children_age_ranges.length > 0) || (userProfile.children_birth_dates && userProfile.children_birth_dates.length > 0)) && (
                 <>
                   <Separator />
                   <div className="space-y-3" dir={language === 'he' ? 'rtl' : 'ltr'}>
                     <Label className="text-base font-semibold">
                       {language === 'he' ? 'משפחה' : 'Family'}
                     </Label>
-                    {userProfile.parent_age_range && (
+                    {(userProfile.birth_date || userProfile.parent_age_range) && (
                       <div className="flex items-center gap-2 text-gray-600">
                         <span className="font-medium">
-                          {language === 'he' ? 'טווח גיל הורה:' : 'Parent age range:'}
+                          {language === 'he' ? 'גילי:' : 'My age:'}
                         </span>
                         <Badge variant="outline" className="bg-purple-50 text-purple-700">
-                          {userProfile.parent_age_range}
+                          {userProfile.parent_age_range || toAdultAgeRange(calculateAge(userProfile.birth_date))}
                         </Badge>
                       </div>
                     )}
-
+                    {userProfile.spouse_birth_date && (
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <span className="font-medium">
+                          {language === 'he' ? 'גיל בן/בת הזוג:' : 'Spouse age:'}
+                        </span>
+                        <Badge variant="outline" className="bg-purple-50 text-purple-700">
+                          {toAdultAgeRange(calculateAge(userProfile.spouse_birth_date))}
+                        </Badge>
+                      </div>
+                    )}
                     {userProfile.children_age_ranges && userProfile.children_age_ranges.length > 0 && (
                       <div className="space-y-2">
                         <Label className="text-sm">

@@ -302,9 +302,8 @@ export default function TripDetails() {
       console.log('Total People Joining:', totalPeopleJoining);
       console.log('Family Message:', familyMessage);
 
-      // Get parent age ranges from user profile
-      const myAgeRange = user.parent_age_range;
-      const spouseAgeRange = null; // Will be calculated by backend
+      // Get parent age range from user profile
+      const parentAgeRange = user.parent_age_range || user.age_range;
 
       // Build children details snapshot from current user's profile
       const toRange = (a) => {
@@ -352,8 +351,7 @@ export default function TripDetails() {
           other_member_name: otherMemberName,
           total_people: totalPeopleJoining,
           children_details: childrenDetails,
-          parent_age_range: myAgeRange,
-          spouse_age_range: spouseAgeRange
+          parent_age_range: parentAgeRange
         };
 
         console.log('Participant Data Being Saved:', participantData);
@@ -411,8 +409,7 @@ export default function TripDetails() {
           selected_children: selectedChildren,
           other_member_name: otherMemberName,
           children_details: childrenDetails,
-          parent_age_range: myAgeRange,
-          spouse_age_range: spouseAgeRange
+          parent_age_range: parentAgeRange
         }
       ];
       
@@ -511,8 +508,7 @@ export default function TripDetails() {
           other_member_name: request.other_member_name,
           total_people: totalPeopleJoining,
           children_details: request.children_details || [],
-          parent_age_range: request.parent_age_range,
-          spouse_age_range: request.spouse_age_range
+          parent_age_range: request.parent_age_range
         }
       ];
 

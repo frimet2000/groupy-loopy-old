@@ -78,19 +78,30 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
     // Others
     if (participant.family_members?.other && participant.other_member_name) stats.totalOthers++;
 
-    // Get parent ages - try participant snapshot first, then profile
-    const profile = userProfiles[participant.email];
-    const parentAge = participant.parent_age_range || profile?.parent_age_range;
-    const spouseAge = participant.spouse_age_range || profile?.spouse_age_range;
+    // Parent age range - try participant first, fallback to profile
+    console.log(`👨 Parent age for ${participant.email}:`, {
+      participant_object_keys: Object.keys(participant),
+      from_participant: participant.parent_age_range,
+      from_profile: userProfiles[participant.email]?.parent_age_range,
+      entire_profile: userProfiles[participant.email]
+    });
+    
+    let parentAge = participant.parent_age_range || userProfiles[participant.email]?.parent_age_range;
 
-    // Add user's age range
-    if (parentAge) {
-      stats.parentsByAge[parentAge] = (stats.parentsByAge[parentAge] || 0) + 1;
+    // Handle both string and object formats
+    if (parentAge && typeof parentAge === 'object') {
+      console.log('  📦 Parent age is object, content:', JSON.stringify(parentAge, null, 2));
+      console.log('  Keys:', Object.keys(parentAge));
+      parentAge = parentAge.age_range || parentAge.value || parentAge.range || null;
     }
+    
+    console.log('  Final parent age:', parentAge, 'Type:', typeof parentAge);
 
-    // Add spouse's age range if they're joining
-    if (participant.family_members?.spouse && spouseAge) {
-      stats.parentsByAge[spouseAge] = (stats.parentsByAge[spouseAge] || 0) + 1;
+    if (parentAge && typeof parentAge === 'string') {
+      console.log('  ✅ Adding parent age:', parentAge);
+      stats.parentsByAge[parentAge] = (stats.parentsByAge[parentAge] || 0) + 1;
+    } else {
+      console.log('  ❌ No valid parent age');
     }
   });
 
@@ -200,8 +211,8 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
             <div className="bg-white rounded-lg p-4 text-center border border-indigo-200">
               <p className="text-sm text-indigo-600">
                 {language === 'he' 
-                  ? 'אין נתונים זמינים - המשתתפים לא מילאו את טווח הגילאים בפרופיל שלהם'
-                  : 'No data available - participants haven\'t filled their age range in their profile'}
+                  ? 'אין נתונים זמינים - המשתתפים לא מילאו את תאריך הלידה בפרופיל שלהם'
+                  : 'No data available - participants haven\'t filled their birth date in their profile'}
               </p>
             </div>
           )}

@@ -67,17 +67,18 @@ Deno.serve(async (req) => {
             })
             .filter(Boolean);
         }
-        // Get age ranges directly from profile
-        const parentAgeRange = userProfile.parent_age_range;
-        const spouseAgeRange = null; // Not supported yet
+        // Calculate parent age range from birth_date if not set
+        let parentAgeRange = userProfile.parent_age_range || userProfile.age_range;
+        if (!parentAgeRange && userProfile.birth_date) {
+          parentAgeRange = toParentAgeRange(userProfile.birth_date);
+        }
 
         profileMap[email] = {
           name: (userProfile.first_name && userProfile.last_name)
             ? `${userProfile.first_name} ${userProfile.last_name}`
             : userProfile.full_name,
           children_age_ranges: childrenRanges,
-          parent_age_range: parentAgeRange,
-          spouse_age_range: spouseAgeRange
+          parent_age_range: parentAgeRange
         };
       }
     });
