@@ -149,7 +149,7 @@ export default function ProfilePreviewDialog({ open, onOpenChange, userEmail }) 
               )}
 
               {/* Family */}
-              {(userProfile.birth_date || userProfile.spouse_birth_date || (userProfile.children_age_ranges && userProfile.children_age_ranges.length > 0) || (userProfile.children_birth_dates && userProfile.children_birth_dates.length > 0)) && (
+              {(userProfile.parent_age_range || userProfile.birth_date || userProfile.spouse_birth_date || (userProfile.children_age_ranges && userProfile.children_age_ranges.length > 0) || (userProfile.children_birth_dates && userProfile.children_birth_dates.length > 0)) && (
                 <>
                   <Separator />
                   <div className="space-y-3" dir={language === 'he' ? 'rtl' : 'ltr'}>
