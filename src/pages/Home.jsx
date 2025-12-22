@@ -526,7 +526,7 @@ export default function Home() {
                 className="group relative flex-1 min-w-[90px]"
               >
                 <div className="relative flex items-center gap-2 sm:gap-4 bg-white rounded-2xl px-3 sm:px-8 py-3 sm:py-5 border-2 border-emerald-200 shadow-xl">
-                  <div className="p-1.5 sm:p-3 bg-emerald-600 rounded-lg sm:rounded-xl shadow-lg">
+                  <div className="p-1.5 sm:p-3 bg-emerald-600 rounded-lg sm:rounded-xl">
                     <stat.icon className="w-5 h-5 sm:w-8 sm:h-8 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
