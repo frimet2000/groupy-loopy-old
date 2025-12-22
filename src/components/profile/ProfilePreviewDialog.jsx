@@ -191,17 +191,7 @@ export default function ProfilePreviewDialog({ open, onOpenChange, userEmail }) 
                         </Label>
                         <div className="space-y-1">
                           {userProfile.children_birth_dates.map((child, idx) => {
-                            const age = calculateAge(child.birth_date);
-                            const toRange = (a) => {
-                              if (a == null || isNaN(a)) return null;
-                              if (a < 3) return '0-2';
-                              if (a < 7) return '3-6';
-                              if (a < 11) return '7-10';
-                              if (a < 15) return '11-14';
-                              if (a < 19) return '15-18';
-                              return null;
-                            };
-                            const range = toRange(age);
+                            const range = child.birth_date;
                             const genderLabel = child.gender === 'male' 
                               ? (language === 'he' ? 'בן' : 'Boy')
                               : child.gender === 'female'
