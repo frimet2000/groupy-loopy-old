@@ -2747,12 +2747,12 @@ export default function TripDetails() {
 
       {/* Join Request Dialog */}
       <Dialog open={showJoinDialog} onOpenChange={setShowJoinDialog}>
-        <DialogContent className="max-w-2xl p-0 gap-0 max-h-[95vh] flex flex-col">
-          <DialogHeader className="px-6 pt-6 pb-2 flex-shrink-0">
-            <DialogTitle>
+        <DialogContent className="w-[95vw] max-w-2xl p-0 gap-0 h-[90vh] max-h-[90vh] flex flex-col overflow-hidden">
+          <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 flex-shrink-0 border-b">
+            <DialogTitle className="text-lg sm:text-xl">
               {language === 'he' ? 'בקשה להצטרפות לטיול' : language === 'ru' ? 'Запрос на присоединение к поездке' : language === 'es' ? 'Solicitud para unirse al viaje' : language === 'fr' ? 'Demande pour rejoindre le voyage' : language === 'de' ? 'Anfrage zur Teilnahme an der Reise' : language === 'it' ? 'Richiesta di unirsi al viaggio' : 'Request to Join Trip'}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-sm">
               {language === 'he' 
                 ? 'ספר למארגן מעט על עצמך או שאל שאלות על הטיול'
                 : language === 'ru' ? 'Расскажите организатору о себе или задайте вопросы о поездке'
@@ -2764,10 +2764,10 @@ export default function TripDetails() {
             </DialogDescription>
           </DialogHeader>
           
-          <ScrollArea className="flex-1 px-6">
-          <div className="space-y-4 pb-6">
+          <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
+          <div className="space-y-4">
             <div className="space-y-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
-              <Label>
+              <Label className="text-sm">
                 {language === 'he' ? 'הודעה למארגן (אופציונלי)' : language === 'ru' ? 'Сообщение организатору (необязательно)' : language === 'es' ? 'Mensaje al organizador (opcional)' : language === 'fr' ? 'Message à l\'organisateur (optionnel)' : language === 'de' ? 'Nachricht an Organisator (optional)' : language === 'it' ? 'Messaggio all\'organizzatore (opzionale)' : 'Message to organizer (optional)'}
               </Label>
               <Textarea
@@ -2781,8 +2781,9 @@ export default function TripDetails() {
                   : language === 'de' ? 'z.B. Hallo, ich habe Erfahrung im Wandern im Süden. Haben Sie noch Platz für eine Person?'
                   : language === 'it' ? 'es., Ciao, ho esperienza in escursioni al sud. Avete spazio per un\'altra persona?'
                   : 'e.g., Hi, I have experience hiking in the south. Do you have room for one more?'}
-                rows={4}
+                rows={3}
                 dir={language === 'he' ? 'rtl' : 'ltr'}
+                className="text-sm"
               />
             </div>
 
@@ -2798,7 +2799,7 @@ export default function TripDetails() {
             </div>
 
             <div className="space-y-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
-              <Label>
+              <Label className="text-sm">
                 {t('myAccessibilityNeeds')} ({language === 'he' ? 'אופציונלי' : language === 'ru' ? 'необязательно' : language === 'es' ? 'opcional' : language === 'fr' ? 'optionnel' : language === 'de' ? 'optional' : language === 'it' ? 'opzionale' : 'optional'})
               </Label>
               <div className="flex flex-wrap gap-2">
@@ -2806,7 +2807,7 @@ export default function TripDetails() {
                   <Badge
                     key={type}
                     variant={accessibilityNeeds.includes(type) ? 'default' : 'outline'}
-                    className={`cursor-pointer transition-all ${
+                    className={`cursor-pointer transition-all text-xs ${
                       accessibilityNeeds.includes(type) 
                         ? 'bg-purple-600 hover:bg-purple-700' 
                         : 'hover:border-purple-500 hover:text-purple-600'
@@ -2827,55 +2828,51 @@ export default function TripDetails() {
 
             {/* Family Members Selection */}
             <div className="space-y-3" dir={language === 'he' ? 'rtl' : 'ltr'}>
-              <Label className="text-base font-semibold">
+              <Label className="text-sm font-semibold">
                 {language === 'he' ? 'מי מצטרף לטיול?' : 'Who is joining the trip?'}
               </Label>
-              <div className="grid grid-cols-1 gap-3 bg-gray-50 p-4 rounded-lg">
-                <div className="flex items-center gap-3 p-3 bg-white rounded-lg border-2 border-emerald-200">
+              <div className="grid grid-cols-1 gap-2 bg-gray-50 p-3 rounded-lg">
+                <div className="flex items-center gap-3 p-2 bg-white rounded-lg border-2 border-emerald-200">
                   <Checkbox
                     id="me"
                     checked={familyMembers.me}
                     disabled
                     className="data-[state=checked]:bg-emerald-600"
                   />
-                  <label htmlFor="me" className="flex-1 font-medium cursor-not-allowed opacity-70">
+                  <label htmlFor="me" className="flex-1 font-medium text-sm cursor-not-allowed opacity-70">
                     {language === 'he' ? 'אני' : 'Me'}
                   </label>
                 </div>
                 
-                <div className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
+                <div className="flex items-center gap-3 p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors">
                   <Checkbox
                     id="spouse"
                     checked={familyMembers.spouse}
                     onCheckedChange={(checked) => setFamilyMembers({...familyMembers, spouse: checked})}
                     className="data-[state=checked]:bg-emerald-600"
                   />
-                  <label htmlFor="spouse" className="flex-1 font-medium cursor-pointer">
+                  <label htmlFor="spouse" className="flex-1 font-medium text-sm cursor-pointer">
                     {language === 'he' ? 'בן/בת זוג' : 'Spouse/Partner'}
                   </label>
                 </div>
 
                 {user?.children_age_ranges && user.children_age_ranges.length > 0 && (() => {
-                  // Normalize children data - handle both old format (strings) and new format (objects)
                   const normalizedChildren = user.children_age_ranges.map((child, idx) => {
                     if (typeof child === 'string') {
-                      // Old format - just age range string
                       return { id: `idx_${idx}`, name: null, age_range: child, gender: null };
                     }
-                    // New format - object with id, name, age_range, gender
                     return { ...child, id: child?.id || `idx_${idx}` };
                   });
-                  console.log('Normalized children:', normalizedChildren);
                   
                   return (
                     <div className="space-y-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
-                      <Label className="text-sm font-semibold">
+                      <Label className="text-xs font-semibold">
                         {language === 'he' ? 'ילדים' : 'Children'}
                       </Label>
                       {normalizedChildren.map((child, idx) => {
                         const refId = child.id;
                         return (
-                          <div key={refId} className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
+                          <div key={refId} className="flex items-center gap-3 p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors">
                             <Checkbox
                               id={`child-${refId}`}
                               checked={selectedChildren.includes(refId)}
@@ -2888,10 +2885,10 @@ export default function TripDetails() {
                               }}
                               className="data-[state=checked]:bg-pink-600"
                             />
-                            <label htmlFor={`child-${refId}`} className="flex-1 font-medium cursor-pointer">
+                            <label htmlFor={`child-${refId}`} className="flex-1 font-medium text-sm cursor-pointer">
                               {child.name || `${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}
                               {child.age_range && (
-                                <Badge variant="outline" className="ml-2 bg-pink-50 text-pink-700">
+                                <Badge variant="outline" className="ml-2 bg-pink-50 text-pink-700 text-xs">
                                   {child.age_range}
                                 </Badge>
                               )}
@@ -2903,23 +2900,21 @@ export default function TripDetails() {
                   );
                 })()}
 
-                <div className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
+                <div className="flex items-center gap-3 p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors">
                   <Checkbox
                     id="pets"
                     checked={familyMembers.pets}
                     onCheckedChange={(checked) => setFamilyMembers({...familyMembers, pets: checked})}
                     className="data-[state=checked]:bg-amber-600"
                   />
-                  <label htmlFor="pets" className="flex-1 font-medium cursor-pointer flex items-center gap-2">
+                  <label htmlFor="pets" className="flex-1 font-medium text-sm cursor-pointer flex items-center gap-2">
                     <Dog className="w-4 h-4" />
                     {language === 'he' ? 'בעלי חיים' : 'Pets'}
                   </label>
                 </div>
 
-
-
                 <div className="space-y-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
-                  <div className="flex items-center gap-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center gap-3 p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors">
                     <Checkbox
                       id="other"
                       checked={familyMembers.other}
@@ -2929,7 +2924,7 @@ export default function TripDetails() {
                       }}
                       className="data-[state=checked]:bg-purple-600"
                     />
-                    <label htmlFor="other" className="flex-1 font-medium cursor-pointer">
+                    <label htmlFor="other" className="flex-1 font-medium text-sm cursor-pointer">
                       {language === 'he' ? 'נוסף' : 'Other'}
                     </label>
                   </div>
@@ -2940,6 +2935,7 @@ export default function TripDetails() {
                       onChange={(e) => setOtherMemberName(e.target.value)}
                       placeholder={language === 'he' ? 'שם האדם/ים הנוסף/ים' : 'Name of other person(s)'}
                       dir={language === 'he' ? 'rtl' : 'ltr'}
+                      className="text-sm"
                     />
                   )}
                 </div>
@@ -2955,48 +2951,48 @@ export default function TripDetails() {
                 type="button"
                 variant="link"
                 onClick={() => setShowTermsDialog(true)}
-                className="text-blue-600 hover:text-blue-800 font-semibold underline h-auto p-0"
+                className="text-blue-600 hover:text-blue-800 font-semibold underline h-auto p-0 text-xs"
               >
                 {language === 'he' ? 'תנאי השימוש וכתב הויתור' : language === 'ru' ? 'Условия и отказ' : language === 'es' ? 'Términos y exención' : language === 'fr' ? 'Conditions et décharge' : language === 'de' ? 'Bedingungen und Haftungsausschluss' : language === 'it' ? 'Termini e liberatoria' : 'Terms and Waiver'}
               </Button>
-              </div>
-              </div>
-              </ScrollArea>
+            </div>
+          </div>
+          </div>
 
-              <div className="flex gap-3 px-6 py-4 border-t flex-shrink-0 bg-white">
-              <Button 
+          <div className="flex gap-3 px-4 sm:px-6 py-3 sm:py-4 border-t flex-shrink-0 bg-white">
+            <Button 
               variant="outline" 
               onClick={() => {
-              setShowJoinDialog(false);
-              setJoinMessage('');
-              setAccessibilityNeeds([]);
-              setSelectedTrekDays([]);
-              setFamilyMembers({ me: true, spouse: false, pets: false, other: false });
-              setSelectedChildren([]);
-              setOtherMemberName('');
+                setShowJoinDialog(false);
+                setJoinMessage('');
+                setAccessibilityNeeds([]);
+                setSelectedTrekDays([]);
+                setFamilyMembers({ me: true, spouse: false, pets: false, other: false });
+                setSelectedChildren([]);
+                setOtherMemberName('');
               }}
-              className="flex-1 h-12 min-h-[44px]"
-              >
+              className="flex-1 h-11 sm:h-12 min-h-[44px]"
+            >
               {t('cancel')}
-              </Button>
-              <Button 
+            </Button>
+            <Button 
               onClick={handleJoinClick}
               disabled={joinMutation.isLoading || (trip.activity_type === 'trek' && selectedTrekDays.length === 0)}
-              className="bg-emerald-600 hover:bg-emerald-700 flex-1 h-12 min-h-[44px]"
-              >
+              className="bg-emerald-600 hover:bg-emerald-700 flex-1 h-11 sm:h-12 min-h-[44px]"
+            >
               {joinMutation.isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
               ) : (
-              <Check className="w-4 h-4 mr-2" />
+                <Check className="w-4 h-4 mr-2" />
               )}
               {trip.approval_required === false
-              ? (language === 'he' ? 'הצטרף עכשיו' : language === 'ru' ? 'Присоединиться' : language === 'es' ? 'Unirse ahora' : language === 'fr' ? 'Rejoindre maintenant' : language === 'de' ? 'Jetzt beitreten' : language === 'it' ? 'Unisciti ora' : 'Join Now')
-              : (language === 'he' ? 'שלח בקשה' : language === 'ru' ? 'Отправить запрос' : language === 'es' ? 'Enviar solicitud' : language === 'fr' ? 'Envoyer demande' : language === 'de' ? 'Anfrage senden' : language === 'it' ? 'Invia richiesta' : 'Send Request')
+                ? (language === 'he' ? 'הצטרף עכשיו' : language === 'ru' ? 'Присоединиться' : language === 'es' ? 'Unirse ahora' : language === 'fr' ? 'Rejoindre maintenant' : language === 'de' ? 'Jetzt beitreten' : language === 'it' ? 'Unisciti ora' : 'Join Now')
+                : (language === 'he' ? 'שלח בקשה' : language === 'ru' ? 'Отправить запрос' : language === 'es' ? 'Enviar solicitud' : language === 'fr' ? 'Envoyer demande' : language === 'de' ? 'Anfrage senden' : language === 'it' ? 'Invia richiesta' : 'Send Request')
               }
-              </Button>
-              </div>
-              </DialogContent>
-              </Dialog>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Join Request Notification Dialog */}
       {trip && trip.pending_requests && trip.pending_requests.length > 0 && (
