@@ -120,8 +120,6 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
   });
   console.log('=== END DEBUG ===\n\n');
 
-
-
   return (
     <Card className="border-2 border-emerald-200 shadow-lg">
       <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50">
@@ -212,10 +210,6 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
             </div>
           )}
         </div>
-
-
-
-
       </CardContent>
     </Card>
   );
