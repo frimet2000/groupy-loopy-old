@@ -186,15 +186,15 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
           </div>
         )}
 
-        {/* Parent Age Distribution - Prominent */}
-        {Object.keys(stats.parentsByAge).length > 0 && (
-          <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl p-4 border-2 border-indigo-200 shadow-md">
-            <div className="flex items-center gap-2 mb-3">
-              <User className="w-5 h-5 text-indigo-600" />
-              <p className="font-bold text-indigo-900 text-base">
-                {language === 'he' ? 'התפלגות גילאי הורים' : 'Parent Age Distribution'}
-              </p>
-            </div>
+        {/* Parent Age Distribution - Always show */}
+        <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl p-4 border-2 border-indigo-200 shadow-md">
+          <div className="flex items-center gap-2 mb-3">
+            <User className="w-5 h-5 text-indigo-600" />
+            <p className="font-bold text-indigo-900 text-base">
+              {language === 'he' ? 'התפלגות גילאי הורים' : 'Parent Age Distribution'}
+            </p>
+          </div>
+          {Object.keys(stats.parentsByAge).length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {Object.entries(stats.parentsByAge).map(([range, count]) => (
                 <motion.div
@@ -207,8 +207,16 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
                 </motion.div>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="bg-white rounded-lg p-4 text-center border border-indigo-200">
+              <p className="text-sm text-indigo-600">
+                {language === 'he' 
+                  ? 'אין נתונים זמינים - המשתתפים לא מילאו את תאריך הלידה בפרופיל שלהם'
+                  : 'No data available - participants haven\'t filled their birth date in their profile'}
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Family Composition - Compact */}
         <div className="space-y-2 text-right">
