@@ -410,7 +410,7 @@ export default function Home() {
               <span className="text-xs sm:text-sm font-medium text-emerald-100">
                 {language === 'he' ? 'פלטפורמת הטיולים המתקדמת של ישראל' : language === 'ru' ? 'Международная платформа для путешествий' : language === 'es' ? 'Plataforma Internacional de Viajes' : language === 'fr' ? 'Plateforme de voyage internationale' : language === 'de' ? 'Internationale Reiseplattform' : language === 'it' ? 'Piattaforma di viaggio internazionale' : 'International Trip Platform'}
               </span>
-            </motion.div>
+            </div>
 
             {/* Main Title with Gradient */}
             <motion.h1
@@ -447,7 +447,7 @@ export default function Home() {
                       <Plus className="w-5 h-5 mr-2" />
                       {t('createTrip')}
                     </Button>
-                  </motion.div>
+                  </div>
                 </Link>
                 <motion.div whileTap={{ scale: 0.95 }} className="w-full">
                   <Button 
@@ -457,7 +457,7 @@ export default function Home() {
                     <Users className="w-5 h-5 mr-2" />
                     {language === 'he' ? 'הצטרף' : 'Join'}
                   </Button>
-                </motion.div>
+                </div>
               </div>
 
               {/* Secondary Actions Row */}
@@ -470,7 +470,7 @@ export default function Home() {
                     <Share2 className="w-4 h-4 mr-2" />
                     {language === 'he' ? 'שתף' : 'Share'}
                   </Button>
-                </motion.div>
+                </div>
                 <motion.div whileTap={{ scale: 0.95 }} className="w-full">
                   <Button 
                     onClick={() => {
@@ -492,7 +492,7 @@ export default function Home() {
                     <Radio className="w-4 h-4 mr-2 animate-pulse" />
                     {language === 'he' ? 'טיולים חיים' : 'Live'}
                   </Button>
-                </motion.div>
+                </div>
               </div>
 
               {/* AI Recommendations - Desktop only */}
@@ -504,10 +504,10 @@ export default function Home() {
                     </span>
                     <ArrowRight className={`w-5 h-5 ${isRTL ? 'mr-2 rotate-180' : 'ml-2'}`} />
                   </Button>
-                </motion.div>
+                </div>
               </Link>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Enhanced Stats with Animations */}
           <motion.div
@@ -538,7 +538,7 @@ export default function Home() {
                 </div>
                 </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -613,7 +613,7 @@ export default function Home() {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
         </section>
       )}
 
@@ -731,7 +731,7 @@ export default function Home() {
             transition={{ duration: 0.5 }}
           >
             <TripsMap trips={filteredTrips} />
-          </motion.div>
+          </div>
         ) : isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {[...Array(8)].map((_, i) => (
@@ -770,31 +770,14 @@ export default function Home() {
                   </div>
 
                   {/* Trips Grid */}
-                  <motion.div 
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
-                    initial="hidden"
-                    animate="visible"
-                    variants={{
-                      hidden: { opacity: 0 },
-                      visible: {
-                        opacity: 1,
-                        transition: { staggerChildren: 0.08 }
-                      }
-                    }}
-                  >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                     {visibleCountryTrips.map((trip, index) => (
-                      <motion.div
-                        key={trip.id}
-                        variants={{
-                          hidden: { opacity: 0 },
-                          visible: { opacity: 1 }
-                        }}
-                        >
+                      <div key={trip.id}>
                         <TripCard trip={trip} />
-                      </motion.div>
+                      </div>
                     ))}
-                  </motion.div>
-                </motion.div>
+                  </div>
+                </div>
               );
             })}
 
@@ -832,7 +815,7 @@ export default function Home() {
                 }}
               >
                 <Compass className="w-20 h-20 text-emerald-400 mx-auto mb-6" />
-              </motion.div>
+              </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('noTripsFound')}</h3>
               <p className="text-gray-600 mb-8 text-lg">{t('createFirstTrip')}</p>
               <Link to={createPageUrl('CreateTrip')}>
@@ -844,10 +827,10 @@ export default function Home() {
                     <Plus className="w-5 h-5 mr-2" />
                     {t('createTrip')}
                   </Button>
-                </motion.div>
+                </div>
               </Link>
             </div>
-          </motion.div>
+          </div>
         )}
       </section>
 
@@ -925,10 +908,10 @@ export default function Home() {
                     className="opacity-75 hover:opacity-100 transition-opacity"
                     >
                     <TripCard trip={trip} />
-                  </motion.div>
+                  </div>
                 ))}
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           ))}
         </section>
       )}

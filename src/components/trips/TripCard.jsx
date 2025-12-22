@@ -193,12 +193,12 @@ export default function TripCard({ trip }) {
           
             <div className={`absolute bottom-3 ${isRTL ? 'right-3' : 'left-3'} flex gap-2`}>
               {trip.pets_allowed && (
-                <div className="w-9 h-9 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-md">
                   <Dog className="w-5 h-5 text-amber-600" />
                 </div>
               )}
               {trip.camping_available && (
-                <div className="w-9 h-9 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-md">
                   <Tent className="w-5 h-5 text-emerald-600" />
                 </div>
               )}
