@@ -510,7 +510,12 @@ export default function Home() {
           </div>
 
           {/* Enhanced Stats */}
-          <div className="flex flex-wrap gap-3 sm:gap-6 mt-8 sm:mt-20">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.9 }}
+            className="flex flex-wrap gap-3 sm:gap-6 mt-8 sm:mt-20"
+          >
             {stats.map((stat, index) => (
               <div
                 key={index}
@@ -529,14 +534,18 @@ export default function Home() {
                 </div>
               </div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Video Call Invites Banner */}
       {myActiveInvites.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-          <Card className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0 shadow-xl">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <Card className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0 shadow-xl">
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
@@ -600,6 +609,7 @@ export default function Home() {
                 </div>
               </div>
             </Card>
+          </motion.div>
         </section>
       )}
 
@@ -758,8 +768,8 @@ export default function Home() {
                         <TripCard trip={trip} />
                       </div>
                     ))}
-                    </div>
-                    </motion.div>
+                  </div>
+                  </motion.div>
               );
             })}
 
@@ -784,7 +794,7 @@ export default function Home() {
               <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('noTripsFound')}</h3>
               <p className="text-gray-600 mb-8 text-lg">{t('createFirstTrip')}</p>
               <Link to={createPageUrl('CreateTrip')}>
-                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white h-14 px-8 text-lg font-bold shadow-2xl border-2 border-emerald-700">
+                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white h-14 px-8 text-lg font-bold shadow-xl border-2 border-emerald-700 hover:border-emerald-800">
                   <Plus className="w-5 h-5 mr-2" />
                   {t('createTrip')}
                 </Button>
@@ -839,19 +849,15 @@ export default function Home() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {countryTrips.map((trip) => (
-                  <motion.div
+                  <div
                     key={trip.id}
-                    variants={{
-                      hidden: { opacity: 0 },
-                      visible: { opacity: 1 }
-                    }}
                     className="opacity-75 hover:opacity-100 transition-opacity"
                   >
                     <TripCard trip={trip} />
-                  </motion.div>
+                  </div>
                 ))}
-                </motion.div>
-                </motion.div>
+              </div>
+            </motion.div>
           ))}
         </section>
       )}
