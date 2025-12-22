@@ -2747,8 +2747,8 @@ export default function TripDetails() {
 
       {/* Join Request Dialog */}
       <Dialog open={showJoinDialog} onOpenChange={setShowJoinDialog}>
-        <DialogContent className="max-w-2xl h-[95vh] sm:h-auto sm:max-h-[90vh] flex flex-col p-0 gap-0">
-          <DialogHeader className="flex-shrink-0 px-6 pt-6 pb-4">
+        <DialogContent className="max-w-2xl max-h-[90vh] sm:max-h-[85vh] p-6">
+          <DialogHeader>
             <DialogTitle>
               {language === 'he' ? 'בקשה להצטרפות לטיול' : language === 'ru' ? 'Запрос на присоединение к поездке' : language === 'es' ? 'Solicitud para unirse al viaje' : language === 'fr' ? 'Demande pour rejoindre le voyage' : language === 'de' ? 'Anfrage zur Teilnahme an der Reise' : language === 'it' ? 'Richiesta di unirsi al viaggio' : 'Request to Join Trip'}
             </DialogTitle>
@@ -2764,8 +2764,8 @@ export default function TripDetails() {
             </DialogDescription>
           </DialogHeader>
           
-          <div className="flex-1 overflow-y-auto px-6">
-          <div className="space-y-4 pb-4">
+          <ScrollArea className="max-h-[calc(90vh-200px)] sm:max-h-[calc(85vh-200px)] -mx-6 px-6">
+          <div className="space-y-4 py-4">
             <div className="space-y-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
               <Label>
                 {language === 'he' ? 'הודעה למארגן (אופציונלי)' : language === 'ru' ? 'Сообщение организатору (необязательно)' : language === 'es' ? 'Mensaje al organizador (opcional)' : language === 'fr' ? 'Message à l\'organisateur (optionnel)' : language === 'de' ? 'Nachricht an Organisator (optional)' : language === 'it' ? 'Messaggio all\'organizzatore (opzionale)' : 'Message to organizer (optional)'}
@@ -2961,9 +2961,9 @@ export default function TripDetails() {
               </Button>
               </div>
               </div>
-              </div>
+              </ScrollArea>
 
-              <DialogFooter className="flex-shrink-0 px-6 py-4 border-t bg-white sticky bottom-0 gap-2">
+              <div className="flex gap-3 pt-4">
               <Button 
               variant="outline" 
               onClick={() => {
@@ -2994,7 +2994,7 @@ export default function TripDetails() {
               : (language === 'he' ? 'שלח בקשה' : language === 'ru' ? 'Отправить запрос' : language === 'es' ? 'Enviar solicitud' : language === 'fr' ? 'Envoyer demande' : language === 'de' ? 'Anfrage senden' : language === 'it' ? 'Invia richiesta' : 'Send Request')
               }
               </Button>
-              </DialogFooter>
+              </div>
               </DialogContent>
               </Dialog>
 
