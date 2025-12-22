@@ -363,7 +363,7 @@ export default function Inbox() {
                             }`}
                             onClick={() => handleMessageClick(message)}
                           >
-                            <div className="flex items-start gap-3">
+                            <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                               <Avatar className="h-10 w-10 flex-shrink-0">
                                 <AvatarFallback className={
                                   !message.read && isReceived ? 'bg-blue-600 text-white' : 'bg-gray-200'
@@ -371,7 +371,7 @@ export default function Inbox() {
                                   {displayName?.charAt(0).toUpperCase() || 'U'}
                                 </AvatarFallback>
                               </Avatar>
-                              <div className="flex-1 min-w-0">
+                              <div className="flex-1 min-w-0" dir={isRTL ? 'rtl' : 'ltr'}>
                                 <div className="flex items-center justify-between gap-2 mb-1">
                                   <p className={`font-medium truncate ${
                                     !message.read && isReceived ? 'text-gray-900' : 'text-gray-700'
