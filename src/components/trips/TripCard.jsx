@@ -143,10 +143,10 @@ export default function TripCard({ trip }) {
             
             <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} flex gap-1.5`}>
               {trip.activity_type && (
-                <Badge className="bg-emerald-600 text-white border-0 font-semibold text-xs px-2.5 py-1 shadow-sm flex items-center gap-1">
-                  {trip.activity_type === 'hiking' && <Mountain className="w-3 h-3" />}
-                  {trip.activity_type === 'cycling' && <Bike className="w-3 h-3" />}
-                  {trip.activity_type === 'offroad' && <Truck className="w-3 h-3" />}
+                <Badge className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-2 border-white font-bold text-sm px-4 py-1.5 shadow-xl flex items-center gap-1.5">
+                  {trip.activity_type === 'hiking' && <Mountain className="w-4 h-4" />}
+                  {trip.activity_type === 'cycling' && <Bike className="w-4 h-4" />}
+                  {trip.activity_type === 'offroad' && <Truck className="w-4 h-4" />}
                   {t(trip.activity_type)}
                 </Badge>
               )}
