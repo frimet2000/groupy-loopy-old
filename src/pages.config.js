@@ -24,6 +24,7 @@ import TermsOfUse from './pages/TermsOfUse';
 import TravelJournal from './pages/TravelJournal';
 import TripDetails from './pages/TripDetails';
 import TripSummary from './pages/TripSummary';
+import Weather from './pages/Weather';
 import __Layout from './Layout.jsx';
 
 
@@ -54,6 +55,7 @@ export const PAGES = {
     "TravelJournal": TravelJournal,
     "TripDetails": TripDetails,
     "TripSummary": TripSummary,
+    "Weather": Weather,
 }
 
 export const pagesConfig = {
