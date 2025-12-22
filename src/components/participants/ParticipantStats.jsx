@@ -80,8 +80,10 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
 
     // Parent age range - try participant first, fallback to profile
     console.log(`👨 Parent age for ${participant.email}:`, {
+      participant_object_keys: Object.keys(participant),
       from_participant: participant.parent_age_range,
-      from_profile: userProfiles[participant.email]?.parent_age_range
+      from_profile: userProfiles[participant.email]?.parent_age_range,
+      entire_profile: userProfiles[participant.email]
     });
     
     let parentAge = participant.parent_age_range || userProfiles[participant.email]?.parent_age_range;
