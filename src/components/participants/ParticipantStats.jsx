@@ -9,6 +9,7 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
   console.log('trip.participants:', trip.participants);
   console.log('userProfiles:', userProfiles);
   console.log('userProfiles is empty?', Object.keys(userProfiles).length === 0);
+  console.log('Number of participants:', trip.participants?.length);
   
   // Calculate detailed statistics
   const stats = {
@@ -92,8 +93,11 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
   console.log('Final stats:', {
     childrenByAge: stats.childrenByAge,
     parentsByAge: stats.parentsByAge,
-    totalChildren: stats.totalChildren
+    totalChildren: stats.totalChildren,
+    totalAdults: stats.totalAdults
   });
+  console.log('parentsByAge keys:', Object.keys(stats.parentsByAge));
+  console.log('Will show parent age section?', Object.keys(stats.parentsByAge).length > 0);
   console.log('=== END DEBUG ===');
 
   // Create family composition examples for animation
