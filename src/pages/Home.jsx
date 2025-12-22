@@ -357,7 +357,7 @@ export default function Home() {
       )}
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-teal-900 to-emerald-950 text-white min-h-[40vh] md:min-h-[50vh] flex items-center touch-manipulation mx-4 sm:mx-6 my-4 rounded-2xl sm:rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.4),0_0_30px_rgba(16,185,129,0.2),inset_0_1px_0_rgba(255,255,255,0.1)]">
+      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-teal-900 to-emerald-950 text-white min-h-[25vh] md:min-h-[30vh] flex items-center touch-manipulation mx-4 sm:mx-6 my-3 rounded-xl sm:rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.3),0_0_20px_rgba(16,185,129,0.15)]">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <img
@@ -397,7 +397,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.1),transparent_50%)]" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 md:py-12">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 md:py-8">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -425,7 +425,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.3 }}
-              className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-2 sm:mb-4"
+              className="text-xl sm:text-3xl md:text-4xl font-bold leading-tight mb-2 sm:mb-3"
             >
               <span className="bg-gradient-to-r from-white via-emerald-100 to-teal-200 bg-clip-text text-transparent">
                 {t('heroTitle')}
@@ -436,7 +436,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.5 }}
-              className="text-sm sm:text-lg md:text-xl text-emerald-100/90 mb-4 sm:mb-6 leading-relaxed max-w-2xl"
+              className="text-xs sm:text-base md:text-lg text-emerald-100/90 mb-3 sm:mb-4 leading-relaxed max-w-xl"
             >
               {t('heroSubtitle')}
             </motion.p>
@@ -448,11 +448,11 @@ export default function Home() {
               className="flex flex-col gap-3 sm:gap-4 w-full max-w-md"
             >
               {/* Primary Actions Row */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <Link to={createPageUrl('CreateTrip')} className="w-full">
                   <motion.div whileTap={{ scale: 0.95 }} className="w-full">
-                    <Button className="w-full bg-white text-emerald-700 hover:bg-emerald-50 h-12 px-4 text-sm font-bold shadow-2xl border-2 border-emerald-200 hover:border-emerald-300 touch-manipulation hover:shadow-[0_8px_30px_rgba(16,185,129,0.4)] transition-all">
-                      <Plus className="w-5 h-5 mr-2" />
+                    <Button className="w-full bg-white text-emerald-700 hover:bg-emerald-50 h-10 sm:h-11 px-3 text-xs sm:text-sm font-bold shadow-xl border border-emerald-200 hover:border-emerald-300 touch-manipulation transition-all">
+                      <Plus className="w-4 h-4 mr-1.5" />
                       {t('createTrip')}
                     </Button>
                   </motion.div>
@@ -460,60 +460,13 @@ export default function Home() {
                 <motion.div whileTap={{ scale: 0.95 }} className="w-full">
                   <Button 
                     onClick={() => document.getElementById('trips-section')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="w-full bg-emerald-600 text-white hover:bg-emerald-700 h-12 px-4 text-sm font-bold shadow-2xl border-2 border-emerald-700 hover:border-emerald-800 touch-manipulation hover:shadow-[0_8px_30px_rgba(16,185,129,0.5)] transition-all"
+                    className="w-full bg-emerald-600 text-white hover:bg-emerald-700 h-10 sm:h-11 px-3 text-xs sm:text-sm font-bold shadow-xl border border-emerald-700 hover:border-emerald-800 touch-manipulation transition-all"
                   >
-                    <Users className="w-5 h-5 mr-2" />
+                    <Users className="w-4 h-4 mr-1.5" />
                     {language === 'he' ? 'הצטרף' : 'Join'}
                   </Button>
                 </motion.div>
               </div>
-
-              {/* Secondary Actions Row */}
-              <div className="grid grid-cols-2 gap-3">
-                <motion.div whileTap={{ scale: 0.95 }} className="w-full">
-                  <Button 
-                    onClick={handleShare}
-                    className="w-full bg-rose-600 text-white hover:bg-rose-700 h-11 px-4 text-sm font-bold shadow-2xl border-2 border-rose-700 hover:border-rose-800 touch-manipulation hover:shadow-[0_8px_30px_rgba(225,29,72,0.5)] transition-all"
-                  >
-                    <Share2 className="w-4 h-4 mr-2" />
-                    {language === 'he' ? 'שתף' : 'Share'}
-                  </Button>
-                </motion.div>
-                <motion.div whileTap={{ scale: 0.95 }} className="w-full">
-                  <Button 
-                    onClick={() => {
-                      const today = new Date();
-                      today.setHours(0, 0, 0, 0);
-                      const liveTrips = trips.filter(trip => {
-                        const tripDate = new Date(trip.date);
-                        tripDate.setHours(0, 0, 0, 0);
-                        return tripDate.getTime() === today.getTime() && trip.status === 'open' && (!trip.privacy || trip.privacy === 'public');
-                      });
-                      if (liveTrips.length > 0) {
-                        navigate(createPageUrl('TripDetails') + '?id=' + liveTrips[0].id);
-                      } else {
-                        toast.info(language === 'he' ? 'אין טיולים חיים כרגע' : 'No live trips right now');
-                      }
-                    }}
-                    className="w-full relative bg-green-600 text-white hover:bg-green-700 h-11 px-4 text-sm font-bold shadow-2xl border-2 border-green-700 hover:border-green-800 touch-manipulation hover:shadow-[0_8px_30px_rgba(22,163,74,0.5)] transition-all"
-                  >
-                    <Radio className="w-4 h-4 mr-2 animate-pulse" />
-                    {language === 'he' ? 'טיולים חיים' : 'Live'}
-                  </Button>
-                </motion.div>
-              </div>
-
-              {/* AI Recommendations - Desktop only */}
-              <Link to={createPageUrl('AIRecommendations')} className="hidden sm:block w-full">
-                <motion.div whileTap={{ scale: 0.95 }} className="w-full">
-                  <Button className="w-full bg-purple-600 border-2 border-purple-700 text-white hover:bg-purple-700 hover:border-purple-800 h-12 px-6 text-sm font-bold shadow-2xl hover:shadow-[0_8px_30px_rgba(147,51,234,0.5)] touch-manipulation transition-all">
-                    <span className="font-bold">
-                      {t('aiRecommendations')}
-                    </span>
-                    <ArrowRight className={`w-5 h-5 ${isRTL ? 'mr-2 rotate-180' : 'ml-2'}`} />
-                  </Button>
-                </motion.div>
-              </Link>
             </motion.div>
           </motion.div>
 
@@ -522,7 +475,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.9 }}
-            className="flex flex-wrap gap-2 sm:gap-4 mt-6 sm:mt-10"
+            className="flex flex-wrap gap-2 sm:gap-3 mt-4 sm:mt-6"
           >
             {stats.map((stat, index) => (
               <div
