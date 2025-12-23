@@ -301,7 +301,7 @@ export default function Community() {
             <Link to={createPageUrl('Profile') + '?email=' + targetUser.email}>
               <Avatar className="h-12 w-12 cursor-pointer hover:opacity-80 transition-opacity">
                 <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-emerald-700 text-white">
-                  {userName.charAt(0).toUpperCase()}
+                  {typeof userName === 'string' && userName ? userName.charAt(0).toUpperCase() : 'U'}
                 </AvatarFallback>
               </Avatar>
             </Link>
@@ -428,9 +428,9 @@ export default function Community() {
                       <div key={request.email} className="flex items-center justify-between bg-white p-4 rounded-lg">
                         <div className="flex items-center gap-3">
                           <Avatar>
-                            <AvatarFallback className="bg-blue-100 text-blue-700">
-                              {name.charAt(0).toUpperCase()}
-                            </AvatarFallback>
+                          <AvatarFallback className="bg-blue-100 text-blue-700">
+                            {typeof name === 'string' && name ? name.charAt(0).toUpperCase() : 'U'}
+                          </AvatarFallback>
                           </Avatar>
                           <div>
                             <p className="font-semibold">{name}</p>
@@ -489,7 +489,7 @@ export default function Community() {
                           <Link to={createPageUrl('Profile') + '?email=' + request.email} className="flex items-center gap-3">
                             <Avatar className="h-12 w-12">
                               <AvatarFallback className="bg-blue-100 text-blue-700">
-                                {name.charAt(0).toUpperCase()}
+                                {typeof name === 'string' && name ? name.charAt(0).toUpperCase() : 'U'}
                               </AvatarFallback>
                             </Avatar>
                             <div>
@@ -555,7 +555,7 @@ export default function Community() {
                             <Link to={createPageUrl('Profile') + '?email=' + friendEmail} className="flex items-center gap-3 flex-1">
                               <Avatar className="h-12 w-12">
                                 <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-700 text-white">
-                                  {name.charAt(0).toUpperCase()}
+                                  {typeof name === 'string' && name ? name.charAt(0).toUpperCase() : 'U'}
                                 </AvatarFallback>
                               </Avatar>
                               <div className="flex-1">
@@ -663,7 +663,7 @@ export default function Community() {
                                 <div className="flex gap-3">
                                   <Avatar className="h-10 w-10">
                                     <AvatarFallback className="bg-emerald-100 text-emerald-700">
-                                      {organizerName.charAt(0).toUpperCase()}
+                                      {typeof organizerName === 'string' && organizerName ? organizerName.charAt(0).toUpperCase() : 'U'}
                                     </AvatarFallback>
                                   </Avatar>
                                   <div className="flex-1">
@@ -789,7 +789,7 @@ export default function Community() {
                                   <div className="flex items-center gap-2 mb-1">
                                     <Avatar className="h-6 w-6">
                                       <AvatarFallback className="bg-blue-600 text-white text-xs">
-                                        {recipientName.charAt(0).toUpperCase()}
+                                        {typeof recipientName === 'string' && recipientName ? recipientName.charAt(0).toUpperCase() : 'U'}
                                       </AvatarFallback>
                                     </Avatar>
                                     <span className="text-sm font-medium text-gray-700">
