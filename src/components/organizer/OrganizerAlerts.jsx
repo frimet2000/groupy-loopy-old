@@ -90,26 +90,27 @@ export default function OrganizerAlerts({ userEmail }) {
       ? tripMessages.length - myLastSeen - 1
       : tripMessages.length;
     
-    const lastMessageId = tripMessages[tripMessages.length - 1]?.id;
-    const alertId = `unread-${trip.id}-${lastMessageId}`;
-    
-    if (unreadCount > 0 && tripMessages[tripMessages.length - 1]?.sender_email !== userEmail && !dismissedAlerts.includes(alertId)) {
-      alerts.push({
-        id: alertId,
-        tripId: trip.id,
-        type: 'unread_messages',
-        title: language === 'he'
-          ? `${unreadCount} הודעות חדשות`
-          : `${unreadCount} new messages`,
-        description: language === 'he'
-          ? `"${title}" - הודעה אחרונה: ${tripMessages[tripMessages.length - 1]?.content?.substring(0, 30)}...`
-          : `"${title}" - Last: ${tripMessages[tripMessages.length - 1]?.content?.substring(0, 30)}...`,
-        icon: MessageCircle,
-        color: 'text-purple-600',
-        bgColor: 'bg-purple-50',
-        borderColor: 'border-purple-200',
-        count: unreadCount
-      });
+    if (unreadCount > 0 && tripMessages[tripMessages.length - 1]?.sender_email !== userEmail) {
+      const alertId = `unread-${trip.id}`;
+      
+      if (!dismissedAlerts.includes(alertId)) {
+        alerts.push({
+          id: alertId,
+          tripId: trip.id,
+          type: 'unread_messages',
+          title: language === 'he'
+            ? `${unreadCount} הודעות חדשות`
+            : `${unreadCount} new messages`,
+          description: language === 'he'
+            ? `"${title}" - הודעה אחרונה: ${tripMessages[tripMessages.length - 1]?.content?.substring(0, 30)}...`
+            : `"${title}" - Last: ${tripMessages[tripMessages.length - 1]?.content?.substring(0, 30)}...`,
+          icon: MessageCircle,
+          color: 'text-purple-600',
+          bgColor: 'bg-purple-50',
+          borderColor: 'border-purple-200',
+          count: unreadCount
+        });
+      }
     }
 
     // Alert: Trip starting soon (within 24 hours)
@@ -138,24 +139,18 @@ export default function OrganizerAlerts({ userEmail }) {
   });
 
   const handleAlertClick = (alert) => {
-    // Dismiss message alerts after click
-    if (alert.type === 'unread_messages') {
-      const updated = [...dismissedAlerts, alert.id];
-      setDismissedAlerts(updated);
-      localStorage.setItem('dismissedAlerts', JSON.stringify(updated));
-    }
+    // Dismiss alert permanently after click
+    const updated = [...dismissedAlerts, alert.id];
+    setDismissedAlerts(updated);
+    localStorage.setItem('dismissedAlerts', JSON.stringify(updated));
     
-    // Navigate to trip details and open chat tab if it's a message alert
-    if (alert.type === 'unread_messages') {
-      navigate(createPageUrl('TripDetails') + '?id=' + alert.tripId + '#chat');
-      // Trigger chat tab after navigation
-      setTimeout(() => {
-        const chatTab = document.querySelector('[value="chat"]');
-        if (chatTab) chatTab.click();
-      }, 100);
-    } else {
-      navigate(createPageUrl('TripDetails') + '?id=' + alert.tripId);
-    }
+    // Navigate to trip details and open chat tab
+    navigate(createPageUrl('TripDetails') + '?id=' + alert.tripId + '#chat');
+    // Trigger chat tab after navigation
+    setTimeout(() => {
+      const chatTab = document.querySelector('[value="chat"]');
+      if (chatTab) chatTab.click();
+    }, 100);
   };
 
   if (alerts.length === 0) return null;
