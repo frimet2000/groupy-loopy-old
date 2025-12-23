@@ -3085,7 +3085,10 @@ export default function TripDetails() {
                   <div className="flex items-center gap-3">
                     <Avatar className="h-12 w-12">
                       <AvatarFallback className="bg-emerald-100 text-emerald-700">
-                        {trip.pending_requests[currentRequestIndex].name?.charAt(0) || 'P'}
+                        {(() => {
+                          const name = trip.pending_requests[currentRequestIndex].name;
+                          return typeof name === 'string' && name ? name.charAt(0) : 'P';
+                        })()}
                       </AvatarFallback>
                     </Avatar>
                     <div>
