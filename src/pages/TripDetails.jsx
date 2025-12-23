@@ -2209,7 +2209,7 @@ export default function TripDetails() {
                             <div key={index} className="flex items-center gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-200" data-test="co-organizer-row">
                             <Avatar className="h-10 w-10">
                               <AvatarFallback className="bg-emerald-500 text-white">
-                                {(userProfiles[organizer.email]?.name || organizer.name || organizer.email)?.charAt(0) || 'O'
+                                {(userProfiles[organizer.email]?.name || organizer.name || organizer.email)?.charAt(0) || 'O'}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
