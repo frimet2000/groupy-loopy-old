@@ -11,7 +11,7 @@ import { Loader2, MapPin, Heart, User as UserIcon, Dog } from 'lucide-react';
 
 
 
-export default function ProfilePreviewDialog({ open, onOpenChange, userEmail }) {
+export default function ProfilePreviewDialog({ open, onOpenChange, userEmail, userName }) {
   const { t, language } = useLanguage();
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -24,15 +24,35 @@ export default function ProfilePreviewDialog({ open, onOpenChange, userEmail }) 
       try {
         const users = await base44.entities.User.list();
         const profile = users.find(u => u.email === userEmail);
-        setUserProfile(profile);
+        
+        // If profile not found but we have userName, create a basic profile
+        if (!profile && userName) {
+          setUserProfile({
+            email: userEmail,
+            full_name: userName,
+            first_name: userName.split(' ')[0] || '',
+            last_name: userName.split(' ').slice(1).join(' ') || ''
+          });
+        } else {
+          setUserProfile(profile);
+        }
       } catch (error) {
         console.error('Error fetching user profile:', error);
+        // Fallback to userName if available
+        if (userName) {
+          setUserProfile({
+            email: userEmail,
+            full_name: userName,
+            first_name: userName.split(' ')[0] || '',
+            last_name: userName.split(' ').slice(1).join(' ') || ''
+          });
+        }
       }
       setLoading(false);
     };
 
     fetchUserProfile();
-  }, [userEmail, open]);
+  }, [userEmail, userName, open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
