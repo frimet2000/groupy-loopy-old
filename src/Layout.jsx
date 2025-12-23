@@ -41,7 +41,8 @@ import {
         MessageSquare,
         Share2,
         BookOpen,
-        CloudSun
+        CloudSun,
+        BarChart3
       } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
@@ -104,6 +105,7 @@ function LayoutContent({ children, currentPageName }) {
 
   const allNavItems = [
         { name: 'Home', icon: Home, label: t('home'), color: 'text-emerald-600' },
+        { name: 'Dashboard', icon: BarChart3, label: language === 'he' ? 'לוח מחוונים' : language === 'ru' ? 'Панель' : language === 'es' ? 'Panel' : language === 'fr' ? 'Tableau' : language === 'de' ? 'Dashboard' : language === 'it' ? 'Dashboard' : 'Dashboard', color: 'text-cyan-600' },
         { name: 'MyTrips', icon: Map, label: t('myTrips'), color: 'text-blue-600' },
         { name: 'CreateTrip', icon: Plus, label: t('createTrip'), color: 'text-purple-600' },
         { name: 'Weather', icon: CloudSun, label: language === 'he' ? 'מזג אוויר' : language === 'ru' ? 'Погода' : language === 'es' ? 'Clima' : language === 'fr' ? 'Météo' : language === 'de' ? 'Wetter' : language === 'it' ? 'Meteo' : 'Weather', color: 'text-sky-500' },
