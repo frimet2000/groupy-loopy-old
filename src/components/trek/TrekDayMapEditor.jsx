@@ -2,16 +2,38 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useLanguage } from '../LanguageContext';
 import { useGoogleMaps } from '../maps/GoogleMapsProvider';
 import { GoogleMap, Marker, Polyline, DirectionsRenderer } from '@react-google-maps/api';
+import { MapContainer, TileLayer, Marker as LeafletMarker, Polyline as LeafletPolyline, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Route, Mountain, TrendingUp, TrendingDown, MapPin, Trash2, Loader2, Navigation, BarChart3, Search } from 'lucide-react';
+import { Route, Mountain, TrendingUp, TrendingDown, MapPin, Trash2, Loader2, Navigation, BarChart3, Search, Map } from 'lucide-react';
 import { toast } from 'sonner';
+
+// Fix Leaflet icons
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+// Leaflet click handler component
+function LeafletClickHandler({ onMapClick }) {
+  useMapEvents({
+    click: (e) => {
+      onMapClick(e.latlng.lat, e.latlng.lng);
+    },
+  });
+  return null;
+}
 
 export default function TrekDayMapEditor({ day, setDay }) {
   const { language, isRTL } = useLanguage();
+  const [mapProvider, setMapProvider] = useState('israelhiking'); // 'israelhiking' or 'google'
   
   const getMapLanguage = () => {
     const langMap = {
@@ -229,6 +251,15 @@ export default function TrekDayMapEditor({ day, setDay }) {
         }
       );
     }
+  }, [day, setDay]);
+
+  const handleLeafletMapClick = useCallback((lat, lng) => {
+    const newWaypoint = {
+      latitude: lat,
+      longitude: lng
+    };
+    const updatedWaypoints = [...(day.waypoints || []), newWaypoint];
+    setDay({ ...day, waypoints: updatedWaypoints });
   }, [day, setDay]);
 
   const removeWaypoint = (index) => {
@@ -471,168 +502,232 @@ export default function TrekDayMapEditor({ day, setDay }) {
           
           {isLoaded && !loadError && (
             <>
-            {/* Search Mode Toggle */}
+            {/* Map Provider Toggle */}
             <div className="flex gap-2 mb-2">
               <Button
                 type="button"
                 size="sm"
-                variant={searchMode === 'single' ? 'default' : 'outline'}
-                onClick={() => setSearchMode('single')}
-                className={searchMode === 'single' ? 'bg-indigo-600' : ''}
+                variant={mapProvider === 'israelhiking' ? 'default' : 'outline'}
+                onClick={() => setMapProvider('israelhiking')}
+                className={mapProvider === 'israelhiking' ? 'bg-emerald-600' : ''}
               >
-                <MapPin className="w-4 h-4 mr-1" />
-                {language === 'he' ? 'נקודה' : 'Point'}
+                <Map className="w-4 h-4 mr-1" />
+                {language === 'he' ? 'מפת Israel Hiking' : 'Israel Hiking'}
               </Button>
               <Button
                 type="button"
                 size="sm"
-                variant={searchMode === 'route' ? 'default' : 'outline'}
-                onClick={() => setSearchMode('route')}
-                className={searchMode === 'route' ? 'bg-indigo-600' : ''}
+                variant={mapProvider === 'google' ? 'default' : 'outline'}
+                onClick={() => setMapProvider('google')}
+                className={mapProvider === 'google' ? 'bg-blue-600' : ''}
               >
-                <Route className="w-4 h-4 mr-1" />
-                {language === 'he' ? 'מסלול' : 'Route'}
+                <Navigation className="w-4 h-4 mr-1" />
+                {language === 'he' ? 'Google Maps' : 'Google Maps'}
               </Button>
             </div>
 
-            {searchMode === 'single' ? (
+            {/* Search Mode Toggle - Only for Google Maps */}
+            {mapProvider === 'google' && (
               <div className="flex gap-2 mb-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Input
-                    ref={searchInputRef}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handlePlaceSearch()}
-                    placeholder={language === 'he' ? 'חפש מיקום...' : 'Search location...'}
-                    className="pl-9 text-sm"
-                    dir={language === 'he' ? 'rtl' : 'ltr'}
-                  />
-                </div>
                 <Button
                   type="button"
                   size="sm"
-                  onClick={handlePlaceSearch}
-                  disabled={isSearching || !searchQuery.trim()}
-                  className="bg-indigo-600 hover:bg-indigo-700"
+                  variant={searchMode === 'single' ? 'default' : 'outline'}
+                  onClick={() => setSearchMode('single')}
+                  className={searchMode === 'single' ? 'bg-indigo-600' : ''}
                 >
-                  {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                  <MapPin className="w-4 h-4 mr-1" />
+                  {language === 'he' ? 'נקודה' : 'Point'}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={searchMode === 'route' ? 'default' : 'outline'}
+                  onClick={() => setSearchMode('route')}
+                  className={searchMode === 'route' ? 'bg-indigo-600' : ''}
+                >
+                  <Route className="w-4 h-4 mr-1" />
+                  {language === 'he' ? 'מסלול' : 'Route'}
                 </Button>
               </div>
-            ) : (
-              <div className="space-y-2 mb-2 p-3 bg-indigo-50 rounded-lg">
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 bg-green-500 rounded-full" />
-                    <Input
-                      value={startPoint}
-                      onChange={(e) => setStartPoint(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && endPoint && handleRouteSearch()}
-                      placeholder={language === 'he' ? 'נקודת התחלה (למשל: אילת)' : 'Start point (e.g., Eilat)'}
-                      className="pl-9 text-sm"
-                      dir={language === 'he' ? 'rtl' : 'ltr'}
-                    />
+            )}
+
+            {mapProvider === 'google' && (
+              <>
+                {searchMode === 'single' ? (
+                  <div className="flex gap-2 mb-2">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Input
+                        ref={searchInputRef}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handlePlaceSearch()}
+                        placeholder={language === 'he' ? 'חפש מיקום...' : 'Search location...'}
+                        className="pl-9 text-sm"
+                        dir={language === 'he' ? 'rtl' : 'ltr'}
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={handlePlaceSearch}
+                      disabled={isSearching || !searchQuery.trim()}
+                      className="bg-indigo-600 hover:bg-indigo-700"
+                    >
+                      {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                    </Button>
                   </div>
-                </div>
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 bg-red-500 rounded-full" />
-                    <Input
-                      value={endPoint}
-                      onChange={(e) => setEndPoint(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && startPoint && handleRouteSearch()}
-                      placeholder={language === 'he' ? 'נקודת סיום (למשל: אילות)' : 'End point (e.g., Eilot)'}
-                      className="pl-9 text-sm"
-                      dir={language === 'he' ? 'rtl' : 'ltr'}
-                    />
+                ) : (
+                  <div className="space-y-2 mb-2 p-3 bg-indigo-50 rounded-lg">
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 bg-green-500 rounded-full" />
+                        <Input
+                          value={startPoint}
+                          onChange={(e) => setStartPoint(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && endPoint && handleRouteSearch()}
+                          placeholder={language === 'he' ? 'נקודת התחלה (למשל: אילת)' : 'Start point (e.g., Eilat)'}
+                          className="pl-9 text-sm"
+                          dir={language === 'he' ? 'rtl' : 'ltr'}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 bg-red-500 rounded-full" />
+                        <Input
+                          value={endPoint}
+                          onChange={(e) => setEndPoint(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && startPoint && handleRouteSearch()}
+                          placeholder={language === 'he' ? 'נקודת סיום (למשל: אילות)' : 'End point (e.g., Eilot)'}
+                          className="pl-9 text-sm"
+                          dir={language === 'he' ? 'rtl' : 'ltr'}
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={handleRouteSearch}
+                        disabled={isSearching || !startPoint.trim() || !endPoint.trim()}
+                        className="bg-indigo-600 hover:bg-indigo-700"
+                      >
+                        {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Route className="w-4 h-4" />}
+                      </Button>
+                    </div>
                   </div>
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={handleRouteSearch}
-                    disabled={isSearching || !startPoint.trim() || !endPoint.trim()}
-                    className="bg-indigo-600 hover:bg-indigo-700"
-                  >
-                    {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Route className="w-4 h-4" />}
-                  </Button>
-                </div>
-              </div>
+                )}
+              </>
             )}
             <div className="rounded-xl overflow-hidden border-2 border-indigo-100">
-              <GoogleMap
-                key={`map-${language}`}
-                mapContainerStyle={{ width: '100%', height: '300px' }}
-                center={center}
-                zoom={day.waypoints?.length > 0 ? 12 : 8}
-                onClick={handleMapClick}
-                onLoad={onMapLoad}
-                options={{
-                  mapTypeControl: true,
-                  streetViewControl: false,
-                  fullscreenControl: true,
-                  zoomControl: true,
-                  language: getMapLanguage(),
-                  region: getMapRegion(),
-                }}
+              {mapProvider === 'israelhiking' ? (
+                <MapContainer
+                  center={[center.lat, center.lng]}
+                  zoom={day.waypoints?.length > 0 ? 12 : 8}
+                  style={{ width: '100%', height: '300px' }}
                 >
-                {/* Show DirectionsRenderer if we have a calculated route */}
-                {directionsResponse ? (
-                  <DirectionsRenderer
-                    directions={directionsResponse}
-                    onLoad={(renderer) => {
-                      directionsRendererRef.current = renderer;
-                    }}
-                    onDirectionsChanged={handleDirectionsChanged}
-                    options={{
-                      draggable: true,
-                      suppressMarkers: false, // Show default A/B markers which are draggable
-                      polylineOptions: {
-                        strokeColor: '#2563eb',
-                        strokeWeight: 4,
-                        strokeOpacity: 0.9,
-                      }
-                    }}
+                  <TileLayer
+                    url="https://israelhiking.osm.org.il/Hebrew/{z}/{x}/{y}.png"
+                    attribution='&copy; <a href="https://israelhiking.osm.org.il">Israel Hiking</a> | <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    maxZoom={16}
                   />
-                ) : (
-                  <>
-                    {/* Markers for waypoints (only when no route is calculated) */}
-                    {day.waypoints?.map((wp, index) => (
-                      <Marker
-                        key={index}
-                        position={{ lat: wp.latitude, lng: wp.longitude }}
-                        label={{ 
-                          text: String(index + 1), 
-                          color: 'white',
-                          fontWeight: 'bold'
-                        }}
-                      />
-                    ))}
-                  </>
-                )}
+                  <LeafletClickHandler onMapClick={handleLeafletMapClick} />
+                  
+                  {/* Waypoint markers */}
+                  {day.waypoints?.map((wp, index) => (
+                    <LeafletMarker
+                      key={index}
+                      position={[wp.latitude, wp.longitude]}
+                    />
+                  ))}
 
-                {/* Direct line between points (dashed, if no route calculated) */}
-                {!directionsResponse && waypointPath.length > 1 && (
-                  <Polyline
-                    path={waypointPath}
-                    options={{
-                      strokeColor: '#4f46e5',
-                      strokeWeight: 3,
-                      strokeOpacity: 0.6,
-                      icons: [{
-                        icon: { path: 'M 0,-1 0,1', strokeOpacity: 1, scale: 3 },
-                        offset: '0',
-                        repeat: '15px'
-                      }]
-                    }}
-                  />
-                )}
-              </GoogleMap>
+                  {/* Line between points */}
+                  {waypointPath.length > 1 && (
+                    <LeafletPolyline
+                      positions={waypointPath.map(p => [p.lat, p.lng])}
+                      color="#4f46e5"
+                      weight={3}
+                      opacity={0.6}
+                      dashArray="10, 10"
+                    />
+                  )}
+                </MapContainer>
+              ) : (
+                <GoogleMap
+                  key={`map-${language}`}
+                  mapContainerStyle={{ width: '100%', height: '300px' }}
+                  center={center}
+                  zoom={day.waypoints?.length > 0 ? 12 : 8}
+                  onClick={handleMapClick}
+                  onLoad={onMapLoad}
+                  options={{
+                    mapTypeControl: true,
+                    streetViewControl: false,
+                    fullscreenControl: true,
+                    zoomControl: true,
+                    language: getMapLanguage(),
+                    region: getMapRegion(),
+                  }}
+                  >
+                  {/* Show DirectionsRenderer if we have a calculated route */}
+                  {directionsResponse ? (
+                    <DirectionsRenderer
+                      directions={directionsResponse}
+                      onLoad={(renderer) => {
+                        directionsRendererRef.current = renderer;
+                      }}
+                      onDirectionsChanged={handleDirectionsChanged}
+                      options={{
+                        draggable: true,
+                        suppressMarkers: false, // Show default A/B markers which are draggable
+                        polylineOptions: {
+                          strokeColor: '#2563eb',
+                          strokeWeight: 4,
+                          strokeOpacity: 0.9,
+                        }
+                      }}
+                    />
+                  ) : (
+                    <>
+                      {/* Markers for waypoints (only when no route is calculated) */}
+                      {day.waypoints?.map((wp, index) => (
+                        <Marker
+                          key={index}
+                          position={{ lat: wp.latitude, lng: wp.longitude }}
+                          label={{ 
+                            text: String(index + 1), 
+                            color: 'white',
+                            fontWeight: 'bold'
+                          }}
+                        />
+                      ))}
+                    </>
+                  )}
+
+                  {/* Direct line between points (dashed, if no route calculated) */}
+                  {!directionsResponse && waypointPath.length > 1 && (
+                    <Polyline
+                      path={waypointPath}
+                      options={{
+                        strokeColor: '#4f46e5',
+                        strokeWeight: 3,
+                        strokeOpacity: 0.6,
+                        icons: [{
+                          icon: { path: 'M 0,-1 0,1', strokeOpacity: 1, scale: 3 },
+                          offset: '0',
+                          repeat: '15px'
+                        }]
+                      }}
+                    />
+                  )}
+                </GoogleMap>
+              )}
             </div>
             </>
           )}
 
-          {/* Calculate Route Button */}
-          {day.waypoints?.length >= 2 && (
+          {/* Calculate Route Button - Only for Google Maps */}
+          {mapProvider === 'google' && day.waypoints?.length >= 2 && (
             <Button
               type="button"
               onClick={calculateWalkingRoute}
