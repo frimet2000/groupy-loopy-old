@@ -54,6 +54,7 @@ export default function TripCard({ trip, currentUser }) {
     user.role === 'admin' ||
     trip.additional_organizers?.some(org => org.email === user.email)
   );
+  const hasJoined = user && trip.participants?.some(p => p.email === user.email);
 
   const handleLike = async (e) => {
     e.preventDefault();
@@ -117,7 +118,7 @@ export default function TripCard({ trip, currentUser }) {
 
   return (
     <>
-      <Card className="group overflow-hidden hover:shadow-xl transition-shadow bg-white border-2 border-gray-200 hover:border-emerald-300 shadow-md touch-manipulation rounded-2xl">
+      <Card className={`group overflow-hidden hover:shadow-xl transition-shadow bg-white border-2 shadow-md touch-manipulation rounded-2xl ${hasJoined ? 'border-blue-400 hover:border-blue-500 ring-2 ring-blue-200' : 'border-gray-200 hover:border-emerald-300'}`}>
         <Link to={createPageUrl('TripDetails') + `?id=${trip.id}`}>
           <div className="relative h-48 sm:h-52 md:h-56 overflow-hidden rounded-t-2xl border-b-2 border-gray-100/50">
             <img
@@ -129,6 +130,12 @@ export default function TripCard({ trip, currentUser }) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
             
             <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} flex flex-col gap-2 max-w-[50%]`}>
+              {hasJoined && (
+                <Badge className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white border-2 border-white font-bold text-sm px-4 py-1.5 shadow-xl flex items-center gap-1.5 w-fit animate-pulse">
+                  <Users className="w-4 h-4" />
+                  {language === 'he' ? 'הצטרפת' : language === 'ru' ? 'Вы участвуете' : language === 'es' ? 'Te uniste' : language === 'fr' ? 'Vous participez' : language === 'de' ? 'Sie nehmen teil' : language === 'it' ? 'Partecipi' : 'Joined'}
+                </Badge>
+              )}
               {trip.activity_type && (
                 <Badge className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-2 border-white font-bold text-sm px-4 py-1.5 shadow-xl flex items-center gap-1.5 w-fit">
                   {trip.activity_type === 'hiking' && <Mountain className="w-4 h-4" />}
