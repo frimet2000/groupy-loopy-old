@@ -18,6 +18,16 @@ export default function OrganizerAlerts({ userEmail }) {
     const saved = localStorage.getItem('dismissedAlerts');
     return saved ? JSON.parse(saved) : [];
   });
+  const [serverDismissedAlerts, setServerDismissedAlerts] = React.useState([]);
+
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const me = await base44.auth.me();
+        setServerDismissedAlerts(me?.organizer_dismissed_alerts || []);
+      } catch (_) {}
+    })();
+  }, []);
 
   const { data: myTrips = [] } = useQuery({
     queryKey: ['myOrganizedTrips', userEmail],
@@ -41,7 +51,7 @@ export default function OrganizerAlerts({ userEmail }) {
     // Alert: Pending join requests
     if (trip.pending_requests?.length > 0) {
       const alertId = `pending-${trip.id}-${trip.pending_requests.length}`;
-      if (!dismissedAlerts.includes(alertId)) {
+      if (!(dismissedAlerts.includes(alertId) || serverDismissedAlerts.includes(alertId))) {
         alerts.push({
           id: alertId,
           tripId: trip.id,
@@ -68,7 +78,7 @@ export default function OrganizerAlerts({ userEmail }) {
       
       if (percentageFull >= 80 && spotsLeft > 0) {
         const alertId = `almost-full-${trip.id}`;
-        if (!dismissedAlerts.includes(alertId)) {
+        if (!(dismissedAlerts.includes(alertId) || serverDismissedAlerts.includes(alertId))) {
           alerts.push({
             id: alertId,
             tripId: trip.id,
@@ -100,7 +110,7 @@ export default function OrganizerAlerts({ userEmail }) {
       const lastMessageId = tripMessages[tripMessages.length - 1]?.id || tripMessages[tripMessages.length - 1]?.timestamp;
       const alertId = `unread-${trip.id}-${lastMessageId}`;
 
-      if (!dismissedAlerts.includes(alertId)) {
+      if (!(dismissedAlerts.includes(alertId) || serverDismissedAlerts.includes(alertId))) {
         alerts.push({
           id: alertId,
           tripId: trip.id,
@@ -127,7 +137,7 @@ export default function OrganizerAlerts({ userEmail }) {
     
     if (hoursUntil > 0 && hoursUntil <= 24) {
       const alertId = `starting-soon-${trip.id}`;
-      if (!dismissedAlerts.includes(alertId)) {
+      if (!(dismissedAlerts.includes(alertId) || serverDismissedAlerts.includes(alertId))) {
         alerts.push({
           id: alertId,
           tripId: trip.id,
@@ -149,10 +159,15 @@ export default function OrganizerAlerts({ userEmail }) {
   });
 
   const handleAlertClick = (alert) => {
-    // Dismiss alert permanently after click
+    // Dismiss alert permanently after click (local + server)
     const updated = [...dismissedAlerts, alert.id];
     setDismissedAlerts(updated);
     localStorage.setItem('dismissedAlerts', JSON.stringify(updated));
+
+    const merged = Array.from(new Set([...(serverDismissedAlerts || []), alert.id]));
+    setServerDismissedAlerts(merged);
+    // Persist on user profile so it never comes back for this user
+    base44.auth.updateMe({ organizer_dismissed_alerts: merged });
     
     // Navigate to trip details and open chat tab
     navigate(createPageUrl('TripDetails') + '?id=' + alert.tripId + '#chat');
