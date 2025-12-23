@@ -40,22 +40,25 @@ export default function OrganizerAlerts({ userEmail }) {
     
     // Alert: Pending join requests
     if (trip.pending_requests?.length > 0) {
-      alerts.push({
-        id: `pending-${trip.id}`,
-        tripId: trip.id,
-        type: 'pending_requests',
-        title: language === 'he' 
-          ? `${trip.pending_requests.length} בקשות הצטרפות חדשות`
-          : `${trip.pending_requests.length} new join requests`,
-        description: language === 'he'
-          ? `"${title}" - ממתינים לאישור שלך`
-          : `"${title}" - waiting for your approval`,
-        icon: Users,
-        color: 'text-blue-600',
-        bgColor: 'bg-blue-50',
-        borderColor: 'border-blue-200',
-        count: trip.pending_requests.length
-      });
+      const alertId = `pending-${trip.id}`;
+      if (!dismissedAlerts.includes(alertId)) {
+        alerts.push({
+          id: alertId,
+          tripId: trip.id,
+          type: 'pending_requests',
+          title: language === 'he' 
+            ? `${trip.pending_requests.length} בקשות הצטרפות חדשות`
+            : `${trip.pending_requests.length} new join requests`,
+          description: language === 'he'
+            ? `"${title}" - ממתינים לאישור שלך`
+            : `"${title}" - waiting for your approval`,
+          icon: Users,
+          color: 'text-blue-600',
+          bgColor: 'bg-blue-50',
+          borderColor: 'border-blue-200',
+          count: trip.pending_requests.length
+        });
+      }
     }
 
     // Alert: Almost full
@@ -64,22 +67,25 @@ export default function OrganizerAlerts({ userEmail }) {
       const percentageFull = ((trip.current_participants || 1) / trip.max_participants) * 100;
       
       if (percentageFull >= 80 && spotsLeft > 0) {
-        alerts.push({
-          id: `almost-full-${trip.id}`,
-          tripId: trip.id,
-          type: 'almost_full',
-          title: language === 'he'
-            ? `נותרו ${spotsLeft} מקומות בלבד!`
-            : `Only ${spotsLeft} spots left!`,
-          description: language === 'he'
-            ? `"${title}" - ${Math.round(percentageFull)}% מלא`
-            : `"${title}" - ${Math.round(percentageFull)}% full`,
-          icon: AlertCircle,
-          color: 'text-orange-600',
-          bgColor: 'bg-orange-50',
-          borderColor: 'border-orange-200',
-          count: spotsLeft
-        });
+        const alertId = `almost-full-${trip.id}`;
+        if (!dismissedAlerts.includes(alertId)) {
+          alerts.push({
+            id: alertId,
+            tripId: trip.id,
+            type: 'almost_full',
+            title: language === 'he'
+              ? `נותרו ${spotsLeft} מקומות בלבד!`
+              : `Only ${spotsLeft} spots left!`,
+            description: language === 'he'
+              ? `"${title}" - ${Math.round(percentageFull)}% מלא`
+              : `"${title}" - ${Math.round(percentageFull)}% full`,
+            icon: AlertCircle,
+            color: 'text-orange-600',
+            bgColor: 'bg-orange-50',
+            borderColor: 'border-orange-200',
+            count: spotsLeft
+          });
+        }
       }
     }
 
@@ -119,22 +125,25 @@ export default function OrganizerAlerts({ userEmail }) {
     const hoursUntil = (tripDate - now) / (1000 * 60 * 60);
     
     if (hoursUntil > 0 && hoursUntil <= 24) {
-      alerts.push({
-        id: `starting-soon-${trip.id}`,
-        tripId: trip.id,
-        type: 'starting_soon',
-        title: language === 'he'
-          ? `הטיול מתחיל בקרוב!`
-          : `Trip starting soon!`,
-        description: language === 'he'
-          ? `"${title}" - בעוד ${Math.round(hoursUntil)} שעות`
-          : `"${title}" - in ${Math.round(hoursUntil)} hours`,
-        icon: Bell,
-        color: 'text-emerald-600',
-        bgColor: 'bg-emerald-50',
-        borderColor: 'border-emerald-200',
-        urgent: true
-      });
+      const alertId = `starting-soon-${trip.id}`;
+      if (!dismissedAlerts.includes(alertId)) {
+        alerts.push({
+          id: alertId,
+          tripId: trip.id,
+          type: 'starting_soon',
+          title: language === 'he'
+            ? `הטיול מתחיל בקרוב!`
+            : `Trip starting soon!`,
+          description: language === 'he'
+            ? `"${title}" - בעוד ${Math.round(hoursUntil)} שעות`
+            : `"${title}" - in ${Math.round(hoursUntil)} hours`,
+          icon: Bell,
+          color: 'text-emerald-600',
+          bgColor: 'bg-emerald-50',
+          borderColor: 'border-emerald-200',
+          urgent: true
+        });
+      }
     }
   });
 
