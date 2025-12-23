@@ -233,9 +233,9 @@ export default function LiveLocationMap({ trip, currentUserEmail, onUpdate }) {
                 style={{ height: '100%', width: '100%' }}
               >
                 <TileLayer
-                  url="https://israelhiking.osm.org.il/Hebrew/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://israelhiking.osm.org.il">Israel Hiking</a> | <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  maxZoom={16}
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  maxZoom={19}
                 />
 
                 {/* Trip starting point */}
@@ -296,7 +296,7 @@ export default function LiveLocationMap({ trip, currentUserEmail, onUpdate }) {
                   />
                   <Avatar className="h-8 w-8">
                     <AvatarFallback style={{ backgroundColor: colors[index % colors.length] + '20' }}>
-                      {loc.name?.charAt(0) || 'U'}
+                      {typeof loc.name === 'string' && loc.name ? loc.name.charAt(0) : 'U'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
