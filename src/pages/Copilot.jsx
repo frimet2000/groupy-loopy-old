@@ -15,7 +15,7 @@ export default function Copilot() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const scrollRef = useRef(null);
+  const endRef = useRef(null);
 
   const title = useMemo(() => {
     switch (language) {
@@ -60,10 +60,10 @@ export default function Copilot() {
     if (!conversation?.id) return;
     const unsubscribe = base44.agents.subscribeToConversation(conversation.id, (data) => {
       setMessages(data.messages || []);
-      // auto scroll
+      // auto scroll to end
       setTimeout(() => {
-        if (scrollRef.current) {
-          scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        if (endRef.current) {
+          endRef.current.scrollIntoView({ behavior: 'auto' });
         }
       }, 0);
     });
@@ -107,7 +107,7 @@ export default function Copilot() {
 
       <Card className="border-2 border-emerald-100 shadow-sm">
         <div className="h-[60vh] flex flex-col">
-          <ScrollArea className="flex-1 p-3 sm:p-4" viewportRef={scrollRef}>
+          <ScrollArea className="flex-1 p-3 sm:p-4">
             {loading ? (
               <div className="h-full flex items-center justify-center text-gray-500 gap-2">
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -141,6 +141,7 @@ export default function Copilot() {
                 {messages.map((m, idx) => (
                   <MessageBubble key={idx} message={m} />
                 ))}
+                <div ref={endRef} />
               </div>
             )}
           </ScrollArea>
