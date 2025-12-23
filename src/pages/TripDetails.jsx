@@ -957,39 +957,43 @@ export default function TripDetails() {
             <>
                 <Button
                 variant="secondary"
-                size="icon"
-                className="rounded-full bg-white/90 hover:bg-white"
+                className="rounded-full bg-white/90 hover:bg-white gap-2 h-11 px-4 font-semibold shadow-lg border border-gray-200"
                 onClick={handleStartEdit}>
 
                   <Edit className="w-5 h-5" />
+                  <span className="hidden sm:inline">
+                    {language === 'he' ? 'ערוך' : language === 'ru' ? 'Изменить' : language === 'es' ? 'Editar' : language === 'fr' ? 'Modifier' : language === 'de' ? 'Bearbeiten' : language === 'it' ? 'Modifica' : 'Edit'}
+                  </span>
                 </Button>
                 <Button
                 variant="secondary"
-                size="icon"
-                className="rounded-full bg-white/90 hover:bg-white relative w-10 h-10 sm:w-auto sm:h-auto"
+                className="rounded-full bg-white/90 hover:bg-white gap-2 h-11 px-4 font-semibold shadow-lg border border-gray-200"
                 disabled={uploadingImage}
-                onClick={() => document.getElementById('trip-image-gallery').click()}
-                title={language === 'he' ? 'בחר מהגלריה' : language === 'ru' ? 'Выбрать из галереи' : language === 'es' ? 'Elegir de la galería' : language === 'fr' ? 'Choisir de la galerie' : language === 'de' ? 'Aus Galerie wählen' : language === 'it' ? 'Scegli dalla galleria' : 'Choose from gallery'}>
+                onClick={() => document.getElementById('trip-image-gallery').click()}>
 
                   {uploadingImage ?
                 <Loader2 className="w-5 h-5 animate-spin" /> :
 
                 <Upload className="w-5 h-5" />
                 }
+                  <span className="hidden sm:inline">
+                    {language === 'he' ? 'העלה תמונה' : language === 'ru' ? 'Загрузить' : language === 'es' ? 'Subir' : language === 'fr' ? 'Télécharger' : language === 'de' ? 'Hochladen' : language === 'it' ? 'Carica' : 'Upload'}
+                  </span>
                 </Button>
                 <Button
                 variant="secondary"
-                size="icon"
-                className="rounded-full bg-white/90 hover:bg-white relative w-10 h-10 sm:w-auto sm:h-auto"
+                className="rounded-full bg-white/90 hover:bg-white gap-2 h-11 px-4 font-semibold shadow-lg border border-gray-200 sm:hidden"
                 disabled={uploadingImage}
-                onClick={() => document.getElementById('trip-image-camera').click()}
-                title={language === 'he' ? 'צלם תמונה' : language === 'ru' ? 'Сделать фото' : language === 'es' ? 'Tomar foto' : language === 'fr' ? 'Prendre photo' : language === 'de' ? 'Foto aufnehmen' : language === 'it' ? 'Scatta foto' : 'Take photo'}>
+                onClick={() => document.getElementById('trip-image-camera').click()}>
 
                   {uploadingImage ?
                 <Loader2 className="w-5 h-5 animate-spin" /> :
 
                 <Camera className="w-5 h-5" />
                 }
+                  <span className="hidden sm:inline">
+                    {language === 'he' ? 'צלם' : language === 'ru' ? 'Сфотографировать' : language === 'es' ? 'Tomar foto' : language === 'fr' ? 'Prendre' : language === 'de' ? 'Foto' : language === 'it' ? 'Scatta' : 'Photo'}
+                  </span>
                 </Button>
                 <input
                 id="trip-image-gallery"
@@ -1031,26 +1035,32 @@ export default function TripDetails() {
             <>
                 {user &&
               <Button
-                variant="secondary"
-                size="icon"
-                className={`rounded-full bg-white/90 hover:bg-white ${
-                trip.saves?.some((s) => s.email === user.email) ? 'text-emerald-600' : ''}`
-                }
-                onClick={handleSaveTrip}>
-
-                    <Bookmark className={`w-5 h-5 ${
-                trip.saves?.some((s) => s.email === user.email) ? 'fill-current' : ''}`
-                } />
-                  </Button>
+              variant="secondary"
+              className={`rounded-full bg-white/90 hover:bg-white gap-2 h-11 px-4 font-semibold shadow-lg ${
+              trip.saves?.some((s) => s.email === user.email) ? 'text-emerald-600 border-2 border-emerald-200' : 'border border-gray-200'}`
               }
-                <Button
-                variant="secondary"
-                size="icon"
-                className="rounded-full bg-white/90 hover:bg-white"
-                onClick={handleShare}>
+              onClick={handleSaveTrip}>
 
-                  <Share2 className="w-5 h-5" />
+                  <Bookmark className={`w-5 h-5 ${
+              trip.saves?.some((s) => s.email === user.email) ? 'fill-current' : ''}`
+              } />
+                  <span className="hidden sm:inline">
+                    {trip.saves?.some((s) => s.email === user.email) 
+                      ? (language === 'he' ? 'נשמר' : language === 'ru' ? 'Сохранено' : language === 'es' ? 'Guardado' : language === 'fr' ? 'Enregistré' : language === 'de' ? 'Gespeichert' : language === 'it' ? 'Salvato' : 'Saved')
+                      : (language === 'he' ? 'שמור' : language === 'ru' ? 'Сохранить' : language === 'es' ? 'Guardar' : language === 'fr' ? 'Enregistrer' : language === 'de' ? 'Speichern' : language === 'it' ? 'Salva' : 'Save')}
+                  </span>
                 </Button>
+              }
+              <Button
+              variant="secondary"
+              className="rounded-full bg-white/90 hover:bg-white gap-2 h-11 px-4 font-semibold shadow-lg border border-gray-200"
+              onClick={handleShare}>
+
+                <Share2 className="w-5 h-5" />
+                <span className="hidden sm:inline">
+                  {language === 'he' ? 'שתף' : language === 'ru' ? 'Поделиться' : language === 'es' ? 'Compartir' : language === 'fr' ? 'Partager' : language === 'de' ? 'Teilen' : language === 'it' ? 'Condividi' : 'Share'}
+                </span>
+              </Button>
               </>
             }
           </div>
