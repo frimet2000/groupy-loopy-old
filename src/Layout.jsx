@@ -227,7 +227,12 @@ function LayoutContent({ children, currentPageName }) {
                       <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                         <Avatar className="h-10 w-10 border-2 border-emerald-100">
                           <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-emerald-700 text-white font-semibold">
-                            {(user.first_name?.charAt(0) || user.full_name?.charAt(0) || user.email?.charAt(0) || 'U').toUpperCase()}
+                            {(() => {
+                              const firstName = typeof user.first_name === 'string' ? user.first_name : '';
+                              const fullName = typeof user.full_name === 'string' ? user.full_name : '';
+                              const email = typeof user.email === 'string' ? user.email : '';
+                              return (firstName.charAt(0) || fullName.charAt(0) || email.charAt(0) || 'U').toUpperCase();
+                            })()}
                           </AvatarFallback>
                         </Avatar>
                       </Button>
