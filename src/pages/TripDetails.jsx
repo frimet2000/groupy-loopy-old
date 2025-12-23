@@ -2166,7 +2166,10 @@ export default function TripDetails() {
                         <div className="flex items-center gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
                           <Avatar className="h-10 w-10">
                             <AvatarFallback className="bg-emerald-600 text-white">
-                              {(userProfiles[trip.organizer_email]?.name || trip.organizer_name)?.charAt(0) || 'O'}
+                              {(() => {
+                                const displayName = userProfiles[trip.organizer_email]?.name || trip.organizer_name;
+                                return typeof displayName === 'string' && displayName ? displayName.charAt(0) : 'O';
+                              })()}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
@@ -2209,7 +2212,10 @@ export default function TripDetails() {
                             <div key={index} className="flex items-center gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-200" data-test="co-organizer-row">
                             <Avatar className="h-10 w-10">
                               <AvatarFallback className="bg-emerald-500 text-white">
-                                {(userProfiles[organizer.email]?.name || organizer.name || organizer.email)?.charAt(0) || 'O'}
+                                {(() => {
+                                  const displayName = userProfiles[organizer.email]?.name || organizer.name || organizer.email;
+                                  return typeof displayName === 'string' && displayName ? displayName.charAt(0) : 'O';
+                                })()}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
@@ -2369,7 +2375,10 @@ export default function TripDetails() {
                                        <div className="flex items-center gap-3">
                                          <Avatar className="h-9 w-9">
                                            <AvatarFallback className={isOrganizerRow ? 'bg-emerald-600 text-white' : 'bg-blue-100 text-blue-700'}>
-                                             {(participantProfile?.name || participant.name)?.charAt(0) || 'P'}
+                                             {(() => {
+                                               const displayName = participantProfile?.name || participant.name;
+                                               return typeof displayName === 'string' && displayName ? displayName.charAt(0) : 'P';
+                                             })()}
                                            </AvatarFallback>
                                          </Avatar>
                                          <div className="flex-1">

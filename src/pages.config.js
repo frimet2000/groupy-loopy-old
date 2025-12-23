@@ -5,6 +5,7 @@ import Admin from './pages/Admin';
 import Community from './pages/Community';
 import CookiePolicy from './pages/CookiePolicy';
 import CreateTrip from './pages/CreateTrip';
+import Dashboard from './pages/Dashboard';
 import EditTrip from './pages/EditTrip';
 import Feedback from './pages/Feedback';
 import Home from './pages/Home';
@@ -25,7 +26,6 @@ import TravelJournal from './pages/TravelJournal';
 import TripDetails from './pages/TripDetails';
 import TripSummary from './pages/TripSummary';
 import Weather from './pages/Weather';
-import Dashboard from './pages/Dashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -37,6 +37,7 @@ export const PAGES = {
     "Community": Community,
     "CookiePolicy": CookiePolicy,
     "CreateTrip": CreateTrip,
+    "Dashboard": Dashboard,
     "EditTrip": EditTrip,
     "Feedback": Feedback,
     "Home": Home,
@@ -57,7 +58,6 @@ export const PAGES = {
     "TripDetails": TripDetails,
     "TripSummary": TripSummary,
     "Weather": Weather,
-    "Dashboard": Dashboard,
 }
 
 export const pagesConfig = {
