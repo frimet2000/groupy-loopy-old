@@ -173,15 +173,15 @@ export default function TripDetails() {
     enabled: !!trip?.participants?.length
   });
 
+  // State for active tab
+  const [activeTab, setActiveTab] = useState('details');
+
   // Open chat tab if hash is #chat
   useEffect(() => {
     if (window.location.hash === '#chat' && trip) {
-      setTimeout(() => {
-        const chatTab = document.querySelector('[value="chat"]');
-        if (chatTab) chatTab.click();
-      }, 300);
+      setActiveTab('chat');
     }
-  }, [trip]);
+  }, [trip, window.location.hash]);
 
   const isOrganizer = user?.email === trip?.organizer_email;
   const isAdditionalOrganizer = trip?.additional_organizers?.some((o) => o.email === user?.email);
@@ -1730,7 +1730,7 @@ export default function TripDetails() {
             </CardContent>
           </Card>
 
-          <Tabs defaultValue="details" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="w-full mb-4">
               <TabsList className="flex flex-wrap lg:grid lg:grid-cols-8 lg:auto-rows-fr w-full items-stretch gap-1.5 lg:gap-2 h-auto bg-gradient-to-r from-white via-gray-50 to-white border-2 border-gray-200/50 shadow-xl rounded-xl p-2 lg:p-3 text-xs md:text-sm" dir={language === 'he' ? 'rtl' : 'ltr'}>
                 <TabsTrigger value="details" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-500/50 data-[state=active]:border-2 data-[state=active]:border-emerald-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
