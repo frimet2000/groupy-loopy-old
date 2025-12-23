@@ -46,9 +46,14 @@ export default function MyTrips() {
         trip.participants?.some(p => p.email === user.email) ||
         trip.saves?.some(s => s.email === user.email)
       );
+
+      // Also include trips where the user is a co-organizer
+      const coOrganized = participated.filter(trip =>
+        trip.additional_organizers?.some(o => o.email === user.email)
+      );
       
       // Combine and deduplicate
-      const combined = [...organized, ...relevant];
+      const combined = [...organized, ...relevant, ...coOrganized];
       const unique = combined.filter((trip, index, self) => 
         index === self.findIndex(t => t.id === trip.id)
       );
@@ -69,10 +74,14 @@ export default function MyTrips() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const organized = allTrips.filter(trip => trip.organizer_email === user.email);
+    const organized = allTrips.filter(trip => 
+      trip.organizer_email === user.email ||
+      trip.additional_organizers?.some(o => o.email === user.email)
+    );
     const joined = allTrips.filter(trip => 
       trip.participants?.some(p => p.email === user.email) && 
-      trip.organizer_email !== user.email
+      trip.organizer_email !== user.email &&
+      !(trip.additional_organizers?.some(o => o.email === user.email))
     );
     const saved = allTrips.filter(trip =>
       trip.saves?.some(s => s.email === user.email)
