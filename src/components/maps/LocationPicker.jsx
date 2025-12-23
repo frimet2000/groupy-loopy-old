@@ -47,12 +47,11 @@ export default function LocationPicker({ isOpen, onClose, initialLat, initialLng
   }, [initialLat, initialLng]);
 
   const handleConfirm = () => {
-    // Return exact coordinates without any modifications
-    const exactLat = position[0];
-    const exactLng = position[1];
+    if (!position) return;
+    const [exactLat, exactLng] = position;
     console.log('LocationPicker sending coordinates:', exactLat, exactLng);
-    onConfirm(exactLat, exactLng);
-    // Don't call onClose() here - let the parent component handle it after state update
+    if (typeof onConfirm === 'function') onConfirm(exactLat, exactLng);
+    if (typeof onClose === 'function') onClose();
   };
 
   return (
@@ -91,7 +90,7 @@ export default function LocationPicker({ isOpen, onClose, initialLat, initialLng
           <Button variant="outline" onClick={onClose}>
             {language === 'he' ? 'ביטול' : 'Cancel'}
           </Button>
-          <Button onClick={handleConfirm} className="bg-emerald-600 hover:bg-emerald-700">
+          <Button type="button" onClick={handleConfirm} className="bg-emerald-600 hover:bg-emerald-700">
             {language === 'he' ? 'אישור מיקום' : 'Confirm Location'}
           </Button>
         </DialogFooter>
