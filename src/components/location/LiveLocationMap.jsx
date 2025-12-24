@@ -43,9 +43,6 @@ function TrailOverlay() {
   return null;
 }
 
-// Add import for useMap
-import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
-
 // Custom marker icons for different users
 const createCustomIcon = (color, size = 24, isOrganizer = false, isHighlighted = false) => {
   const borderColor = isHighlighted ? '#FFD700' : 'white';
