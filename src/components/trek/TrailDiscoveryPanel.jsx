@@ -4,9 +4,41 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Bike, Route as RouteIcon, Search, Loader2 } from "lucide-react";
-import osmtogeojson from "osmtogeojson";
 import GPX from "gpxparser";
 import { toast } from "sonner";
+
+// Minimal Overpass (relation) => GeoJSON converter for hiking/cycling routes
+function overpassRelationToGeoJSON(overpassJson, relationId) {
+  const elements = overpassJson?.elements || [];
+  const rel = elements.find((e) => e.type === 'relation' && e.id === relationId);
+  if (!rel) return { type: 'FeatureCollection', features: [] };
+  const wayMap = new Map();
+  elements.forEach((el) => {
+    if (el.type === 'way' && Array.isArray(el.geometry)) {
+      const coords = el.geometry.map((p) => [p.lon, p.lat]);
+      wayMap.set(el.id, coords);
+    }
+  });
+  const memberWays = (rel.members || []).filter((m) => m.type === 'way' && wayMap.has(m.ref)).map((m) => wayMap.get(m.ref));
+  let geometry;
+  if (memberWays.length === 0) {
+    geometry = { type: 'MultiLineString', coordinates: [] };
+  } else if (memberWays.length === 1) {
+    geometry = { type: 'LineString', coordinates: memberWays[0] };
+  } else {
+    geometry = { type: 'MultiLineString', coordinates: memberWays };
+  }
+  return {
+    type: 'FeatureCollection',
+    features: [
+      {
+        type: 'Feature',
+        properties: { ...rel.tags, id: relationId },
+        geometry,
+      },
+    ],
+  };
+}
 
 export default function TrailDiscoveryPanel({ isOpen, onOpenChange, getBounds, onTrailSelected, mapProvider }) {
   const [loading, setLoading] = useState(false);
@@ -61,7 +93,7 @@ export default function TrailDiscoveryPanel({ isOpen, onOpenChange, getBounds, o
       setLoading(true);
       const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
       const data = await res.json();
-      const geojson = osmtogeojson(data);
+      const geojson = overpassRelationToGeoJSON(data, trail.id);
       onTrailSelected?.(geojson, { id: trail.id, name: trail.name, type: trail.type, distance: trail.distance });
     } catch (e) {
       toast.error("Failed to load trail geometry");
