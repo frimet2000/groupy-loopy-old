@@ -261,7 +261,7 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
     return baseUrl + points.join('/') + '/@' + points[0] + ',13z';
   })() : null;
 
-  const MapContent = () => (
+  const renderMapContent = () => (
     <Card className="overflow-hidden border-2 border-emerald-200">
       <div className="p-2 border-b bg-gray-50 flex items-center gap-2 flex-wrap">
         <Button
@@ -542,7 +542,7 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="p-4">
+        <CardContent className="p-4 space-y-4">
           <Button type="button" onClick={() => setIsFullScreen(true)} className="w-full bg-emerald-600 hover:bg-emerald-700 gap-2" size="lg">
             <MapPin className="w-5 h-5" />
             {language === 'he' ? 'פתח עורך נקודות ציון' : language === 'ru' ? 'Открыть редактор точек' : language === 'es' ? 'Abrir editor de puntos' : language === 'fr' ? 'Ouvrir éditeur de points' : language === 'de' ? 'Wegpunkt-Editor öffnen' : language === 'it' ? 'Apri editor punti' : 'Open Waypoint Editor'}
@@ -579,7 +579,7 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
             </DialogTitle>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto p-6">
-            <MapContent />
+            {renderMapContent()}
           </div>
         </DialogContent>
       </Dialog>
