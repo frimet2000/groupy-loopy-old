@@ -548,12 +548,12 @@ export default function TrekDayMapEditor({ day, setDay }) {
               <Button
                 type="button"
                 size="sm"
-                variant={mapProvider === 'מפה' ? 'default' : 'outline'}
-                onClick={() => setMapProvider('מפה')}
-                className={mapProvider === 'מפה' ? 'bg-emerald-600' : ''}
+                variant={mapProvider === 'israelhiking' ? 'default' : 'outline'}
+                onClick={() => setMapProvider('israelhiking')}
+                className={mapProvider === 'israelhiking' ? 'bg-emerald-600' : ''}
               >
                 <Map className="w-4 h-4 mr-1" />
-                {language === 'he' ? 'מפה' : 'מפה'}
+                {language === 'he' ? 'מפת Israel Hiking' : 'Israel Hiking'}
               </Button>
               <Button
                 type="button"
