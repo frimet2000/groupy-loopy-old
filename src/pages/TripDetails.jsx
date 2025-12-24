@@ -2704,287 +2704,295 @@ export default function TripDetails() {
                     className="space-y-6"
                     dir={isRTL ? 'rtl' : 'ltr'}>
 
-                        <ScrollArea className="h-[50vh]">
-                          <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-6">
-                            <div className="flex items-start gap-3 mb-4">
-                              <AlertTriangle className="w-8 h-8 text-amber-600 flex-shrink-0 mt-1" />
-                              <div>
-                                <h3 className="font-bold text-xl text-amber-900 mb-2">
-                                  {language === 'he' ? 'כתב ויתור - חשוב מאוד!' :
-                              language === 'ru' ? 'Отказ от ответственности - очень важно!' :
-                              language === 'es' ? '¡Exención - muy importante!' :
-                              language === 'fr' ? 'Décharge - très important!' :
-                              language === 'de' ? 'Haftungsausschluss - sehr wichtig!' :
-                              language === 'it' ? 'Liberatoria - molto importante!' :
-                              'Liability Waiver - Very Important!'}
-                                </h3>
-                              </div>
-                            </div>
-
-                            <div className="text-sm text-gray-800 leading-relaxed space-y-4">
-                              {language === 'he' ? (
-                                <>
-                                  <p className="font-bold">1. כללי והסכמה לתנאים</p>
-                                  <p>השימוש באפליקציית Groupy Loopy (להלן: "האפליקציה"), לרבות שירותי המפות, תכנון המסלולים, הניווט והצטרפות לקבוצות טיול, מותנה בהסכמה מלאה ובלתי מסויגת לכל האמור במסמך זה. המשך השימוש באפליקציה מהווה אישור כי קראת והבנת את תנאיו, ואתה מסכים לפטור את בעלי האפליקציה, מפתחיה ומנהליה (להלן: "המפעילים") מכל אחריות.</p>
-                                  
-                                  <p className="font-bold">2. היעדר אחריות למידע ולניווט</p>
-                                  <p><strong>שירות AS-IS:</strong> המידע המוצג באפליקציה, לרבות שירותי המפות והשבילים, מבוסס על מקורות חיצוניים ופתוחים. המפעילים אינם מתחייבים לדיוק, מהימנות או שלמות הנתונים.</p>
-                                  <p><strong>סטיות בשטח:</strong> ייתכנו סטיות משמעותיות בין המסלול המוצג במפה לבין תנאי השטח בפועל. הניווט וההסתמכות על המידע הדיגיטלי הם באחריות המשתמש בלבד.</p>
-                                  
-                                  <p className="font-bold">3. בטיחות, כשירות ואחריות אישית</p>
-                                  <p><strong>אחריות המשתמש:</strong> היציאה לטיול והשימוש במסלולים המוצעים נעשים על דעת המשתמש ובאחריותו הבלעדית. על המשתמש להפעיל שיקול דעת עצמאי בשטח, לבדוק את תנאי מזג האוויר, מצב הביטחון וסכנת שיטפונות.</p>
-                                  <p><strong>כשירות גופנית:</strong> המשתמש מצהיר כי הוא בעל כשירות רפואית וגופנית המתאימה למסלול שנבחר.</p>
-                                  <p><strong>ציוד עזר:</strong> המשתמש מבין כי האפליקציה אינה תחליף למפה פיזית, מצפן, כמות מספקת של מים וציוד בטיחות נדרש.</p>
-                                  
-                                  <p className="font-bold">4. שחרור מלא מאחריות לנזקים</p>
-                                  <p><strong>נזקי גוף ורכוש:</strong> המפעילים לא יישאו בכל אחריות לנזק ישיר או עקיף, גופני (לרבות פציעה, נכות או מוות), כספי או רכושי, שייגרם למשתמש או לצד שלישי כתוצאה מהשימוש באפליקציה.</p>
-                                  <p><strong>טיולים קבוצתיים:</strong> במסגרת "טיולי קבוצות", המפעילים אינם אחראים להתנהגות המשתתפים, לאיכות הארגון או לכל אירוע פלילי או נזיקי המתרחש במהלך המפגש. המשתמש מוותר על כל טענה כלפי האפליקציה בגין פעילות של משתמשים אחרים.</p>
-                                  
-                                  <p className="font-bold">5. הגבלת אחריות טכנולוגית</p>
-                                  <p>המפעילים אינם אחראים לתקלות טכניות, הפסקות בשירות, איבוד קליטת GPS או שגיאות בחישובי מסלול OSRM/Google Maps שעלולות להוביל לטעות בדרך.</p>
-                                  
-                                  <p className="font-bold">6. פרטיות ושירותי מיקום</p>
-                                  <p>המשתמש מאשר לאפליקציה לאסוף ולשתף נתוני מיקום (GPS) בזמן אמת לצורך תפעול הניווט והצגת מיקום המשתתפים בקבוצה. המשתמש מבין כי מיקומו עשוי להיות חשוף למשתתפים אחרים בהתאם להגדרות הקבוצה.</p>
-                                  
-                                  <p className="font-bold">7. סמכות שיפוט</p>
-                                  <p>על כתב ויתור זה יחולו חוקי מדינת ישראל.</p>
-                                  
-                                  <div className="bg-amber-100 p-4 rounded-lg border-2 border-amber-400 mt-4">
-                                    <p className="font-bold mb-2">סיכום והצהרה:</p>
-                                    <p>באמצעות סימון תיבת האישור או שימוש באפליקציה, אני מצהיר כי:</p>
-                                    <ul className="list-disc list-inside mt-2 space-y-1">
-                                      <li>אני מוותר על כל זכות תביעה כנגד מפתחי ומפעילי Groupy Loopy</li>
-                                      <li>ידוע לי כי טיולי שטח כרוכים בסכנה וכי אני לוקח על עצמי סיכון זה מרצוני החופשי</li>
-                                      <li>אני אחראי באופן מלא על עצמי ועל המלווים מטעמי (כולל קטינים)</li>
-                                    </ul>
-                                  </div>
-                                </>
-                              ) : language === 'ru' ? (
-                                <>
-                                  <p className="font-bold">1. Общие положения и согласие с условиями</p>
-                                  <p>Использование приложения Groupy Loopy (далее: "Приложение"), включая картографические сервисы, планирование маршрутов, навигацию и участие в групповых поездках, обусловлено полным и безоговорочным согласием со всем, изложенным в этом документе. Продолжение использования Приложения подтверждает, что вы прочитали и поняли условия, и вы соглашаетесь освободить владельцев Приложения, его разработчиков и администраторов (далее: "Операторы") от любой ответственности.</p>
-                                  
-                                  <p className="font-bold">2. Отказ от ответственности за информацию и навигацию</p>
-                                  <p><strong>Сервис AS-IS:</strong> Информация, отображаемая в Приложении, включая картографические и маршрутные сервисы, основана на внешних и открытых источниках. Операторы не гарантируют точность, надежность или полноту данных.</p>
-                                  <p><strong>Отклонения на местности:</strong> Могут быть существенные расхождения между маршрутом, отображаемым на карте, и фактическими условиями на местности. Навигация и доверие к цифровой информации осуществляются на ответственность пользователя.</p>
-                                  
-                                  <p className="font-bold">3. Безопасность, пригодность и личная ответственность</p>
-                                  <p><strong>Ответственность пользователя:</strong> Выход на маршрут и использование предлагаемых маршрутов осуществляются по усмотрению пользователя и под его исключительную ответственность. Пользователь должен применять самостоятельное суждение на местности, проверять погодные условия, безопасность и риск наводнений.</p>
-                                  <p><strong>Физическая пригодность:</strong> Пользователь заявляет, что обладает медицинской и физической пригодностью, соответствующей выбранному маршруту.</p>
-                                  <p><strong>Оборудование:</strong> Пользователь понимает, что Приложение не заменяет физическую карту, компас, достаточное количество воды и необходимое защитное снаряжение.</p>
-                                  
-                                  <p className="font-bold">4. Полное освобождение от ответственности за ущерб</p>
-                                  <p><strong>Телесные повреждения и имущественный ущерб:</strong> Операторы не несут никакой ответственности за прямой или косвенный ущерб, телесные повреждения (включая травмы, инвалидность или смерть), финансовый или имущественный ущерб, причиненный пользователю или третьей стороне в результате использования Приложения.</p>
-                                  <p><strong>Групповые поездки:</strong> В рамках "групповых поездок" Операторы не несут ответственности за поведение участников, качество организации или любые криминальные или деликтные инциденты, происходящие во время мероприятия. Пользователь отказывается от любых претензий к Приложению относительно действий других пользователей.</p>
-                                  
-                                  <p className="font-bold">5. Ограничение технологической ответственности</p>
-                                  <p>Операторы не несут ответственности за технические сбои, прерывания в обслуживании, потерю сигнала GPS или ошибки в расчетах маршрута OSRM/Google Maps, которые могут привести к неправильному пути.</p>
-                                  
-                                  <p className="font-bold">6. Конфиденциальность и службы определения местоположения</p>
-                                  <p>Пользователь разрешает Приложению собирать и передавать данные о местоположении (GPS) в реальном времени для работы навигации и отображения местоположения участников группы. Пользователь понимает, что его местоположение может быть раскрыто другим участникам в соответствии с настройками группы.</p>
-                                  
-                                  <p className="font-bold">7. Юрисдикция</p>
-                                  <p>Настоящий отказ регулируется законами Государства Израиль.</p>
-                                  
-                                  <div className="bg-amber-100 p-4 rounded-lg border-2 border-amber-400 mt-4">
-                                    <p className="font-bold mb-2">Резюме и заявление:</p>
-                                    <p>Отмечая флажок подтверждения или используя Приложение, я заявляю, что:</p>
-                                    <ul className="list-disc list-inside mt-2 space-y-1">
-                                      <li>Я отказываюсь от любого права на иск против разработчиков и операторов Groupy Loopy</li>
-                                      <li>Мне известно, что полевые поездки связаны с опасностью, и я принимаю этот риск по своей доброй воле</li>
-                                      <li>Я полностью несу ответственность за себя и сопровождающих лиц (включая несовершеннолетних)</li>
-                                    </ul>
-                                  </div>
-                                </>
-                              ) : language === 'es' ? (
-                                <>
-                                  <p className="font-bold">1. Generalidades y consentimiento a los términos</p>
-                                  <p>El uso de la aplicación Groupy Loopy (en adelante: "la Aplicación"), incluidos los servicios de mapas, planificación de rutas, navegación y participación en grupos de viaje, está condicionado al consentimiento total e incondicional de todo lo establecido en este documento. El uso continuado de la Aplicación constituye la confirmación de que ha leído y comprendido sus términos, y acepta liberar a los propietarios de la Aplicación, sus desarrolladores y administradores (en adelante: "los Operadores") de toda responsabilidad.</p>
-                                  
-                                  <p className="font-bold">2. Descargo de responsabilidad por información y navegación</p>
-                                  <p><strong>Servicio TAL CUAL:</strong> La información mostrada en la Aplicación, incluidos los servicios de mapas y rutas, se basa en fuentes externas y abiertas. Los Operadores no garantizan la exactitud, fiabilidad o integridad de los datos.</p>
-                                  <p><strong>Desviaciones en el terreno:</strong> Pueden existir desviaciones significativas entre la ruta mostrada en el mapa y las condiciones reales del terreno. La navegación y confianza en la información digital son responsabilidad exclusiva del usuario.</p>
-                                  
-                                  <p className="font-bold">3. Seguridad, aptitud y responsabilidad personal</p>
-                                  <p><strong>Responsabilidad del usuario:</strong> La salida al viaje y el uso de las rutas propuestas se realizan bajo el criterio del usuario y bajo su exclusiva responsabilidad. El usuario debe aplicar juicio independiente en el terreno, verificar condiciones meteorológicas, situación de seguridad y riesgo de inundaciones.</p>
-                                  <p><strong>Aptitud física:</strong> El usuario declara que posee la aptitud médica y física apropiada para la ruta elegida.</p>
-                                  <p><strong>Equipo auxiliar:</strong> El usuario entiende que la Aplicación no sustituye un mapa físico, brújula, cantidad suficiente de agua y equipo de seguridad necesario.</p>
-                                  
-                                  <p className="font-bold">4. Liberación total de responsabilidad por daños</p>
-                                  <p><strong>Daños corporales y materiales:</strong> Los Operadores no asumirán ninguna responsabilidad por daño directo o indirecto, corporal (incluyendo lesión, discapacidad o muerte), financiero o material, causado al usuario o a terceros como resultado del uso de la Aplicación.</p>
-                                  <p><strong>Viajes grupales:</strong> En el contexto de "viajes grupales", los Operadores no son responsables del comportamiento de los participantes, la calidad de la organización o cualquier evento criminal o dañino que ocurra durante el encuentro. El usuario renuncia a cualquier reclamación contra la Aplicación por actividades de otros usuarios.</p>
-                                  
-                                  <p className="font-bold">5. Limitación de responsabilidad tecnológica</p>
-                                  <p>Los Operadores no son responsables de fallas técnicas, interrupciones del servicio, pérdida de señal GPS o errores en los cálculos de ruta OSRM/Google Maps que puedan llevar a un error en el camino.</p>
-                                  
-                                  <p className="font-bold">6. Privacidad y servicios de ubicación</p>
-                                  <p>El usuario autoriza a la Aplicación a recopilar y compartir datos de ubicación (GPS) en tiempo real con el propósito de operar la navegación y mostrar la ubicación de los participantes del grupo. El usuario entiende que su ubicación puede ser expuesta a otros participantes según la configuración del grupo.</p>
-                                  
-                                  <p className="font-bold">7. Jurisdicción</p>
-                                  <p>Este descargo de responsabilidad se rige por las leyes del Estado de Israel.</p>
-                                  
-                                  <div className="bg-amber-100 p-4 rounded-lg border-2 border-amber-400 mt-4">
-                                    <p className="font-bold mb-2">Resumen y declaración:</p>
-                                    <p>Al marcar la casilla de confirmación o usar la Aplicación, declaro que:</p>
-                                    <ul className="list-disc list-inside mt-2 space-y-1">
-                                      <li>Renuncio a cualquier derecho de reclamación contra los desarrolladores y operadores de Groupy Loopy</li>
-                                      <li>Soy consciente de que los viajes al aire libre conllevan peligro y acepto este riesgo por mi propia voluntad</li>
-                                      <li>Soy totalmente responsable de mí mismo y de los acompañantes (incluidos menores)</li>
-                                    </ul>
-                                  </div>
-                                </>
-                              ) : language === 'fr' ? (
-                                <>
-                                  <p className="font-bold">1. Généralités et consentement aux conditions</p>
-                                  <p>L'utilisation de l'application Groupy Loopy (ci-après : "l'Application"), y compris les services cartographiques, la planification d'itinéraires, la navigation et l'adhésion à des groupes de voyage, est conditionnée par un consentement total et inconditionnel à tout ce qui est indiqué dans ce document. La poursuite de l'utilisation de l'Application constitue une confirmation que vous avez lu et compris ses conditions, et vous acceptez de dégager les propriétaires de l'Application, ses développeurs et administrateurs (ci-après : "les Opérateurs") de toute responsabilité.</p>
-                                  
-                                  <p className="font-bold">2. Déclaration de non-responsabilité pour l'information et la navigation</p>
-                                  <p><strong>Service TEL QUEL :</strong> Les informations affichées dans l'Application, y compris les services de cartes et de sentiers, sont basées sur des sources externes et ouvertes. Les Opérateurs ne garantissent pas l'exactitude, la fiabilité ou l'exhaustivité des données.</p>
-                                  <p><strong>Écarts sur le terrain :</strong> Il peut y avoir des écarts significatifs entre l'itinéraire affiché sur la carte et les conditions réelles du terrain. La navigation et la confiance dans l'information numérique relèvent de la seule responsabilité de l'utilisateur.</p>
-                                  
-                                  <p className="font-bold">3. Sécurité, aptitude et responsabilité personnelle</p>
-                                  <p><strong>Responsabilité de l'utilisateur :</strong> Le départ en voyage et l'utilisation des itinéraires proposés se font à la discrétion de l'utilisateur et sous sa seule responsabilité. L'utilisateur doit faire preuve de jugement indépendant sur le terrain, vérifier les conditions météorologiques, la situation sécuritaire et le risque d'inondations.</p>
-                                  <p><strong>Aptitude physique :</strong> L'utilisateur déclare posséder l'aptitude médicale et physique appropriée pour l'itinéraire choisi.</p>
-                                  <p><strong>Équipement auxiliaire :</strong> L'utilisateur comprend que l'Application ne remplace pas une carte physique, une boussole, une quantité suffisante d'eau et l'équipement de sécurité nécessaire.</p>
-                                  
-                                  <p className="font-bold">4. Libération totale de responsabilité pour dommages</p>
-                                  <p><strong>Dommages corporels et matériels :</strong> Les Opérateurs n'assumeront aucune responsabilité pour les dommages directs ou indirects, corporels (y compris blessure, invalidité ou décès), financiers ou matériels, causés à l'utilisateur ou à des tiers résultant de l'utilisation de l'Application.</p>
-                                  <p><strong>Voyages de groupe :</strong> Dans le cadre des "voyages de groupe", les Opérateurs ne sont pas responsables du comportement des participants, de la qualité de l'organisation ou de tout événement criminel ou dommageable survenant pendant la rencontre. L'utilisateur renonce à toute réclamation contre l'Application concernant les activités d'autres utilisateurs.</p>
-                                  
-                                  <p className="font-bold">5. Limitation de responsabilité technologique</p>
-                                  <p>Les Opérateurs ne sont pas responsables des pannes techniques, des interruptions de service, de la perte de signal GPS ou des erreurs dans les calculs d'itinéraire OSRM/Google Maps pouvant conduire à une erreur de route.</p>
-                                  
-                                  <p className="font-bold">6. Confidentialité et services de localisation</p>
-                                  <p>L'utilisateur autorise l'Application à collecter et partager des données de localisation (GPS) en temps réel dans le but d'exploiter la navigation et d'afficher la localisation des participants du groupe. L'utilisateur comprend que sa localisation peut être exposée à d'autres participants selon les paramètres du groupe.</p>
-                                  
-                                  <p className="font-bold">7. Juridiction</p>
-                                  <p>Cette décharge est régie par les lois de l'État d'Israël.</p>
-                                  
-                                  <div className="bg-amber-100 p-4 rounded-lg border-2 border-amber-400 mt-4">
-                                    <p className="font-bold mb-2">Résumé et déclaration :</p>
-                                    <p>En cochant la case de confirmation ou en utilisant l'Application, je déclare que :</p>
-                                    <ul className="list-disc list-inside mt-2 space-y-1">
-                                      <li>Je renonce à tout droit de réclamation contre les développeurs et opérateurs de Groupy Loopy</li>
-                                      <li>Je sais que les voyages de plein air comportent des dangers et j'accepte ce risque de mon plein gré</li>
-                                      <li>Je suis entièrement responsable de moi-même et de mes accompagnants (y compris les mineurs)</li>
-                                    </ul>
-                                  </div>
-                                </>
-                              ) : language === 'de' ? (
-                                <>
-                                  <p className="font-bold">1. Allgemeines und Zustimmung zu den Bedingungen</p>
-                                  <p>Die Nutzung der Groupy Loopy-Anwendung (nachfolgend: "die App"), einschließlich Kartendienste, Routenplanung, Navigation und Teilnahme an Gruppenreisen, ist an die vollständige und bedingungslose Zustimmung zu allem, was in diesem Dokument festgelegt ist, gebunden. Die fortgesetzte Nutzung der App bestätigt, dass Sie die Bedingungen gelesen und verstanden haben, und Sie erklären sich damit einverstanden, die Eigentümer der App, ihre Entwickler und Administratoren (nachfolgend: "die Betreiber") von jeglicher Haftung freizustellen.</p>
-                                  
-                                  <p className="font-bold">2. Haftungsausschluss für Informationen und Navigation</p>
-                                  <p><strong>Service WIE BESEHEN:</strong> Die in der App angezeigten Informationen, einschließlich Karten- und Wegdienste, basieren auf externen und offenen Quellen. Die Betreiber garantieren nicht die Genauigkeit, Zuverlässigkeit oder Vollständigkeit der Daten.</p>
-                                  <p><strong>Abweichungen im Gelände:</strong> Es können erhebliche Abweichungen zwischen der auf der Karte angezeigten Route und den tatsächlichen Geländebedingungen bestehen. Navigation und Vertrauen in die digitalen Informationen liegen in der alleinigen Verantwortung des Benutzers.</p>
-                                  
-                                  <p className="font-bold">3. Sicherheit, Eignung und persönliche Verantwortung</p>
-                                  <p><strong>Verantwortung des Benutzers:</strong> Die Durchführung der Reise und die Nutzung der vorgeschlagenen Routen erfolgen nach eigenem Ermessen des Benutzers und unter seiner alleinigen Verantwortung. Der Benutzer muss im Gelände selbständig urteilen, Wetterbedingungen, Sicherheitslage und Überschwemmungsgefahr prüfen.</p>
-                                  <p><strong>Körperliche Eignung:</strong> Der Benutzer erklärt, dass er über die medizinische und körperliche Eignung verfügt, die für die gewählte Route geeignet ist.</p>
-                                  <p><strong>Hilfsausrüstung:</strong> Der Benutzer versteht, dass die App keine physische Karte, Kompass, ausreichend Wasser und erforderliche Sicherheitsausrüstung ersetzt.</p>
-                                  
-                                  <p className="font-bold">4. Vollständige Haftungsfreistellung für Schäden</p>
-                                  <p><strong>Körperschäden und Sachschäden:</strong> Die Betreiber übernehmen keinerlei Haftung für direkte oder indirekte Schäden, körperliche Schäden (einschließlich Verletzung, Behinderung oder Tod), finanzielle oder sachliche Schäden, die dem Benutzer oder Dritten infolge der Nutzung der App zugefügt werden.</p>
-                                  <p><strong>Gruppenreisen:</strong> Im Rahmen von "Gruppenreisen" sind die Betreiber nicht verantwortlich für das Verhalten der Teilnehmer, die Qualität der Organisation oder für kriminelle oder schadenverursachende Ereignisse, die während des Treffens auftreten. Der Benutzer verzichtet auf jegliche Ansprüche gegen die App bezüglich der Aktivitäten anderer Benutzer.</p>
-                                  
-                                  <p className="font-bold">5. Einschränkung der technologischen Haftung</p>
-                                  <p>Die Betreiber haften nicht für technische Störungen, Dienstunterbrechungen, GPS-Signalverlust oder Fehler in OSRM/Google Maps-Routenberechnungen, die zu Navigationsfehlern führen können.</p>
-                                  
-                                  <p className="font-bold">6. Datenschutz und Standortdienste</p>
-                                  <p>Der Benutzer autorisiert die App, Standortdaten (GPS) in Echtzeit zu sammeln und zu teilen, um die Navigation zu betreiben und den Standort der Gruppenmitglieder anzuzeigen. Der Benutzer versteht, dass sein Standort gemäß den Gruppeneinstellungen anderen Teilnehmern offengelegt werden kann.</p>
-                                  
-                                  <p className="font-bold">7. Gerichtsstand</p>
-                                  <p>Dieser Haftungsausschluss unterliegt den Gesetzen des Staates Israel.</p>
-                                  
-                                  <div className="bg-amber-100 p-4 rounded-lg border-2 border-amber-400 mt-4">
-                                    <p className="font-bold mb-2">Zusammenfassung und Erklärung:</p>
-                                    <p>Durch Ankreuzen des Bestätigungsfeldes oder Nutzung der App erkläre ich, dass:</p>
-                                    <ul className="list-disc list-inside mt-2 space-y-1">
-                                      <li>Ich auf jegliches Klagerecht gegen die Entwickler und Betreiber von Groupy Loopy verzichte</li>
-                                      <li>Mir bekannt ist, dass Outdoor-Reisen mit Gefahren verbunden sind und ich dieses Risiko aus freiem Willen übernehme</li>
-                                      <li>Ich vollständig verantwortlich bin für mich und meine Begleiter (einschließlich Minderjähriger)</li>
-                                    </ul>
-                                  </div>
-                                </>
-                              ) : language === 'it' ? (
-                                <>
-                                  <p className="font-bold">1. Generalità e consenso ai termini</p>
-                                  <p>L'uso dell'applicazione Groupy Loopy (di seguito: "l'Applicazione"), compresi i servizi di mappe, pianificazione percorsi, navigazione e adesione a gruppi di viaggio, è condizionato al consenso totale e incondizionato a tutto quanto stabilito in questo documento. Il proseguimento dell'uso dell'Applicazione costituisce conferma che hai letto e compreso i suoi termini, e accetti di sollevare i proprietari dell'Applicazione, i suoi sviluppatori e amministratori (di seguito: "gli Operatori") da ogni responsabilità.</p>
-                                  
-                                  <p className="font-bold">2. Esclusione di responsabilità per informazioni e navigazione</p>
-                                  <p><strong>Servizio COSÌ COM'È:</strong> Le informazioni visualizzate nell'Applicazione, compresi i servizi di mappe e sentieri, si basano su fonti esterne e aperte. Gli Operatori non garantiscono l'accuratezza, l'affidabilità o la completezza dei dati.</p>
-                                  <p><strong>Deviazioni sul terreno:</strong> Possono esserci deviazioni significative tra il percorso visualizzato sulla mappa e le condizioni reali del terreno. La navigazione e l'affidamento sulle informazioni digitali sono di esclusiva responsabilità dell'utente.</p>
-                                  
-                                  <p className="font-bold">3. Sicurezza, idoneità e responsabilità personale</p>
-                                  <p><strong>Responsabilità dell'utente:</strong> L'uscita per il viaggio e l'uso dei percorsi proposti avvengono a discrezione dell'utente e sotto la sua esclusiva responsabilità. L'utente deve applicare un giudizio indipendente sul terreno, verificare le condizioni meteorologiche, la situazione di sicurezza e il rischio di inondazioni.</p>
-                                  <p><strong>Idoneità fisica:</strong> L'utente dichiara di possedere l'idoneità medica e fisica appropriata per il percorso scelto.</p>
-                                  <p><strong>Attrezzatura ausiliaria:</strong> L'utente comprende che l'Applicazione non sostituisce una mappa fisica, bussola, quantità sufficiente di acqua e attrezzatura di sicurezza necessaria.</p>
-                                  
-                                  <p className="font-bold">4. Liberazione totale da responsabilità per danni</p>
-                                  <p><strong>Danni fisici e materiali:</strong> Gli Operatori non assumono alcuna responsabilità per danni diretti o indiretti, fisici (inclusi lesioni, invalidità o morte), finanziari o materiali, causati all'utente o a terzi a seguito dell'uso dell'Applicazione.</p>
-                                  <p><strong>Viaggi di gruppo:</strong> Nel contesto dei "viaggi di gruppo", gli Operatori non sono responsabili del comportamento dei partecipanti, della qualità dell'organizzazione o di qualsiasi evento criminale o dannoso che si verifichi durante l'incontro. L'utente rinuncia a qualsiasi reclamo contro l'Applicazione per attività di altri utenti.</p>
-                                  
-                                  <p className="font-bold">5. Limitazione di responsabilità tecnologica</p>
-                                  <p>Gli Operatori non sono responsabili per guasti tecnici, interruzioni del servizio, perdita del segnale GPS o errori nei calcoli del percorso OSRM/Google Maps che possono portare a errori di navigazione.</p>
-                                  
-                                  <p className="font-bold">6. Privacy e servizi di localizzazione</p>
-                                  <p>L'utente autorizza l'Applicazione a raccogliere e condividere dati di localizzazione (GPS) in tempo reale per il funzionamento della navigazione e la visualizzazione della posizione dei partecipanti del gruppo. L'utente comprende che la sua posizione può essere esposta ad altri partecipanti secondo le impostazioni del gruppo.</p>
-                                  
-                                  <p className="font-bold">7. Giurisdizione</p>
-                                  <p>Questa liberatoria è regolata dalle leggi dello Stato di Israele.</p>
-                                  
-                                  <div className="bg-amber-100 p-4 rounded-lg border-2 border-amber-400 mt-4">
-                                    <p className="font-bold mb-2">Riepilogo e dichiarazione:</p>
-                                    <p>Spuntando la casella di conferma o utilizzando l'Applicazione, dichiaro che:</p>
-                                    <ul className="list-disc list-inside mt-2 space-y-1">
-                                      <li>Rinuncio a qualsiasi diritto di reclamo contro gli sviluppatori e operatori di Groupy Loopy</li>
-                                      <li>Sono consapevole che i viaggi all'aperto comportano pericoli e accetto questo rischio di mia spontanea volontà</li>
-                                      <li>Sono completamente responsabile per me stesso e per i miei accompagnatori (compresi i minori)</li>
-                                    </ul>
-                                  </div>
-                                </>
-                              ) : (
-                                <>
-                                  <p className="font-bold">1. General and Consent to Terms</p>
-                                  <p>Use of the Groupy Loopy application (hereinafter: "the Application"), including map services, route planning, navigation, and joining travel groups, is conditioned upon full and unconditional consent to everything stated in this document. Continued use of the Application constitutes confirmation that you have read and understood its terms, and you agree to release the Application's owners, developers, and administrators (hereinafter: "the Operators") from any liability.</p>
-                                  
-                                  <p className="font-bold">2. Disclaimer for Information and Navigation</p>
-                                  <p><strong>AS-IS Service:</strong> The information displayed in the Application, including map and trail services, is based on external and open sources. The Operators do not guarantee the accuracy, reliability, or completeness of the data.</p>
-                                  <p><strong>Deviations on the ground:</strong> There may be significant deviations between the route displayed on the map and the actual terrain conditions. Navigation and reliance on digital information are the sole responsibility of the user.</p>
-                                  
-                                  <p className="font-bold">3. Safety, Fitness, and Personal Responsibility</p>
-                                  <p><strong>User's responsibility:</strong> Embarking on a trip and using the proposed routes are done at the user's discretion and under their sole responsibility. The user must exercise independent judgment in the field, check weather conditions, security situation, and flood risk.</p>
-                                  <p><strong>Physical fitness:</strong> The user declares they possess the medical and physical fitness appropriate for the chosen route.</p>
-                                  <p><strong>Auxiliary equipment:</strong> The user understands that the Application is not a substitute for a physical map, compass, sufficient water, and required safety equipment.</p>
-                                  
-                                  <p className="font-bold">4. Full Release from Liability for Damages</p>
-                                  <p><strong>Bodily and property damage:</strong> The Operators will not assume any liability for direct or indirect damage, bodily harm (including injury, disability, or death), financial or property damage, caused to the user or third parties as a result of using the Application.</p>
-                                  <p><strong>Group trips:</strong> In the context of "group trips", the Operators are not responsible for participants' behavior, the quality of organization, or any criminal or tortious event occurring during the gathering. The user waives any claim against the Application regarding activities of other users.</p>
-                                  
-                                  <p className="font-bold">5. Limitation of Technological Liability</p>
-                                  <p>The Operators are not liable for technical malfunctions, service interruptions, GPS signal loss, or errors in OSRM/Google Maps route calculations that may lead to navigation mistakes.</p>
-                                  
-                                  <p className="font-bold">6. Privacy and Location Services</p>
-                                  <p>The user authorizes the Application to collect and share location data (GPS) in real-time for the purpose of operating navigation and displaying the location of group participants. The user understands that their location may be exposed to other participants according to group settings.</p>
-                                  
-                                  <p className="font-bold">7. Jurisdiction</p>
-                                  <p>This waiver is governed by the laws of the State of Israel.</p>
-                                  
-                                  <div className="bg-amber-100 p-4 rounded-lg border-2 border-amber-400 mt-4">
-                                    <p className="font-bold mb-2">Summary and Declaration:</p>
-                                    <p>By checking the confirmation box or using the Application, I declare that:</p>
-                                    <ul className="list-disc list-inside mt-2 space-y-1">
-                                      <li>I waive any right to claim against the developers and operators of Groupy Loopy</li>
-                                      <li>I am aware that outdoor trips involve danger and I accept this risk of my own free will</li>
-                                      <li>I am fully responsible for myself and my companions (including minors)</li>
-                                    </ul>
-                                  </div>
-                                </>
-                              )}
+                        <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-6">
+                          <div className="flex items-start gap-3 mb-4">
+                            <AlertTriangle className="w-8 h-8 text-amber-600 flex-shrink-0 mt-1" />
+                            <div>
+                              <h3 className="font-bold text-xl text-amber-900 mb-2">
+                                {language === 'he' ? 'נא לקרוא בעיון לפני המשך השתתפות' :
+                            language === 'ru' ? 'Пожалуйста, внимательно прочитайте перед продолжением' :
+                            language === 'es' ? 'Por favor, lea atentamente antes de continuar' :
+                            language === 'fr' ? 'Veuillez lire attentivement avant de continuer' :
+                            language === 'de' ? 'Bitte lesen Sie sorgfältig, bevor Sie fortfahren' :
+                            language === 'it' ? 'Si prega di leggere attentamente prima di continuare' :
+                            'Please Read Carefully Before Continuing'}
+                              </h3>
+                              <p className="text-gray-700 leading-relaxed">
+                                {language === 'he' ?
+                            'השתתפות בטיולים מאורגנים דרך האפליקציה נעשית על אחריותך הבלעדית. חשוב מאוד לקרוא את כתב הוויתור המלא ולוודא שיש לך ביטוח מתאים.' :
+                            language === 'ru' ? 'Участие в поездках, организованных через приложение, осуществляется на ваш собственный риск. Очень важно прочитать полный отказ и убедиться, что у вас есть соответствующая страховка.' :
+                            language === 'es' ? 'La participación en viajes organizados a través de la aplicación es bajo su propio riesgo. Es muy importante leer la exención completa y asegurarse de tener un seguro adecuado.' :
+                            language === 'fr' ? 'La participation aux voyages organisés via l\'application se fait à vos propres risques. Il est très important de lire la décharge complète et de vous assurer d\'avoir une assurance appropriée.' :
+                            language === 'de' ? 'Die Teilnahme an über die App organisierten Reisen erfolgt auf eigene Gefahr. Es ist sehr wichtig, den vollständigen Haftungsausschluss zu lesen und sicherzustellen, dass Sie eine angemessene Versicherung haben.' :
+                            language === 'it' ? 'La partecipazione ai viaggi organizzati tramite l\'app avviene a proprio rischio. È molto importante leggere la liberatoria completa e assicurarsi di avere un\'assicurazione adeguata.' :
+                            'Participation in trips organized through the app is at your own risk. It is very important to read the full waiver and ensure you have appropriate insurance.'}
+                              </p>
                             </div>
                           </div>
-                        </ScrollArea>
+
+                          <div className="text-sm text-gray-800 leading-relaxed space-y-4">
+                            {language === 'he' ? (
+                              <>
+                                <p className="font-bold">1. כללי והסכמה לתנאים</p>
+                                <p>השימוש באפליקציית Groupy Loopy (להלן: "האפליקציה"), לרבות שירותי המפות, תכנון המסלולים, הניווט והצטרפות לקבוצות טיול, מותנה בהסכמה מלאה ובלתי מסויגת לכל האמור במסמך זה. המשך השימוש באפליקציה מהווה אישור כי קראת והבנת את תנאיו, ואתה מסכים לפטור את בעלי האפליקציה, מפתחיה ומנהליה (להלן: "המפעילים") מכל אחריות.</p>
+                                
+                                <p className="font-bold">2. היעדר אחריות למידע ולניווט</p>
+                                <p><strong>שירות AS-IS:</strong> המידע המוצג באפליקציה, לרבות שירותי המפות והשבילים, מבוסס על מקורות חיצוניים ופתוחים. המפעילים אינם מתחייבים לדיוק, מהימנות או שלמות הנתונים.</p>
+                                <p><strong>סטיות בשטח:</strong> ייתכנו סטיות משמעותיות בין המסלול המוצג במפה לבין תנאי השטח בפועל. הניווט וההסתמכות על המידע הדיגיטלי הם באחריות המשתמש בלבד.</p>
+                                
+                                <p className="font-bold">3. בטיחות, כשירות ואחריות אישית</p>
+                                <p><strong>אחריות המשתמש:</strong> היציאה לטיול והשימוש במסלולים המוצעים נעשים על דעת המשתמש ובאחריותו הבלעדית. על המשתמש להפעיל שיקול דעת עצמאי בשטח, לבדוק את תנאי מזג האוויר, מצב הביטחון וסכנת שיטפונות.</p>
+                                <p><strong>כשירות גופנית:</strong> המשתמש מצהיר כי הוא בעל כשירות רפואית וגופנית המתאימה למסלול שנבחר.</p>
+                                <p><strong>ציוד עזר:</strong> המשתמש מבין כי האפליקציה אינה תחליף למפה פיזית, מצפן, כמות מספקת של מים וציוד בטיחות נדרש.</p>
+                                
+                                <p className="font-bold">4. שחרור מלא מאחריות לנזקים</p>
+                                <p><strong>נזקי גוף ורכוש:</strong> המפעילים לא יישאו בכל אחריות לנזק ישיר או עקיף, גופני (לרבות פציעה, נכות או מוות), כספי או רכושי, שייגרם למשתמש או לצד שלישי כתוצאה מהשימוש באפליקציה.</p>
+                                <p><strong>טיולים קבוצתיים:</strong> במסגרת "טיולי קבוצות", המפעילים אינם אחראים להתנהגות המשתתפים, לאיכות הארגון או לכל אירוע פלילי או נזיקי המתרחש במהלך המפגש. המשתמש מוותר על כל טענה כלפי האפליקציה בגין פעילות של משתמשים אחרים.</p>
+                                
+                                <p className="font-bold">5. הגבלת אחריות טכנולוגית</p>
+                                <p>המפעילים אינם אחראים לתקלות טכניות, הפסקות בשירות, איבוד קליטת GPS או שגיאות בחישובי מסלול OSRM/Google Maps שעלולות להוביל לטעות בדרך.</p>
+                                
+                                <p className="font-bold">6. פרטיות ושירותי מיקום</p>
+                                <p>המשתמש מאשר לאפליקציה לאסוף ולשתף נתוני מיקום (GPS) בזמן אמת לצורך תפעול הניווט והצגת מיקום המשתתפים בקבוצה. המשתמש מבין כי מיקומו עשוי להיות חשוף למשתתפים אחרים בהתאם להגדרות הקבוצה.</p>
+                                
+                                <p className="font-bold">7. סמכות שיפוט</p>
+                                <p>על כתב ויתור זה יחולו חוקי מדינת ישראל.</p>
+                                
+                                <div className="bg-amber-100 p-4 rounded-lg border-2 border-amber-400 mt-4">
+                                  <p className="font-bold mb-2">סיכום והצהרה:</p>
+                                  <p>באמצעות סימון תיבת האישור או שימוש באפליקציה, אני מצהיר כי:</p>
+                                  <ul className="list-disc list-inside mt-2 space-y-1">
+                                    <li>אני מוותר על כל זכות תביעה כנגד מפתחי ומפעילי Groupy Loopy</li>
+                                    <li>ידוע לי כי טיולי שטח כרוכים בסכנה וכי אני לוקח על עצמי סיכון זה מרצוני החופשי</li>
+                                    <li>אני אחראי באופן מלא על עצמי ועל המלווים מטעמי (כולל קטינים)</li>
+                                  </ul>
+                                </div>
+                              </>
+                            ) : language === 'ru' ? (
+                              <>
+                                <p className="font-bold">1. Общие положения и согласие с условиями</p>
+                                <p>Использование приложения Groupy Loopy (далее: "Приложение"), включая картографические сервисы, планирование маршрутов, навигацию и участие в групповых поездках, обусловлено полным и безоговорочным согласием со всем, изложенным в этом документе. Продолжение использования Приложения подтверждает, что вы прочитали и поняли условия, и вы соглашаетесь освободить владельцев Приложения, его разработчиков и администраторов (далее: "Операторы") от любой ответственности.</p>
+                                
+                                <p className="font-bold">2. Отказ от ответственности за информацию и навигацию</p>
+                                <p><strong>Сервис AS-IS:</strong> Информация, отображаемая в Приложении, включая картографические и маршрутные сервисы, основана на внешних и открытых источниках. Операторы не гарантируют точность, надежность или полноту данных.</p>
+                                <p><strong>Отклонения на местности:</strong> Могут быть существенные расхождения между маршрутом, отображаемым на карте, и фактическими условиями на местности. Навигация и доверие к цифровой информации осуществляются на ответственность пользователя.</p>
+                                
+                                <p className="font-bold">3. Безопасность, пригодность и личная ответственность</p>
+                                <p><strong>Ответственность пользователя:</strong> Выход на маршрут и использование предлагаемых маршрутов осуществляются по усмотрению пользователя и под его исключительную ответственность. Пользователь должен применять самостоятельное суждение на местности, проверять погодные условия, безопасность и риск наводнений.</p>
+                                <p><strong>Физическая пригодность:</strong> Пользователь заявляет, что обладает медицинской и физической пригодностью, соответствующей выбранному маршруту.</p>
+                                <p><strong>Оборудование:</strong> Пользователь понимает, что Приложение не заменяет физическую карту, компас, достаточное количество воды и необходимое защитное снаряжение.</p>
+                                
+                                <p className="font-bold">4. Полное освобождение от ответственности за ущерб</p>
+                                <p><strong>Телесные повреждения и имущественный ущерб:</strong> Операторы не несут никакой ответственности за прямой или косвенный ущерб, телесные повреждения (включая травмы, инвалидность или смерть), финансовый или имущественный ущерб, причиненный пользователю или третьей стороне в результате использования Приложения.</p>
+                                <p><strong>Групповые поездки:</strong> В рамках "групповых поездок" Операторы не несут ответственности за поведение участников, качество организации или любые криминальные или деликтные инциденты, происходящие во время мероприятия. Пользователь отказывается от любых претензий к Приложению относительно действий других пользователей.</p>
+                                
+                                <p className="font-bold">5. Ограничение технологической ответственности</p>
+                                <p>Операторы не несут ответственности за технические сбои, прерывания в обслуживании, потерю сигнала GPS или ошибки в расчетах маршрута OSRM/Google Maps, которые могут привести к неправильному пути.</p>
+                                
+                                <p className="font-bold">6. Конфиденциальность и службы определения местоположения</p>
+                                <p>Пользователь разрешает Приложению собирать и передавать данные о местоположении (GPS) в реальном времени для работы навигации и отображения местоположения участников группы. Пользователь понимает, что его местоположение может быть раскрыто другим участникам в соответствии с настройками группы.</p>
+                                
+                                <p className="font-bold">7. Юрисдикция</p>
+                                <p>Настоящий отказ регулируется законами Государства Израиль.</p>
+                                
+                                <div className="bg-amber-100 p-4 rounded-lg border-2 border-amber-400 mt-4">
+                                  <p className="font-bold mb-2">Резюме и заявление:</p>
+                                  <p>Отмечая флажок подтверждения или используя Приложение, я заявляю, что:</p>
+                                  <ul className="list-disc list-inside mt-2 space-y-1">
+                                    <li>Я отказываюсь от любого права на иск против разработчиков и операторов Groupy Loopy</li>
+                                    <li>Мне известно, что полевые поездки связаны с опасностью, и я принимаю этот риск по своей доброй воле</li>
+                                    <li>Я полностью несу ответственность за себя и сопровождающих лиц (включая несовершеннолетних)</li>
+                                  </ul>
+                                </div>
+                              </>
+                            ) : language === 'es' ? (
+                              <>
+                                <p className="font-bold">1. Generalidades y consentimiento a los términos</p>
+                                <p>El uso de la aplicación Groupy Loopy (en adelante: "la Aplicación"), incluidos los servicios de mapas, planificación de rutas, navegación y participación en grupos de viaje, está condicionado al consentimiento total e incondicional de todo lo establecido en este documento. El uso continuado de la Aplicación constituye la confirmación de que ha leído y comprendido sus términos, y acepta liberar a los propietarios de la Aplicación, sus desarrolladores y administradores (en adelante: "los Operadores") de toda responsabilidad.</p>
+                                
+                                <p className="font-bold">2. Descargo de responsabilidad por información y navegación</p>
+                                <p><strong>Servicio TAL CUAL:</strong> La información mostrada en la Aplicación, incluidos los servicios de mapas y rutas, se basa en fuentes externas y abiertas. Los Operadores no garantizan la exactitud, fiabilidad o integridad de los datos.</p>
+                                <p><strong>Desviaciones en el terreno:</strong> Pueden existir desviaciones significativas entre la ruta mostrada en el mapa y las condiciones reales del terreno. La navegación y confianza en la información digital son responsabilidad exclusiva del usuario.</p>
+                                
+                                <p className="font-bold">3. Seguridad, aptitud y responsabilidad personal</p>
+                                <p><strong>Responsabilidad del usuario:</strong> La salida al viaje y el uso de las rutas propuestas se realizan bajo el criterio del usuario y bajo su exclusiva responsabilidad. El usuario debe aplicar juicio independiente en el terreno, verificar condiciones meteorológicas, situación de seguridad y riesgo de inundaciones.</p>
+                                <p><strong>Aptitud física:</strong> El usuario declara que posee la aptitud médica y física apropiada para la ruta elegida.</p>
+                                <p><strong>Equipo auxiliar:</strong> El usuario entiende que la Aplicación no sustituye un mapa físico, brújula, cantidad suficiente de agua y equipo de seguridad necesario.</p>
+                                
+                                <p className="font-bold">4. Liberación total de responsabilidad por daños</p>
+                                <p><strong>Daños corporales y materiales:</strong> Los Operadores no asumirán ninguna responsabilidad por daño directo o indirecto, corporal (incluyendo lesión, discapacidad o muerte), financiero o material, causado al usuario o a terceros como resultado del uso de la Aplicación.</p>
+                                <p><strong>Viajes grupales:</strong> En el contexto de "viajes grupales", los Operadores no son responsables del comportamiento de los participantes, la calidad de la organización o cualquier evento criminal o dañino que ocurra durante el encuentro. El usuario renuncia a cualquier reclamación contra la Aplicación por actividades de otros usuarios.</p>
+                                
+                                <p className="font-bold">5. Limitación de responsabilidad tecnológica</p>
+                                <p>Los Operadores no son responsables de fallas técnicas, interrupciones del servicio, pérdida de señal GPS o errores en los cálculos de ruta OSRM/Google Maps que puedan llevar a un error en el camino.</p>
+                                
+                                <p className="font-bold">6. Privacidad y servicios de ubicación</p>
+                                <p>El usuario autoriza a la Aplicación a recopilar y compartir datos de ubicación (GPS) en tiempo real con el propósito de operar la navegación y mostrar la ubicación de los participantes del grupo. El usuario entiende que su ubicación puede ser expuesta a otros participantes según la configuración del grupo.</p>
+                                
+                                <p className="font-bold">7. Jurisdicción</p>
+                                <p>Este descargo de responsabilidad se rige por las leyes del Estado de Israel.</p>
+                                
+                                <div className="bg-amber-100 p-4 rounded-lg border-2 border-amber-400 mt-4">
+                                  <p className="font-bold mb-2">Resumen y declaración:</p>
+                                  <p>Al marcar la casilla de confirmación o usar la Aplicación, declaro que:</p>
+                                  <ul className="list-disc list-inside mt-2 space-y-1">
+                                    <li>Renuncio a cualquier derecho de reclamación contra los desarrolladores y operadores de Groupy Loopy</li>
+                                    <li>Soy consciente de que los viajes al aire libre conllevan peligro y acepto este riesgo por mi propia voluntad</li>
+                                    <li>Soy totalmente responsable de mí mismo y de los acompañantes (incluidos menores)</li>
+                                  </ul>
+                                </div>
+                              </>
+                            ) : language === 'fr' ? (
+                              <>
+                                <p className="font-bold">1. Généralités et consentement aux conditions</p>
+                                <p>L'utilisation de l'application Groupy Loopy (ci-après : "l'Application"), y compris les services cartographiques, la planification d'itinéraires, la navigation et l'adhésion à des groupes de voyage, est conditionnée par un consentement total et inconditionnel à tout ce qui est indiqué dans ce document. La poursuite de l'utilisation de l'Application constitue une confirmation que vous avez lu et compris ses conditions, et vous acceptez de dégager les propriétaires de l'Application, ses développeurs et administrateurs (ci-après : "les Opérateurs") de toute responsabilité.</p>
+                                
+                                <p className="font-bold">2. Déclaration de non-responsabilité pour l'information et la navigation</p>
+                                <p><strong>Service TEL QUEL :</strong> Les informations affichées dans l'Application, y compris les services de cartes et de sentiers, sont basées sur des sources externes et ouvertes. Les Opérateurs ne garantissent pas l'exactitude, la fiabilité ou l'exhaustivité des données.</p>
+                                <p><strong>Écarts sur le terrain :</strong> Il peut y avoir des écarts significatifs entre l'itinéraire affiché sur la carte et les conditions réelles du terrain. La navigation et la confiance dans l'information numérique relèvent de la seule responsabilité de l'utilisateur.</p>
+                                
+                                <p className="font-bold">3. Sécurité, aptitude et responsabilité personnelle</p>
+                                <p><strong>Responsabilité de l'utilisateur :</strong> Le départ en voyage et l'utilisation des itinéraires proposés se font à la discrétion de l'utilisateur et sous sa seule responsabilité. L'utilisateur doit faire preuve de jugement indépendant sur le terrain, vérifier les conditions météorologiques, la situation sécuritaire et le risque d'inondations.</p>
+                                <p><strong>Aptitude physique :</strong> L'utilisateur déclare posséder l'aptitude médicale et physique appropriée pour l'itinéraire choisi.</p>
+                                <p><strong>Équipement auxiliaire :</strong> L'utilisateur comprend que l'Application ne remplace pas une carte physique, une boussole, une quantité suffisante d'eau et l'équipement de sécurité nécessaire.</p>
+                                
+                                <p className="font-bold">4. Libération totale de responsabilité pour dommages</p>
+                                <p><strong>Dommages corporels et matériels :</strong> Les Opérateurs n'assumeront aucune responsabilité pour les dommages directs ou indirects, corporels (y compris blessure, invalidité ou décès), financiers ou matériels, causés à l'utilisateur ou à des tiers résultant de l'utilisation de l'Application.</p>
+                                <p><strong>Voyages de groupe :</strong> Dans le cadre des "voyages de groupe", les Opérateurs ne sont pas responsables du comportement des participants, de la qualité de l'organisation ou de tout événement criminel ou dommageable survenant pendant la rencontre. L'utilisateur renonce à toute réclamation contre l'Application concernant les activités d'autres utilisateurs.</p>
+                                
+                                <p className="font-bold">5. Limitation de responsabilité technologique</p>
+                                <p>Les Opérateurs ne sont pas responsables des pannes techniques, des interruptions de service, de la perte de signal GPS ou des erreurs dans les calculs d'itinéraire OSRM/Google Maps pouvant conduire à une erreur de route.</p>
+                                
+                                <p className="font-bold">6. Confidentialité et services de localisation</p>
+                                <p>L'utilisateur autorise l'Application à collecter et partager des données de localisation (GPS) en temps réel dans le but d'exploiter la navigation et d'afficher la localisation des participants du groupe. L'utilisateur comprend que sa localisation peut être exposée à d'autres participants selon les paramètres du groupe.</p>
+                                
+                                <p className="font-bold">7. Juridiction</p>
+                                <p>Cette décharge est régie par les lois de l'État d'Israël.</p>
+                                
+                                <div className="bg-amber-100 p-4 rounded-lg border-2 border-amber-400 mt-4">
+                                  <p className="font-bold mb-2">Résumé et déclaration :</p>
+                                  <p>En cochant la case de confirmation ou en utilisant l'Application, je déclare que :</p>
+                                  <ul className="list-disc list-inside mt-2 space-y-1">
+                                    <li>Je renonce à tout droit de réclamation contre les développeurs et opérateurs de Groupy Loopy</li>
+                                    <li>Je sais que les voyages de plein air comportent des dangers et j'accepte ce risque de mon plein gré</li>
+                                    <li>Je suis entièrement responsable de moi-même et de mes accompagnants (y compris les mineurs)</li>
+                                  </ul>
+                                </div>
+                              </>
+                            ) : language === 'de' ? (
+                              <>
+                                <p className="font-bold">1. Allgemeines und Zustimmung zu den Bedingungen</p>
+                                <p>Die Nutzung der Groupy Loopy-Anwendung (nachfolgend: "die App"), einschließlich Kartendienste, Routenplanung, Navigation und Teilnahme an Gruppenreisen, ist an die vollständige und bedingungslose Zustimmung zu allem, was in diesem Dokument festgelegt ist, gebunden. Die fortgesetzte Nutzung der App bestätigt, dass Sie die Bedingungen gelesen und verstanden haben, und Sie erklären sich damit einverstanden, die Eigentümer der App, ihre Entwickler und Administratoren (nachfolgend: "die Betreiber") von jeglicher Haftung freizustellen.</p>
+                                
+                                <p className="font-bold">2. Haftungsausschluss für Informationen und Navigation</p>
+                                <p><strong>Service WIE BESEHEN:</strong> Die in der App angezeigten Informationen, einschließlich Karten- und Wegdienste, basieren auf externen und offenen Quellen. Die Betreiber garantieren nicht die Genauigkeit, Zuverlässigkeit oder Vollständigkeit der Daten.</p>
+                                <p><strong>Abweichungen im Gelände:</strong> Es können erhebliche Abweichungen zwischen der auf der Karte angezeigten Route und den tatsächlichen Geländebedingungen bestehen. Navigation und Vertrauen in die digitalen Informationen liegen in der alleinigen Verantwortung des Benutzers.</p>
+                                
+                                <p className="font-bold">3. Sicherheit, Eignung und persönliche Verantwortung</p>
+                                <p><strong>Verantwortung des Benutzers:</strong> Die Durchführung der Reise und die Nutzung der vorgeschlagenen Routen erfolgen nach eigenem Ermessen des Benutzers und unter seiner alleinigen Verantwortung. Der Benutzer muss im Gelände selbständig urteilen, Wetterbedingungen, Sicherheitslage und Überschwemmungsgefahr prüfen.</p>
+                                <p><strong>Körperliche Eignung:</strong> Der Benutzer erklärt, dass er über die medizinische und körperliche Eignung verfügt, die für die gewählte Route geeignet ist.</p>
+                                <p><strong>Hilfsausrüstung:</strong> Der Benutzer versteht, dass die App keine physische Karte, Kompass, ausreichend Wasser und erforderliche Sicherheitsausrüstung ersetzt.</p>
+                                
+                                <p className="font-bold">4. Vollständige Haftungsfreistellung für Schäden</p>
+                                <p><strong>Körperschäden und Sachschäden:</strong> Die Betreiber übernehmen keinerlei Haftung für direkte oder indirekte Schäden, körperliche Schäden (einschließlich Verletzung, Behinderung oder Tod), finanzielle oder sachliche Schäden, die dem Benutzer oder Dritten infolge der Nutzung der App zugefügt werden.</p>
+                                <p><strong>Gruppenreisen:</strong> Im Rahmen von "Gruppenreisen" sind die Betreiber nicht verantwortlich für das Verhalten der Teilnehmer, die Qualität der Organisation oder für kriminelle oder schadenverursachende Ereignisse, die während des Treffens auftreten. Der Benutzer verzichtet auf jegliche Ansprüche gegen die App bezüglich der Aktivitäten anderer Benutzer.</p>
+                                
+                                <p className="font-bold">5. Einschränkung der technologischen Haftung</p>
+                                <p>Die Betreiber haften nicht für technische Störungen, Dienstunterbrechungen, GPS-Signalverlust oder Fehler in OSRM/Google Maps-Routenberechnungen, die zu Navigationsfehlern führen können.</p>
+                                
+                                <p className="font-bold">6. Datenschutz und Standortdienste</p>
+                                <p>Der Benutzer autorisiert die App, Standortdaten (GPS) in Echtzeit zu sammeln und zu teilen, um die Navigation zu betreiben und den Standort der Gruppenmitglieder anzuzeigen. Der Benutzer versteht, dass sein Standort gemäß den Gruppeneinstellungen anderen Teilnehmern offengelegt werden kann.</p>
+                                
+                                <p className="font-bold">7. Gerichtsstand</p>
+                                <p>Dieser Haftungsausschluss unterliegt den Gesetzen des Staates Israel.</p>
+                                
+                                <div className="bg-amber-100 p-4 rounded-lg border-2 border-amber-400 mt-4">
+                                  <p className="font-bold mb-2">Zusammenfassung und Erklärung:</p>
+                                  <p>Durch Ankreuzen des Bestätigungsfeldes oder Nutzung der App erkläre ich, dass:</p>
+                                  <ul className="list-disc list-inside mt-2 space-y-1">
+                                    <li>Ich auf jegliches Klagerecht gegen die Entwickler und Betreiber von Groupy Loopy verzichte</li>
+                                    <li>Mir bekannt ist, dass Outdoor-Reisen mit Gefahren verbunden sind und ich dieses Risiko aus freiem Willen übernehme</li>
+                                    <li>Ich vollständig verantwortlich bin für mich und meine Begleiter (einschließlich Minderjähriger)</li>
+                                  </ul>
+                                </div>
+                              </>
+                            ) : language === 'it' ? (
+                              <>
+                                <p className="font-bold">1. Generalità e consenso ai termini</p>
+                                <p>L'uso dell'applicazione Groupy Loopy (di seguito: "l'Applicazione"), compresi i servizi di mappe, pianificazione percorsi, navigazione e adesione a gruppi di viaggio, è condizionato al consenso totale e incondizionato a tutto quanto stabilito in questo documento. Il proseguimento dell'uso dell'Applicazione costituisce conferma che hai letto e compreso i suoi termini, e accetti di sollevare i proprietari dell'Applicazione, i suoi sviluppatori e amministratori (di seguito: "gli Operatori") da ogni responsabilità.</p>
+                                
+                                <p className="font-bold">2. Esclusione di responsabilità per informazioni e navigazione</p>
+                                <p><strong>Servizio COSÌ COM'È:</strong> Le informazioni visualizzate nell'Applicazione, compresi i servizi di mappe e sentieri, si basano su fonti esterne e aperte. Gli Operatori non garantiscono l'accuratezza, l'affidabilità o la completezza dei dati.</p>
+                                <p><strong>Deviazioni sul terreno:</strong> Possono esserci deviazioni significative tra il percorso visualizzato sulla mappa e le condizioni reali del terreno. La navigazione e l'affidamento sulle informazioni digitali sono di esclusiva responsabilità dell'utente.</p>
+                                
+                                <p className="font-bold">3. Sicurezza, idoneità e responsabilità personale</p>
+                                <p><strong>Responsabilità dell'utente:</strong> L'uscita per il viaggio e l'uso dei percorsi proposti avvengono a discrezione dell'utente e sotto la sua esclusiva responsabilità. L'utente deve applicare un giudizio indipendente sul terreno, verificare le condizioni meteorologiche, la situazione di sicurezza e il rischio di inondazioni.</p>
+                                <p><strong>Idoneità fisica:</strong> L'utente dichiara di possedere l'idoneità medica e fisica appropriata per il percorso scelto.</p>
+                                <p><strong>Attrezzatura ausiliaria:</strong> L'utente comprende che l'Applicazione non sostituisce una mappa fisica, bussola, quantità sufficiente di acqua e attrezzatura di sicurezza necessaria.</p>
+                                
+                                <p className="font-bold">4. Liberazione totale da responsabilità per danni</p>
+                                <p><strong>Danni fisici e materiali:</strong> Gli Operatori non assumono alcuna responsabilità per danni diretti o indiretti, fisici (inclusi lesioni, invalidità o morte), finanziari o materiali, causati all'utente o a terzi a seguito dell'uso dell'Applicazione.</p>
+                                <p><strong>Viaggi di gruppo:</strong> Nel contesto dei "viaggi di gruppo", gli Operatori non sono responsabili del comportamento dei partecipanti, della qualità dell'organizzazione o di qualsiasi evento criminale o dannoso che si verifichi durante l'incontro. L'utente rinuncia a qualsiasi reclamo contro l'Applicazione per attività di altri utenti.</p>
+                                
+                                <p className="font-bold">5. Limitazione di responsabilità tecnologica</p>
+                                <p>Gli Operatori non sono responsabili per guasti tecnici, interruzioni del servizio, perdita del segnale GPS o errori nei calcoli del percorso OSRM/Google Maps che possono portare a errori di navigazione.</p>
+                                
+                                <p className="font-bold">6. Privacy e servizi di localizzazione</p>
+                                <p>L'utente autorizza l'Applicazione a raccogliere e condividere dati di localizzazione (GPS) in tempo reale per il funzionamento della navigazione e la visualizzazione della posizione dei partecipanti del gruppo. L'utente comprende che la sua posizione può essere esposta ad altri partecipanti secondo le impostazioni del gruppo.</p>
+                                
+                                <p className="font-bold">7. Giurisdizione</p>
+                                <p>Questa liberatoria è regolata dalle leggi dello Stato di Israele.</p>
+                                
+                                <div className="bg-amber-100 p-4 rounded-lg border-2 border-amber-400 mt-4">
+                                  <p className="font-bold mb-2">Riepilogo e dichiarazione:</p>
+                                  <p>Spuntando la casella di conferma o utilizzando l'Applicazione, dichiaro che:</p>
+                                  <ul className="list-disc list-inside mt-2 space-y-1">
+                                    <li>Rinuncio a qualsiasi diritto di reclamo contro gli sviluppatori e operatori di Groupy Loopy</li>
+                                    <li>Sono consapevole che i viaggi all'aperto comportano pericoli e accetto questo rischio di mia spontanea volontà</li>
+                                    <li>Sono completamente responsabile per me stesso e per i miei accompagnatori (compresi i minori)</li>
+                                  </ul>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <p className="font-bold">1. General and Consent to Terms</p>
+                                <p>Use of the Groupy Loopy application (hereinafter: "the Application"), including map services, route planning, navigation, and joining travel groups, is conditioned upon full and unconditional consent to everything stated in this document. Continued use of the Application constitutes confirmation that you have read and understood its terms, and you agree to release the Application's owners, developers, and administrators (hereinafter: "the Operators") from any liability.</p>
+                                
+                                <p className="font-bold">2. Disclaimer for Information and Navigation</p>
+                                <p><strong>AS-IS Service:</strong> The information displayed in the Application, including map and trail services, is based on external and open sources. The Operators do not guarantee the accuracy, reliability, or completeness of the data.</p>
+                                <p><strong>Deviations on the ground:</strong> There may be significant deviations between the route displayed on the map and the actual terrain conditions. Navigation and reliance on digital information are the sole responsibility of the user.</p>
+                                
+                                <p className="font-bold">3. Safety, Fitness, and Personal Responsibility</p>
+                                <p><strong>User's responsibility:</strong> Embarking on a trip and using the proposed routes are done at the user's discretion and under their sole responsibility. The user must exercise independent judgment in the field, check weather conditions, security situation, and flood risk.</p>
+                                <p><strong>Physical fitness:</strong> The user declares they possess the medical and physical fitness appropriate for the chosen route.</p>
+                                <p><strong>Auxiliary equipment:</strong> The user understands that the Application is not a substitute for a physical map, compass, sufficient water, and required safety equipment.</p>
+                                
+                                <p className="font-bold">4. Full Release from Liability for Damages</p>
+                                <p><strong>Bodily and property damage:</strong> The Operators will not assume any liability for direct or indirect damage, bodily harm (including injury, disability, or death), financial or property damage, caused to the user or third parties as a result of using the Application.</p>
+                                <p><strong>Group trips:</strong> In the context of "group trips", the Operators are not responsible for participants' behavior, the quality of organization, or any criminal or tortious event occurring during the gathering. The user waives any claim against the Application regarding activities of other users.</p>
+                                
+                                <p className="font-bold">5. Limitation of Technological Liability</p>
+                                <p>The Operators are not liable for technical malfunctions, service interruptions, GPS signal loss, or errors in OSRM/Google Maps route calculations that may lead to navigation mistakes.</p>
+                                
+                                <p className="font-bold">6. Privacy and Location Services</p>
+                                <p>The user authorizes the Application to collect and share location data (GPS) in real-time for the purpose of operating navigation and displaying the location of group participants. The user understands that their location may be exposed to other participants according to group settings.</p>
+                                
+                                <p className="font-bold">7. Jurisdiction</p>
+                                <p>This waiver is governed by the laws of the State of Israel.</p>
+                                
+                                <div className="bg-amber-100 p-4 rounded-lg border-2 border-amber-400 mt-4">
+                                  <p className="font-bold mb-2">Summary and Declaration:</p>
+                                  <p>By checking the confirmation box or using the Application, I declare that:</p>
+                                  <ul className="list-disc list-inside mt-2 space-y-1">
+                                    <li>I waive any right to claim against the developers and operators of Groupy Loopy</li>
+                                    <li>I am aware that outdoor trips involve danger and I accept this risk of my own free will</li>
+                                    <li>I am fully responsible for myself and my companions (including minors)</li>
+                                  </ul>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
 
 
 
