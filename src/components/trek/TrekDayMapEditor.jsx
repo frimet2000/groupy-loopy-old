@@ -996,7 +996,7 @@ return (
                 </GoogleMap>
               )}
             </div>
-            </>
+            </Card>
           )}
 
           {/* Selected Trail Details */}
