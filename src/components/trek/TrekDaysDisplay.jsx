@@ -4,19 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapContainer, TileLayer, Polyline, Marker } from 'react-leaflet';
-import L from 'leaflet';
-import { Route, MapPin, Mountain, TrendingUp, TrendingDown, Cloud, Backpack, Droplets, CheckCircle2, ChevronLeft, ChevronRight, Navigation } from 'lucide-react';
+import { Route, MapPin, Mountain, TrendingUp, TrendingDown, Cloud, Backpack, Droplets, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import WeatherWidget from '../weather/WeatherWidget';
-
-// Fix Leaflet default icon
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png'
-});
+import EnhancedMapView from '../maps/EnhancedMapView';
 
 export default function TrekDaysDisplay({ trip, selectedDay: externalSelectedDay, onDayChange }) {
   const { language, isRTL } = useLanguage();
@@ -266,67 +257,18 @@ export default function TrekDaysDisplay({ trip, selectedDay: externalSelectedDay
 
               {/* Map */}
               {day.waypoints && day.waypoints.length > 0 && (
-              <div className="relative h-96 rounded-xl overflow-hidden border-2 border-indigo-200">
-                  <MapContainer
-                center={[
-                day.waypoints.reduce((sum, wp) => sum + wp.latitude, 0) / day.waypoints.length,
-                day.waypoints.reduce((sum, wp) => sum + wp.longitude, 0) / day.waypoints.length]
-                }
-                zoom={13}
-                style={{ height: '100%', width: '100%' }}>
-
-                    <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-                    
-                    {day.waypoints.map((wp, wpIndex) =>
-                <Marker
-                  key={wpIndex}
-                  position={[wp.latitude, wp.longitude]} />
-
-                )}
-
-                    {day.waypoints.length > 1 &&
-                <Polyline
-                  positions={day.waypoints.map((wp) => [wp.latitude, wp.longitude])}
-                  color="#4f46e5"
-                  weight={4}
-                  opacity={0.7} />
-
-                }
-                  </MapContainer>
-                  <div className={`absolute top-3 ${isRTL ? 'left-3' : 'right-3'} z-[1000]`}>
-                    <div className="flex gap-2">
-                      <Button
-                        className="bg-emerald-600 hover:bg-emerald-700 shadow-lg gap-2"
-                        onClick={() => {
-                          const target = day.waypoints[day.waypoints.length - 1];
-                          if (!target) return;
-                          const url = `https://www.google.com/maps/dir/?api=1&destination=${target.latitude},${target.longitude}`;
-                          window.open(url, '_blank');
-                        }}
-                      >
-                        <MapPin className="w-4 h-4" />
-                        Google Maps
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg gap-2"
-                        onClick={() => {
-                          const target = day.waypoints[day.waypoints.length - 1];
-                          if (!target) return;
-                          const url = `https://waze.com/ul?ll=${target.latitude},${target.longitude}&navigate=yes`;
-                          window.open(url, '_blank');
-                        }}
-                      >
-                        <Navigation className="w-4 h-4" />
-                        Waze
-                      </Button>
-                    </div>
-                  </div>
-                  </div>
-                  )}
+                <EnhancedMapView
+                  center={[
+                    day.waypoints.reduce((sum, wp) => sum + wp.latitude, 0) / day.waypoints.length,
+                    day.waypoints.reduce((sum, wp) => sum + wp.longitude, 0) / day.waypoints.length
+                  ]}
+                  zoom={13}
+                  waypoints={day.waypoints}
+                  polylineColor="#4f46e5"
+                  height="400px"
+                  showNavigationButtons={true}
+                />
+              )}
             </TabsContent>
           )}
         </Tabs>
