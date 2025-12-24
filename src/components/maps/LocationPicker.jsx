@@ -78,6 +78,19 @@ export default function LocationPicker({ isOpen, onClose, initialLat, initialLng
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+            {/* Default overlays: Hiking & Cycling trails */}
+            <TileLayer
+              attribution='&copy; <a href="https://waymarkedtrails.org">Waymarked Trails</a> - Hiking'
+              url="https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png"
+              opacity={0.6}
+              zIndex={1000}
+            />
+            <TileLayer
+              attribution='&copy; <a href="https://waymarkedtrails.org">Waymarked Trails</a> - Cycling'
+              url="https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png"
+              opacity={0.4}
+              zIndex={1001}
+            />
             <LocationMarker position={position} setPosition={setPosition} />
           </MapContainer>
         </div>
