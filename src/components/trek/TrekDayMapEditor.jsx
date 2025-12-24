@@ -84,6 +84,9 @@ export default function TrekDayMapEditor({ day, setDay }) {
   const [discoveryOpen, setDiscoveryOpen] = useState(false);
   const [selectedTrail, setSelectedTrail] = useState(null);
 const waymarkedOverlaysRef = useRef([]);
+const [osrmLoading, setOsrmLoading] = useState(false);
+const [osrmRoute, setOsrmRoute] = useState(null);
+const lastOsrmKeyRef = useRef(null);
 
   const center = day.waypoints?.length > 0
     ? { lat: day.waypoints[0].latitude, lng: day.waypoints[0].longitude }
@@ -598,6 +601,67 @@ const waymarkedOverlaysRef = useRef([]);
   }
 }, [waymarkedVisible, mapProvider, mapInstance]);
 
+// OSRM pedestrian routing between 2 points
+const getOSRMRoute = async (startCoords, endCoords) => {
+  const url = `https://router.project-osrm.org/route/v1/foot/${startCoords.lng},${startCoords.lat};${endCoords.lng},${endCoords.lat}?overview=full&geometries=geojson&steps=true`;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.code === 'Ok' && data.routes.length > 0) {
+      const route = data.routes[0];
+      return {
+        distance: (route.distance / 1000).toFixed(2),
+        geometry: route.geometry,
+        duration: Math.round(route.duration / 60)
+      };
+    }
+  } catch (error) {
+    console.error('OSRM Routing Error:', error);
+  }
+  return null;
+};
+
+useEffect(() => {
+  if (!day.waypoints || day.waypoints.length !== 2) {
+    setOsrmRoute(null);
+    lastOsrmKeyRef.current = null;
+    return;
+  }
+  const [a, b] = day.waypoints;
+  if (!a || !b) return;
+  const key = `${a.latitude.toFixed(6)},${a.longitude.toFixed(6)}|${b.latitude.toFixed(6)},${b.longitude.toFixed(6)}`;
+  if (lastOsrmKeyRef.current === key) return;
+  (async () => {
+    setOsrmLoading(true);
+    const res = await getOSRMRoute({ lat: a.latitude, lng: a.longitude }, { lat: b.latitude, lng: b.longitude });
+    setOsrmLoading(false);
+    if (!res?.geometry?.coordinates?.length) { setOsrmRoute(null); return; }
+    setOsrmRoute(res);
+
+    // Snap markers to path start/end
+    const coords = res.geometry.coordinates;
+    const start = coords[0];
+    const end = coords[coords.length - 1];
+    const snappedKey = `${start[1].toFixed(6)},${start[0].toFixed(6)}|${end[1].toFixed(6)},${end[0].toFixed(6)}`;
+    lastOsrmKeyRef.current = snappedKey;
+    setDay(prev => ({ ...prev, waypoints: [
+      { latitude: start[1], longitude: start[0] },
+      { latitude: end[1], longitude: end[0] }
+    ]}));
+
+    // Fit bounds to route
+    if (mapProvider === 'israelhiking' && leafletMap) {
+      const latlngs = coords.map(([lng, lat]) => [lat, lng]);
+      const bounds = L.latLngBounds(latlngs);
+      leafletMap.fitBounds(bounds, { padding: [20, 20] });
+    } else if (mapProvider === 'google' && mapInstance && window.google) {
+      const bounds = new window.google.maps.LatLngBounds();
+      coords.forEach(([lng, lat]) => bounds.extend({ lat, lng }));
+      if (!bounds.isEmpty()) mapInstance.fitBounds(bounds);
+    }
+  })();
+}, [day.waypoints, mapProvider, leafletMap, mapInstance]);
+
 return (
     <Card className="border-indigo-200">
       <CardHeader className="pb-3">
@@ -822,7 +886,7 @@ return (
                   ))}
 
                   {/* Line between points */}
-                  {waypointPath.length > 1 && (
+                  {!osrmRoute && waypointPath.length > 1 && (
                     <LeafletPolyline
                       positions={waypointPath.map(p => [p.lat, p.lng])}
                       color="#4f46e5"
@@ -836,6 +900,15 @@ return (
                     <LeafletGeoJSON
                       data={selectedTrail.geojson}
                       style={{ color: '#16a34a', weight: 5, opacity: 0.9 }}
+                    />
+                  )}
+
+                  {osrmRoute?.geometry && (
+                    <LeafletPolyline
+                      positions={osrmRoute.geometry.coordinates.map(([lng, lat]) => [lat, lng])}
+                      color="#2563eb"
+                      weight={4}
+                      opacity={0.9}
                     />
                   )}
                 </MapContainer>
@@ -892,7 +965,7 @@ return (
                   )}
 
                   {/* Direct line between points (dashed, if no route calculated) */}
-                  {!directionsResponse && waypointPath.length > 1 && (
+                  {!directionsResponse && !osrmRoute && waypointPath.length > 1 && (
                     <Polyline
                       path={waypointPath}
                       options={{
@@ -905,8 +978,19 @@ return (
                           repeat: '15px'
                         }]
                       }}
-                    />
-                  )}
+                      />
+                      )}
+
+                      {osrmRoute?.geometry && (
+                      <Polyline
+                      path={osrmRoute.geometry.coordinates.map(([lng, lat]) => ({ lat, lng }))}
+                      options={{
+                        strokeColor: '#2563eb',
+                        strokeWeight: 4,
+                        strokeOpacity: 0.9
+                      }}
+                      />
+                      )}
 
                   {selectedTrail?.paths?.length > 0 && selectedTrail.paths.map((path, idx) => (
                     <Polyline
@@ -940,6 +1024,19 @@ return (
                 <Button type="button" size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={applySelectedTrail}>
                   {language === 'he' ? 'קבע כמסלול הקבוצה' : 'Set as Group Route'}
                 </Button>
+              </div>
+            </div>
+          )}
+
+          {/* OSRM Route Stats */}
+          {osrmRoute && (
+            <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <div className="text-sm font-semibold text-blue-800">
+                {language === 'he' ? 'מסלול הליכה' : 'Walking Route'}
+              </div>
+              <div className="text-sm text-blue-700 flex gap-4 mt-1">
+                <span>{language === 'he' ? 'מרחק:' : 'Distance:'} {osrmRoute.distance} {language === 'he' ? 'ק"מ' : 'km'}</span>
+                <span>{language === 'he' ? 'זמן משוער:' : 'Estimated Time:'} {osrmRoute.duration} {language === 'he' ? 'דק׳' : 'min'}</span>
               </div>
             </div>
           )}
