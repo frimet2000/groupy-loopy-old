@@ -52,11 +52,9 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
   const lastOsrmKeyRef = useRef(null);
 
   const handleMapClick = (lat, lng) => {
-    // Create waypoint immediately with default name and save
-    const idx = waypoints.length;
-    const newWp = { name: `WP ${idx + 1}`, description: '', latitude: lat, longitude: lng, order: idx };
-    setWaypoints([...waypoints, newWp]);
-    toast.success(language === 'he' ? 'נקודת ציון נוספה' : 'Waypoint added');
+    setEditingIndex(null);
+    setWaypointForm({ name: '', description: '', latitude: lat, longitude: lng });
+    setEditDialog(true);
   };
 
   const handleEditWaypoint = (waypoint, index) => {
@@ -450,7 +448,41 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
                   </div>
                 )}
                 
-
+                <div className="absolute top-2 left-2 right-2 bg-emerald-600 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-medium z-[400]">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span>
+                      {language === 'he' ? '💡 לחץ על המפה להוספת נקודה' : '💡 Click to add waypoint'}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <Button type="button" size="sm" variant="secondary" className="bg-white/20 hover:bg-white/30" onClick={computeRoute}>
+                        <Navigation className="w-4 h-4 mr-1" />
+                        {language === 'he' ? 'מסלול' : 'Route'}
+                      </Button>
+                      {showDirections && (
+                        <Button type="button" size="sm" variant="secondary" className="bg-white/20 hover:bg-white/30" onClick={clearRoute}>
+                          {language === 'he' ? 'נקה' : 'Clear'}
+                        </Button>
+                      )}
+                      <div className="bg-white rounded-lg overflow-hidden">
+                        <Autocomplete onLoad={setSearchBox} onPlaceChanged={() => {
+                          const place = searchBox?.getPlace();
+                          if (!place || !place.geometry) return;
+                          const lat = place.geometry.location.lat();
+                          const lng = place.geometry.location.lng();
+                          handleMapClick(lat, lng);
+                        }}>
+                          <input
+                            className="px-3 py-2 w-60 text-sm text-gray-800 outline-none"
+                            placeholder={language === 'he' ? 'חיפוש מקום...' : 'Search place...'}
+                          />
+                        </Autocomplete>
+                      </div>
+                      <button onClick={() => setShowMap(false)} className="bg-white/20 hover:bg-white/30 rounded p-1">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             {/* Trail Discovery Panel */}
             <TrailDiscoveryPanel
