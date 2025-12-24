@@ -189,66 +189,91 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
     }
   }, [waymarkedVisible, mapProvider]);
 
-  // OSRM pedestrian routing between two points
-  const getOSRMRoute = async (startCoords, endCoords) => {
-    const url = `https://router.project-osrm.org/route/v1/foot/${startCoords.lng},${startCoords.lat};${endCoords.lng},${endCoords.lat}?overview=full&geometries=geojson&steps=true`;
+  // OSRM Multi-Stop Routing
+  const fetchRoute = async (points) => {
+    if (points.length < 2) {
+      setOsrmRoute(null);
+      return;
+    }
+
+    setOsrmLoading(true);
+    // Concatenate all coordinates: lon,lat;lon,lat...
+    const coords = points.map(p => `${p.lng},${p.lat}`).join(';');
+    // Use 'foot' profile, get full geometry
+    const url = `https://router.project-osrm.org/route/v1/foot/${coords}?overview=full&geometries=geojson`;
+
     try {
       const response = await fetch(url);
       const data = await response.json();
+
       if (data.code === 'Ok' && data.routes.length > 0) {
         const route = data.routes[0];
-        return {
+        const result = {
           distance: (route.distance / 1000).toFixed(2),
           geometry: route.geometry,
           duration: Math.round(route.duration / 60)
         };
+        setOsrmRoute(result);
+
+        // Fit bounds
+        if (mapProvider === 'israelhiking' && leafletMap) {
+          const coords = result.geometry.coordinates;
+          const latlngs = coords.map(([lng, lat]) => [lat, lng]);
+          const bounds = L.latLngBounds(latlngs);
+          leafletMap.fitBounds(bounds, { padding: [20, 20] });
+        } else if (mapProvider === 'google' && gmapRef.current && window.google) {
+          const coords = result.geometry.coordinates;
+          const bounds = new window.google.maps.LatLngBounds();
+          coords.forEach(([lng, lat]) => bounds.extend({ lat, lng }));
+          if (!bounds.isEmpty()) gmapRef.current.fitBounds(bounds);
+        }
+      } else {
+        console.warn("OSRM couldn't find a path on trails, drawing direct lines");
+        // Fallback: simple polyline
+        setOsrmRoute({
+          distance: null,
+          duration: null,
+          geometry: {
+            type: 'LineString',
+            coordinates: points.map(p => [p.lng, p.lat])
+          },
+          isFallback: true
+        });
       }
     } catch (error) {
-      console.error('OSRM Routing Error:', error);
+      console.error("Route error:", error);
+      // Fallback on error
+      setOsrmRoute({
+        distance: null,
+        duration: null,
+        geometry: {
+          type: 'LineString',
+          coordinates: points.map(p => [p.lng, p.lat])
+        },
+        isFallback: true
+      });
+    } finally {
+      setOsrmLoading(false);
     }
-    return null;
   };
 
-  // Trigger OSRM when we have exactly two endpoints
   useEffect(() => {
-    const points = [];
-    if (startLat && startLng) points.push({ lat: startLat, lng: startLng, isStart: true });
+    const allPoints = [];
+    if (startLat && startLng) allPoints.push({ lat: startLat, lng: startLng });
     const sorted = [...waypoints].sort((a, b) => a.order - b.order);
-    sorted.forEach(w => points.push({ lat: w.latitude, lng: w.longitude }));
-    if (points.length !== 2) {
+    sorted.forEach(w => allPoints.push({ lat: w.latitude, lng: w.longitude }));
+
+    if (allPoints.length < 2) {
       setOsrmRoute(null);
       lastOsrmKeyRef.current = null;
       return;
     }
-    const a = points[0];
-    const b = points[1];
-    const key = `${a.lat.toFixed(6)},${a.lng.toFixed(6)}|${b.lat.toFixed(6)},${b.lng.toFixed(6)}`;
+
+    const key = allPoints.map(p => `${p.lat.toFixed(6)},${p.lng.toFixed(6)}`).join(';');
     if (lastOsrmKeyRef.current === key) return;
     
     lastOsrmKeyRef.current = key;
-    
-    (async () => {
-      setOsrmLoading(true);
-      const res = await getOSRMRoute({ lat: a.lat, lng: a.lng }, { lat: b.lat, lng: b.lng });
-      setOsrmLoading(false);
-      if (!res?.geometry?.coordinates?.length) { 
-        setOsrmRoute(null); 
-        return; 
-      }
-      setOsrmRoute(res);
-      
-      if (mapProvider === 'israelhiking' && leafletMap) {
-        const coords = res.geometry.coordinates;
-        const latlngs = coords.map(([lng, lat]) => [lat, lng]);
-        const bounds = L.latLngBounds(latlngs);
-        leafletMap.fitBounds(bounds, { padding: [20, 20] });
-      } else if (mapProvider === 'google' && gmapRef.current && window.google) {
-        const coords = res.geometry.coordinates;
-        const bounds = new window.google.maps.LatLngBounds();
-        coords.forEach(([lng, lat]) => bounds.extend({ lat, lng }));
-        if (!bounds.isEmpty()) gmapRef.current.fitBounds(bounds);
-      }
-    })();
+    fetchRoute(allPoints);
   }, [waypoints, startLat, startLng, mapProvider, leafletMap]);
 
   const googleMapsUrl = waypoints.length > 0 && startLat && startLng ? (() => {
