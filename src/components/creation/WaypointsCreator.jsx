@@ -224,26 +224,26 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
     const b = points[1];
     const key = `${a.lat.toFixed(6)},${a.lng.toFixed(6)}|${b.lat.toFixed(6)},${b.lng.toFixed(6)}`;
     if (lastOsrmKeyRef.current === key) return;
+    
+    lastOsrmKeyRef.current = key;
+    
     (async () => {
       setOsrmLoading(true);
       const res = await getOSRMRoute({ lat: a.lat, lng: a.lng }, { lat: b.lat, lng: b.lng });
       setOsrmLoading(false);
-      if (!res?.geometry?.coordinates?.length) { setOsrmRoute(null); return; }
-      setOsrmRoute(res);
-      const coords = res.geometry.coordinates;
-      const start = coords[0];
-      const end = coords[coords.length - 1];
-      lastOsrmKeyRef.current = `${start[1].toFixed(6)},${start[0].toFixed(6)}|${end[1].toFixed(6)},${end[0].toFixed(6)}`;
-      if (sorted.length >= 1) {
-        const snapped = { ...sorted[sorted.length - 1], latitude: end[1], longitude: end[0] };
-        const updated = [...sorted.slice(0, -1), snapped];
-        setWaypoints(updated.map((w, i) => ({ ...w, order: i })));
+      if (!res?.geometry?.coordinates?.length) { 
+        setOsrmRoute(null); 
+        return; 
       }
+      setOsrmRoute(res);
+      
       if (mapProvider === 'israelhiking' && leafletMap) {
+        const coords = res.geometry.coordinates;
         const latlngs = coords.map(([lng, lat]) => [lat, lng]);
         const bounds = L.latLngBounds(latlngs);
         leafletMap.fitBounds(bounds, { padding: [20, 20] });
       } else if (mapProvider === 'google' && gmapRef.current && window.google) {
+        const coords = res.geometry.coordinates;
         const bounds = new window.google.maps.LatLngBounds();
         coords.forEach(([lng, lat]) => bounds.extend({ lat, lng }));
         if (!bounds.isEmpty()) gmapRef.current.fitBounds(bounds);
