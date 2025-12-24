@@ -150,6 +150,11 @@ export default function TripDetails() {
     fetchUser();
   }, []);
 
+  // Scroll to top when trip changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [tripId]);
+
   const { data: trip, isLoading, error } = useQuery({
     queryKey: ['trip', tripId],
     queryFn: async () => {
