@@ -629,67 +629,6 @@ export default function Onboarding() {
                     </div>
                   )}
 
-                  {/* Step 2: Fitness & Accessibility */}
-                  {step === 2 && (
-                    <div className="space-y-6">
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <p className="text-sm text-blue-800">
-                          ℹ️ {language === 'he' 
-                            ? 'כל השדות אופציונליים - תוכל להשלים מאוחר יותר בפרופיל'
-                            : 'All fields are optional - you can complete them later in your profile'}
-                        </p>
-                      </div>
-
-                      <div className="space-y-3">
-                        <Label>{language === 'he' ? 'רמת כושר פיזי' : 'Fitness Level'}</Label>
-                        <Select
-                          value={formData.fitness_level}
-                          onValueChange={(v) => handleChange('fitness_level', v)}
-                        >
-                          <SelectTrigger className="h-12">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="low">
-                              {language === 'he' ? 'נמוכה - טיולים קלים בלבד' : 'Low - Easy trips only'}
-                            </SelectItem>
-                            <SelectItem value="moderate">
-                              {language === 'he' ? 'בינונית - טיולים קלים עד בינוניים' : 'Moderate - Easy to moderate trips'}
-                            </SelectItem>
-                            <SelectItem value="high">
-                              {language === 'he' ? 'גבוהה - טיולים מאתגרים' : 'High - Challenging trips'}
-                            </SelectItem>
-                            <SelectItem value="very_high">
-                              {language === 'he' ? 'גבוהה מאוד - טיולים קשים' : 'Very High - Hard trips'}
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="space-y-3">
-                        <Label className="flex items-center gap-2">
-                          <Accessibility className="w-4 h-4 text-purple-600" />
-                          {language === 'he' ? 'דרישות נגישות' : 'Accessibility Needs'}
-                        </Label>
-                        <div className="flex flex-wrap gap-2">
-                          {['wheelchair', 'visual_impairment', 'hearing_impairment', 'mobility_aid', 'stroller_friendly', 'elderly_friendly'].map(type => (
-                            <Badge
-                              key={type}
-                              variant={formData.accessibility_needs.includes(type) ? 'default' : 'outline'}
-                              className={`cursor-pointer transition-all py-2 px-3 ${
-                                formData.accessibility_needs.includes(type)
-                                  ? 'bg-purple-600 hover:bg-purple-700'
-                                  : 'hover:border-purple-500 hover:text-purple-600'
-                              }`}
-                              onClick={() => toggleAccessibility(type)}
-                            >
-                              {t(type)}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </CardContent>
           </Card>
 
