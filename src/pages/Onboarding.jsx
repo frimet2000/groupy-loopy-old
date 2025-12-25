@@ -376,6 +376,11 @@ export default function Onboarding() {
                         <p className="text-sm text-blue-800">
                           ℹ️ {language === 'he' 
                             ? 'כל השדות אופציונליים - תוכל להשלים מאוחר יותר בפרופיל'
+                            : language === 'ru' ? 'Все поля необязательны - можно заполнить позже'
+                            : language === 'es' ? 'Todos los campos son opcionales - puedes completarlos después'
+                            : language === 'fr' ? 'Tous les champs sont optionnels - à compléter plus tard'
+                            : language === 'de' ? 'Alle Felder sind optional - später ausfüllbar'
+                            : language === 'it' ? 'Tutti i campi sono opzionali - completabili dopo'
                             : 'All fields are optional - you can complete them later in your profile'}
                         </p>
                       </div>
@@ -390,7 +395,7 @@ export default function Onboarding() {
                           onValueChange={(v) => handleChange('parent_age_range', v)}
                         >
                           <SelectTrigger className="h-12">
-                            <SelectValue placeholder={language === 'he' ? 'בחר קבוצת גיל' : 'Select age range'} />
+                            <SelectValue placeholder={language === 'he' ? 'בחר קבוצת גיל' : language === 'ru' ? 'Выберите возраст' : language === 'es' ? 'Selecciona edad' : language === 'fr' ? 'Sélectionnez l\'âge' : language === 'de' ? 'Alter wählen' : language === 'it' ? 'Seleziona età' : 'Select age range'} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="18-25">18-25</SelectItem>
@@ -425,7 +430,7 @@ export default function Onboarding() {
                             onValueChange={(v) => handleChange('spouse_age_range', v)}
                           >
                             <SelectTrigger className="h-12">
-                              <SelectValue placeholder={language === 'he' ? 'בחר קבוצת גיל' : 'Select age range'} />
+                              <SelectValue placeholder={language === 'he' ? 'בחר קבוצת גיל' : language === 'ru' ? 'Выберите возраст' : language === 'es' ? 'Selecciona edad' : language === 'fr' ? 'Sélectionnez l\'âge' : language === 'de' ? 'Alter wählen' : language === 'it' ? 'Seleziona età' : 'Select age range'} />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="18-25">18-25</SelectItem>
@@ -476,7 +481,7 @@ export default function Onboarding() {
                                   }}
                                 >
                                   <SelectTrigger>
-                                    <SelectValue placeholder={language === 'he' ? 'בחר' : 'Select'} />
+                                    <SelectValue placeholder={language === 'he' ? 'בחר' : language === 'ru' ? 'Выбрать' : language === 'es' ? 'Elegir' : language === 'fr' ? 'Choisir' : language === 'de' ? 'Wählen' : language === 'it' ? 'Scegli' : 'Select'} />
                                   </SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value="0-2">0-2</SelectItem>
@@ -498,7 +503,7 @@ export default function Onboarding() {
                                   }}
                                 >
                                   <SelectTrigger>
-                                    <SelectValue placeholder={language === 'he' ? 'בחר' : 'Select'} />
+                                    <SelectValue placeholder={language === 'he' ? 'בחר' : language === 'ru' ? 'Выбрать' : language === 'es' ? 'Elegir' : language === 'fr' ? 'Choisir' : language === 'de' ? 'Wählen' : language === 'it' ? 'Scegli' : 'Select'} />
                                   </SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value="male">{language === 'he' ? 'זכר' : language === 'ru' ? 'Мужской' : language === 'es' ? 'Masculino' : language === 'fr' ? 'Masculin' : language === 'de' ? 'Männlich' : language === 'it' ? 'Maschio' : 'Male'}</SelectItem>
@@ -564,6 +569,11 @@ export default function Onboarding() {
                         <p className="text-sm text-blue-800">
                           ℹ️ {language === 'he' 
                             ? 'כל השדות אופציונליים - תוכל להשלים מאוחר יותר בפרופיל'
+                            : language === 'ru' ? 'Все поля необязательны - можно заполнить позже'
+                            : language === 'es' ? 'Todos los campos son opcionales - puedes completarlos después'
+                            : language === 'fr' ? 'Tous les champs sont optionnels - à compléter plus tard'
+                            : language === 'de' ? 'Alle Felder sind optional - später ausfüllbar'
+                            : language === 'it' ? 'Tutti i campi sono opzionali - completabili dopo'
                             : 'All fields are optional - you can complete them later in your profile'}
                         </p>
                       </div>
@@ -626,6 +636,11 @@ export default function Onboarding() {
                         <p className="text-sm text-blue-800">
                           ℹ️ {language === 'he' 
                             ? 'כל השדות אופציונליים - תוכל להשלים מאוחר יותר בפרופיל'
+                            : language === 'ru' ? 'Все поля необязательны - можно заполнить позже'
+                            : language === 'es' ? 'Todos los campos son opcionales - puedes completarlos después'
+                            : language === 'fr' ? 'Tous les champs sont optionnels - à compléter plus tard'
+                            : language === 'de' ? 'Alle Felder sind optional - später ausfüllbar'
+                            : language === 'it' ? 'Tutti i campi sono opzionali - completabili dopo'
                             : 'All fields are optional - you can complete them later in your profile'}
                         </p>
                       </div>
