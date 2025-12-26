@@ -17,7 +17,6 @@ import ListDetails from './pages/ListDetails';
 import MyLists from './pages/MyLists';
 import MyTrips from './pages/MyTrips';
 import Notifications from './pages/Notifications';
-import Onboarding from './pages/Onboarding';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
@@ -27,6 +26,7 @@ import TravelJournal from './pages/TravelJournal';
 import TripDetails from './pages/TripDetails';
 import TripSummary from './pages/TripSummary';
 import Weather from './pages/Weather';
+import Onboarding from './pages/Onboarding';
 import __Layout from './Layout.jsx';
 
 
@@ -50,7 +50,6 @@ export const PAGES = {
     "MyLists": MyLists,
     "MyTrips": MyTrips,
     "Notifications": Notifications,
-    "Onboarding": Onboarding,
     "PrivacyPolicy": PrivacyPolicy,
     "Profile": Profile,
     "Settings": Settings,
@@ -60,6 +59,7 @@ export const PAGES = {
     "TripDetails": TripDetails,
     "TripSummary": TripSummary,
     "Weather": Weather,
+    "Onboarding": Onboarding,
 }
 
 export const pagesConfig = {

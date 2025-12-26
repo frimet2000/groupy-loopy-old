@@ -10,7 +10,6 @@ import LanguageSelection from './components/LanguageSelection';
 import CookieConsent from './components/legal/CookieConsent';
 import AccessibilityButton from './components/accessibility/AccessibilityButton';
 import InstallPrompt from './components/pwa/InstallPrompt';
-import TermsGate from './components/legal/TermsGate';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -55,7 +54,6 @@ function LayoutContent({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showLanguageSelection, setShowLanguageSelection] = useState(false);
-  const [showTermsGate, setShowTermsGate] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -82,13 +80,7 @@ function LayoutContent({ children, currentPageName }) {
       try {
         const userData = await base44.auth.me();
         setUser(userData);
-
-        // Check if user needs to accept terms
-        if (userData && !userData.terms_accepted && currentPageName !== 'Onboarding') {
-          setShowTermsGate(true);
-          return;
-        }
-
+        
         // Check if user needs to complete onboarding
         if (userData && !userData.profile_completed && currentPageName !== 'Onboarding') {
           window.location.href = createPageUrl('Onboarding');
@@ -98,7 +90,7 @@ function LayoutContent({ children, currentPageName }) {
       }
     };
     fetchUser();
-    }, [currentPageName]);
+  }, [currentPageName]);
 
   const handleLanguageSelect = (lang) => {
     setLanguage(lang);
@@ -133,14 +125,6 @@ function LayoutContent({ children, currentPageName }) {
 
   if (showLanguageSelection) {
     return <LanguageSelection onLanguageSelect={handleLanguageSelect} />;
-  }
-
-  if (showTermsGate) {
-    return <TermsGate onAccept={() => {
-      setShowTermsGate(false);
-      // Refresh user data
-      base44.auth.me().then(userData => setUser(userData));
-    }} />;
   }
 
   return (
