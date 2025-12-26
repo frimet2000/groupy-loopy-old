@@ -201,14 +201,9 @@ function LayoutContent({ children, currentPageName }) {
         setUser(userData);
 
         if (userData) {
-          // Mandatory Legal Gate
-          if (!userData.terms_accepted && currentPageName !== 'Legal') {
-            window.location.href = createPageUrl('Legal');
-            return;
-          }
-          // Onboarding gate
-          if (!userData.profile_completed && currentPageName !== 'Onboarding') {
-            window.location.href = createPageUrl('Onboarding');
+          // Onboarding + Legal Gate (combined)
+          if ((!userData.terms_accepted || !userData.profile_completed) && currentPageName !== 'Onboarding') {
+            navigate(createPageUrl('Onboarding'));
             return;
           }
         }

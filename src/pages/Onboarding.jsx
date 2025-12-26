@@ -13,11 +13,12 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { 
   Users, Heart, MapPin, Car, Activity, ChevronRight, ChevronLeft, 
-  CheckCircle2, Loader2, Accessibility, Plus, X, User, Upload, Camera, Globe
+  CheckCircle2, Loader2, Accessibility, Plus, X, User, Upload, Camera, Globe, FileText
 } from 'lucide-react';
 import { getCountryRegions, getAllCountries } from '../components/utils/CountryRegions';
 
@@ -31,7 +32,8 @@ export default function Onboarding() {
   const [imageUploading, setImageUploading] = useState(false);
   const [step, setStep] = useState(0);
   const [completed, setCompleted] = useState(false);
-  const totalSteps = 5;
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const totalSteps = 6;
   
   const getDefaultCountry = () => {
     switch (language) {
@@ -110,6 +112,19 @@ export default function Onboarding() {
   };
 
   const handleSkipToEnd = () => {
+    if (!acceptedTerms) {
+      toast.error(
+        language === 'he' ? 'יש לאשר את תנאי השימוש' :
+        language === 'ru' ? 'Необходимо принять условия использования' :
+        language === 'es' ? 'Debes aceptar los Términos de uso' :
+        language === 'fr' ? "Vous devez accepter les conditions d'utilisation" :
+        language === 'de' ? 'Sie müssen die Nutzungsbedingungen akzeptieren' :
+        language === 'it' ? "Devi accettare i Termini d'uso" :
+        'You must accept the Terms of Use'
+      );
+      setStep(totalSteps - 1);
+      return;
+    }
     handleSubmit();
   };
 
@@ -126,7 +141,9 @@ export default function Onboarding() {
       await base44.auth.updateMe({
         ...formData,
         full_name: fullName,
-        profile_completed: true
+        profile_completed: true,
+        terms_accepted: true,
+        terms_accepted_date: new Date().toISOString()
       });
       
       // Mark first login as completed for PWA install prompt
@@ -264,12 +281,14 @@ export default function Onboarding() {
                     {step === 2 && <Activity className="w-6 h-6 text-emerald-600" />}
                     {step === 3 && <Heart className="w-6 h-6 text-rose-600" />}
                     {step === 4 && <MapPin className="w-6 h-6 text-purple-600" />}
-                    
+                    {step === 5 && <FileText className="w-6 h-6 text-gray-700" />}
+
                     {step === 0 && (language === 'he' ? 'פרטים אישיים' : language === 'ru' ? 'Личные данные' : language === 'es' ? 'Datos personales' : language === 'fr' ? 'Détails personnels' : language === 'de' ? 'Persönliche Daten' : language === 'it' ? 'Dati personali' : 'Personal Details')}
                     {step === 1 && (language === 'he' ? 'פרטי משפחה' : language === 'ru' ? 'Семья' : language === 'es' ? 'Familia' : language === 'fr' ? 'Famille' : language === 'de' ? 'Familie' : language === 'it' ? 'Famiglia' : 'Family Details')}
                     {step === 2 && (language === 'he' ? 'רמת כושר ונגישות' : language === 'ru' ? 'Фитнес и доступность' : language === 'es' ? 'Condición física y accesibilidad' : language === 'fr' ? 'Condition physique et accessibilité' : language === 'de' ? 'Fitness & Barrierefreiheit' : language === 'it' ? 'Fitness e accessibilità' : 'Fitness & Accessibility')}
                     {step === 3 && (language === 'he' ? 'תחומי עניין' : language === 'ru' ? 'Интересы' : language === 'es' ? 'Intereses' : language === 'fr' ? 'Intérêts' : language === 'de' ? 'Interessen' : language === 'it' ? 'Interessi' : 'Interests')}
                     {step === 4 && (language === 'he' ? 'מיקום ורכב' : language === 'ru' ? 'Местоположение и транспорт' : language === 'es' ? 'Ubicación y vehículo' : language === 'fr' ? 'Localisation et véhicule' : language === 'de' ? 'Standort & Fahrzeug' : language === 'it' ? 'Posizione e veicolo' : 'Location & Vehicle')}
+                    {step === 5 && (language === 'he' ? 'תנאי שימוש' : language === 'ru' ? 'Условия использования' : language === 'es' ? 'Términos de uso' : language === 'fr' ? "Conditions d'utilisation" : language === 'de' ? 'Nutzungsbedingungen' : language === 'it' ? "Termini d'uso" : 'Legal & Terms')}
                   </CardTitle>
                   <CardDescription>
                     {step === 0 && (language === 'he' ? 'איך נקרא לך?' : language === 'ru' ? 'Как вас зовут?' : language === 'es' ? '¿Cómo te llamamos?' : language === 'fr' ? 'Comment vous appeler?' : language === 'de' ? 'Wie sollen wir Sie nennen?' : language === 'it' ? 'Come ti chiamiamo?' : 'What should we call you?')}
@@ -277,6 +296,7 @@ export default function Onboarding() {
                     {step === 2 && (language === 'he' ? 'מה רמת הכושר הפיזי ודרישות הנגישות?' : language === 'ru' ? 'Уровень физподготовки и потребности?' : language === 'es' ? '¿Tu nivel físico y necesidades?' : language === 'fr' ? 'Votre niveau physique et besoins?' : language === 'de' ? 'Ihr Fitnesslevel und Bedürfnisse?' : language === 'it' ? 'Il tuo livello fisico e necessità?' : 'What is your fitness level and accessibility needs?')}
                     {step === 3 && (language === 'he' ? 'מה מעניין אתכם בטיולים?' : language === 'ru' ? 'Что вас интересует?' : language === 'es' ? '¿Qué te interesa?' : language === 'fr' ? 'Qu\'est-ce qui vous intéresse?' : language === 'de' ? 'Was interessiert Sie?' : language === 'it' ? 'Cosa ti interessa?' : 'What interests you in trips?')}
                     {step === 4 && (language === 'he' ? 'איפה אתם גרים ואיזה רכב יש לכם?' : language === 'ru' ? 'Где вы живете и какое авто?' : language === 'es' ? '¿Dónde vives y qué vehículo tienes?' : language === 'fr' ? 'Où vivez-vous et quel véhicule?' : language === 'de' ? 'Wo leben Sie und welches Fahrzeug?' : language === 'it' ? 'Dove vivi e che veicolo hai?' : 'Where do you live and what vehicle do you have?')}
+                    {step === 5 && (language === 'he' ? 'קראו ואשרו את תנאי השימוש' : language === 'ru' ? 'Прочтите и примите условия использования' : language === 'es' ? 'Lee y acepta los Términos de uso' : language === 'fr' ? 'Lisez et acceptez les conditions d\'utilisation' : language === 'de' ? 'Lesen und akzeptieren Sie die Nutzungsbedingungen' : language === 'it' ? 'Leggi e accetta i Termini d\'uso' : 'Read and accept the Terms of Use')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6 pt-6">
@@ -666,7 +686,72 @@ export default function Onboarding() {
                     </div>
                   )}
 
-                </CardContent>
+                  {/* Step 5: Legal & Terms */}
+                  {step === 5 && (
+                    <div className="space-y-4">
+                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                        <p className="text-sm text-amber-900">
+                          {language === 'he' ? 'עליך לקרוא ולאשר את תנאי השימוש כדי להשלים את ההרשמה' :
+                           language === 'ru' ? 'Вам необходимо прочитать и принять условия использования, чтобы завершить регистрацию' :
+                           language === 'es' ? 'Debes leer y aceptar los Términos de uso para finalizar el registro' :
+                           language === 'fr' ? "Vous devez lire et accepter les conditions d'utilisation pour terminer l'inscription" :
+                           language === 'de' ? 'Sie müssen die Nutzungsbedingungen lesen und akzeptieren, um die Registrierung abzuschließen' :
+                           language === 'it' ? "Devi leggere e accettare i Termini d'uso per completare la registrazione" :
+                           'You must read and accept the Terms of Use to finish sign-up'}
+                        </p>
+                      </div>
+
+                      <ScrollArea className="h-64 rounded-md border p-4 bg-white">
+                        <div className="space-y-3 text-sm leading-6 text-gray-700">
+                          <h2 className="font-semibold text-gray-900">
+                            {language === 'he' ? 'תנאי שימוש — תקציר' :
+                             language === 'ru' ? 'Условия использования — кратко' :
+                             language === 'es' ? 'Términos de uso — Resumen' :
+                             language === 'fr' ? "Conditions d'utilisation — Résumé" :
+                             language === 'de' ? 'Nutzungsbedingungen — Kurzfassung' :
+                             language === 'it' ? "Termini d'uso — Sintesi" :
+                             'Terms of Use — Summary'}
+                          </h2>
+                          <p>
+                            {language === 'he' ? 'השימוש בפלטפורמה על אחריות המשתמש בלבד. יש לציית לחוק, לכללי הבטיחות והטיול, ולכבד משתתפים אחרים.' :
+                             language === 'ru' ? 'Использование платформы на ваш риск. Соблюдайте закон, безопасность и уважайте других участников.' :
+                             language === 'es' ? 'El uso de la plataforma es bajo tu responsabilidad. Respeta la ley, la seguridad y a los demás participantes.' :
+                             language === 'fr' ? 'L\'utilisation de la plateforme est sous votre responsabilité. Respectez la loi, la sécurité et les autres participants.' :
+                             language === 'de' ? 'Die Nutzung der Plattform erfolgt auf eigene Verantwortung. Beachten Sie Gesetz, Sicherheit und respektieren Sie andere.' :
+                             language === 'it' ? 'L\'uso della piattaforma è sotto la tua responsabilità. Rispetta la legge, la sicurezza e gli altri partecipanti.' :
+                             'Use of the platform is at your own risk. Follow laws and safety rules and respect other participants.'}
+                          </p>
+                          <ul className="list-disc ml-5 space-y-1">
+                            <li>{language === 'he' ? 'אין אחריות על התאמת מסלולים או תנאי שטח' : language === 'ru' ? 'Нет гарантии соответствия маршрутов или условий' : language === 'es' ? 'Sin garantía sobre rutas o condiciones' : language === 'fr' ? 'Aucune garantie sur les itinéraires ou conditions' : language === 'de' ? 'Keine Gewähr für Routen oder Bedingungen' : language === 'it' ? 'Nessuna garanzia su percorsi o condizioni' : 'No warranty on routes or conditions'}</li>
+                            <li>{language === 'he' ? 'יש להצטייד בציוד ובביטוח המתאימים' : language === 'ru' ? 'Иметь подходящее снаряжение и страховку' : language === 'es' ? 'Lleva equipo y seguro adecuados' : language === 'fr' ? 'Munissez-vous d\'équipement et assurance adaptés' : language === 'de' ? 'Passende Ausrüstung und Versicherung' : language === 'it' ? 'Dotarsi di attrezzatura e assicurazione adeguate' : 'Bring proper gear and insurance'}</li>
+                            <li>{language === 'he' ? 'הפלטפורמה אינה מארגנת טיולים — רק מחברת בין אנשים' : language === 'ru' ? 'Платформа не организует поездки — лишь связывает людей' : language === 'es' ? 'La plataforma no organiza viajes — solo conecta personas' : language === 'fr' ? 'La plateforme n\'organise pas de voyages — elle connecte des personnes' : language === 'de' ? 'Die Plattform organisiert keine Reisen — sie verbindet Menschen' : language === 'it' ? 'La piattaforma non organizza viaggi — collega le persone' : 'The platform does not organize trips — it connects people'}</li>
+                            <li>{language === 'he' ? 'עליך לציית להוראות בטיחות ולחוקי המקום' : language === 'ru' ? 'Соблюдайте правила безопасности и законы' : language === 'es' ? 'Cumple normas de seguridad y leyes' : language === 'fr' ? 'Respectez les règles de sécurité et les lois' : language === 'de' ? 'Befolgen Sie Sicherheitsregeln und Gesetze' : language === 'it' ? 'Rispetta le norme di sicurezza e le leggi' : 'Follow safety rules and laws'}</li>
+                            <li>{language === 'he' ? 'כיבוד פרטיות והתנהגות מכבדת בקהילה' : language === 'ru' ? 'Уважайте приватность и правила общения' : language === 'es' ? 'Respeta la privacidad y convive con respeto' : language === 'fr' ? 'Respect de la vie privée et des autres' : language === 'de' ? 'Wahrung der Privatsphäre und respektvolles Verhalten' : language === 'it' ? 'Rispetta la privacy e comportati con rispetto' : 'Respect privacy and behave respectfully'}</li>
+                          </ul>
+                          <p className="text-xs text-gray-500">
+                            <a href={createPageUrl('TermsOfUse')} className="text-emerald-600 hover:underline" target="_blank" rel="noreferrer">
+                              {language === 'he' ? 'לצפייה במלוא תנאי השימוש' : language === 'ru' ? 'Полные условия использования' : language === 'es' ? 'Ver términos completos' : language === 'fr' ? 'Voir les conditions complètes' : language === 'de' ? 'Vollständige Bedingungen' : language === 'it' ? 'Termini completi' : 'View full Terms'}
+                            </a>
+                          </p>
+                        </div>
+                      </ScrollArea>
+
+                      <div className="flex items-center gap-3">
+                        <Checkbox id="accept-terms" checked={acceptedTerms} onCheckedChange={setAcceptedTerms} />
+                        <Label htmlFor="accept-terms" className="cursor-pointer">
+                          {language === 'he' ? 'קראתי ואני מאשר/ת את תנאי השימוש' :
+                           language === 'ru' ? 'Я прочитал(а) и принимаю условия использования' :
+                           language === 'es' ? 'He leído y acepto los Términos de uso' :
+                           language === 'fr' ? "J'ai lu et j'accepte les conditions d'utilisation" :
+                           language === 'de' ? 'Ich habe die Nutzungsbedingungen gelesen und akzeptiere sie' :
+                           language === 'it' ? 'Ho letto e accetto i Termini d\'uso' :
+                           'I have read and accept the Terms of Use'}
+                        </Label>
+                      </div>
+                    </div>
+                  )}
+
+                  </CardContent>
           </Card>
 
           {/* Navigation Buttons */}
