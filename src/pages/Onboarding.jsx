@@ -914,16 +914,7 @@ export default function Onboarding() {
               )}
             </div>
 
-            {step > 0 && (
-              <Button
-                variant="ghost"
-                onClick={handleSkipToEnd}
-                disabled={loading}
-                className="text-gray-600 hover:text-emerald-600"
-              >
-                {language === 'he' ? 'דלג והשלם מאוחר יותר' : language === 'ru' ? 'Пропустить и заполнить позже' : language === 'es' ? 'Omitir y completar después' : language === 'fr' ? 'Ignorer et compléter plus tard' : language === 'de' ? 'Überspringen und später ausfüllen' : language === 'it' ? 'Salta e completa dopo' : 'Skip and complete later'}
-              </Button>
-            )}
+
           </div>
         </motion.div>
       </div>
