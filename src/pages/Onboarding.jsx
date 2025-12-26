@@ -135,6 +135,19 @@ export default function Onboarding() {
   };
 
   const handleSubmit = async () => {
+    if (!acceptedTerms) {
+      toast.error(
+        language === 'he' ? 'יש לאשר את תנאי השימוש' :
+        language === 'ru' ? 'Необходимо принять условия использования' :
+        language === 'es' ? 'Debes aceptar los Términos de uso' :
+        language === 'fr' ? "Vous devez accepter les conditions d'utilisation" :
+        language === 'de' ? 'Sie müssen die Nutzungsbedingungen akzeptieren' :
+        language === 'it' ? "Devi accettare i Termini d'uso" :
+        'You must accept the Terms of Use'
+      );
+      setStep(totalSteps - 1);
+      return;
+    }
     setLoading(true);
     try {
       const fullName = `${formData.first_name} ${formData.last_name}`.trim();
@@ -145,10 +158,10 @@ export default function Onboarding() {
         terms_accepted: true,
         terms_accepted_date: new Date().toISOString()
       });
-      
+
       // Mark first login as completed for PWA install prompt
       localStorage.setItem('first_login_completed', 'true');
-      
+
       toast.success(language === 'he' ? 'הפרופיל נשמר בהצלחה!' : 'Profile saved successfully!');
       setCompleted(true);
     } catch (error) {

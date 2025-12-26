@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../components/LanguageContext";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -142,26 +143,27 @@ function getTos(language) {
 
 export default function Legal() {
   const { language, isRTL } = useLanguage();
+  const navigate = useNavigate();
   const [checked, setChecked] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    // If already accepted, go to dashboard
+    // If already accepted, go to dashboard without full reload
     (async () => {
       try {
         const me = await base44.auth.me();
         if (me?.terms_accepted) {
-          window.location.href = createPageUrl("Dashboard");
+          navigate(createPageUrl("Dashboard"));
         }
       } catch {}
     })();
-  }, []);
+  }, [navigate]);
 
   const handleAccept = async () => {
     if (!checked) return;
     setSaving(true);
     await base44.auth.updateMe({ terms_accepted: true, terms_accepted_date: new Date().toISOString() });
-    window.location.href = createPageUrl("Dashboard");
+    navigate(createPageUrl("Dashboard"));
   };
 
   const tos = getTos(language);
