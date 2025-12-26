@@ -263,7 +263,7 @@ function LayoutContent({ children, currentPageName }) {
             {/* Logo */}
             <Link to={createPageUrl('Home')} className="flex items-center group">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693c3ab4048a1e3a31fffd66/413fc3893_Gemini_Generated_Image_me8dl1me8dl1me8d.png"
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693c3ab4048a1e3a31fffd66/532a53f9c_.png"
                 alt="Groupy Loopy"
                 className="h-12 w-auto transition-all group-hover:scale-105"
               />
