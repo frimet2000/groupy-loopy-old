@@ -325,9 +325,9 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* Footer - Only on Home page */}
       {currentPageName === 'Home' && (
-        <footer className="bg-white border-t border-gray-200 py-2 mt-12">
-          <div className="max-w-7xl mx-auto px-2">
-            <div className="flex items-center justify-center gap-1 text-[10px] text-gray-500 whitespace-nowrap overflow-x-auto">
+        <footer className="bg-white border-t-2 border-gray-200/80 py-10 md:py-14 mt-12">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm md:text-base text-gray-600 whitespace-nowrap overflow-x-auto">
               <span>© 2025 Groupy Loopy</span>
               <span>•</span>
               <Link to={createPageUrl('PrivacyPolicy')} className="hover:text-emerald-600">
