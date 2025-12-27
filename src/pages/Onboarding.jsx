@@ -831,6 +831,120 @@ export default function Onboarding() {
                     </div>
                   )}
 
+                  {/* Step 4: Location & Vehicle */}
+                  {step === 4 && (
+                    <div className="space-y-6">
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <p className="text-sm text-blue-800">
+                          ℹ️ {language === 'he' 
+                            ? 'כל השדות אופציונליים - תוכל להשלים מאוחר יותר בפרופיל'
+                            : language === 'ru' ? 'Все поля необязательны - можно заполнить позже'
+                            : language === 'es' ? 'Todos los campos son opcionales - puedes completarlos después'
+                            : language === 'fr' ? 'Tous les champs sont optionnels - à compléter plus tard'
+                            : language === 'de' ? 'Alle Felder sind optional - später ausfüllbar'
+                            : language === 'it' ? 'Tutti i campi sono opzionali - completabili dopo'
+                            : 'All fields are optional - you can complete them later in your profile'}
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold flex items-center gap-2">
+                          <Globe className="w-5 h-5 text-purple-600" />
+                          {language === 'he' ? 'מדינת מגורים' : language === 'ru' ? 'Страна проживания' : language === 'es' ? 'País de residencia' : language === 'fr' ? 'Pays de résidence' : language === 'de' ? 'Wohnsitzland' : language === 'it' ? 'Paese di residenza' : 'Home Country'}
+                        </Label>
+                        <Select
+                          value={formData.home_country}
+                          onValueChange={(v) => handleChange('home_country', v)}
+                        >
+                          <SelectTrigger className="h-12">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-60">
+                            {getAllCountries().map(c => (
+                              <SelectItem key={c} value={c}>{t(c)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold flex items-center gap-2">
+                          <MapPin className="w-5 h-5 text-purple-600" />
+                          {language === 'he' ? 'אזור מגורים' : language === 'ru' ? 'Регион проживания' : language === 'es' ? 'Región de residencia' : language === 'fr' ? 'Région de résidence' : language === 'de' ? 'Wohnregion' : language === 'it' ? 'Regione di residenza' : 'Home Region'}
+                        </Label>
+                        <Input
+                          value={formData.home_region}
+                          onChange={(e) => handleChange('home_region', e.target.value)}
+                          placeholder={
+                            formData.home_country === 'israel' 
+                              ? (language === 'he' ? 'לדוגמה: תל אביב, ירושלים, חיפה' : 'e.g., Tel Aviv, Jerusalem, Haifa')
+                            : formData.home_country === 'usa'
+                              ? 'e.g., California, Texas, New York'
+                            : formData.home_country === 'france'
+                              ? 'e.g., Paris, Provence, Normandy'
+                            : formData.home_country === 'spain'
+                              ? 'e.g., Barcelona, Madrid, Andalusia'
+                            : formData.home_country === 'germany'
+                              ? 'e.g., Bavaria, Berlin, Hamburg'
+                            : formData.home_country === 'italy'
+                              ? 'e.g., Rome, Tuscany, Milan'
+                            : (language === 'he' ? 'האזור או העיר שלך' : language === 'ru' ? 'Ваш регион или город' : language === 'es' ? 'Tu región o ciudad' : language === 'fr' ? 'Votre région ou ville' : language === 'de' ? 'Ihre Region oder Stadt' : language === 'it' ? 'La tua regione o città' : 'Your region or city')
+                          }
+                          className="h-12 text-base"
+                          dir={language === 'he' ? 'rtl' : 'ltr'}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold flex items-center gap-2">
+                          <Car className="w-5 h-5 text-purple-600" />
+                          {language === 'he' ? 'סוג רכב' : language === 'ru' ? 'Тип транспорта' : language === 'es' ? 'Tipo de vehículo' : language === 'fr' ? 'Type de véhicule' : language === 'de' ? 'Fahrzeugtyp' : language === 'it' ? 'Tipo di veicolo' : 'Vehicle Type'}
+                        </Label>
+                        <Select
+                          value={formData.vehicle_type}
+                          onValueChange={(v) => handleChange('vehicle_type', v)}
+                        >
+                          <SelectTrigger className="h-12">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">
+                              {language === 'he' ? 'אין רכב' : language === 'ru' ? 'Нет транспорта' : language === 'es' ? 'Sin vehículo' : language === 'fr' ? 'Pas de véhicule' : language === 'de' ? 'Kein Fahrzeug' : language === 'it' ? 'Nessun veicolo' : 'No Vehicle'}
+                            </SelectItem>
+                            <SelectItem value="car">
+                              {language === 'he' ? 'רכב פרטי' : language === 'ru' ? 'Легковой автомобиль' : language === 'es' ? 'Automóvil' : language === 'fr' ? 'Voiture' : language === 'de' ? 'PKW' : language === 'it' ? 'Automobile' : 'Car'}
+                            </SelectItem>
+                            <SelectItem value="suv">
+                              {language === 'he' ? 'רכב שטח (SUV)' : language === 'ru' ? 'Внедорожник (SUV)' : language === 'es' ? 'SUV' : language === 'fr' ? 'SUV' : language === 'de' ? 'SUV' : language === 'it' ? 'SUV' : 'SUV'}
+                            </SelectItem>
+                            <SelectItem value="4x4">
+                              {language === 'he' ? 'שטח 4X4' : language === 'ru' ? '4X4' : language === 'es' ? '4X4' : language === 'fr' ? '4X4' : language === 'de' ? '4X4' : language === 'it' ? '4X4' : '4X4'}
+                            </SelectItem>
+                            <SelectItem value="van">
+                              {language === 'he' ? 'ואן/מיניבוס' : language === 'ru' ? 'Микроавтобус' : language === 'es' ? 'Furgoneta' : language === 'fr' ? 'Van' : language === 'de' ? 'Van' : language === 'it' ? 'Van' : 'Van/Minibus'}
+                            </SelectItem>
+                            <SelectItem value="motorcycle">
+                              {language === 'he' ? 'אופנוע' : language === 'ru' ? 'Мотоцикл' : language === 'es' ? 'Motocicleta' : language === 'fr' ? 'Moto' : language === 'de' ? 'Motorrad' : language === 'it' ? 'Motocicletta' : 'Motorcycle'}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                        <p className="text-sm text-purple-800 leading-relaxed">
+                          💡 {language === 'he' 
+                            ? 'פרטים אלה יעזרו למצוא לך טיולים באזור שלך ולארגן נסיעות משותפות'
+                            : language === 'ru' ? 'Эти данные помогут найти поездки в вашем районе и организовать совместные поездки'
+                            : language === 'es' ? 'Estos detalles te ayudarán a encontrar viajes en tu área y organizar traslados compartidos'
+                            : language === 'fr' ? 'Ces détails vous aideront à trouver des voyages dans votre région et à organiser des covoiturages'
+                            : language === 'de' ? 'Diese Details helfen Ihnen, Reisen in Ihrer Nähe zu finden und Fahrgemeinschaften zu organisieren'
+                            : language === 'it' ? 'Questi dettagli ti aiuteranno a trovare viaggi nella tua zona e a organizzare trasporti condivisi'
+                            : 'These details will help you find trips in your area and organize carpools'}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Step 5: Legal & Terms */}
                   {step === 5 && (
                     <div className="space-y-4">
