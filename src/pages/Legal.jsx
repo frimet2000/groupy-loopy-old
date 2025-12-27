@@ -45,7 +45,7 @@ function getTos(language) {
       { title: "12. Governing Law & Venue", body: "Subject to applicable law, Israeli law and courts shall apply unless mandatory local law dictates otherwise." },
       { title: "13. Changes to Terms", body: "We may update terms periodically. Continued use constitutes acceptance." },
       { title: "14. Severability", body: "If any provision is unenforceable, the remainder remains in effect." },
-      { title: "15. Contact", body: "Questions: support@groupyloopy.app" }
+      { title: "15. Contact", body: "Questions: frimet@gmail.com" }
     ],
     ru: [
       { title: "Условия использования и отказ от ответственности – GROUPY LOOPY", body: "" },
@@ -99,7 +99,7 @@ function getTos(language) {
       { title: "12. Droit applicable et juridiction", body: "Sous réserve du droit applicable, droit israélien et tribunaux d'Israël." },
       { title: "13. Modification des conditions", body: "Mises à jour possibles. L'usage continu vaut acceptation." },
       { title: "14. Divisibilité", body: "Si une clause est inapplicable, le reste demeure." },
-      { title: "15. Contact", body: "Questions: support@groupyloopy.app" }
+      { title: "15. Contact", body: "Questions: frimet@gmail.com" }
     ],
     de: [
       { title: "Nutzungsbedingungen & Haftungsausschluss – GROUPY LOOPY", body: "" },
