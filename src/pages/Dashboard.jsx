@@ -187,10 +187,10 @@ export default function Dashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
-              {language === 'he' ? 'לוח מחוונים' : 'Dashboard'}
+              {language === 'he' ? 'לוח מחוונים' : language === 'ru' ? 'Панель управления' : language === 'es' ? 'Panel de control' : language === 'fr' ? 'Tableau de bord' : language === 'de' ? 'Dashboard' : language === 'it' ? 'Pannello di controllo' : 'Dashboard'}
             </h1>
             <p className="text-gray-600 mt-1">
-              {language === 'he' ? 'סקירת הטיולים שלך' : 'Your trips overview'}
+              {language === 'he' ? 'סקירת הטיולים שלך' : language === 'ru' ? 'Обзор ваших поездок' : language === 'es' ? 'Resumen de tus viajes' : language === 'fr' ? 'Aperçu de vos voyages' : language === 'de' ? 'Überblick über Ihre Reisen' : language === 'it' ? 'Panoramica dei tuoi viaggi' : 'Your trips overview'}
             </p>
           </div>
         </div>
@@ -203,7 +203,7 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-blue-100 text-sm font-medium">
-                      {language === 'he' ? 'בקשות ממתינות' : 'Pending Requests'}
+                      {language === 'he' ? 'בקשות ממתינות' : language === 'ru' ? 'Ожидающие запросы' : language === 'es' ? 'Solicitudes pendientes' : language === 'fr' ? 'Demandes en attente' : language === 'de' ? 'Ausstehende Anfragen' : language === 'it' ? 'Richieste in sospeso' : 'Pending Requests'}
                     </p>
                     <p className="text-3xl font-bold mt-2">{stats.pendingRequests}</p>
                   </div>
@@ -221,7 +221,7 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-emerald-100 text-sm font-medium">
-                      {language === 'he' ? 'טיולים קרובים' : 'Upcoming Trips'}
+                      {language === 'he' ? 'טיולים קרובים' : language === 'ru' ? 'Предстоящие поездки' : language === 'es' ? 'Próximos viajes' : language === 'fr' ? 'Voyages à venir' : language === 'de' ? 'Bevorstehende Reisen' : language === 'it' ? 'Prossimi viaggi' : 'Upcoming Trips'}
                     </p>
                     <p className="text-3xl font-bold mt-2">{stats.upcomingTrips}</p>
                   </div>
@@ -239,7 +239,7 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-purple-100 text-sm font-medium">
-                      {language === 'he' ? 'סה"כ משתתפים' : 'Total Participants'}
+                      {language === 'he' ? 'סה"כ משתתפים' : language === 'ru' ? 'Всего участников' : language === 'es' ? 'Total participantes' : language === 'fr' ? 'Total des participants' : language === 'de' ? 'Teilnehmer gesamt' : language === 'it' ? 'Partecipanti totali' : 'Total Participants'}
                     </p>
                     <p className="text-3xl font-bold mt-2">{stats.totalParticipants}</p>
                   </div>
@@ -257,7 +257,7 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-orange-100 text-sm font-medium">
-                      {language === 'he' ? 'הודעות' : 'Messages'}
+                      {language === 'he' ? 'הודעות' : language === 'ru' ? 'Сообщения' : language === 'es' ? 'Mensajes' : language === 'fr' ? 'Messages' : language === 'de' ? 'Nachrichten' : language === 'it' ? 'Messaggi' : 'Messages'}
                     </p>
                     <p className="text-3xl font-bold mt-2">{stats.totalMessages}</p>
                   </div>
@@ -277,7 +277,7 @@ export default function Dashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Activity className="w-5 h-5 text-emerald-600" />
-                {language === 'he' ? 'התפלגות סטטוס' : 'Status Distribution'}
+                {language === 'he' ? 'התפלגות סטטוס' : language === 'ru' ? 'Распределение по статусам' : language === 'es' ? 'Distribución de estado' : language === 'fr' ? 'Distribution des statuts' : language === 'de' ? 'Statusverteilung' : language === 'it' ? 'Distribuzione dello stato' : 'Status Distribution'}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -319,7 +319,7 @@ export default function Dashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-blue-600" />
-                {language === 'he' ? 'פעילות אחרונה (30 יום)' : 'Activity (Last 30 Days)'}
+                {language === 'he' ? 'פעילות אחרונה (30 יום)' : language === 'ru' ? 'Активность (последние 30 дней)' : language === 'es' ? 'Actividad (últimos 30 días)' : language === 'fr' ? 'Activité (30 derniers jours)' : language === 'de' ? 'Aktivität (letzte 30 Tage)' : language === 'it' ? 'Attività (ultimi 30 giorni)' : 'Activity (Last 30 Days)'}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -340,16 +340,16 @@ export default function Dashboard() {
         <Tabs defaultValue="requests" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="requests">
-              {language === 'he' ? 'בקשות' : 'Requests'} 
+              {language === 'he' ? 'בקשות' : language === 'ru' ? 'Запросы' : language === 'es' ? 'Solicitudes' : language === 'fr' ? 'Demandes' : language === 'de' ? 'Anfragen' : language === 'it' ? 'Richieste' : 'Requests'} 
               {stats.pendingRequests > 0 && (
                 <Badge className="ml-2 bg-red-500">{stats.pendingRequests}</Badge>
               )}
             </TabsTrigger>
             <TabsTrigger value="trips">
-              {language === 'he' ? 'טיולים קרובים' : 'Upcoming Trips'}
+              {language === 'he' ? 'טיולים קרובים' : language === 'ru' ? 'Предстоящие' : language === 'es' ? 'Próximos' : language === 'fr' ? 'À venir' : language === 'de' ? 'Bevorstehend' : language === 'it' ? 'Prossimi' : 'Upcoming Trips'}
             </TabsTrigger>
             <TabsTrigger value="messages">
-              {language === 'he' ? 'הודעות' : 'Messages'}
+              {language === 'he' ? 'הודעות' : language === 'ru' ? 'Сообщения' : language === 'es' ? 'Mensajes' : language === 'fr' ? 'Messages' : language === 'de' ? 'Nachrichten' : language === 'it' ? 'Messaggi' : 'Messages'}
             </TabsTrigger>
           </TabsList>
 
