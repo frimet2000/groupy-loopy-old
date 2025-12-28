@@ -348,8 +348,12 @@ export default function EditTrip() {
         if (distances.length > 0) trekTotalDistance = distances.reduce((sum, d) => sum + d, 0);
       }
 
+      const localizedTitleKey = language === 'he' ? 'title_he' : language === 'ru' ? 'title_ru' : language === 'es' ? 'title_es' : language === 'fr' ? 'title_fr' : language === 'de' ? 'title_de' : language === 'it' ? 'title_it' : 'title_en';
+
       const tripData = {
         ...cleanFormData,
+        title: formData.title,
+        [localizedTitleKey]: formData.title,
         waypoints: formData.activity_type === 'trek' ? [] : (waypoints || []),
         equipment_checklist: equipment || [],
         recommended_water_liters: waterRecommendation || null,
@@ -491,7 +495,7 @@ export default function EditTrip() {
                   </CardHeader>
                   <CardContent className="p-3 sm:p-4 space-y-2.5 sm:space-y-3">
                     <div className="space-y-1">
-                      <Label className="text-sm font-semibold">{language === 'he' ? 'כותרת הטיול' : 'Trip Title'} *</Label>
+                      <Label className="text-sm font-semibold">{language === 'he' ? 'כותרת הטיול' : language === 'ru' ? 'Название поездки' : language === 'es' ? 'Título del viaje' : language === 'fr' ? 'Titre du voyage' : language === 'de' ? 'Reisetitel' : language === 'it' ? 'Titolo del viaggio' : 'Trip Title'} *</Label>
                       <Input
                         value={formData.title}
                         onChange={(e) => handleChange('title', e.target.value)}
