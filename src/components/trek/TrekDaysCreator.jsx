@@ -42,7 +42,6 @@ export default function TrekDaysCreator({ trekDays, setTrekDays, onGenerateAI, t
       date: '',
       daily_description: '',
       difficulty: 'moderate',
-      area: 'negev',
       waypoints: [],
       daily_distance_km: null,
       start_altitude_m: null,
@@ -143,17 +142,6 @@ export default function TrekDaysCreator({ trekDays, setTrekDays, onGenerateAI, t
                         <Badge className="bg-indigo-600">
                           {language === 'he' ? `יום ${day.day_number}` : `Day ${day.day_number}`}
                         </Badge>
-                        {day.area && (
-                          <Badge className={
-                            day.area === 'negev' ? 'bg-orange-100 text-orange-800 border border-orange-300' : 
-                            day.area === 'north' ? 'bg-blue-100 text-blue-800 border border-blue-300' : 
-                            'bg-purple-100 text-purple-800 border border-purple-300'
-                          }>
-                            {day.area === 'negev' ? (language === 'he' ? 'נגב' : 'Negev') : 
-                             day.area === 'north' ? (language === 'he' ? 'צפון' : 'North') : 
-                             (language === 'he' ? 'כל השביל' : 'All Trail')}
-                          </Badge>
-                        )}
                         <h4 className="font-bold text-gray-900">{day.daily_title}</h4>
                       </div>
                       {getDayDate(day) && (
@@ -285,46 +273,24 @@ export default function TrekDaysCreator({ trekDays, setTrekDays, onGenerateAI, t
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <Compass className="w-4 h-4" />
-                      {language === 'he' ? 'רמת קושי יומית' : language === 'ru' ? 'Сложность дня' : language === 'es' ? 'Dificultad del día' : language === 'fr' ? 'Difficulté quotidienne' : language === 'de' ? 'Tagesschwierigkeit' : language === 'it' ? 'Difficoltà giornaliera' : 'Daily Difficulty'}
-                    </Label>
-                    <Select 
-                      value={editingDay.difficulty || 'moderate'} 
-                      onValueChange={(v) => setEditingDay({ ...editingDay, difficulty: v })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {difficulties.map(d => (
-                          <SelectItem key={d} value={d}>{t(d)}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4" />
-                      {language === 'he' ? 'אזור' : language === 'ru' ? 'Область' : language === 'es' ? 'Área' : language === 'fr' ? 'Zone' : language === 'de' ? 'Bereich' : language === 'it' ? 'Area' : 'Area'}
-                    </Label>
-                    <Select 
-                      value={editingDay.area || 'negev'} 
-                      onValueChange={(v) => setEditingDay({ ...editingDay, area: v })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="negev">{language === 'he' ? 'נגב' : language === 'ru' ? 'Негев' : language === 'es' ? 'Néguev' : language === 'fr' ? 'Néguev' : language === 'de' ? 'Negev' : language === 'it' ? 'Negev' : 'Negev'}</SelectItem>
-                        <SelectItem value="north">{language === 'he' ? 'צפון' : language === 'ru' ? 'Север' : language === 'es' ? 'Norte' : language === 'fr' ? 'Nord' : language === 'de' ? 'Norden' : language === 'it' ? 'Nord' : 'North'}</SelectItem>
-                        <SelectItem value="all_trail">{language === 'he' ? 'כל השביל' : language === 'ru' ? 'Весь маршрут' : language === 'es' ? 'Todo el sendero' : language === 'fr' ? 'Tout le sentier' : language === 'de' ? 'Ganzer Weg' : language === 'it' ? 'Tutto il sentiero' : 'All Trail'}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Compass className="w-4 h-4" />
+                    {language === 'he' ? 'רמת קושי יומית' : 'Daily Difficulty'}
+                  </Label>
+                  <Select 
+                    value={editingDay.difficulty || 'moderate'} 
+                    onValueChange={(v) => setEditingDay({ ...editingDay, difficulty: v })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {difficulties.map(d => (
+                        <SelectItem key={d} value={d}>{t(d)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <DayImageUploader 
