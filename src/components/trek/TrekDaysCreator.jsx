@@ -15,7 +15,7 @@ import TrekDayMapEditor from './TrekDayMapEditor';
 import EquipmentCreator from '../creation/EquipmentCreator';
 import DayImageUploader from './DayImageUploader';
 
-export default function TrekDaysCreator({ trekDays, setTrekDays, onGenerateAI, tripDate, tripLocation }) {
+export default function TrekDaysCreator({ trekDays, setTrekDays, onGenerateAI, tripDate, tripLocation, categories = [] }) {
   const { language, isRTL } = useLanguage();
 
   const { t } = useLanguage();
@@ -38,6 +38,7 @@ export default function TrekDaysCreator({ trekDays, setTrekDays, onGenerateAI, t
     const newDay = {
       id: Date.now(),
       day_number: (trekDays.length || 0) + 1,
+      category_id: '',
       daily_title: '',
       date: '',
       daily_description: '',
@@ -138,10 +139,20 @@ export default function TrekDaysCreator({ trekDays, setTrekDays, onGenerateAI, t
                       </div>
                     )}
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
                         <Badge className="bg-indigo-600">
                           {language === 'he' ? `יום ${day.day_number}` : `Day ${day.day_number}`}
                         </Badge>
+                        {day.category_id && categories.find(c => c.id === day.category_id) && (
+                          <Badge 
+                            style={{ 
+                              backgroundColor: categories.find(c => c.id === day.category_id)?.color,
+                              color: 'white'
+                            }}
+                          >
+                            {categories.find(c => c.id === day.category_id)?.name}
+                          </Badge>
+                        )}
                         <h4 className="font-bold text-gray-900">{day.daily_title}</h4>
                       </div>
                       {getDayDate(day) && (
@@ -248,6 +259,35 @@ export default function TrekDaysCreator({ trekDays, setTrekDays, onGenerateAI, t
                     dir={isRTL ? 'rtl' : 'ltr'}
                   />
                 </div>
+
+                {categories.length > 0 && (
+                  <div className="space-y-2">
+                    <Label>
+                      {language === 'he' ? 'קטגוריה/איזור' : language === 'ru' ? 'Категория/Область' : language === 'es' ? 'Categoría/Área' : language === 'fr' ? 'Catégorie/Zone' : language === 'de' ? 'Kategorie/Bereich' : language === 'it' ? 'Categoria/Area' : 'Category/Area'}
+                    </Label>
+                    <Select 
+                      value={editingDay.category_id || ''} 
+                      onValueChange={(v) => setEditingDay({ ...editingDay, category_id: v })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={language === 'he' ? 'בחר קטגוריה' : 'Select category'} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map(cat => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            <div className="flex items-center gap-2">
+                              <div 
+                                className="w-3 h-3 rounded-full" 
+                                style={{ backgroundColor: cat.color }}
+                              />
+                              {cat.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label>
