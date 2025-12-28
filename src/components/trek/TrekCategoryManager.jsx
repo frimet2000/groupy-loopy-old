@@ -7,9 +7,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Trash2, Edit, Tag, DollarSign, Users, Shield } from 'lucide-react';
+import { Plus, Trash2, Edit, Tag, DollarSign, Users, Shield, Euro, Coins, PoundSterling } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Switch } from "@/components/ui/switch";
+
+const getCurrencyIcon = (currency) => {
+  switch(currency) {
+    case 'ILS': return Coins;
+    case 'EUR': return Euro;
+    case 'GBP': return PoundSterling;
+    case 'USD': 
+    default: return DollarSign;
+  }
+};
 
 export default function TrekCategoryManager({ categories, setCategories, currency = 'ILS' }) {
   const { language, isRTL } = useLanguage();
@@ -135,12 +145,15 @@ export default function TrekCategoryManager({ categories, setCategories, currenc
                               {language === 'he' ? `מקס ${cat.max_selectable_days} ימים` : `Max ${cat.max_selectable_days} days`}
                             </Badge>
                           )}
-                          {cat.fee_per_adult > 0 && (
-                            <Badge variant="outline" className="gap-1">
-                              <DollarSign className="w-3 h-3" />
-                              {cat.fee_per_adult} {currency}
-                            </Badge>
-                          )}
+                          {cat.fee_per_adult > 0 && (() => {
+                            const CurrIcon = getCurrencyIcon(currency);
+                            return (
+                              <Badge variant="outline" className="gap-1">
+                                <CurrIcon className="w-3 h-3" />
+                                {cat.fee_per_adult} {currency}
+                              </Badge>
+                            );
+                          })()}
                           {cat.requires_approval && (
                             <Badge variant="outline" className="gap-1">
                               <Shield className="w-3 h-3 text-amber-600" />
