@@ -29,6 +29,7 @@ import BudgetCreator from '../components/creation/BudgetCreator';
 import TripTemplates from '../components/templates/TripTemplates';
 import TrekDaysCreator from '../components/trek/TrekDaysCreator';
 import TrekCategoryManager from '../components/trek/TrekCategoryManager';
+import TrekPaymentSettings from '../components/trek/TrekPaymentSettings';
 
 const difficulties = ['easy', 'moderate', 'challenging', 'hard', 'extreme'];
 const durations = ['hours', 'half_day', 'full_day', 'overnight', 'multi_day'];
@@ -1599,6 +1600,10 @@ Include water recommendation in liters and detailed equipment list.`,
                 <div className="space-y-6">
                   {formData.activity_type === 'trek' ? (
                     <>
+                      <TrekPaymentSettings
+                        paymentSettings={paymentSettings}
+                        setPaymentSettings={setPaymentSettings}
+                      />
                       <TrekCategoryManager
                         categories={trekCategories}
                         setCategories={setTrekCategories}
