@@ -24,6 +24,7 @@ import EquipmentCreator from '../components/creation/EquipmentCreator';
 import ItineraryCreator from '../components/creation/ItineraryCreator';
 import BudgetCreator from '../components/creation/BudgetCreator';
 import TrekDaysCreator from '../components/trek/TrekDaysCreator';
+import TrekCategoryManager from '../components/trek/TrekCategoryManager';
 
 const difficulties = ['easy', 'moderate', 'challenging', 'hard', 'extreme'];
 const durations = ['hours', 'half_day', 'full_day', 'overnight', 'multi_day'];
@@ -102,6 +103,19 @@ export default function EditTrip() {
     notes: ''
   });
   const [trekDays, setTrekDays] = useState([]);
+  const [trekCategories, setTrekCategories] = useState([]);
+  const [paymentSettings, setPaymentSettings] = useState({
+    enabled: false,
+    currency: 'ILS',
+    base_registration_fee: 0,
+    adult_age_threshold: 10,
+    max_free_children: null,
+    overall_max_selectable_days: null,
+    payment_methods: ['paypal', 'credit_card'],
+    group_discount_enabled: false,
+    group_discount_percentage: 0,
+    organized_group_free: false
+  });
 
   const steps = [
     { 
@@ -222,6 +236,19 @@ export default function EditTrip() {
           ...day,
           id: day.id || Date.now() + idx
         })));
+        setTrekCategories(trip.trek_categories || []);
+        setPaymentSettings(trip.payment_settings || {
+          enabled: false,
+          currency: 'ILS',
+          base_registration_fee: 0,
+          adult_age_threshold: 10,
+          max_free_children: null,
+          overall_max_selectable_days: null,
+          payment_methods: ['paypal', 'credit_card'],
+          group_discount_enabled: false,
+          group_discount_percentage: 0,
+          organized_group_free: false
+        });
 
         setLoading(false);
       } catch (e) {
@@ -367,6 +394,8 @@ export default function EditTrip() {
         daily_itinerary: formData.activity_type === 'trek' ? [] : (itinerary || []),
         budget: Object.keys(cleanBudget).length > 0 ? cleanBudget : undefined,
         trek_days: formData.activity_type === 'trek' ? trekDays : [],
+        trek_categories: formData.activity_type === 'trek' ? trekCategories : [],
+        payment_settings: formData.activity_type === 'trek' ? paymentSettings : undefined,
         trek_overall_highest_point_m: trekOverallHighest,
         trek_overall_lowest_point_m: trekOverallLowest,
         trek_total_distance_km: trekTotalDistance
@@ -929,11 +958,17 @@ export default function EditTrip() {
                 <div className="space-y-6">
                   {formData.activity_type === 'trek' ? (
                     <>
+                      <TrekCategoryManager
+                        categories={trekCategories}
+                        setCategories={setTrekCategories}
+                        currency={paymentSettings.currency}
+                      />
                       <TrekDaysCreator
                         trekDays={trekDays}
                         setTrekDays={setTrekDays}
                         tripDate={formData.date}
                         tripLocation={formData.location}
+                        categories={trekCategories}
                       />
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <EquipmentCreator
