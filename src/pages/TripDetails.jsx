@@ -162,7 +162,7 @@ export default function TripDetails() {
       return trips[0];
     },
     enabled: !!tripId,
-    refetchInterval: 5000 // Refresh every 5 seconds for all users viewing trip details
+    refetchInterval: 2000 // Refresh every 2 seconds for real-time chat updates
   });
 
   // Fetch user profiles for all participants to show updated names and family info
@@ -847,7 +847,7 @@ export default function TripDetails() {
     e.target.value = '';
   };
 
-  const handleSendChatMessage = async ({ content, type, recipient_email }) => {
+  const handleSendChatMessage = async ({ content, type, recipient_email, isUrgent }) => {
     setSendingMessage(true);
     try {
       const userName = user.first_name && user.last_name ?
@@ -860,7 +860,8 @@ export default function TripDetails() {
         content,
         timestamp: new Date().toISOString(),
         type,
-        recipient_email: recipient_email || null
+        recipient_email: recipient_email || null,
+        isUrgent: isUrgent || false
       };
 
       const updatedMessages = [...(trip.messages || []), newMessage];
