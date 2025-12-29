@@ -7,6 +7,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -14,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MessageCircle, Send, Users, Lock, Loader2, Video, X, Calendar, Clock } from 'lucide-react';
+import { MessageCircle, Send, Users, Lock, Loader2, Video, X, Calendar, Clock, Search, AlertCircle, CheckSquare } from 'lucide-react';
 import { format } from 'date-fns';
 import { base44 } from '@/api/base44Client';
 import { toast } from "sonner";
@@ -25,6 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import GroupChatManager from './GroupChatManager';
 
 export default function TripChat({ trip, currentUserEmail, onSendMessage, sending }) {
   const { language } = useLanguage();
@@ -35,6 +38,11 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
   const [scheduledTime, setScheduledTime] = useState('');
   const [creatingInvite, setCreatingInvite] = useState(false);
+  const [isUrgent, setIsUrgent] = useState(false);
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
+  const [selectedRecipients, setSelectedRecipients] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [groups, setGroups] = useState([]);
   const scrollRef = useRef(null);
 
   const roomName = `tripmate-${trip.id}`;
@@ -55,12 +63,49 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
     if (!message.trim()) return;
 
     const type = activeTab === 'group' ? 'group' : 'private';
+    
+    // Determine recipients
+    let recipients = [];
+    if (type === 'group') {
+      recipients = participants.map(p => p.email).filter(e => e !== currentUserEmail);
+    } else if (multiSelectMode) {
+      recipients = selectedRecipients;
+    } else if (selectedRecipient) {
+      recipients = [selectedRecipient];
+    }
+
+    if (recipients.length === 0 && type !== 'group') {
+      toast.error(language === 'he' ? 'בחר נמענים' : 'Select recipients');
+      return;
+    }
+
+    // Send message via onSendMessage (updates trip)
     await onSendMessage({
       content: message.trim(),
       type,
-      recipient_email: type === 'private' ? selectedRecipient : null
+      recipient_email: type === 'private' ? (multiSelectMode ? null : selectedRecipient) : null,
+      isUrgent
     });
+
+    // Send notifications (Push + Email)
+    try {
+      await base44.functions.invoke('sendChatNotification', {
+        tripId: trip.id,
+        recipientEmails: recipients,
+        message: message.trim(),
+        isUrgent,
+        isGroup: type === 'group',
+        groupName: trip.title || 'Trip Chat',
+        messageId: Date.now().toString()
+      });
+    } catch (error) {
+      console.error('Notification error:', error);
+    }
+
     setMessage('');
+    setIsUrgent(false);
+    setMultiSelectMode(false);
+    setSelectedRecipients([]);
   };
 
   const handleCreateInvite = async () => {
@@ -121,8 +166,24 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
 
   const privateConversations = getPrivateConversations();
 
+  const toggleRecipient = (email) => {
+    setSelectedRecipients((prev) =>
+      prev.includes(email) ? prev.filter((e) => e !== email) : [...prev, email]
+    );
+  };
+
+  const filteredParticipants = otherParticipants.filter((p) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      p.name?.toLowerCase().includes(query) ||
+      p.email?.toLowerCase().includes(query) ||
+      p.phone?.toLowerCase().includes(query)
+    );
+  });
+
   const renderMessage = (msg, isPrivate = false) => {
     const isMine = msg.sender_email === currentUserEmail;
+    const urgent = msg.isUrgent || false;
     return (
       <div key={msg.id} className={`flex gap-3 mb-4 ${isMine ? 'flex-row-reverse' : ''}`}>
         <Avatar className="w-8 h-8">
@@ -133,6 +194,9 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
         <div className={`flex-1 ${isMine ? 'text-right' : ''}`}>
           <div className={`inline-block max-w-[80%] ${isMine ? 'text-right' : ''}`}>
             <div className="flex items-center gap-2 mb-1">
+              {urgent && (
+                <AlertCircle className="w-4 h-4 text-red-600 animate-pulse" />
+              )}
               <span className="text-sm font-medium text-gray-700">
                 {msg.sender_name}
               </span>
@@ -141,10 +205,20 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
               </span>
             </div>
             <div className={`rounded-2xl px-4 py-2 ${
-              isMine 
+              urgent
+                ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white border-2 border-yellow-400 shadow-lg'
+                : isMine 
                 ? 'bg-emerald-600 text-white' 
                 : 'bg-gray-100 text-gray-900'
             }`}>
+              {urgent && (
+                <div className="flex items-center gap-2 mb-1 pb-1 border-b border-white/30">
+                  <AlertCircle className="w-3 h-3" />
+                  <span className="text-xs font-bold uppercase">
+                    {language === 'he' ? 'דחוף!' : language === 'ru' ? 'Срочно!' : language === 'es' ? '¡Urgente!' : language === 'fr' ? 'Urgent !' : language === 'de' ? 'Dringend!' : language === 'it' ? 'Urgente!' : 'URGENT!'}
+                  </span>
+                </div>
+              )}
               <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
             </div>
           </div>
@@ -157,20 +231,25 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
     <>
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-2">
             <CardTitle className="flex items-center gap-2">
               <MessageCircle className="w-5 h-5 text-blue-600" />
               {language === 'he' ? 'צ\'אט הטיול' : language === 'ru' ? 'Чат поездки' : language === 'es' ? 'Chat del viaje' : language === 'fr' ? 'Chat du voyage' : language === 'de' ? 'Reise-Chat' : language === 'it' ? 'Chat del viaggio' : 'Trip Chat'}
             </CardTitle>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowVideoCall(true)}
-              className="gap-2 text-emerald-600 border-emerald-200 hover:bg-emerald-50"
-            >
-              <Video className="w-4 h-4" />
-              {language === 'he' ? 'שיחת וידאו' : language === 'ru' ? 'Видеозвонок' : language === 'es' ? 'Videollamada' : language === 'fr' ? 'Appel vidéo' : language === 'de' ? 'Videoanruf' : language === 'it' ? 'Videochiamata' : 'Video Call'}
-            </Button>
+            <div className="flex gap-2">
+              <GroupChatManager trip={trip} onGroupCreated={(group) => setGroups([...groups, group])} />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowVideoCall(true)}
+                className="gap-2 text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+              >
+                <Video className="w-4 h-4" />
+                <span className="hidden sm:inline">
+                  {language === 'he' ? 'שיחת וידאו' : language === 'ru' ? 'Видеозвонок' : language === 'es' ? 'Videollamada' : language === 'fr' ? 'Appel vidéo' : language === 'de' ? 'Videoanruf' : language === 'it' ? 'Videochiamata' : 'Video Call'}
+                </span>
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -235,7 +314,7 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
               )}
             </ScrollArea>
 
-            <div className="space-y-2 pt-4 border-t">
+            <div className="space-y-3 pt-4 border-t">
               <Button
                 variant="outline"
                 size="sm"
@@ -245,6 +324,16 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
                 <Calendar className="w-4 h-4" />
                 {language === 'he' ? 'קבע שיחת וידאו' : language === 'ru' ? 'Запланировать видеозвонок' : language === 'es' ? 'Programar videollamada' : language === 'fr' ? 'Planifier appel vidéo' : language === 'de' ? 'Videoanruf planen' : language === 'it' ? 'Pianifica videochiamata' : 'Schedule Video Call'}
               </Button>
+
+              <div className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className={`w-4 h-4 ${isUrgent ? 'text-red-600' : 'text-gray-400'}`} />
+                  <span className="text-sm font-medium">
+                    {language === 'he' ? 'הודעה דחופה' : language === 'ru' ? 'Срочное сообщение' : language === 'es' ? 'Mensaje urgente' : language === 'fr' ? 'Message urgent' : language === 'de' ? 'Dringende Nachricht' : language === 'it' ? 'Messaggio urgente' : 'Urgent Message'}
+                  </span>
+                </div>
+                <Switch checked={isUrgent} onCheckedChange={setIsUrgent} />
+              </div>
               
               <div className="flex gap-2">
                 <Input
@@ -254,11 +343,12 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
                   placeholder={language === 'he' ? 'כתוב הודעה...' : language === 'ru' ? 'Введите сообщение...' : language === 'es' ? 'Escribe un mensaje...' : language === 'fr' ? 'Écrivez un message...' : language === 'de' ? 'Nachricht eingeben...' : language === 'it' ? 'Scrivi un messaggio...' : 'Type a message...'}
                   disabled={sending}
                   dir={language === 'he' ? 'rtl' : 'ltr'}
+                  className={isUrgent ? 'border-2 border-red-400' : ''}
                 />
                 <Button 
                   onClick={handleSend} 
                   disabled={!message.trim() || sending}
-                  className="bg-emerald-600 hover:bg-emerald-700"
+                  className={isUrgent ? 'bg-red-600 hover:bg-red-700 animate-pulse' : 'bg-emerald-600 hover:bg-emerald-700'}
                 >
                   {sending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -288,26 +378,84 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
               </div>
             ) : (
               <>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    {language === 'he' ? 'שלח הודעה פרטית אל:' : language === 'ru' ? 'Отправить личное сообщение:' : language === 'es' ? 'Enviar mensaje privado a:' : language === 'fr' ? 'Envoyer message privé à :' : language === 'de' ? 'Private Nachricht senden an:' : language === 'it' ? 'Invia messaggio privato a:' : 'Send private message to:'}
-                  </label>
-                  <Select value={selectedRecipient} onValueChange={setSelectedRecipient}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={language === 'he' ? 'בחר משתתף' : language === 'ru' ? 'Выбрать участника' : language === 'es' ? 'Seleccionar participante' : language === 'fr' ? 'Sélectionner participant' : language === 'de' ? 'Teilnehmer auswählen' : language === 'it' ? 'Seleziona partecipante' : 'Select participant'} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {otherParticipants.map(p => (
-                        <SelectItem key={p.email} value={p.email}>
-                          {p.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="space-y-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium flex items-center gap-2">
+                      <CheckSquare className="w-4 h-4 text-blue-600" />
+                      {language === 'he' ? 'בחירה מרובה' : language === 'ru' ? 'Множественный выбор' : language === 'es' ? 'Selección múltiple' : language === 'fr' ? 'Sélection multiple' : language === 'de' ? 'Mehrfachauswahl' : language === 'it' ? 'Selezione multipla' : 'Multi-Select'}
+                    </label>
+                    <Switch checked={multiSelectMode} onCheckedChange={setMultiSelectMode} />
+                  </div>
+                  {multiSelectMode && selectedRecipients.length > 0 && (
+                    <div className="text-xs text-blue-700">
+                      {selectedRecipients.length} {language === 'he' ? 'נבחרו' : language === 'ru' ? 'выбрано' : language === 'es' ? 'seleccionados' : language === 'fr' ? 'sélectionnés' : language === 'de' ? 'ausgewählt' : language === 'it' ? 'selezionati' : 'selected'}
+                    </div>
+                  )}
                 </div>
 
-                {selectedRecipient && (
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    placeholder={language === 'he' ? 'חפש לפי שם, אימייל או טלפון...' : language === 'ru' ? 'Поиск по имени, email или телефону...' : language === 'es' ? 'Buscar por nombre, email o teléfono...' : language === 'fr' ? 'Rechercher par nom, email ou téléphone...' : language === 'de' ? 'Nach Name, E-Mail oder Telefon suchen...' : language === 'it' ? 'Cerca per nome, email o telefono...' : 'Search by name, email or phone...'}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+
+                {!multiSelectMode && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">
+                      {language === 'he' ? 'שלח הודעה פרטית אל:' : language === 'ru' ? 'Отправить личное сообщение:' : language === 'es' ? 'Enviar mensaje privado a:' : language === 'fr' ? 'Envoyer message privé à :' : language === 'de' ? 'Private Nachricht senden an:' : language === 'it' ? 'Invia messaggio privato a:' : 'Send private message to:'}
+                    </label>
+                    <Select value={selectedRecipient} onValueChange={setSelectedRecipient}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={language === 'he' ? 'בחר משתתף' : language === 'ru' ? 'Выбрать участника' : language === 'es' ? 'Seleccionar participante' : language === 'fr' ? 'Sélectionner participant' : language === 'de' ? 'Teilnehmer auswählen' : language === 'it' ? 'Seleziona partecipante' : 'Select participant'} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {filteredParticipants.map(p => (
+                          <SelectItem key={p.email} value={p.email}>
+                            <div>
+                              <p className="font-medium">{p.name}</p>
+                              <p className="text-xs text-gray-500">{p.email}</p>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {multiSelectMode && (
+                  <div className="max-h-48 overflow-y-auto space-y-2 border rounded-lg p-2">
+                    {filteredParticipants.map((p) => (
+                      <div
+                        key={p.email}
+                        className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
+                        onClick={() => toggleRecipient(p.email)}
+                      >
+                        <Checkbox checked={selectedRecipients.includes(p.email)} />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm truncate">{p.name}</p>
+                          <p className="text-xs text-gray-500 truncate">{p.email}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {(selectedRecipient || (multiSelectMode && selectedRecipients.length > 0)) && (
                   <>
+                    <div className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <AlertCircle className={`w-4 h-4 ${isUrgent ? 'text-red-600' : 'text-gray-400'}`} />
+                        <span className="text-sm font-medium">
+                          {language === 'he' ? 'הודעה דחופה' : language === 'ru' ? 'Срочное сообщение' : language === 'es' ? 'Mensaje urgente' : language === 'fr' ? 'Message urgent' : language === 'de' ? 'Dringende Nachricht' : language === 'it' ? 'Messaggio urgente' : 'Urgent Message'}
+                        </span>
+                      </div>
+                      <Switch checked={isUrgent} onCheckedChange={setIsUrgent} />
+                    </div>
+
                     <ScrollArea className="h-[300px] pr-4" ref={scrollRef}>
                       {privateConversations[selectedRecipient]?.length > 0 ? (
                         privateConversations[selectedRecipient].map(msg => renderMessage(msg, true))
@@ -333,14 +481,19 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && !sending && handleSend()}
-                        placeholder={language === 'he' ? 'כתוב הודעה פרטית...' : language === 'ru' ? 'Введите личное сообщение...' : language === 'es' ? 'Escribe mensaje privado...' : language === 'fr' ? 'Écrivez message privé...' : language === 'de' ? 'Private Nachricht eingeben...' : language === 'it' ? 'Scrivi messaggio privato...' : 'Type a private message...'}
+                        placeholder={
+                          multiSelectMode 
+                            ? (language === 'he' ? 'הודעה לנבחרים...' : language === 'ru' ? 'Сообщение выбранным...' : language === 'es' ? 'Mensaje a seleccionados...' : language === 'fr' ? 'Message aux sélectionnés...' : language === 'de' ? 'Nachricht an Ausgewählte...' : language === 'it' ? 'Messaggio ai selezionati...' : 'Message to selected...')
+                            : (language === 'he' ? 'כתוב הודעה פרטית...' : language === 'ru' ? 'Введите личное сообщение...' : language === 'es' ? 'Escribe mensaje privado...' : language === 'fr' ? 'Écrivez message privé...' : language === 'de' ? 'Private Nachricht eingeben...' : language === 'it' ? 'Scrivi messaggio privato...' : 'Type a private message...')
+                        }
                         disabled={sending}
                         dir={language === 'he' ? 'rtl' : 'ltr'}
+                        className={isUrgent ? 'border-2 border-red-400' : ''}
                       />
                       <Button 
                         onClick={handleSend} 
-                        disabled={!message.trim() || sending}
-                        className="bg-blue-600 hover:bg-blue-700"
+                        disabled={!message.trim() || sending || (!selectedRecipient && (!multiSelectMode || selectedRecipients.length === 0))}
+                        className={isUrgent ? 'bg-red-600 hover:bg-red-700 animate-pulse' : 'bg-blue-600 hover:bg-blue-700'}
                       >
                         {sending ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
