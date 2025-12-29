@@ -59,6 +59,14 @@ function LayoutContent({ children, currentPageName }) {
   const [showLanguageSelection, setShowLanguageSelection] = useState(false);
   const navigate = useNavigate();
 
+  const { data: unreadMessages = [] } = useQuery({
+    queryKey: ['unreadMessagesCount', user?.email],
+    queryFn: () => base44.entities.Message.filter({ recipient_email: user.email, read: false }),
+    enabled: !!user?.email,
+    refetchInterval: 5000,
+  });
+  const unreadCount = unreadMessages.length;
+
   useEffect(() => {
     // Add Facebook domain verification meta tag
     const metaTag = document.createElement('meta');
@@ -189,14 +197,6 @@ function LayoutContent({ children, currentPageName }) {
     }
     link.setAttribute('href', url);
   }, [currentPageName, language]);
-
-  const { data: unreadMessages = [] } = useQuery({
-    queryKey: ['unreadMessagesCount', user?.email],
-    queryFn: () => base44.entities.Message.filter({ recipient_email: user.email, read: false }),
-    enabled: !!user?.email,
-    refetchInterval: 5000,
-  });
-  const unreadCount = unreadMessages.length;
 
   useEffect(() => {
     // Check if language has been selected
