@@ -67,6 +67,7 @@ Deno.serve(async (req) => {
             icon: '/icon-192x192.png',
             badge: '/badge-72x72.png',
             tag: `trip-${tripId}`,
+            isUrgent, // Pass urgent flag to service worker
             data: {
               url: `/TripDetails?id=${tripId}`,
               tripId,
@@ -74,31 +75,43 @@ Deno.serve(async (req) => {
               isUrgent
             },
             requireInteraction: isUrgent,
-            vibrate: isUrgent ? [200, 100, 200, 100, 200] : [200, 100, 200],
-            sound: '/notification.mp3',
             actions: [
-              { action: 'open', title: 'Open Chat' },
-              { action: 'close', title: 'Dismiss' }
+              { action: 'open', title: isUrgent ? '⚠️ פתח' : 'פתח צ\'אט' },
+              { action: 'close', title: 'סגור' }
             ]
           });
 
-          await Promise.allSettled(
+          const pushResults = await Promise.allSettled(
             subscriptions.map(async (subscription) => {
               try {
                 await webpush.sendNotification(subscription, payload);
                 pushSent = true;
+                return { success: true, endpoint: subscription.endpoint };
               } catch (error) {
-                if (error.statusCode === 410) {
-                  const updatedSubscriptions = subscriptions.filter(
-                    (sub) => sub.endpoint !== subscription.endpoint
-                  );
-                  await base44.asServiceRole.entities.User.update(recipient.id, {
-                    push_subscriptions: updatedSubscriptions
-                  });
+                // Handle expired subscriptions (410 Gone)
+                if (error.statusCode === 410 || error.statusCode === 404) {
+                  console.log('Removing expired subscription:', subscription.endpoint);
+                  return { success: false, expired: true, endpoint: subscription.endpoint };
                 }
+                console.error('Push notification error:', error);
+                return { success: false, expired: false, endpoint: subscription.endpoint };
               }
             })
           );
+
+          // Clean up expired subscriptions
+          const expiredEndpoints = pushResults
+            .filter(r => r.value?.expired)
+            .map(r => r.value.endpoint);
+
+          if (expiredEndpoints.length > 0) {
+            const updatedSubscriptions = subscriptions.filter(
+              sub => !expiredEndpoints.includes(sub.endpoint)
+            );
+            await base44.asServiceRole.entities.User.update(recipient.id, {
+              push_subscriptions: updatedSubscriptions
+            });
+          }
         }
 
         // Send Email with threading

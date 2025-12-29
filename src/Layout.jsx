@@ -6,6 +6,7 @@ import { GoogleMapsProvider } from './components/maps/GoogleMapsProvider';
 import LanguageSwitcher from './components/ui/LanguageSwitcher';
 import PermissionsRequest from './components/notifications/PermissionsRequest';
 import NotificationBell from './components/notifications/NotificationBell';
+import NotificationPermissionRequest from './components/notifications/NotificationPermissionRequest';
 import LanguageSelection from './components/LanguageSelection';
 import CookieConsent from './components/legal/CookieConsent';
 import AccessibilityButton from './components/accessibility/AccessibilityButton';
@@ -517,6 +518,9 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* Permissions Request Dialog */}
       {user && <PermissionsRequest />}
+
+      {/* First-time Notification Permission Request */}
+      <NotificationPermissionRequest />
 
       {/* Cookie Consent Banner */}
       <CookieConsent />
