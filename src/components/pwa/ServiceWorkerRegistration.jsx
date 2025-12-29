@@ -58,46 +58,36 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('push', (event) => {
   console.log('Service Worker: Push received', event);
   
-  let notification = {
-    title: 'Groupy Loopy',
-    body: 'You have a new notification',
-    icon: '/icon-192x192.png',
-    badge: '/badge-72x72.png',
-    tag: 'default',
-    data: {}
-  };
+  if (!event.data) return;
 
-  if (event.data) {
-    try {
-      const payload = event.data.json();
-      notification = {
-        title: payload.title || notification.title,
-        body: payload.body || notification.body,
-        icon: payload.icon || notification.icon,
-        badge: payload.badge || notification.badge,
-        tag: payload.tag || notification.tag,
-        data: payload.data || {},
-        vibrate: [200, 100, 200],
-        requireInteraction: payload.requireInteraction || false,
-        actions: payload.actions || []
-      };
-    } catch (e) {
-      console.error('Error parsing push data:', e);
-      notification.body = event.data.text();
-    }
-  }
-
-  event.waitUntil(
-    self.registration.showNotification(notification.title, {
-      body: notification.body,
-      icon: notification.icon,
-      badge: notification.badge,
-      tag: notification.tag,
-      data: notification.data,
-      vibrate: notification.vibrate,
-      requireInteraction: notification.requireInteraction,
-      actions: notification.actions
+  const data = event.data.json();
+  
+  // Urgent messages get special treatment
+  const isUrgent = data.isUrgent || false;
+  const title = isUrgent ? \`🚨 אזהרה חריגה: \${data.title}\` : data.title;
+  
+  const options = {
+    body: data.body,
+    icon: data.icon || '/icon-192x192.png',
+    badge: data.badge || '/badge-72x72.png',
+    tag: isUrgent ? 'urgent-alert' : (data.tag || 'notification'),
+    data: data.data,
+    requireInteraction: isUrgent ? true : (data.requireInteraction || false),
+    vibrate: isUrgent ? [300, 100, 300, 100, 300] : [200, 100, 200],
+    silent: false, // Never silent - always play default sound
+    renotify: isUrgent, // Re-notify if urgent
+    actions: data.actions || [
+      { action: 'open', title: 'פתח' },
+      { action: 'close', title: 'סגור' }
+    ],
+    // Priority hint for urgent messages
+    ...(isUrgent && {
+      urgency: 'high'
     })
+  };
+  
+  event.waitUntil(
+    self.registration.showNotification(title, options)
   );
 });
 
