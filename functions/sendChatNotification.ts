@@ -31,7 +31,10 @@ Deno.serve(async (req) => {
     const publicKey = Deno.env.get('WEB_PUSH_PUBLIC_KEY');
     const privateKey = Deno.env.get('WEB_PUSH_PRIVATE_KEY');
 
-    if (publicKey && privateKey) {
+    if (!publicKey || !privateKey) {
+      console.warn('VAPID keys not configured - Push notifications will not be sent');
+      console.log('Please set WEB_PUSH_PUBLIC_KEY and WEB_PUSH_PRIVATE_KEY environment variables');
+    } else {
       webpush.setVapidDetails(
         'mailto:support@groupyloopy.com',
         publicKey,
@@ -169,14 +172,7 @@ Deno.serve(async (req) => {
         await base44.asServiceRole.integrations.Core.SendEmail({
           to: email,
           subject: subject,
-          body: emailBody,
-          headers: {
-            'Message-ID': threadMessageId,
-            'In-Reply-To': baseMessageId,
-            'References': baseMessageId,
-            'X-Priority': isUrgent ? '1' : '3',
-            'Importance': isUrgent ? 'high' : 'normal'
-          }
+          body: emailBody
         });
 
         results.push({

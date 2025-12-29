@@ -89,7 +89,7 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
 
     // Send notifications (Push + Email)
     try {
-      await base44.functions.invoke('sendChatNotification', {
+      const result = await base44.functions.invoke('sendChatNotification', {
         tripId: trip.id,
         recipientEmails: recipients,
         message: message.trim(),
@@ -98,8 +98,10 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
         groupName: trip.title || 'Trip Chat',
         messageId: Date.now().toString()
       });
+      console.log('Notification sent:', result);
     } catch (error) {
       console.error('Notification error:', error);
+      toast.error(language === 'he' ? 'שגיאה בשליחת התראות' : 'Error sending notifications');
     }
 
     setMessage('');
