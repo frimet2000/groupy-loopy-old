@@ -33,6 +33,7 @@ export default function NotificationBell({ userEmail }) {
   const { language } = useLanguage();
   const queryClient = useQueryClient();
   const [showChatDialog, setShowChatDialog] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [chatFriend, setChatFriend] = useState(null);
   const [prevUnreadCount, setPrevUnreadCount] = useState(0);
 
@@ -242,8 +243,23 @@ export default function NotificationBell({ userEmail }) {
     },
   });
 
-  const handleNotificationClick = (notification) => {
-    // Navigation handled by Link
+  const handleNotificationClick = async (notification) => {
+    setIsOpen(false);
+
+    try {
+      if (notification.type === 'inbox_message') {
+        await base44.entities.Message.update(notification.messageId, { read: true });
+        queryClient.invalidateQueries(['unreadMessages']);
+      }
+      
+      if (notification.type === 'trip_reminder') {
+        const reminderId = notification.id.replace('reminder_', '');
+        await base44.entities.TripReminder.update(reminderId, { sent: true });
+        queryClient.invalidateQueries(['upcomingReminders']);
+      }
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
   };
 
   const renderNotificationLink = (notification, children) => {
@@ -277,7 +293,7 @@ export default function NotificationBell({ userEmail }) {
         currentUser={currentUser}
       />
 
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button 
           variant="ghost" 
