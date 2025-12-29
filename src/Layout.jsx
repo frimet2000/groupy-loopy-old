@@ -257,16 +257,8 @@ function LayoutContent({ children, currentPageName }) {
       <header className="bg-gradient-to-r from-white via-emerald-50/30 to-white backdrop-blur-xl border-b-2 border-emerald-200/50 sticky top-0 z-50 shadow-lg shadow-emerald-100/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link to={createPageUrl('Home')} className="flex items-center group">
-              <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693c3ab4048a1e3a31fffd66/532a53f9c_.png"
-                alt="Groupy Loopy"
-                className="h-12 w-auto transition-all group-hover:scale-105"
-              />
-            </Link>
-
-            {/* Desktop Navigation */}
+          
+                      {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-1.5">
               {navItems.map(item => (
                 <Link key={item.name} to={createPageUrl(item.name)}>
