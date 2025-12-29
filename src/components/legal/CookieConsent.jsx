@@ -20,11 +20,13 @@ export default function CookieConsent() {
 
   const handleAccept = () => {
     localStorage.setItem('cookie_consent', 'accepted');
+    localStorage.setItem('cookie_consent_permanent', 'true');
     setShowBanner(false);
   };
 
   const handleDecline = () => {
     localStorage.setItem('cookie_consent', 'declined');
+    localStorage.setItem('cookie_consent_permanent', 'true');
     // Clear any non-essential storage if needed
     sessionStorage.clear();
     setShowBanner(false);
