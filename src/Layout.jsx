@@ -7,6 +7,7 @@ import LanguageSwitcher from './components/ui/LanguageSwitcher';
 import PermissionsRequest from './components/notifications/PermissionsRequest';
 import NotificationBell from './components/notifications/NotificationBell';
 import NotificationPermissionRequest from './components/notifications/NotificationPermissionRequest';
+import MessageListener from './components/notifications/MessageListener';
 import LanguageSelection from './components/LanguageSelection';
 import CookieConsent from './components/legal/CookieConsent';
 import AccessibilityButton from './components/accessibility/AccessibilityButton';
@@ -189,6 +190,14 @@ function LayoutContent({ children, currentPageName }) {
     link.setAttribute('href', url);
   }, [currentPageName, language]);
 
+  const { data: unreadMessages = [] } = useQuery({
+    queryKey: ['unreadMessagesCount', user?.email],
+    queryFn: () => base44.entities.Message.filter({ recipient_email: user.email, read: false }),
+    enabled: !!user?.email,
+    refetchInterval: 5000,
+  });
+  const unreadCount = unreadMessages.length;
+
   useEffect(() => {
     // Check if language has been selected
     const languageSelected = localStorage.getItem('language_selected');
@@ -289,7 +298,12 @@ function LayoutContent({ children, currentPageName }) {
                       <div className={`relative p-1.5 rounded-lg ${isActive(item.name) ? 'bg-white/20 shadow-inner' : ''}`}>
                         <item.icon className={`w-4 h-4 ${isActive(item.name) ? 'text-white drop-shadow' : item.color}`} />
                       </div>
-                      <span className="relative">{item.label}</span>
+                      <span className="relative">
+                        {item.label}
+                        {item.name === 'Inbox' && unreadCount > 0 && (
+                          <span className="absolute -top-2 -right-3 h-2.5 w-2.5 bg-red-500 rounded-full shadow" />
+                        )}
+                      </span>
                     </Button>
                   </motion.div>
                 </Link>
@@ -530,6 +544,9 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* Service Worker Registration */}
       <ServiceWorkerRegistration />
+
+      {/* Message Listener for in-app toasts */}
+      <MessageListener />
       </div>
       );
       }

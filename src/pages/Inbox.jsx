@@ -234,6 +234,16 @@ export default function Inbox() {
     );
   }
 
+  // Auto-open chat if query string specifies a sender
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const chatEmail = params.get('chat');
+    if (chatEmail) {
+      const msg = receivedMessages.find(m => m.sender_email === chatEmail && !m.archived) || sentMessages.find(m => m.recipient_email === chatEmail);
+      if (msg) setSelectedMessage(msg);
+    }
+  }, [receivedMessages, sentMessages]);
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}

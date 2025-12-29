@@ -877,6 +877,27 @@ export default function TripDetails() {
       [recipient_email] :
       (trip.participants || []).map((p) => p.email).filter((e) => e !== user.email);
 
+      // Persist a copy to the Message inbox for unread counters and Inbox hub
+      try {
+        await Promise.all(
+          recipientsList.map((email) =>
+            base44.entities.Message.create({
+              sender_email: user.email,
+              sender_name: userName,
+              recipient_email: email,
+              subject: language === 'he' ? `צ'אט טיול: ${trip.title || trip.title_he || trip.title_en || 'Trip'}` : `Trip Chat: ${trip.title || trip.title_en || trip.title_he || 'Trip'}`,
+              body: content,
+              sent_at: new Date().toISOString(),
+              read: false,
+              starred: false,
+              archived: false
+            })
+          )
+        );
+      } catch (e) {
+        console.log('Message inbox save error:', e);
+      }
+
       // Create notification records for group messages
       if (type === 'group') {
         const notificationPromises = recipientsList.map((email) =>
