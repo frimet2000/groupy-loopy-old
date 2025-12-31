@@ -13,6 +13,7 @@ import CookieConsent from './components/legal/CookieConsent';
 import AccessibilityButton from './components/accessibility/AccessibilityButton';
 import InstallPrompt from './components/pwa/InstallPrompt';
 import ServiceWorkerRegistration from './components/pwa/ServiceWorkerRegistration';
+import InAppBrowserWarning, { isInAppBrowser } from './components/auth/InAppBrowserWarning';
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -57,6 +58,7 @@ function LayoutContent({ children, currentPageName }) {
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showLanguageSelection, setShowLanguageSelection] = useState(false);
+  const [showInAppBrowserWarning, setShowInAppBrowserWarning] = useState(false);
   const navigate = useNavigate();
 
   const { data: unreadMessages = [] } = useQuery({
@@ -400,7 +402,13 @@ function LayoutContent({ children, currentPageName }) {
                   ) : (
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button 
-                        onClick={() => base44.auth.redirectToLogin()}
+                        onClick={() => {
+                          if (isInAppBrowser()) {
+                            setShowInAppBrowserWarning(true);
+                          } else {
+                            base44.auth.redirectToLogin();
+                          }
+                        }}
                         className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                       >
                         {language === 'he' ? 'התחבר' : language === 'ru' ? 'Войти' : language === 'es' ? 'Iniciar sesión' : language === 'fr' ? 'Connexion' : language === 'de' ? 'Anmelden' : language === 'it' ? 'Accedi' : 'Login'}
@@ -547,6 +555,12 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* Message Listener for in-app toasts */}
       <MessageListener />
+
+      {/* In-App Browser Warning */}
+      <InAppBrowserWarning 
+        isOpen={showInAppBrowserWarning} 
+        onClose={() => setShowInAppBrowserWarning(false)} 
+      />
       </div>
       );
       }
