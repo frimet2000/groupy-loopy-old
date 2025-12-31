@@ -13,6 +13,7 @@ import Home from './pages/Home';
 import Inbox from './pages/Inbox';
 import JournalEditor from './pages/JournalEditor';
 import JournalEntry from './pages/JournalEntry';
+import Landing from './pages/Landing';
 import Legal from './pages/Legal';
 import ListDetails from './pages/ListDetails';
 import MyLists from './pages/MyLists';
@@ -28,7 +29,6 @@ import TravelJournal from './pages/TravelJournal';
 import TripDetails from './pages/TripDetails';
 import TripSummary from './pages/TripSummary';
 import Weather from './pages/Weather';
-import Landing from './pages/Landing';
 import __Layout from './Layout.jsx';
 
 
@@ -48,6 +48,7 @@ export const PAGES = {
     "Inbox": Inbox,
     "JournalEditor": JournalEditor,
     "JournalEntry": JournalEntry,
+    "Landing": Landing,
     "Legal": Legal,
     "ListDetails": ListDetails,
     "MyLists": MyLists,
@@ -63,7 +64,6 @@ export const PAGES = {
     "TripDetails": TripDetails,
     "TripSummary": TripSummary,
     "Weather": Weather,
-    "Landing": Landing,
 }
 
 export const pagesConfig = {

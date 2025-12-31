@@ -199,47 +199,52 @@ function LayoutContent({ children, currentPageName }) {
   }, [currentPageName, language]);
 
   useEffect(() => {
-    // Check if we need to show landing page for in-app browsers
-    const isInAppBrowser = () => {
-      const ua = navigator.userAgent;
-      return ua.includes('TikTok') || 
-             ua.includes('BytedanceWebview') || 
-             ua.includes('Instagram') || 
-             ua.includes('FBAN') || 
-             ua.includes('FBAV');
-    };
+    try {
+      // Check if we need to show landing page for in-app browsers
+      const isInAppBrowser = () => {
+        if (typeof navigator === 'undefined') return false;
+        const ua = navigator.userAgent;
+        return ua.includes('TikTok') || 
+               ua.includes('BytedanceWebview') || 
+               ua.includes('Instagram') || 
+               ua.includes('FBAN') || 
+               ua.includes('FBAV');
+      };
 
-    const landingVisited = localStorage.getItem('landing_page_visited');
-    
-    if (isInAppBrowser() && !landingVisited && currentPageName !== 'Landing') {
-      navigate(createPageUrl('Landing'));
-      return;
-    }
-
-    // Check if language has been selected
-    const languageSelected = localStorage.getItem('language_selected');
-    if (!languageSelected && currentPageName !== 'Landing') {
-      setShowLanguageSelection(true);
-      return;
-    }
-
-    const fetchUser = async () => {
-      try {
-        const userData = await base44.auth.me();
-        setUser(userData);
-
-        if (userData) {
-          // Onboarding + Legal Gate (combined)
-          if ((!userData.terms_accepted || !userData.profile_completed) && currentPageName !== 'Onboarding' && currentPageName !== 'Landing') {
-            navigate(createPageUrl('Onboarding'));
-            return;
-          }
-        }
-      } catch (e) {
-        console.log('Not logged in');
+      const landingVisited = typeof localStorage !== 'undefined' ? localStorage.getItem('landing_page_visited') : null;
+      
+      if (isInAppBrowser() && !landingVisited && currentPageName !== 'Landing') {
+        navigate(createPageUrl('Landing'));
+        return;
       }
-    };
-    fetchUser();
+
+      // Check if language has been selected
+      const languageSelected = typeof localStorage !== 'undefined' ? localStorage.getItem('language_selected') : null;
+      if (!languageSelected && currentPageName !== 'Landing') {
+        setShowLanguageSelection(true);
+        return;
+      }
+
+      const fetchUser = async () => {
+        try {
+          const userData = await base44.auth.me();
+          setUser(userData);
+
+          if (userData) {
+            // Onboarding + Legal Gate (combined)
+            if ((!userData.terms_accepted || !userData.profile_completed) && currentPageName !== 'Onboarding' && currentPageName !== 'Landing') {
+              navigate(createPageUrl('Onboarding'));
+              return;
+            }
+          }
+        } catch (e) {
+          console.log('Not logged in');
+        }
+      };
+      fetchUser();
+    } catch (error) {
+      console.error('Layout effect error:', error);
+    }
   }, [currentPageName, navigate]);
 
   const handleLanguageSelect = (lang) => {

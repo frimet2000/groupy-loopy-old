@@ -10,25 +10,31 @@ export default function Landing() {
   }, []);
 
   const detectLanguage = async () => {
-    // Try geolocation
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const lang = getLanguageFromCoordinates(latitude, longitude);
-          setDetectedLanguage(lang);
-        },
-        () => {
-          // Fallback to browser language
-          const browserLang = navigator.language.split('-')[0];
-          const supportedLangs = ['he', 'en', 'ru', 'es', 'fr', 'de', 'it'];
-          setDetectedLanguage(supportedLangs.includes(browserLang) ? browserLang : 'en');
-        }
-      );
-    } else {
-      const browserLang = navigator.language.split('-')[0];
-      const supportedLangs = ['he', 'en', 'ru', 'es', 'fr', 'de', 'it'];
-      setDetectedLanguage(supportedLangs.includes(browserLang) ? browserLang : 'en');
+    try {
+      // Try geolocation
+      if (typeof navigator !== 'undefined' && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            const lang = getLanguageFromCoordinates(latitude, longitude);
+            setDetectedLanguage(lang);
+          },
+          () => {
+            // Fallback to browser language
+            const browserLang = (navigator.language || 'en').split('-')[0];
+            const supportedLangs = ['he', 'en', 'ru', 'es', 'fr', 'de', 'it'];
+            setDetectedLanguage(supportedLangs.includes(browserLang) ? browserLang : 'en');
+          }
+        );
+      } else {
+        // Fallback to browser language
+        const browserLang = typeof navigator !== 'undefined' ? (navigator.language || 'en').split('-')[0] : 'en';
+        const supportedLangs = ['he', 'en', 'ru', 'es', 'fr', 'de', 'it'];
+        setDetectedLanguage(supportedLangs.includes(browserLang) ? browserLang : 'en');
+      }
+    } catch (error) {
+      console.error('Language detection error:', error);
+      setDetectedLanguage('en');
     }
   };
 
@@ -97,27 +103,42 @@ export default function Landing() {
   const isRTL = detectedLanguage === 'he';
 
   const handleOpenInBrowser = () => {
-    const appUrl = window.location.origin;
-    localStorage.setItem('landing_page_visited', 'true');
-    localStorage.setItem('language', detectedLanguage);
-    
-    // Try multiple methods to open in external browser
-    const isTikTok = navigator.userAgent.includes('TikTok') || navigator.userAgent.includes('BytedanceWebview');
-    const isInstagram = navigator.userAgent.includes('Instagram');
-    const isFacebook = navigator.userAgent.includes('FBAN') || navigator.userAgent.includes('FBAV');
-    
-    if (isTikTok || isInstagram || isFacebook) {
-      // For in-app browsers, try to open in external browser
-      const a = document.createElement('a');
-      a.href = appUrl;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } else {
-      // Regular redirect
-      window.location.href = appUrl;
+    try {
+      if (typeof window === 'undefined') return;
+      
+      const appUrl = window.location.origin;
+      
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('landing_page_visited', 'true');
+        localStorage.setItem('language', detectedLanguage);
+        localStorage.setItem('language_selected', 'true');
+      }
+      
+      // Try multiple methods to open in external browser
+      const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+      const isTikTok = userAgent.includes('TikTok') || userAgent.includes('BytedanceWebview');
+      const isInstagram = userAgent.includes('Instagram');
+      const isFacebook = userAgent.includes('FBAN') || userAgent.includes('FBAV');
+      
+      if (isTikTok || isInstagram || isFacebook) {
+        // For in-app browsers, try to open in external browser
+        const a = document.createElement('a');
+        a.href = appUrl;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        // Regular redirect
+        window.location.href = appUrl;
+      }
+    } catch (error) {
+      console.error('Open browser error:', error);
+      // Fallback - try simple redirect
+      if (typeof window !== 'undefined') {
+        window.location.href = window.location.origin;
+      }
     }
   };
 
