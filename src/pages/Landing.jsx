@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button';
 
 export default function Landing() {
   const [detectedLanguage, setDetectedLanguage] = useState('en');
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     detectLanguage();
   }, []);
 
@@ -101,6 +103,16 @@ export default function Landing() {
 
   const t = translations[detectedLanguage] || translations.en;
   const isRTL = detectedLanguage === 'he';
+
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
 
   const handleOpenInBrowser = () => {
     try {
