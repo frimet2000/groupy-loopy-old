@@ -199,9 +199,26 @@ function LayoutContent({ children, currentPageName }) {
   }, [currentPageName, language]);
 
   useEffect(() => {
+    // Check if we need to show landing page for in-app browsers
+    const isInAppBrowser = () => {
+      const ua = navigator.userAgent;
+      return ua.includes('TikTok') || 
+             ua.includes('BytedanceWebview') || 
+             ua.includes('Instagram') || 
+             ua.includes('FBAN') || 
+             ua.includes('FBAV');
+    };
+
+    const landingVisited = localStorage.getItem('landing_page_visited');
+    
+    if (isInAppBrowser() && !landingVisited && currentPageName !== 'Landing') {
+      navigate(createPageUrl('Landing'));
+      return;
+    }
+
     // Check if language has been selected
     const languageSelected = localStorage.getItem('language_selected');
-    if (!languageSelected) {
+    if (!languageSelected && currentPageName !== 'Landing') {
       setShowLanguageSelection(true);
       return;
     }
@@ -213,7 +230,7 @@ function LayoutContent({ children, currentPageName }) {
 
         if (userData) {
           // Onboarding + Legal Gate (combined)
-          if ((!userData.terms_accepted || !userData.profile_completed) && currentPageName !== 'Onboarding') {
+          if ((!userData.terms_accepted || !userData.profile_completed) && currentPageName !== 'Onboarding' && currentPageName !== 'Landing') {
             navigate(createPageUrl('Onboarding'));
             return;
           }
@@ -223,7 +240,7 @@ function LayoutContent({ children, currentPageName }) {
       }
     };
     fetchUser();
-  }, [currentPageName]);
+  }, [currentPageName, navigate]);
 
   const handleLanguageSelect = (lang) => {
     setLanguage(lang);
