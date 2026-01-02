@@ -5,7 +5,7 @@ import { useLanguage } from '../components/LanguageContext';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import TripCard from '../components/trips/TripCard';
 import { ArrowLeft, ArrowRight, List, Loader2, Plus, X, Lock, Unlock } from 'lucide-react';
