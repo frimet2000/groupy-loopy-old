@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import DailyMeetingPoints from '../components/nifgashim/DailyMeetingPoints';
 
 export default function NifgashimDashboard() {
   const { language, isRTL } = useLanguage();

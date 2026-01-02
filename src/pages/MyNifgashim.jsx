@@ -11,6 +11,7 @@ import { motion } from 'framer-motion';
 import { createPageUrl } from '@/utils';
 import ParticipantQRCode from '../components/nifgashim/ParticipantQRCode';
 import DailyMemorial from '../components/nifgashim/DailyMemorial';
+import DailyMeetingPoints from '../components/nifgashim/DailyMeetingPoints';
 import { Label } from '@/components/ui/label';
 
 export default function MyNifgashim() {
