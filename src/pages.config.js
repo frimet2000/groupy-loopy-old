@@ -16,8 +16,15 @@ import JournalEntry from './pages/JournalEntry';
 import Landing from './pages/Landing';
 import Legal from './pages/Legal';
 import ListDetails from './pages/ListDetails';
+import MemorialRequest from './pages/MemorialRequest';
 import MyLists from './pages/MyLists';
+import MyNifgashim from './pages/MyNifgashim';
 import MyTrips from './pages/MyTrips';
+import NifgashimCheckIn from './pages/NifgashimCheckIn';
+import NifgashimDashboard from './pages/NifgashimDashboard';
+import NifgashimLanding from './pages/NifgashimLanding';
+import NifgashimRegistration from './pages/NifgashimRegistration';
+import NifgashimTrekManager from './pages/NifgashimTrekManager';
 import Notifications from './pages/Notifications';
 import Onboarding from './pages/Onboarding';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -29,13 +36,6 @@ import TravelJournal from './pages/TravelJournal';
 import TripDetails from './pages/TripDetails';
 import TripSummary from './pages/TripSummary';
 import Weather from './pages/Weather';
-import NifgashimLanding from './pages/NifgashimLanding';
-import NifgashimRegistration from './pages/NifgashimRegistration';
-import MemorialRequest from './pages/MemorialRequest';
-import NifgashimDashboard from './pages/NifgashimDashboard';
-import NifgashimTrekManager from './pages/NifgashimTrekManager';
-import NifgashimCheckIn from './pages/NifgashimCheckIn';
-import MyNifgashim from './pages/MyNifgashim';
 import __Layout from './Layout.jsx';
 
 
@@ -58,8 +58,15 @@ export const PAGES = {
     "Landing": Landing,
     "Legal": Legal,
     "ListDetails": ListDetails,
+    "MemorialRequest": MemorialRequest,
     "MyLists": MyLists,
+    "MyNifgashim": MyNifgashim,
     "MyTrips": MyTrips,
+    "NifgashimCheckIn": NifgashimCheckIn,
+    "NifgashimDashboard": NifgashimDashboard,
+    "NifgashimLanding": NifgashimLanding,
+    "NifgashimRegistration": NifgashimRegistration,
+    "NifgashimTrekManager": NifgashimTrekManager,
     "Notifications": Notifications,
     "Onboarding": Onboarding,
     "PrivacyPolicy": PrivacyPolicy,
@@ -71,13 +78,6 @@ export const PAGES = {
     "TripDetails": TripDetails,
     "TripSummary": TripSummary,
     "Weather": Weather,
-    "NifgashimLanding": NifgashimLanding,
-    "NifgashimRegistration": NifgashimRegistration,
-    "MemorialRequest": MemorialRequest,
-    "NifgashimDashboard": NifgashimDashboard,
-    "NifgashimTrekManager": NifgashimTrekManager,
-    "NifgashimCheckIn": NifgashimCheckIn,
-    "MyNifgashim": MyNifgashim,
 }
 
 export const pagesConfig = {

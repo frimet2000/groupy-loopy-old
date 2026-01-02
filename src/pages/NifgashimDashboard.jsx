@@ -18,7 +18,9 @@ import {
   Car,
   Heart,
   Download,
-  AlertCircle
+  AlertCircle,
+  Mail,
+  Send
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -42,6 +44,9 @@ export default function NifgashimDashboard() {
       mealsToday: "ארוחות היום",
       accommodation: "לינות",
       drivers: "נהגים",
+      sendReminders: "שלח תזכורות",
+      remindersSent: "התזכורות נשלחו בהצלחה",
+      selectDateForReminder: "בחר תאריך לשליחת תזכורות",
       filterByDate: "סינון לפי תאריך",
       allDates: "כל התאריכים",
       pendingMemorials: "הנצחות לאישור",
@@ -67,6 +72,9 @@ export default function NifgashimDashboard() {
       mealsToday: "Today's Meals",
       accommodation: "Accommodations",
       drivers: "Drivers",
+      sendReminders: "Send Reminders",
+      remindersSent: "Reminders sent successfully",
+      selectDateForReminder: "Select date to send reminders",
       filterByDate: "Filter by Date",
       allDates: "All Dates",
       pendingMemorials: "Pending Memorials",
@@ -192,25 +200,62 @@ export default function NifgashimDashboard() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-4 mb-8">
-          <StatCard
-            icon={CheckCircle2}
-            title={trans.todayCheckIns}
-            value={todayCheckIns}
-            color="text-emerald-600"
-          />
-          <StatCard
-            icon={Heart}
-            title={trans.pendingMemorials}
-            value={pendingMemorials.length}
-            color="text-red-600"
-          />
-          <StatCard
-            icon={Heart}
-            title={trans.approvedMemorials}
-            value={approvedMemorials.length}
-            color="text-pink-600"
-          />
+        <StatCard
+          icon={CheckCircle2}
+          title={trans.todayCheckIns}
+          value={todayCheckIns}
+          color="text-emerald-600"
+        />
+        <StatCard
+          icon={Heart}
+          title={trans.pendingMemorials}
+          value={pendingMemorials.length}
+          color="text-red-600"
+        />
+        <StatCard
+          icon={Heart}
+          title={trans.approvedMemorials}
+          value={approvedMemorials.length}
+          color="text-pink-600"
+        />
         </div>
+
+        {/* Send Reminders */}
+        <Card className="mb-8">
+        <CardContent className="p-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-full bg-orange-100">
+                <Mail className="w-5 h-5 text-orange-600" />
+              </div>
+              <div>
+                <div className="font-semibold">{trans.sendReminders}</div>
+                <div className="text-sm text-gray-600">{trans.selectDateForReminder}</div>
+              </div>
+            </div>
+            <Button
+              onClick={async () => {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const dateStr = tomorrow.toISOString().split('T')[0];
+                try {
+                  const result = await base44.functions.invoke('sendNifgashimReminder', {
+                    date: dateStr,
+                    language
+                  });
+                  toast.success(`${trans.remindersSent} (${result.data.sent}/${result.data.total})`);
+                } catch (e) {
+                  toast.error(language === 'he' ? 'שגיאה בשליחה' : 'Send error');
+                }
+              }}
+              className="bg-orange-600 hover:bg-orange-700"
+            >
+              <Send className="w-4 h-4 mr-2" />
+              {language === 'he' ? 'שלח למחר' : 'Send for Tomorrow'}
+            </Button>
+          </div>
+        </CardContent>
+        </Card>
 
         {/* Tabs */}
         <Tabs defaultValue="registrations" className="space-y-4">
@@ -225,7 +270,29 @@ export default function NifgashimDashboard() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>{trans.registrations}</CardTitle>
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={async () => {
+                      try {
+                        const response = await base44.functions.invoke('exportNifgashimData', {
+                          type: 'registrations'
+                        });
+                        const blob = new Blob([response.data], { type: 'text/csv' });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `registrations_${new Date().toISOString().split('T')[0]}.csv`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        a.remove();
+                        toast.success(language === 'he' ? 'הנתונים יוצאו בהצלחה' : 'Data exported successfully');
+                      } catch (e) {
+                        toast.error(language === 'he' ? 'שגיאה בייצוא' : 'Export error');
+                      }
+                    }}
+                  >
                     <Download className="w-4 h-4 mr-2" />
                     {trans.exportExcel}
                   </Button>
