@@ -34,52 +34,52 @@ Deno.serve(async (req) => {
       privacy: 'public' 
     }, '-created_date', 100);
     
-    // בניית ה-XML - וודא שאין רווחים לפני ה-<?xml
-    let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n';
+    // בניית ה-XML בפורמט תקין
+    const xmlLines = [];
+    xmlLines.push('<?xml version="1.0" encoding="UTF-8"?>');
+    xmlLines.push('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">');
     
     staticPages.forEach(page => {
       const pagePath = page.path ? '/' + page.path : '';
-      xml += '  <url>\n';
-      xml += `    <loc>${baseUrl}${pagePath}</loc>\n`;
-      xml += `    <lastmod>${now}</lastmod>\n`;
-      xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
-      xml += `    <priority>${page.priority}</priority>\n`;
+      xmlLines.push('  <url>');
+      xmlLines.push(`    <loc>${baseUrl}${pagePath}</loc>`);
+      xmlLines.push(`    <lastmod>${now}</lastmod>`);
+      xmlLines.push(`    <changefreq>${page.changefreq}</changefreq>`);
+      xmlLines.push(`    <priority>${page.priority}</priority>`);
       languages.forEach(lang => {
-        xml += `    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}${pagePath}?lang=${lang}" />\n`;
+        xmlLines.push(`    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}${pagePath}?lang=${lang}" />`);
       });
-      xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}${pagePath}" />\n`;
-      xml += '  </url>\n';
+      xmlLines.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}${pagePath}" />`);
+      xmlLines.push('  </url>');
       
       languages.forEach(lang => {
-        xml += '  <url>\n';
-        xml += `    <loc>${baseUrl}${pagePath}?lang=${lang}</loc>\n`;
-        xml += `    <lastmod>${now}</lastmod>\n`;
-        xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
-        xml += `    <priority>${page.priority}</priority>\n`;
-        xml += '  </url>\n';
+        xmlLines.push('  <url>');
+        xmlLines.push(`    <loc>${baseUrl}${pagePath}?lang=${lang}</loc>`);
+        xmlLines.push(`    <lastmod>${now}</lastmod>`);
+        xmlLines.push(`    <changefreq>${page.changefreq}</changefreq>`);
+        xmlLines.push(`    <priority>${page.priority}</priority>`);
+        xmlLines.push('  </url>');
       });
     });
     
     trips.forEach(trip => {
       const tripDate = (trip.updated_date || trip.created_date || new Date().toISOString()).split('T')[0];
-      xml += '  <url>\n';
-      xml += `    <loc>${baseUrl}/TripDetails?id=${trip.id}</loc>\n`;
-      xml += `    <lastmod>${tripDate}</lastmod>\n`;
-      xml += '    <changefreq>daily</changefreq>\n';
-      xml += '    <priority>0.8</priority>\n';
-      xml += '  </url>\n';
+      xmlLines.push('  <url>');
+      xmlLines.push(`    <loc>${baseUrl}/TripDetails?id=${trip.id}</loc>`);
+      xmlLines.push(`    <lastmod>${tripDate}</lastmod>`);
+      xmlLines.push('    <changefreq>daily</changefreq>');
+      xmlLines.push('    <priority>0.8</priority>');
+      xmlLines.push('  </url>');
     });
     
-    xml += '</urlset>';
+    xmlLines.push('</urlset>');
 
-    // חשוב: החזרת Response נקי עם Content-Type מפורש
-    return new Response(xml.trim(), {
+    return new Response(xmlLines.join('\n'), {
       status: 200,
       headers: {
         'Content-Type': 'application/xml; charset=utf-8',
         'X-Content-Type-Options': 'nosniff',
-        'Cache-Control': 'no-cache, no-store, must-revalidate'
+        'Cache-Control': 'public, max-age=3600'
       }
     });
 
