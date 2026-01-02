@@ -88,6 +88,25 @@ function LayoutContent({ children, currentPageName }) {
     authorMeta.content = 'Groupy Loopy';
     document.head.appendChild(authorMeta);
 
+    // Add Google Ads Global Site Tag (gtag.js)
+    if (!document.getElementById('gtag-script')) {
+      const gtagScript = document.createElement('script');
+      gtagScript.id = 'gtag-script';
+      gtagScript.async = true;
+      gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXXXXX';
+      document.head.appendChild(gtagScript);
+
+      const gtagConfig = document.createElement('script');
+      gtagConfig.id = 'gtag-config';
+      gtagConfig.innerHTML = `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-XXXXXXXXXX');
+      `;
+      document.head.appendChild(gtagConfig);
+    }
+
     return () => {
       document.head.removeChild(metaTag);
       document.head.removeChild(keywordsMeta);
@@ -213,26 +232,60 @@ function LayoutContent({ children, currentPageName }) {
     }
     link.setAttribute('href', url);
 
-    // Schema.org JSON-LD for SoftwareApplication (Homepage only)
-    if (currentPageName === 'Home') {
-      const schemaScript = document.getElementById('schema-software');
-      if (schemaScript) schemaScript.remove();
+    // Schema.org JSON-LD Schemas
+    const schemas = [];
 
-      const schema = {
+    // WebSite Schema with SearchAction (for all pages)
+    const websiteSchema = {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Groupy Loopy",
+      "url": "https://groupyloopy.app",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://groupyloopy.app/?search={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    };
+    schemas.push(websiteSchema);
+
+    // Organization Schema (for all pages)
+    const organizationSchema = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Groupy Loopy",
+      "url": "https://groupyloopy.app",
+      "logo": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693c3ab4048a1e3a31fffd66/532a53f9c_.png",
+      "description": language === 'he'
+        ? "מערכת מקצועית לניהול טיולים קבוצתיים, רישום משתתפים וגביית תשלומים"
+        : "Professional platform for group trip management, participant registration and payment collection",
+      "sameAs": [
+        "https://www.facebook.com/groupyloopy"
+      ]
+    };
+    schemas.push(organizationSchema);
+
+    // SoftwareApplication Schema (Homepage only)
+    if (currentPageName === 'Home') {
+      const softwareSchema = {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
         "name": "Groupy Loopy",
         "description": language === 'he' 
-          ? "מערכת מקצועית לניהול טיולים קבוצתיים, רישום משתתפים וגביית תשלומים"
-          : "Professional platform for group trip management, participant registration and payment collection",
+          ? "מערכת מקצועית לניהול טיולים קבוצתיים, רישום משתתפים וגביית תשלומים. כולל מפות אינטראקטיביות, צ'ק-אין QR, ניהול הנצחות ותשלומים אוטומטיים."
+          : "Professional platform for group trip management, participant registration and payment collection. Includes interactive maps, QR check-in, memorial management and automatic payments.",
         "applicationCategory": "TravelApplication",
         "operatingSystem": "Web",
         "url": "https://groupyloopy.app",
         "offers": {
           "@type": "Offer",
-          "price": "0",
+          "price": "85",
           "priceCurrency": "ILS",
-          "availability": "https://schema.org/InStock"
+          "availability": "https://schema.org/InStock",
+          "description": language === 'he' ? "רישום לטראק - 85 ₪ למבוגר" : "Trek registration - 85 ILS per adult"
         },
         "aggregateRating": {
           "@type": "AggregateRating",
@@ -246,13 +299,21 @@ function LayoutContent({ children, currentPageName }) {
           "url": "https://groupyloopy.app"
         }
       };
+      schemas.push(softwareSchema);
+    }
 
+    // Clear old schemas
+    const oldSchemas = document.querySelectorAll('script[type="application/ld+json"]');
+    oldSchemas.forEach(s => s.remove());
+
+    // Inject all schemas
+    schemas.forEach((schema, idx) => {
       const script = document.createElement('script');
-      script.id = 'schema-software';
+      script.id = `schema-${idx}`;
       script.type = 'application/ld+json';
       script.text = JSON.stringify(schema);
       document.head.appendChild(script);
-    }
+    });
     }, [currentPageName, language]);
 
   useEffect(() => {
