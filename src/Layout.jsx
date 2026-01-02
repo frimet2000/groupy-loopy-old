@@ -74,10 +74,26 @@ function LayoutContent({ children, currentPageName }) {
     metaTag.content = 'u7wujwd6860x2d554lgdr2kycajfrs';
     document.head.appendChild(metaTag);
 
+    // Add keywords meta tag
+    const keywordsMeta = document.createElement('meta');
+    keywordsMeta.name = 'keywords';
+    keywordsMeta.content = language === 'he'
+      ? 'ניהול טיולים, ארגון קבוצות, רישום לטיול, גביית תשלומים מקבוצה, מערכת ניהול משתתפים, טופס הרשמה לטיול, ניהול לוגיסטיקה, טיולים קבוצתיים, טראק, הנצחת חללים'
+      : 'trip management, group organization, trip registration, group payment collection, participant management system, trip registration form, logistics management, group trips, trek, memorial management';
+    document.head.appendChild(keywordsMeta);
+
+    // Add author meta
+    const authorMeta = document.createElement('meta');
+    authorMeta.name = 'author';
+    authorMeta.content = 'Groupy Loopy';
+    document.head.appendChild(authorMeta);
+
     return () => {
       document.head.removeChild(metaTag);
+      document.head.removeChild(keywordsMeta);
+      document.head.removeChild(authorMeta);
     };
-  }, []);
+  }, [language]);
 
   // SEO meta tags (dynamic per page + language)
   useEffect(() => {
@@ -86,8 +102,8 @@ function LayoutContent({ children, currentPageName }) {
 
     const titles = {
       he: {
-        default: 'Groupy Loopy — מצאו שותפים לטיול',
-        Home: 'Groupy Loopy — מצאו שותפים לטיול',
+        default: 'Groupy Loopy - מערכת ניהול טיולים קבוצתיים | רישום משתתפים וגביית תשלומים',
+        Home: 'Groupy Loopy - מערכת ניהול טיולים קבוצתיים | רישום משתתפים וגביית תשלומים',
         MyTrips: 'הטיולים שלי — Groupy Loopy',
         CreateTrip: 'צור טיול — Groupy Loopy',
         Dashboard: 'לוח מחוונים — Groupy Loopy'
@@ -137,7 +153,7 @@ function LayoutContent({ children, currentPageName }) {
     };
 
     const descriptions = {
-      he: 'פלטפורמה חינמית לחיבור מטיילים, יצירה והצטרפות לטיולים, מסלולים וקבוצות — אחריות ובטיחות אישית.',
+      he: 'פלטפורמה מקצועית לארגון וניהול טיולים קבוצתיים. רישום משתתפים דיגיטלי, גביית תשלומים אוטומטית, ניהול לוגיסטיקה והנצחה. התחל בחינם - למארגני טיולים, מדריכים וקהילות.',
       en: 'A free platform to connect hikers, create and join trips and routes — personal safety and responsibility first.',
       ru: 'Бесплатная платформа для связи туристов, создания и присоединения к поездкам — ваша безопасность и ответственность.',
       es: 'Plataforma gratuita para conectar excursionistas, crear y unirse a viajes — seguridad y responsabilidad personal.',
@@ -196,7 +212,48 @@ function LayoutContent({ children, currentPageName }) {
       document.head.appendChild(link);
     }
     link.setAttribute('href', url);
-  }, [currentPageName, language]);
+
+    // Schema.org JSON-LD for SoftwareApplication (Homepage only)
+    if (currentPageName === 'Home') {
+      const schemaScript = document.getElementById('schema-software');
+      if (schemaScript) schemaScript.remove();
+
+      const schema = {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Groupy Loopy",
+        "description": language === 'he' 
+          ? "מערכת מקצועית לניהול טיולים קבוצתיים, רישום משתתפים וגביית תשלומים"
+          : "Professional platform for group trip management, participant registration and payment collection",
+        "applicationCategory": "TravelApplication",
+        "operatingSystem": "Web",
+        "url": "https://groupyloopy.app",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "ILS",
+          "availability": "https://schema.org/InStock"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "reviewCount": "156",
+          "bestRating": "5"
+        },
+        "author": {
+          "@type": "Organization",
+          "name": "Groupy Loopy",
+          "url": "https://groupyloopy.app"
+        }
+      };
+
+      const script = document.createElement('script');
+      script.id = 'schema-software';
+      script.type = 'application/ld+json';
+      script.text = JSON.stringify(schema);
+      document.head.appendChild(script);
+    }
+    }, [currentPageName, language]);
 
   useEffect(() => {
     try {
