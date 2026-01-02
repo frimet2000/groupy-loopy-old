@@ -238,6 +238,13 @@ export default function TripDetails() {
   }, [trip, isOrganizer]);
 
   const handleJoinClick = async () => {
+    // Check if user is logged in
+    if (!user) {
+      toast.info(language === 'he' ? 'יש להתחבר כדי להצטרף לטיול' : 'Please login to join the trip');
+      base44.auth.redirectToLogin(window.location.pathname);
+      return;
+    }
+
     // Check if registration is open
     if (trip.registration_start_date) {
       const registrationOpens = new Date(trip.registration_start_date);

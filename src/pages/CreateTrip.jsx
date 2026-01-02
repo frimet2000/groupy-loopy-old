@@ -184,6 +184,12 @@ export default function CreateTrip() {
         const userData = await base44.auth.me();
         setUser(userData);
         
+        if (!userData) {
+          toast.error(language === 'he' ? 'יש להתחבר כדי ליצור טיול' : 'Please login to create a trip');
+          base44.auth.redirectToLogin(window.location.pathname);
+          return;
+        }
+        
         // Set default country based on language immediately (no waiting for geolocation)
         const languageToCountry = {
           'he': 'israel',
@@ -217,8 +223,8 @@ export default function CreateTrip() {
           setDynamicRegions(predefinedRegions[defaultCountry]);
         }
       } catch (e) {
-        toast.error(language === 'he' ? 'יש להתחבר' : 'Please login');
-        navigate(createPageUrl('Home'));
+        toast.error(language === 'he' ? 'יש להתחבר כדי ליצור טיול' : 'Please login to create a trip');
+        base44.auth.redirectToLogin(window.location.pathname);
       }
     };
     fetchUser();

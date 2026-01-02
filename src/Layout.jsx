@@ -238,10 +238,8 @@ function LayoutContent({ children, currentPageName }) {
             }
           }
         } catch (e) {
-          // Not logged in - redirect to login for all pages except NifgashimPortal and Landing
-          if (currentPageName !== 'NifgashimPortal' && currentPageName !== 'Landing') {
-            base44.auth.redirectToLogin(window.location.pathname);
-          }
+          // Not logged in - allow browsing, login only required for specific actions
+          console.log('User not logged in - browsing mode');
         }
       };
       fetchUser();
