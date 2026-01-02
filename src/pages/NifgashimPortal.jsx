@@ -18,6 +18,7 @@ import NifgashimDayCardsSelector from '../components/nifgashim/portal/DayCardsSe
 import NifgashimMemorialForm from '../components/nifgashim/portal/MemorialForm';
 import NifgashimRegistrationSummary from '../components/nifgashim/portal/RegistrationSummary';
 import ThankYouView from '../components/nifgashim/portal/ThankYouView';
+import AdminDashboard from '../components/nifgashim/portal/AdminDashboard';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_placeholder');
 
@@ -144,8 +145,10 @@ export default function NifgashimPortal() {
   const [showPayment, setShowPayment] = useState(false);
   const [totalAmount, setTotalAmount] = useState(0);
   const [showThankYou, setShowThankYou] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
 
-  const { data: nifgashimTrip, isLoading } = useQuery({
+  const { data: nifgashimTrip, isLoading, refetch } = useQuery({
     queryKey: ['nifgashimPortalTrip'],
     queryFn: async () => {
       const trips = await base44.entities.Trip.filter({ 
@@ -156,6 +159,26 @@ export default function NifgashimPortal() {
   });
   const trekDays = nifgashimTrip?.trek_days || [];
   const linkedDaysPairs = nifgashimTrip?.linked_days_pairs || [];
+
+  // Check if user is admin
+  React.useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const user = await base44.auth.me();
+        if (user?.role === 'admin') {
+          setIsAdmin(true);
+          // Check URL for admin access
+          const urlParams = new URLSearchParams(window.location.search);
+          if (urlParams.get('admin') === 'true') {
+            setShowAdminDashboard(true);
+          }
+        }
+      } catch (error) {
+        setIsAdmin(false);
+      }
+    };
+    checkAdmin();
+  }, []);
 
   const translations = {
     he: {
@@ -368,6 +391,21 @@ export default function NifgashimPortal() {
   }
 
   const progressPercent = (currentStep / steps.length) * 100;
+
+  // Admin Dashboard View
+  if (showAdminDashboard && isAdmin) {
+    return (
+      <div className={`min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-8 px-4 ${isRTL ? 'rtl' : 'ltr'}`}>
+        <div className="max-w-7xl mx-auto">
+          <AdminDashboard
+            trip={nifgashimTrip}
+            language={language}
+            isRTL={isRTL}
+          />
+        </div>
+      </div>
+    );
+  }
 
   if (showThankYou) {
     return (
