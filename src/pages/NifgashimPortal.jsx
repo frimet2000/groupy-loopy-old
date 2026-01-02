@@ -1,497 +1,327 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '../components/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, MapPin, Calendar, CreditCard, User, Mail, Phone, Hash } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-
-const TRIP_ID = '6946647d7d7b248feaf1b118';
-const APP_ID = '693c3ab4048a1e3a31fffd66';
-const API_KEY = '6038ed8aa02f4f5eb813b1b899ed95bf';
+import { Users, UserCheck, UsersRound, ArrowRight, ArrowLeft, Check, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import NifgashimUserTypeSelector from '../components/nifgashim/portal/UserTypeSelector';
+import NifgashimParticipantForm from '../components/nifgashim/portal/ParticipantForm';
+import NifgashimDayCardsSelector from '../components/nifgashim/portal/DayCardsSelector';
+import NifgashimRegistrationSummary from '../components/nifgashim/portal/RegistrationSummary';
 
 export default function NifgashimPortal() {
-  const { isRTL, language } = useLanguage();
+  const { language, isRTL } = useLanguage();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [userType, setUserType] = useState(null); // 'individual', 'family', 'group'
+  const [participants, setParticipants] = useState([]);
   const [selectedDays, setSelectedDays] = useState([]);
-  const [formData, setFormData] = useState({
-    full_name: '',
-    email: '',
-    phone: '',
-    id_number: ''
+  const [groupInfo, setGroupInfo] = useState({ name: '', leaderName: '', leaderEmail: '', leaderPhone: '' });
+  const [submitting, setSubmitting] = useState(false);
+
+  const { data: trips = [], isLoading } = useQuery({
+    queryKey: ['nifgashimPortalTrip'],
+    queryFn: () => base44.entities.Trip.filter({ 
+      activity_type: 'trek',
+      organizer_email: 'nifgashim@israel.org'
+    })
   });
-  const [loading, setLoading] = useState(false);
+
+  const nifgashimTrip = trips[0];
+  const trekDays = nifgashimTrip?.trek_days || [];
+  const linkedDaysPairs = nifgashimTrip?.linked_days_pairs || [];
 
   const translations = {
     he: {
-      title: "הרשמה למסע נפגשים בשביל ישראל 2026",
-      subtitle: "מסע ארצישראלי ייחודי",
-      gallery: "גלריית תמונות",
-      map: "מפת המסלול",
-      selectDays: "בחר ימי השתתפות",
-      personalDetails: "פרטים אישיים",
-      fullName: "שם מלא",
-      email: "אימייל",
-      phone: "טלפון",
-      idNumber: "תעודת זהות",
-      totalPrice: "סה״כ לתשלום",
-      freeRegistration: "רישום חינם",
-      submit: "שלח והמשך לתשלום",
-      submitting: "שולח...",
-      success: "ההרשמה נשלחה בהצלחה!",
-      selectAtLeastOneDay: "יש לבחור לפחות יום אחד",
-      fillAllFields: "יש למלא את כל השדות",
-      day: "יום"
+      title: "הרשמה למסע נפגשים בשביל ישראל",
+      subtitle: "תהליך הרשמה פשוט ומהיר",
+      stepUserType: "סוג רישום",
+      stepParticipants: "פרטי משתתפים",
+      stepDays: "בחירת ימים",
+      stepSummary: "סיכום",
+      next: "הבא",
+      back: "אחורה",
+      submit: "שלח הרשמה",
+      submitting: "שולח..."
     },
     en: {
-      title: "Nifgashim for Israel Trek 2026 Registration",
-      subtitle: "A unique Israel journey",
-      gallery: "Photo Gallery",
-      map: "Route Map",
-      selectDays: "Select Days",
-      personalDetails: "Personal Details",
-      fullName: "Full Name",
-      email: "Email",
-      phone: "Phone",
-      idNumber: "ID Number",
-      totalPrice: "Total Price",
-      freeRegistration: "Free Registration",
-      submit: "Submit & Continue to Payment",
-      submitting: "Submitting...",
-      success: "Registration submitted successfully!",
-      selectAtLeastOneDay: "Please select at least one day",
-      fillAllFields: "Please fill all fields",
-      day: "Day"
+      title: "Nifgashim for Israel Registration",
+      subtitle: "Simple and fast registration process",
+      stepUserType: "Registration Type",
+      stepParticipants: "Participant Details",
+      stepDays: "Select Days",
+      stepSummary: "Summary",
+      next: "Next",
+      back: "Back",
+      submit: "Submit Registration",
+      submitting: "Submitting..."
     },
     ru: {
-      title: "Регистрация на поход Нифгашим для Израиля 2026",
-      subtitle: "Уникальное путешествие по Израилю",
-      gallery: "Галерея фото",
-      map: "Карта маршрута",
-      selectDays: "Выбрать дни",
-      personalDetails: "Личные данные",
-      fullName: "Полное имя",
-      email: "Email",
-      phone: "Телефон",
-      idNumber: "ID номер",
-      totalPrice: "Итого",
-      freeRegistration: "Бесплатная регистрация",
-      submit: "Отправить",
-      submitting: "Отправка...",
-      success: "Регистрация успешна!",
-      selectAtLeastOneDay: "Выберите хотя бы один день",
-      fillAllFields: "Заполните все поля",
-      day: "День"
+      title: "Регистрация Nifgashim для Израиля",
+      subtitle: "Простой и быстрый процесс регистрации",
+      stepUserType: "Тип регистрации",
+      stepParticipants: "Данные участников",
+      stepDays: "Выбор дней",
+      stepSummary: "Резюме",
+      next: "Далее",
+      back: "Назад",
+      submit: "Отправить регистрацию",
+      submitting: "Отправка..."
     },
     es: {
-      title: "Registro Nifgashim para Israel Trek 2026",
-      subtitle: "Un viaje único por Israel",
-      gallery: "Galería de fotos",
-      map: "Mapa de ruta",
-      selectDays: "Seleccionar días",
-      personalDetails: "Datos personales",
-      fullName: "Nombre completo",
-      email: "Email",
-      phone: "Teléfono",
-      idNumber: "Número ID",
-      totalPrice: "Total",
-      freeRegistration: "Registro gratuito",
-      submit: "Enviar",
-      submitting: "Enviando...",
-      success: "¡Registro exitoso!",
-      selectAtLeastOneDay: "Seleccione al menos un día",
-      fillAllFields: "Complete todos los campos",
-      day: "Día"
+      title: "Registro Nifgashim para Israel",
+      subtitle: "Proceso de registro simple y rápido",
+      stepUserType: "Tipo de registro",
+      stepParticipants: "Detalles de participantes",
+      stepDays: "Seleccionar días",
+      stepSummary: "Resumen",
+      next: "Siguiente",
+      back: "Atrás",
+      submit: "Enviar registro",
+      submitting: "Enviando..."
     },
     fr: {
-      title: "Inscription Nifgashim pour Israel Trek 2026",
-      subtitle: "Un voyage unique en Israël",
-      gallery: "Galerie photos",
-      map: "Carte du parcours",
-      selectDays: "Sélectionner jours",
-      personalDetails: "Coordonnées",
-      fullName: "Nom complet",
-      email: "Email",
-      phone: "Téléphone",
-      idNumber: "Numéro ID",
-      totalPrice: "Total",
-      freeRegistration: "Inscription gratuite",
-      submit: "Envoyer",
-      submitting: "Envoi...",
-      success: "Inscription réussie!",
-      selectAtLeastOneDay: "Sélectionnez au moins un jour",
-      fillAllFields: "Remplissez tous les champs",
-      day: "Jour"
+      title: "Inscription Nifgashim pour Israël",
+      subtitle: "Processus d'inscription simple et rapide",
+      stepUserType: "Type d'inscription",
+      stepParticipants: "Détails des participants",
+      stepDays: "Sélectionner les jours",
+      stepSummary: "Résumé",
+      next: "Suivant",
+      back: "Retour",
+      submit: "Soumettre l'inscription",
+      submitting: "Envoi..."
     },
     de: {
-      title: "Nifgashim für Israel Trek 2026 Anmeldung",
-      subtitle: "Eine einzigartige Israel-Reise",
-      gallery: "Fotogalerie",
-      map: "Routenkarte",
-      selectDays: "Tage auswählen",
-      personalDetails: "Persönliche Daten",
-      fullName: "Vollständiger Name",
-      email: "Email",
-      phone: "Telefon",
-      idNumber: "ID Nummer",
-      totalPrice: "Gesamt",
-      freeRegistration: "Kostenlose Anmeldung",
-      submit: "Absenden",
-      submitting: "Wird gesendet...",
-      success: "Anmeldung erfolgreich!",
-      selectAtLeastOneDay: "Wählen Sie mindestens einen Tag",
-      fillAllFields: "Füllen Sie alle Felder aus",
-      day: "Tag"
+      title: "Nifgashim für Israel Registrierung",
+      subtitle: "Einfacher und schneller Registrierungsprozess",
+      stepUserType: "Registrierungstyp",
+      stepParticipants: "Teilnehmerdetails",
+      stepDays: "Tage auswählen",
+      stepSummary: "Zusammenfassung",
+      next: "Weiter",
+      back: "Zurück",
+      submit: "Registrierung absenden",
+      submitting: "Wird gesendet..."
     },
     it: {
-      title: "Registrazione Nifgashim per Israel Trek 2026",
-      subtitle: "Un viaggio unico in Israele",
-      gallery: "Galleria foto",
-      map: "Mappa percorso",
-      selectDays: "Seleziona giorni",
-      personalDetails: "Dati personali",
-      fullName: "Nome completo",
-      email: "Email",
-      phone: "Telefono",
-      idNumber: "Numero ID",
-      totalPrice: "Totale",
-      freeRegistration: "Registrazione gratuita",
-      submit: "Invia",
-      submitting: "Invio...",
-      success: "Registrazione riuscita!",
-      selectAtLeastOneDay: "Seleziona almeno un giorno",
-      fillAllFields: "Compila tutti i campi",
-      day: "Giorno"
+      title: "Registrazione Nifgashim per Israele",
+      subtitle: "Processo di registrazione semplice e veloce",
+      stepUserType: "Tipo di registrazione",
+      stepParticipants: "Dettagli partecipanti",
+      stepDays: "Seleziona giorni",
+      stepSummary: "Riepilogo",
+      next: "Avanti",
+      back: "Indietro",
+      submit: "Invia registrazione",
+      submitting: "Invio..."
     }
   };
 
-  const trans = translations[language] || translations.he;
+  const trans = translations[language] || translations.en;
 
-  const { data: trip, isLoading } = useQuery({
-    queryKey: ['nifgashimTrip', TRIP_ID],
-    queryFn: async () => {
-      const response = await fetch(
-        `https://app.base44.com/api/apps/${APP_ID}/entities/Trip/${TRIP_ID}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${API_KEY}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      if (!response.ok) throw new Error('Failed to fetch trip');
-      return response.json();
-    }
-  });
+  const steps = [
+    { id: 1, label: trans.stepUserType },
+    { id: 2, label: trans.stepParticipants },
+    { id: 3, label: trans.stepDays },
+    { id: 4, label: trans.stepSummary }
+  ];
 
-  const photos = trip?.photos || [];
-  const waypoints = trip?.waypoints || [];
-  const trekDays = trip?.trek_days || [];
-  const totalPrice = selectedDays.length > 0 ? 85 : 0;
-
-  const handleDayToggle = (dayNumber) => {
-    setSelectedDays(prev => 
-      prev.includes(dayNumber) 
-        ? prev.filter(d => d !== dayNumber)
-        : [...prev, dayNumber]
-    );
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (selectedDays.length === 0) {
-      toast.error(trans.selectAtLeastOneDay);
-      return;
-    }
-    
-    if (!formData.full_name || !formData.email || !formData.phone || !formData.id_number) {
-      toast.error(trans.fillAllFields);
-      return;
-    }
-
-    setLoading(true);
-    
+  const handleSubmit = async () => {
+    setSubmitting(true);
     try {
-      const participantData = {
-        name: formData.full_name,
-        email: formData.email,
-        phone: formData.phone,
-        id_number: formData.id_number,
-        joined_at: new Date().toISOString()
-      };
+      const user = await base44.auth.me().catch(() => null);
+      
+      // Prepare participant data for Trip entity
+      const participantsData = participants.map(p => ({
+        email: p.email || (user?.email || `temp-${Date.now()}@nifgashim.temp`),
+        name: p.name,
+        id_number: p.id_number,
+        phone: p.phone,
+        joined_at: new Date().toISOString(),
+        selected_days: selectedDays.map(d => d.day_number),
+        waiver_accepted: true,
+        waiver_timestamp: new Date().toISOString(),
+        is_organized_group: userType === 'group',
+        group_type: userType === 'group' ? 'other' : null,
+        group_name: userType === 'group' ? groupInfo.name : null,
+        payment_status: userType === 'group' ? 'exempt' : 'pending'
+      }));
 
-      const updatedParticipants = [...(trip.participants || []), participantData];
-      const updatedSelectedDays = [
-        ...(trip.participants_selected_days || []),
-        {
-          email: formData.email,
-          name: formData.full_name,
-          days: selectedDays
-        }
-      ];
+      // Update Trip entity with new participants
+      const currentParticipants = nifgashimTrip?.participants || [];
+      await base44.entities.Trip.update(nifgashimTrip.id, {
+        participants: [...currentParticipants, ...participantsData]
+      });
 
-      await fetch(
-        `https://app.base44.com/api/apps/${APP_ID}/entities/Trip/${TRIP_ID}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            participants: updatedParticipants,
-            participants_selected_days: updatedSelectedDays,
-            budget: {
-              ...trip.budget,
-              notes: `${trans.totalPrice}: ${totalPrice} ש״ח`
-            }
-          })
-        }
-      );
-
-      toast.success(trans.success);
+      toast.success(language === 'he' ? 'ההרשמה נשלחה בהצלחה!' : 'Registration submitted successfully!');
       
       // Reset form
-      setFormData({ full_name: '', email: '', phone: '', id_number: '' });
+      setCurrentStep(1);
+      setUserType(null);
+      setParticipants([]);
       setSelectedDays([]);
+      setGroupInfo({ name: '', leaderName: '', leaderEmail: '', leaderPhone: '' });
     } catch (error) {
       console.error(error);
-      toast.error(language === 'he' ? 'שגיאה בשליחת הטופס' : 'Error submitting form');
+      toast.error(language === 'he' ? 'שגיאה בשליחת ההרשמה' : 'Error submitting registration');
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
       </div>
     );
   }
 
+  const progressPercent = (currentStep / steps.length) * 100;
+
   return (
-    <div className={`min-h-screen bg-gradient-to-b from-blue-50 to-white py-4 sm:py-8 px-4 ${isRTL ? 'rtl' : 'ltr'}`}>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-6xl mx-auto"
-      >
+    <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 py-8 px-4 ${isRTL ? 'rtl' : 'ltr'}`}>
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
+        >
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">{trans.title}</h1>
+          <p className="text-gray-600">{trans.subtitle}</p>
+        </motion.div>
+
+        {/* Progress */}
         <Card className="mb-6">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-emerald-600 text-white">
-            <CardTitle className="text-2xl sm:text-3xl text-center">{trip?.title || trans.title}</CardTitle>
-            <p className="text-center text-white opacity-90 mt-2">{trans.subtitle}</p>
-          </CardHeader>
-        </Card>
-
-        {/* Photo Gallery */}
-        {photos.length > 0 && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-xl">{trans.gallery}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                {photos.map((photo, idx) => (
-                  <motion.div
-                    key={idx}
-                    whileHover={{ scale: 1.05 }}
-                    className="relative aspect-square rounded-lg overflow-hidden shadow-md"
-                  >
-                    <img
-                      src={photo.url}
-                      alt={photo.caption || `תמונה ${idx + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </motion.div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Map */}
-        {waypoints.length > 0 && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
-                <MapPin className="w-5 h-5" />
-                {trans.map}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64 sm:h-96 rounded-lg overflow-hidden">
-                <MapContainer
-                  center={[waypoints[0].latitude, waypoints[0].longitude]}
-                  zoom={8}
-                  className="h-full w-full"
-                >
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  />
-                  {waypoints.map((wp, idx) => (
-                    <Marker key={idx} position={[wp.latitude, wp.longitude]}>
-                      <Popup>{wp.name || `נקודה ${idx + 1}`}</Popup>
-                    </Marker>
-                  ))}
-                </MapContainer>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Day Selector */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="text-xl flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              {trans.selectDays}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {trekDays.map((day) => (
-                <motion.div
-                  key={day.day_number}
-                  whileHover={{ scale: 1.02 }}
-                  className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
-                    selectedDays.includes(day.day_number)
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-gray-200 hover:border-blue-300'
-                  }`}
-                  onClick={() => handleDayToggle(day.day_number)}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <div className="font-semibold text-lg mb-1">
-                        {trans.day} {day.day_number}
-                      </div>
-                      {day.daily_title && (
-                        <div className="text-sm text-gray-700 mb-2">{day.daily_title}</div>
-                      )}
-                      {day.date && (
-                        <div className="text-xs text-gray-500">
-                          {new Date(day.date).toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US', {
-                            weekday: 'short',
-                            month: 'short',
-                            day: 'numeric'
-                          })}
-                        </div>
-                      )}
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              {steps.map((step, idx) => (
+                <React.Fragment key={step.id}>
+                  <div className={`flex flex-col items-center gap-1 ${currentStep >= step.id ? 'opacity-100' : 'opacity-40'}`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                      currentStep > step.id 
+                        ? 'bg-green-500 text-white' 
+                        : currentStep === step.id 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-gray-200 text-gray-500'
+                    }`}>
+                      {currentStep > step.id ? <Check className="w-5 h-5" /> : step.id}
                     </div>
-                    <Checkbox
-                      checked={selectedDays.includes(day.day_number)}
-                      onCheckedChange={() => handleDayToggle(day.day_number)}
-                    />
+                    <span className="text-xs font-semibold text-center hidden sm:block">
+                      {step.label}
+                    </span>
                   </div>
-                </motion.div>
+                  {idx < steps.length - 1 && (
+                    <div className={`flex-1 h-1 mx-2 rounded-full ${
+                      currentStep > step.id ? 'bg-green-500' : 'bg-gray-200'
+                    }`} />
+                  )}
+                </React.Fragment>
               ))}
             </div>
+            <Progress value={progressPercent} className="h-2" />
           </CardContent>
         </Card>
 
-        {/* Registration Form */}
-        <form onSubmit={handleSubmit}>
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
-                <User className="w-5 h-5" />
-                {trans.personalDetails}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="full_name">{trans.fullName}</Label>
-                <Input
-                  id="full_name"
-                  value={formData.full_name}
-                  onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                  required
-                  className="mt-1"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="email" className="flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  {trans.email}
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                  className="mt-1"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="phone" className="flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
-                  {trans.phone}
-                </Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  required
-                  className="mt-1"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="id_number" className="flex items-center gap-2">
-                  <Hash className="w-4 h-4" />
-                  {trans.idNumber}
-                </Label>
-                <Input
-                  id="id_number"
-                  value={formData.id_number}
-                  onChange={(e) => setFormData({ ...formData, id_number: e.target.value })}
-                  required
-                  maxLength={9}
-                  className="mt-1"
-                />
-              </div>
-            </CardContent>
-          </Card>
+        {/* Step Content */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStep}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {currentStep === 1 && (
+              <NifgashimUserTypeSelector
+                selectedType={userType}
+                onSelect={setUserType}
+              />
+            )}
 
-          {/* Price Summary & Submit */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="text-xl font-bold flex items-center gap-2">
-                  <CreditCard className="w-6 h-6" />
-                  {trans.totalPrice}:
-                </div>
-                <Badge className={`text-2xl px-4 py-2 ${totalPrice > 0 ? 'bg-blue-600' : 'bg-green-600'}`}>
-                  {totalPrice > 0 ? `${totalPrice} ש״ח` : trans.freeRegistration}
-                </Badge>
-              </div>
-              
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-lg py-6"
-              >
-                <CheckCircle2 className={`w-5 h-5 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                {loading ? trans.submitting : trans.submit}
-              </Button>
-            </CardContent>
-          </Card>
-        </form>
-      </motion.div>
+            {currentStep === 2 && (
+              <NifgashimParticipantForm
+                userType={userType}
+                participants={participants}
+                setParticipants={setParticipants}
+                groupInfo={groupInfo}
+                setGroupInfo={setGroupInfo}
+              />
+            )}
+
+            {currentStep === 3 && (
+              <NifgashimDayCardsSelector
+                trekDays={trekDays}
+                linkedDaysPairs={linkedDaysPairs}
+                selectedDays={selectedDays}
+                onDaysChange={setSelectedDays}
+                maxDays={8}
+              />
+            )}
+
+            {currentStep === 4 && (
+              <NifgashimRegistrationSummary
+                userType={userType}
+                participants={participants}
+                selectedDays={selectedDays}
+                trekDays={trekDays}
+                groupInfo={groupInfo}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Navigation */}
+        <div className="flex justify-between gap-4 mt-6">
+          <Button
+            variant="outline"
+            onClick={() => setCurrentStep(prev => Math.max(prev - 1, 1))}
+            disabled={currentStep === 1 || submitting}
+            className="px-6"
+          >
+            <ArrowLeft className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+            {trans.back}
+          </Button>
+
+          {currentStep < steps.length ? (
+            <Button
+              onClick={() => setCurrentStep(prev => prev + 1)}
+              disabled={
+                (currentStep === 1 && !userType) ||
+                (currentStep === 2 && participants.length === 0) ||
+                (currentStep === 3 && selectedDays.length === 0)
+              }
+              className="px-6 bg-blue-600 hover:bg-blue-700"
+            >
+              {trans.next}
+              <ArrowRight className={`w-4 h-4 ${isRTL ? 'mr-2' : 'ml-2'}`} />
+            </Button>
+          ) : (
+            <Button
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="px-6 bg-green-600 hover:bg-green-700"
+            >
+              {submitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  {trans.submitting}
+                </>
+              ) : (
+                <>
+                  <Check className="w-4 h-4 mr-2" />
+                  {trans.submit}
+                </>
+              )}
+            </Button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
