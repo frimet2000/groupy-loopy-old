@@ -3931,7 +3931,7 @@ export default function TripDetails() {
               {language === 'he' ? 'בחר אילו טאבים להציג למשתתפים' : 'Choose which tabs to show to participants'}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-3 py-4">
+          <div className="space-y-3 py-4 max-h-[60vh] overflow-y-auto">
             {[
               { value: 'details', icon: Info, label: language === 'he' ? 'פרטים' : 'Details' },
               { value: 'map', icon: MapPin, label: language === 'he' ? 'מפה' : 'Map' },
