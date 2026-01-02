@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '../components/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Calendar } from '@/components/ui/calendar';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
 import { Calendar as CalendarIcon, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import DaySelector from '../components/nifgashim/DaySelector';
 
 export default function NifgashimRegistration() {
   const { t, isRTL, language } = useLanguage();
@@ -88,6 +89,17 @@ export default function NifgashimRegistration() {
 
   const trans = translations[language] || translations.en;
 
+  const { data: trips = [] } = useQuery({
+    queryKey: ['nifgashimTrips'],
+    queryFn: () => base44.entities.Trip.filter({ 
+      activity_type: 'trek',
+      organizer_email: 'nifgashim@israel.org'
+    })
+  });
+
+  const nifgashimTrip = trips[0];
+  const trekDays = nifgashimTrip?.trek_days || [];
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -103,10 +115,9 @@ export default function NifgashimRegistration() {
     fetchUser();
   }, []);
 
-  const negevDaysCount = selectedDates.filter(date => {
-    // Logic to determine if date is in Negev region
-    // This would need to be mapped to actual trek days
-    return false; // Placeholder
+  const negevDaysCount = selectedDates.filter(dateStr => {
+    const day = trekDays.find(d => d.date === dateStr);
+    return day?.region === 'negev';
   }).length;
 
   const totalDaysCount = selectedDates.length;
@@ -239,22 +250,13 @@ export default function NifgashimRegistration() {
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold">{trans.selectDates}</h3>
                 
-                <Alert>
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    <div className="space-y-1">
-                      <div>{trans.rule1}</div>
-                      <div>{trans.rule2}</div>
-                    </div>
-                  </AlertDescription>
-                </Alert>
-
-                {!canAddMoreDays && (
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>{trans.limitReached}</AlertDescription>
-                  </Alert>
-                )}
+                <DaySelector
+                  trekDays={trekDays}
+                  selectedDates={selectedDates}
+                  onDatesChange={setSelectedDates}
+                  maxNegevDays={8}
+                  maxTotalDays={30}
+                />
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">

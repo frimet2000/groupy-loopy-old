@@ -1,0 +1,318 @@
+import React, { useState, useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
+import { useLanguage } from '../components/LanguageContext';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { 
+  Users, 
+  Calendar, 
+  DollarSign, 
+  CheckCircle2, 
+  Clock, 
+  Utensils, 
+  Bed, 
+  Car,
+  Heart,
+  Download,
+  AlertCircle
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+
+export default function NifgashimDashboard() {
+  const { language, isRTL } = useLanguage();
+  const [user, setUser] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const translations = {
+    he: {
+      title: "דאשבורד נפגשים בשביל ישראל",
+      overview: "סקירה כללית",
+      registrations: "הרשמות",
+      memorials: "בקשות הנצחה",
+      checkIns: "צ'ק-אינים",
+      totalRegistrations: "סה\"כ הרשמות",
+      confirmedRegistrations: "מאושרות",
+      pendingPayments: "ממתינות לתשלום",
+      totalRevenue: "הכנסות",
+      todayCheckIns: "צ'ק-אינים היום",
+      mealsToday: "ארוחות היום",
+      accommodation: "לינות",
+      drivers: "נהגים",
+      filterByDate: "סינון לפי תאריך",
+      allDates: "כל התאריכים",
+      pendingMemorials: "הנצחות לאישור",
+      approvedMemorials: "הנצחות מאושרות",
+      exportExcel: "ייצוא לאקסל",
+      adminOnly: "דף זה מיועד למנהלים בלבד",
+      noData: "אין נתונים",
+      lunch: "צהריים",
+      dinner: "ערב",
+      breakfast: "בוקר"
+    },
+    en: {
+      title: "Nifgashim for Israel Dashboard",
+      overview: "Overview",
+      registrations: "Registrations",
+      memorials: "Memorial Requests",
+      checkIns: "Check-ins",
+      totalRegistrations: "Total Registrations",
+      confirmedRegistrations: "Confirmed",
+      pendingPayments: "Pending Payments",
+      totalRevenue: "Revenue",
+      todayCheckIns: "Today's Check-ins",
+      mealsToday: "Today's Meals",
+      accommodation: "Accommodations",
+      drivers: "Drivers",
+      filterByDate: "Filter by Date",
+      allDates: "All Dates",
+      pendingMemorials: "Pending Memorials",
+      approvedMemorials: "Approved Memorials",
+      exportExcel: "Export to Excel",
+      adminOnly: "This page is for administrators only",
+      noData: "No data",
+      lunch: "Lunch",
+      dinner: "Dinner",
+      breakfast: "Breakfast"
+    }
+  };
+
+  const trans = translations[language] || translations.en;
+
+  const { data: registrations = [] } = useQuery({
+    queryKey: ['nifgashimRegistrations'],
+    queryFn: () => base44.entities.NifgashimRegistration.list('-created_date'),
+    refetchInterval: 10000
+  });
+
+  const { data: memorials = [] } = useQuery({
+    queryKey: ['memorials'],
+    queryFn: () => base44.entities.Memorial.list('-created_date'),
+    refetchInterval: 10000
+  });
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await base44.auth.me();
+        if (userData?.role !== 'admin') {
+          base44.auth.redirectToLogin();
+          return;
+        }
+        setUser(userData);
+      } catch (e) {
+        base44.auth.redirectToLogin();
+      }
+    };
+    fetchUser();
+  }, []);
+
+  if (!user || user.role !== 'admin') {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${isRTL ? 'rtl' : 'ltr'}`}>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{trans.adminOnly}</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  const confirmedRegs = registrations.filter(r => r.registration_status === 'confirmed');
+  const pendingPayments = registrations.filter(r => r.payment_status === 'pending' || r.payment_status === 'partial');
+  const totalRevenue = registrations.reduce((sum, r) => sum + (r.amount_paid || 0), 0);
+  const todayCheckIns = registrations.reduce((sum, r) => {
+    const today = new Date().toISOString().split('T')[0];
+    return sum + (r.check_ins?.filter(c => c.date === today).length || 0);
+  }, 0);
+
+  const pendingMemorials = memorials.filter(m => m.status === 'pending');
+  const approvedMemorials = memorials.filter(m => m.status === 'approved');
+
+  const StatCard = ({ icon: Icon, title, value, color, subtitle }) => (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardContent className="pt-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-600 mb-1">{title}</p>
+            <p className={`text-3xl font-bold ${color}`}>{value}</p>
+            {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
+          </div>
+          <div className={`p-3 rounded-full ${color.replace('text-', 'bg-').replace('600', '100')}`}>
+            <Icon className={`w-6 h-6 ${color}`} />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <div className={`min-h-screen bg-gray-50 py-6 px-4 ${isRTL ? 'rtl' : 'ltr'}`}>
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+            {trans.title}
+          </h1>
+          <p className="text-gray-600">{trans.overview}</p>
+        </motion.div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <StatCard
+            icon={Users}
+            title={trans.totalRegistrations}
+            value={registrations.length}
+            color="text-blue-600"
+          />
+          <StatCard
+            icon={CheckCircle2}
+            title={trans.confirmedRegistrations}
+            value={confirmedRegs.length}
+            color="text-green-600"
+          />
+          <StatCard
+            icon={Clock}
+            title={trans.pendingPayments}
+            value={pendingPayments.length}
+            color="text-orange-600"
+          />
+          <StatCard
+            icon={DollarSign}
+            title={trans.totalRevenue}
+            value={`${totalRevenue.toLocaleString()}₪`}
+            color="text-purple-600"
+          />
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-4 mb-8">
+          <StatCard
+            icon={CheckCircle2}
+            title={trans.todayCheckIns}
+            value={todayCheckIns}
+            color="text-emerald-600"
+          />
+          <StatCard
+            icon={Heart}
+            title={trans.pendingMemorials}
+            value={pendingMemorials.length}
+            color="text-red-600"
+          />
+          <StatCard
+            icon={Heart}
+            title={trans.approvedMemorials}
+            value={approvedMemorials.length}
+            color="text-pink-600"
+          />
+        </div>
+
+        {/* Tabs */}
+        <Tabs defaultValue="registrations" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="registrations">{trans.registrations}</TabsTrigger>
+            <TabsTrigger value="memorials">{trans.memorials}</TabsTrigger>
+            <TabsTrigger value="checkIns">{trans.checkIns}</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="registrations" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>{trans.registrations}</CardTitle>
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    {trans.exportExcel}
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {registrations.length === 0 ? (
+                    <p className="text-center text-gray-500 py-8">{trans.noData}</p>
+                  ) : (
+                    registrations.map((reg, idx) => (
+                      <Card key={reg.id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between gap-4">
+                            <div className="flex-1">
+                              <div className="font-semibold">{reg.user_email}</div>
+                              <div className="text-sm text-gray-600">
+                                {reg.total_days_count} {trans.days} • {reg.total_amount}₪
+                              </div>
+                            </div>
+                            <Badge className={
+                              reg.payment_status === 'completed' ? 'bg-green-100 text-green-800' :
+                              reg.payment_status === 'partial' ? 'bg-orange-100 text-orange-800' :
+                              'bg-gray-100 text-gray-800'
+                            }>
+                              {reg.payment_status}
+                            </Badge>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="memorials" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>{trans.memorials}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {memorials.length === 0 ? (
+                    <p className="text-center text-gray-500 py-8">{trans.noData}</p>
+                  ) : (
+                    memorials.map((memorial) => (
+                      <Card key={memorial.id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1">
+                              <div className="font-semibold">{memorial.fallen_name}</div>
+                              <div className="text-sm text-gray-600">{memorial.requester_name}</div>
+                              <div className="text-xs text-gray-500">{memorial.requester_email}</div>
+                            </div>
+                            <Badge className={
+                              memorial.status === 'approved' ? 'bg-green-100 text-green-800' :
+                              memorial.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                              'bg-yellow-100 text-yellow-800'
+                            }>
+                              {memorial.status}
+                            </Badge>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="checkIns" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>{trans.checkIns}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-center text-gray-500 py-8">
+                  {language === 'he' ? 'מערכת צ\'ק-אין תפותח בשלב הבא' : 'Check-in system coming in next phase'}
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+}

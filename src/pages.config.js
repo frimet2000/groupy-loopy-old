@@ -32,6 +32,8 @@ import Weather from './pages/Weather';
 import NifgashimLanding from './pages/NifgashimLanding';
 import NifgashimRegistration from './pages/NifgashimRegistration';
 import MemorialRequest from './pages/MemorialRequest';
+import NifgashimDashboard from './pages/NifgashimDashboard';
+import NifgashimTrekManager from './pages/NifgashimTrekManager';
 import __Layout from './Layout.jsx';
 
 
@@ -70,6 +72,8 @@ export const PAGES = {
     "NifgashimLanding": NifgashimLanding,
     "NifgashimRegistration": NifgashimRegistration,
     "MemorialRequest": MemorialRequest,
+    "NifgashimDashboard": NifgashimDashboard,
+    "NifgashimTrekManager": NifgashimTrekManager,
 }
 
 export const pagesConfig = {
