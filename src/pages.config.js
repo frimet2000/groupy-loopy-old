@@ -39,6 +39,7 @@ import TripDetails from './pages/TripDetails';
 import TripSummary from './pages/TripSummary';
 import Weather from './pages/Weather';
 import Features from './pages/Features';
+import TripPlanningGuide from './pages/TripPlanningGuide';
 import __Layout from './Layout.jsx';
 
 
@@ -84,6 +85,7 @@ export const PAGES = {
     "TripSummary": TripSummary,
     "Weather": Weather,
     "Features": Features,
+    "TripPlanningGuide": TripPlanningGuide,
 }
 
 export const pagesConfig = {

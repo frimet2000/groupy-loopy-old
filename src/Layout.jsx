@@ -535,29 +535,37 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* Footer - Only on Home page */}
       {currentPageName === 'Home' && (
-        <footer className="bg-white border-t-2 border-gray-200/80 py-10 md:py-14 mt-12">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm md:text-base text-gray-600 whitespace-nowrap overflow-x-auto">
-              <span>© 2025 Groupy Loopy</span>
-              <span>•</span>
-              <Link to={createPageUrl('PrivacyPolicy')} className="hover:text-emerald-600">
-                {language === 'he' ? 'פרטיות' : 'Privacy'}
-              </Link>
-              <span>•</span>
-              <Link to={createPageUrl('TermsOfUse')} className="hover:text-emerald-600">
-                {language === 'he' ? 'תנאים' : 'Terms'}
-              </Link>
-              <span>•</span>
-              <Link to={createPageUrl('AccessibilityStatement')} className="hover:text-emerald-600">
-                {language === 'he' ? 'נגישות' : 'Accessibility'}
-              </Link>
-              <span>•</span>
-              <Link to={createPageUrl('AboutUs')} className="hover:text-emerald-600">
-                {language === 'he' ? 'אודות' : 'About'}
-              </Link>
-            </div>
+      <footer className="bg-white border-t-2 border-gray-200/80 py-10 md:py-14 mt-12">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm md:text-base text-gray-600 whitespace-nowrap overflow-x-auto">
+            <span>© 2025 Groupy Loopy</span>
+            <span>•</span>
+            <Link to={createPageUrl('Features')} className="hover:text-emerald-600">
+              {language === 'he' ? 'תכונות' : 'Features'}
+            </Link>
+            <span>•</span>
+            <Link to={createPageUrl('TripPlanningGuide')} className="hover:text-emerald-600 font-semibold">
+              {language === 'he' ? 'מדריך' : 'Guide'}
+            </Link>
+            <span>•</span>
+            <Link to={createPageUrl('PrivacyPolicy')} className="hover:text-emerald-600">
+              {language === 'he' ? 'פרטיות' : 'Privacy'}
+            </Link>
+            <span>•</span>
+            <Link to={createPageUrl('TermsOfUse')} className="hover:text-emerald-600">
+              {language === 'he' ? 'תנאים' : 'Terms'}
+            </Link>
+            <span>•</span>
+            <Link to={createPageUrl('AccessibilityStatement')} className="hover:text-emerald-600">
+              {language === 'he' ? 'נגישות' : 'Accessibility'}
+            </Link>
+            <span>•</span>
+            <Link to={createPageUrl('AboutUs')} className="hover:text-emerald-600">
+              {language === 'he' ? 'אודות' : 'About'}
+            </Link>
           </div>
-        </footer>
+        </div>
+      </footer>
       )}
 
       {/* Mobile Bottom Navigation */}
