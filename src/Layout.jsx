@@ -121,8 +121,8 @@ function LayoutContent({ children, currentPageName }) {
 
     const titles = {
       he: {
-        default: 'Groupy Loopy - מערכת ניהול טיולים קבוצתיים | רישום משתתפים וגביית תשלומים',
-        Home: 'Groupy Loopy - מערכת ניהול טיולים קבוצתיים | רישום משתתפים וגביית תשלומים',
+        default: 'Groupy Loopy | ניהול, ארגון והרשמה לטיולים קבוצתיים',
+        Home: 'Groupy Loopy | ניהול, ארגון והרשמה לטיולים קבוצתיים',
         MyTrips: 'הטיולים שלי — Groupy Loopy',
         CreateTrip: 'צור טיול — Groupy Loopy',
         Dashboard: 'לוח מחוונים — Groupy Loopy'
@@ -172,7 +172,7 @@ function LayoutContent({ children, currentPageName }) {
     };
 
     const descriptions = {
-      he: 'פלטפורמה מקצועית לארגון וניהול טיולים קבוצתיים. רישום משתתפים דיגיטלי, גביית תשלומים אוטומטית, ניהול לוגיסטיקה והנצחה. התחל בחינם - למארגני טיולים, מדריכים וקהילות.',
+      he: 'הפלטפורמה המובילה לארגון טיולים: דפי רישום, סליקת תשלומים, מפות אינטראקטיביות וניהול משתתפים - הכל במקום אחד. למארגני טיולים, מדריכים וקהילות.',
       en: 'A free platform to connect hikers, create and join trips and routes — personal safety and responsibility first.',
       ru: 'Бесплатная платформа для связи туристов, создания и присоединения к поездкам — ваша безопасность и ответственность.',
       es: 'Plataforma gratuita para conectar excursionistas, crear y unirse a viajes — seguridad y responsabilidad personal.',

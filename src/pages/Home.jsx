@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, Share2, SlidersHorizontal, List, Globe, Heart, Radio, Bike, Mountain, Truck, History } from 'lucide-react';
+import { Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, Share2, SlidersHorizontal, List, Globe, Heart, Radio, Bike, Mountain, Truck, History, CreditCard, BookOpen } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from 'framer-motion';
@@ -428,7 +428,7 @@ export default function Home() {
               className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-3 sm:mb-6"
             >
               <span className="bg-gradient-to-r from-white via-emerald-100 to-teal-200 bg-clip-text text-transparent">
-                {t('heroTitle')}
+                {language === 'he' ? 'כל הטיולים שלכם במקום אחד' : language === 'ru' ? 'Все ваши поездки в одном месте' : language === 'es' ? 'Todos tus viajes en un solo lugar' : language === 'fr' ? 'Tous vos voyages en un seul endroit' : language === 'de' ? 'Alle Ihre Reisen an einem Ort' : language === 'it' ? 'Tutti i tuoi viaggi in un unico posto' : 'All Your Trips in One Place'}
               </span>
             </motion.h1>
 
@@ -621,13 +621,70 @@ export default function Home() {
         </section>
       )}
 
+      {/* Features Section - SEO H2 */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="hover:shadow-xl transition-shadow border-2 border-emerald-100">
+            <CardContent className="p-6">
+              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
+                <Users className="w-6 h-6 text-emerald-600" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                {language === 'he' ? 'הרשמה מהירה' : language === 'ru' ? 'Быстрая регистрация' : language === 'es' ? 'Registro rápido' : language === 'fr' ? 'Inscription rapide' : language === 'de' ? 'Schnelle Anmeldung' : language === 'it' ? 'Registrazione rapida' : 'Quick Registration'}
+              </h2>
+              <p className="text-gray-600 text-sm">
+                {language === 'he' ? 'טפסים דיגיטליים חכמים לרישום משתתפים - אוטומטי, מהיר ופשוט' : language === 'ru' ? 'Умные цифровые формы для регистрации участников - автоматически, быстро и просто' : language === 'es' ? 'Formularios digitales inteligentes para registro de participantes - automático, rápido y simple' : language === 'fr' ? 'Formulaires numériques intelligents pour l\'inscription des participants - automatique, rapide et simple' : language === 'de' ? 'Intelligente digitale Formulare zur Teilnehmerregistrierung - automatisch, schnell und einfach' : language === 'it' ? 'Moduli digitali intelligenti per la registrazione dei partecipanti - automatico, veloce e semplice' : 'Smart digital forms for participant registration - automatic, fast and simple'}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-xl transition-shadow border-2 border-blue-100">
+            <CardContent className="p-6">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                <MapPin className="w-6 h-6 text-blue-600" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                {language === 'he' ? 'מפות ומסלולים' : language === 'ru' ? 'Карты и маршруты' : language === 'es' ? 'Mapas y rutas' : language === 'fr' ? 'Cartes et itinéraires' : language === 'de' ? 'Karten und Routen' : language === 'it' ? 'Mappe e percorsi' : 'Maps & Routes'}
+              </h2>
+              <p className="text-gray-600 text-sm">
+                {language === 'he' ? 'תכנון מסלולים, נקודות ציון ושיתוף מיקום בזמן אמת עם המשתתפים' : language === 'ru' ? 'Планирование маршрутов, точки интереса и обмен местоположением в реальном времени с участниками' : language === 'es' ? 'Planificación de rutas, puntos de referencia y ubicación en tiempo real con participantes' : language === 'fr' ? 'Planification d\'itinéraires, points de repère et partage de localisation en temps réel avec les participants' : language === 'de' ? 'Routenplanung, Wegpunkte und Echtzeit-Standortfreigabe mit Teilnehmern' : language === 'it' ? 'Pianificazione percorsi, punti di riferimento e condivisione posizione in tempo reale con i partecipanti' : 'Route planning, waypoints and real-time location sharing with participants'}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-xl transition-shadow border-2 border-purple-100">
+            <CardContent className="p-6">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+                <CreditCard className="w-6 h-6 text-purple-600" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                {language === 'he' ? 'ניהול תשלומים מאובטח' : language === 'ru' ? 'Безопасное управление платежами' : language === 'es' ? 'Gestión segura de pagos' : language === 'fr' ? 'Gestion sécurisée des paiements' : language === 'de' ? 'Sichere Zahlungsverwaltung' : language === 'it' ? 'Gestione pagamenti sicura' : 'Secure Payment Management'}
+              </h2>
+              <p className="text-gray-600 text-sm">
+                {language === 'he' ? 'גביית תשלומים אוטומטית, מעקב סטטוסים ודוחות מפורטים - הכל במקום אחד' : language === 'ru' ? 'Автоматический сбор платежей, отслеживание статусов и подробные отчеты - все в одном месте' : language === 'es' ? 'Cobro automático de pagos, seguimiento de estados e informes detallados - todo en un solo lugar' : language === 'fr' ? 'Collecte automatique des paiements, suivi des statuts et rapports détaillés - le tout en un seul endroit' : language === 'de' ? 'Automatische Zahlungserfassung, Statusverfolgung und detaillierte Berichte - alles an einem Ort' : language === 'it' ? 'Raccolta automatica pagamenti, tracciamento stato e report dettagliati - tutto in un unico posto' : 'Automatic payment collection, status tracking and detailed reports - all in one place'}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* CTA to Planning Guide */}
+        <div className="mt-8 text-center">
+          <Link to={createPageUrl('TripPlanningGuide')}>
+            <Button variant="outline" className="gap-2 border-2 border-emerald-300 hover:bg-emerald-50 h-12">
+              <BookOpen className="w-5 h-5 text-emerald-600" />
+              {language === 'he' ? 'מדריך מלא לארגון טיולים' : language === 'ru' ? 'Полное руководство по организации поездок' : language === 'es' ? 'Guía completa para organizar viajes' : language === 'fr' ? 'Guide complet pour organiser des voyages' : language === 'de' ? 'Vollständiger Leitfaden zur Reiseorganisation' : language === 'it' ? 'Guida completa per organizzare viaggi' : 'Complete Trip Organization Guide'}
+            </Button>
+          </Link>
+        </div>
+      </section>
+
       {/* Trips Section */}
       <section id="trips-section" className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12 pb-20 sm:pb-8">
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
-                {t('exploreTrips')}
+                {language === 'he' ? 'גלה טיולים' : language === 'ru' ? 'Найти поездки' : language === 'es' ? 'Descubre viajes' : language === 'fr' ? 'Découvrir des voyages' : language === 'de' ? 'Reisen entdecken' : language === 'it' ? 'Scopri viaggi' : 'Discover Trips'}
               </h2>
               <p className="text-sm sm:text-base text-gray-600 mt-1">
                 {filteredTrips.length} {language === 'he' ? 'טיולים נמצאו' : language === 'ru' ? 'поездок найдено' : language === 'es' ? 'viajes encontrados' : language === 'fr' ? 'voyages trouvés' : language === 'de' ? 'Reisen gefunden' : language === 'it' ? 'viaggi trovati' : 'trips found'}
