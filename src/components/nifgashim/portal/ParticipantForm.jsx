@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useLanguage } from '../../LanguageContext';
 import { Plus, Trash2, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { motion } from 'framer-motion';
 
 export default function ParticipantForm({ userType, participants, setParticipants, groupInfo, setGroupInfo }) {
   const { language, isRTL } = useLanguage();
