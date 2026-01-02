@@ -381,15 +381,23 @@ function LayoutContent({ children, currentPageName }) {
       };
 
       const landingVisited = typeof localStorage !== 'undefined' ? localStorage.getItem('landing_page_visited') : null;
-      
+
       if (isInAppBrowser() && !landingVisited && currentPageName !== 'Landing') {
         navigate(createPageUrl('Landing'));
         return;
       }
 
-      // Check if language has been selected
+      // Check if language has been selected - BUT SKIP if lang parameter exists in URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const langParam = urlParams.get('lang');
       const languageSelected = typeof localStorage !== 'undefined' ? localStorage.getItem('language_selected') : null;
-      if (!languageSelected && currentPageName !== 'Landing') {
+      const savedLanguage = typeof localStorage !== 'undefined' ? localStorage.getItem('language') : null;
+
+      // Only show language selection if:
+      // 1. No lang parameter in URL
+      // 2. No language saved in localStorage
+      // 3. User hasn't selected language before
+      if (!langParam && !savedLanguage && !languageSelected && currentPageName !== 'Landing') {
         setShowLanguageSelection(true);
         return;
       }
