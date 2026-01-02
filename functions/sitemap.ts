@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
-  // גוגל חייב GET
+  // וידוא שהבקשה היא מסוג GET
   if (req.method !== 'GET') {
     return new Response('Method not allowed', { status: 405 });
   }
@@ -12,69 +12,58 @@ Deno.serve(async (req) => {
     const now = new Date().toISOString().split('T')[0];
     const languages = ['en', 'he', 'es', 'fr', 'de', 'it', 'ru'];
     
+    // 1. הגדרת דפים סטטיים
     const staticPages = [
       { path: '', priority: '1.0', changefreq: 'daily' },
       { path: 'CreateTrip', priority: '0.9', changefreq: 'weekly' },
       { path: 'MyTrips', priority: '0.8', changefreq: 'daily' },
-      { path: 'AIRecommendations', priority: '0.7', changefreq: 'weekly' },
       { path: 'Community', priority: '0.7', changefreq: 'daily' },
-      { path: 'Weather', priority: '0.6', changefreq: 'weekly' },
-      { path: 'TravelJournal', priority: '0.6', changefreq: 'weekly' },
-      { path: 'TripPlanningGuide', priority: '0.9', changefreq: 'monthly' },
-      { path: 'AboutUs', priority: '0.5', changefreq: 'monthly' },
-      { path: 'PrivacyPolicy', priority: '0.3', changefreq: 'monthly' },
-      { path: 'TermsOfUse', priority: '0.3', changefreq: 'monthly' },
-      { path: 'AccessibilityStatement', priority: '0.3', changefreq: 'monthly' },
-      { path: 'Features', priority: '0.8', changefreq: 'monthly' },
-      { path: 'NifgashimPortal', priority: '0.9', changefreq: 'weekly' }
+      { path: 'TripPlanningGuide', priority: '0.9', changefreq: 'monthly' }
     ];
     
+    // 2. משיכת נתונים דינמיים (טיולים ציבוריים)
     const trips = await base44.asServiceRole.entities.Trip.filter({ 
       status: 'open',
       privacy: 'public' 
     }, '-created_date', 100);
     
-    // בניית ה-XML בפורמט תקין
-    const xmlLines = [];
-    xmlLines.push('<?xml version="1.0" encoding="UTF-8"?>');
-    xmlLines.push('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">');
+    // 3. בניית מבנה ה-XML
+    let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n';
     
+    // הוספת דפים סטטיים עם גרסאות שפה
     staticPages.forEach(page => {
-      const pagePath = page.path ? '/' + page.path : '';
-      xmlLines.push('  <url>');
-      xmlLines.push(`    <loc>${baseUrl}${pagePath}</loc>`);
-      xmlLines.push(`    <lastmod>${now}</lastmod>`);
-      xmlLines.push(`    <changefreq>${page.changefreq}</changefreq>`);
-      xmlLines.push(`    <priority>${page.priority}</priority>`);
-      languages.forEach(lang => {
-        xmlLines.push(`    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}${pagePath}?lang=${lang}" />`);
-      });
-      xmlLines.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}${pagePath}" />`);
-      xmlLines.push('  </url>');
+      const pagePath = page.path ? `/${page.path}` : '';
       
+      xml += '  <url>\n';
+      xml += `    <loc>${baseUrl}${pagePath}</loc>\n`;
+      xml += `    <lastmod>${now}</lastmod>\n`;
+      xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
+      xml += `    <priority>${page.priority}</priority>\n`;
+      
+      // תגיות שפה (Hreflang) לקידום בינלאומי
       languages.forEach(lang => {
-        xmlLines.push('  <url>');
-        xmlLines.push(`    <loc>${baseUrl}${pagePath}?lang=${lang}</loc>`);
-        xmlLines.push(`    <lastmod>${now}</lastmod>`);
-        xmlLines.push(`    <changefreq>${page.changefreq}</changefreq>`);
-        xmlLines.push(`    <priority>${page.priority}</priority>`);
-        xmlLines.push('  </url>');
+        xml += `    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}${pagePath}?lang=${lang}" />\n`;
       });
+      xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}${pagePath}" />\n`;
+      xml += '  </url>\n';
     });
     
+    // הוספת דפי טיולים דינמיים
     trips.forEach(trip => {
-      const tripDate = (trip.updated_date || trip.created_date || new Date().toISOString()).split('T')[0];
-      xmlLines.push('  <url>');
-      xmlLines.push(`    <loc>${baseUrl}/TripDetails?id=${trip.id}</loc>`);
-      xmlLines.push(`    <lastmod>${tripDate}</lastmod>`);
-      xmlLines.push('    <changefreq>daily</changefreq>');
-      xmlLines.push('    <priority>0.8</priority>');
-      xmlLines.push('  </url>');
+      const tripDate = (trip.updated_date || trip.created_date || now).split('T')[0];
+      xml += '  <url>\n';
+      xml += `    <loc>${baseUrl}/TripDetails?id=${trip.id}</loc>\n`;
+      xml += `    <lastmod>${tripDate}</lastmod>\n`;
+      xml += '    <changefreq>daily</changefreq>\n';
+      xml += '    <priority>0.8</priority>\n';
+      xml += '  </url>\n';
     });
     
-    xmlLines.push('</urlset>');
+    xml += '</urlset>';
 
-    return new Response(xmlLines.join('\n'), {
+    // 4. החזרת ה-Response עם ה-Headers הנכונים
+    return new Response(xml.trim(), {
       status: 200,
       headers: {
         'Content-Type': 'application/xml; charset=utf-8',
@@ -84,9 +73,7 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
-    const fallbackXml = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://groupyloopy.app</loc></url></urlset>';
-    return new Response(fallbackXml, {
-      headers: { 'Content-Type': 'application/xml; charset=utf-8' }
-    });
+    console.error('Sitemap Error:', error);
+    return new Response('Error generating sitemap', { status: 500 });
   }
 });
