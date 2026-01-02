@@ -8,6 +8,7 @@ import CookiePolicy from './pages/CookiePolicy';
 import CreateTrip from './pages/CreateTrip';
 import Dashboard from './pages/Dashboard';
 import EditTrip from './pages/EditTrip';
+import Features from './pages/Features';
 import Feedback from './pages/Feedback';
 import Home from './pages/Home';
 import Inbox from './pages/Inbox';
@@ -31,10 +32,9 @@ import TermsOfService from './pages/TermsOfService';
 import TermsOfUse from './pages/TermsOfUse';
 import TravelJournal from './pages/TravelJournal';
 import TripDetails from './pages/TripDetails';
+import TripPlanningGuide from './pages/TripPlanningGuide';
 import TripSummary from './pages/TripSummary';
 import Weather from './pages/Weather';
-import Features from './pages/Features';
-import TripPlanningGuide from './pages/TripPlanningGuide';
 import __Layout from './Layout.jsx';
 
 
@@ -49,6 +49,7 @@ export const PAGES = {
     "CreateTrip": CreateTrip,
     "Dashboard": Dashboard,
     "EditTrip": EditTrip,
+    "Features": Features,
     "Feedback": Feedback,
     "Home": Home,
     "Inbox": Inbox,
@@ -72,10 +73,9 @@ export const PAGES = {
     "TermsOfUse": TermsOfUse,
     "TravelJournal": TravelJournal,
     "TripDetails": TripDetails,
+    "TripPlanningGuide": TripPlanningGuide,
     "TripSummary": TripSummary,
     "Weather": Weather,
-    "Features": Features,
-    "TripPlanningGuide": TripPlanningGuide,
 }
 
 export const pagesConfig = {

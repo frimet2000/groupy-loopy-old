@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import AnnouncementToast from '../components/announcements/AnnouncementToast';
 
 export default function Home() {
-  const { t, isRTL, language } = useLanguage();
+  const { t, isRTL, language, setLanguage } = useLanguage();
   const navigate = useNavigate();
   const [filters, setFilters] = useState({});
   const [visibleCount, setVisibleCount] = useState(8);
@@ -33,6 +33,15 @@ export default function Home() {
   const [selectedContinent, setSelectedContinent] = useState('all');
   const [showLiveTripsDialog, setShowLiveTripsDialog] = useState(false);
   const [joiningLiveTrip, setJoiningLiveTrip] = useState(false);
+
+  // Auto-detect and set language from URL parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const langParam = urlParams.get('lang');
+    if (langParam && ['en', 'he', 'es', 'fr', 'de', 'it', 'ru'].includes(langParam) && langParam !== language) {
+      setLanguage(langParam);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
