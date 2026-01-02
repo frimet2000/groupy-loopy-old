@@ -20,13 +20,8 @@ import MemorialRequest from './pages/MemorialRequest';
 import MyLists from './pages/MyLists';
 import MyNifgashim from './pages/MyNifgashim';
 import MyTrips from './pages/MyTrips';
-import NifgashimCheckIn from './pages/NifgashimCheckIn';
-import NifgashimDashboard from './pages/NifgashimDashboard';
-import NifgashimLanding from './pages/NifgashimLanding';
-import NifgashimPayment from './pages/NifgashimPayment';
 import NifgashimPortal from './pages/NifgashimPortal';
 import NifgashimRegistration from './pages/NifgashimRegistration';
-import NifgashimTrekManager from './pages/NifgashimTrekManager';
 import Notifications from './pages/Notifications';
 import Onboarding from './pages/Onboarding';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -66,13 +61,8 @@ export const PAGES = {
     "MyLists": MyLists,
     "MyNifgashim": MyNifgashim,
     "MyTrips": MyTrips,
-    "NifgashimCheckIn": NifgashimCheckIn,
-    "NifgashimDashboard": NifgashimDashboard,
-    "NifgashimLanding": NifgashimLanding,
-    "NifgashimPayment": NifgashimPayment,
     "NifgashimPortal": NifgashimPortal,
     "NifgashimRegistration": NifgashimRegistration,
-    "NifgashimTrekManager": NifgashimTrekManager,
     "Notifications": Notifications,
     "Onboarding": Onboarding,
     "PrivacyPolicy": PrivacyPolicy,

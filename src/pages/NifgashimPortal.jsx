@@ -17,6 +17,7 @@ import NifgashimParticipantForm from '../components/nifgashim/portal/Participant
 import NifgashimDayCardsSelector from '../components/nifgashim/portal/DayCardsSelector';
 import NifgashimMemorialForm from '../components/nifgashim/portal/MemorialForm';
 import NifgashimRegistrationSummary from '../components/nifgashim/portal/RegistrationSummary';
+import ThankYouView from '../components/nifgashim/portal/ThankYouView';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_placeholder');
 
@@ -142,6 +143,7 @@ export default function NifgashimPortal() {
   const [submitting, setSubmitting] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [showThankYou, setShowThankYou] = useState(false);
 
   const { data: nifgashimTrip, isLoading } = useQuery({
     queryKey: ['nifgashimPortalTrip'],
@@ -348,11 +350,8 @@ export default function NifgashimPortal() {
 
       toast.success(trans.registrationSuccess);
       
-      // Redirect to Home after 2 seconds
-      setTimeout(() => {
-        toast.info(trans.redirecting);
-        navigate(createPageUrl('Home'));
-      }, 2000);
+      // Show Thank You view
+      setShowThankYou(true);
     } catch (error) {
       console.error(error);
       toast.error(language === 'he' ? 'שגיאה בשליחת ההרשמה' : 'Error submitting registration');
@@ -369,6 +368,23 @@ export default function NifgashimPortal() {
   }
 
   const progressPercent = (currentStep / steps.length) * 100;
+
+  if (showThankYou) {
+    return (
+      <div className={`min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 py-8 px-4 ${isRTL ? 'rtl' : 'ltr'}`}>
+        <div className="max-w-4xl mx-auto">
+          <ThankYouView
+            participants={participants}
+            selectedDays={selectedDays}
+            totalAmount={totalAmount}
+            userType={userType}
+            language={language}
+            isRTL={isRTL}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 py-8 px-4 ${isRTL ? 'rtl' : 'ltr'}`}>
