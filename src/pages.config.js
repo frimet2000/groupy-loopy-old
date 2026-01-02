@@ -37,6 +37,7 @@ import TravelJournal from './pages/TravelJournal';
 import TripDetails from './pages/TripDetails';
 import TripSummary from './pages/TripSummary';
 import Weather from './pages/Weather';
+import NifgashimPortal from './pages/NifgashimPortal';
 import __Layout from './Layout.jsx';
 
 
@@ -80,6 +81,7 @@ export const PAGES = {
     "TripDetails": TripDetails,
     "TripSummary": TripSummary,
     "Weather": Weather,
+    "NifgashimPortal": NifgashimPortal,
 }
 
 export const pagesConfig = {
