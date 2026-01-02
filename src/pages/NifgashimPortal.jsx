@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import NifgashimUserTypeSelector from '../components/nifgashim/portal/UserTypeSelector';
 import NifgashimParticipantForm from '../components/nifgashim/portal/ParticipantForm';
 import NifgashimDayCardsSelector from '../components/nifgashim/portal/DayCardsSelector';
+import NifgashimMemorialForm from '../components/nifgashim/portal/MemorialForm';
 import NifgashimRegistrationSummary from '../components/nifgashim/portal/RegistrationSummary';
 
 export default function NifgashimPortal() {
@@ -20,6 +21,7 @@ export default function NifgashimPortal() {
   const [participants, setParticipants] = useState([]);
   const [selectedDays, setSelectedDays] = useState([]);
   const [groupInfo, setGroupInfo] = useState({ name: '', leaderName: '', leaderEmail: '', leaderPhone: '' });
+  const [memorialData, setMemorialData] = useState({ memorial: null });
   const [submitting, setSubmitting] = useState(false);
 
   const { data: nifgashimTrip, isLoading } = useQuery({
@@ -41,6 +43,7 @@ export default function NifgashimPortal() {
       stepUserType: "סוג רישום",
       stepParticipants: "פרטי משתתפים",
       stepDays: "בחירת ימים",
+      stepMemorial: "הנצחה",
       stepSummary: "סיכום",
       next: "הבא",
       back: "אחורה",
@@ -53,6 +56,7 @@ export default function NifgashimPortal() {
       stepUserType: "Registration Type",
       stepParticipants: "Participant Details",
       stepDays: "Select Days",
+      stepMemorial: "Memorial",
       stepSummary: "Summary",
       next: "Next",
       back: "Back",
@@ -65,6 +69,7 @@ export default function NifgashimPortal() {
       stepUserType: "Тип регистрации",
       stepParticipants: "Данные участников",
       stepDays: "Выбор дней",
+      stepMemorial: "Мемориал",
       stepSummary: "Резюме",
       next: "Далее",
       back: "Назад",
@@ -77,6 +82,7 @@ export default function NifgashimPortal() {
       stepUserType: "Tipo de registro",
       stepParticipants: "Detalles de participantes",
       stepDays: "Seleccionar días",
+      stepMemorial: "Memorial",
       stepSummary: "Resumen",
       next: "Siguiente",
       back: "Atrás",
@@ -89,6 +95,7 @@ export default function NifgashimPortal() {
       stepUserType: "Type d'inscription",
       stepParticipants: "Détails des participants",
       stepDays: "Sélectionner les jours",
+      stepMemorial: "Mémorial",
       stepSummary: "Résumé",
       next: "Suivant",
       back: "Retour",
@@ -101,6 +108,7 @@ export default function NifgashimPortal() {
       stepUserType: "Registrierungstyp",
       stepParticipants: "Teilnehmerdetails",
       stepDays: "Tage auswählen",
+      stepMemorial: "Gedenkstätte",
       stepSummary: "Zusammenfassung",
       next: "Weiter",
       back: "Zurück",
@@ -113,6 +121,7 @@ export default function NifgashimPortal() {
       stepUserType: "Tipo di registrazione",
       stepParticipants: "Dettagli partecipanti",
       stepDays: "Seleziona giorni",
+      stepMemorial: "Memoriale",
       stepSummary: "Riepilogo",
       next: "Avanti",
       back: "Indietro",
@@ -127,7 +136,8 @@ export default function NifgashimPortal() {
     { id: 1, label: trans.stepUserType },
     { id: 2, label: trans.stepParticipants },
     { id: 3, label: trans.stepDays },
-    { id: 4, label: trans.stepSummary }
+    { id: 4, label: trans.stepMemorial },
+    { id: 5, label: trans.stepSummary }
   ];
 
   const handleSubmit = async () => {
@@ -157,6 +167,15 @@ export default function NifgashimPortal() {
         participants: [...currentParticipants, ...participantsData]
       });
 
+      // Create Memorial request if provided
+      if (memorialData.memorial?.fallen_name) {
+        await base44.entities.Memorial.create({
+          trip_id: nifgashimTrip.id,
+          ...memorialData.memorial,
+          status: 'pending'
+        });
+      }
+
       toast.success(language === 'he' ? 'ההרשמה נשלחה בהצלחה!' : 'Registration submitted successfully!');
       
       // Reset form
@@ -165,6 +184,7 @@ export default function NifgashimPortal() {
       setParticipants([]);
       setSelectedDays([]);
       setGroupInfo({ name: '', leaderName: '', leaderEmail: '', leaderPhone: '' });
+      setMemorialData({ memorial: null });
     } catch (error) {
       console.error(error);
       toast.error(language === 'he' ? 'שגיאה בשליחת ההרשמה' : 'Error submitting registration');
@@ -265,6 +285,13 @@ export default function NifgashimPortal() {
             )}
 
             {currentStep === 4 && (
+              <NifgashimMemorialForm
+                formData={memorialData}
+                setFormData={setMemorialData}
+              />
+            )}
+
+            {currentStep === 5 && (
               <NifgashimRegistrationSummary
                 userType={userType}
                 participants={participants}

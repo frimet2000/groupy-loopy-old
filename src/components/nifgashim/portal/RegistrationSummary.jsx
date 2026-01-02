@@ -111,7 +111,7 @@ export default function RegistrationSummary({ userType, participants, selectedDa
                    language === 'de' ? 'Tag' :
                    language === 'it' ? 'Giorno' : 'Day';
 
-  // Calculate price: only adults (age 10+) pay
+  // Calculate price: 85 ILS per adult (10+) for the entire trek
   const calculatePrice = () => {
     if (userType === 'group') return 0;
     
@@ -121,7 +121,7 @@ export default function RegistrationSummary({ userType, participants, selectedDa
       return age >= 10;
     }).length;
 
-    return adultsCount * selectedDays.length * 85; // 85 ILS per adult per day
+    return adultsCount * 85; // 85 ILS per adult for entire trek
   };
 
   const totalPrice = calculatePrice();
@@ -218,8 +218,18 @@ export default function RegistrationSummary({ userType, participants, selectedDa
           {userType !== 'group' && (
             <p className="text-sm text-gray-600 mt-2">
               {language === 'he' 
-                ? `תשלום עבור ${participants.filter(p => !p.age_range || parseInt(p.age_range.split('-')[0]) >= 10).length} מבוגרים × ${selectedDays.length} ימים × 85₪`
-                : `Payment for ${participants.filter(p => !p.age_range || parseInt(p.age_range.split('-')[0]) >= 10).length} adults × ${selectedDays.length} days × 85₪`}
+                ? `תשלום עבור ${participants.filter(p => !p.age_range || parseInt(p.age_range.split('-')[0]) >= 10).length} מבוגרים (גיל 10+) × 85₪ לכל הטראק`
+                : language === 'ru'
+                ? `Оплата за ${participants.filter(p => !p.age_range || parseInt(p.age_range.split('-')[0]) >= 10).length} взрослых (10+) × 85₪ за весь трек`
+                : language === 'es'
+                ? `Pago por ${participants.filter(p => !p.age_range || parseInt(p.age_range.split('-')[0]) >= 10).length} adultos (10+) × 85₪ por todo el trek`
+                : language === 'fr'
+                ? `Paiement pour ${participants.filter(p => !p.age_range || parseInt(p.age_range.split('-')[0]) >= 10).length} adultes (10+) × 85₪ pour tout le trek`
+                : language === 'de'
+                ? `Zahlung für ${participants.filter(p => !p.age_range || parseInt(p.age_range.split('-')[0]) >= 10).length} Erwachsene (10+) × 85₪ für den gesamten Trek`
+                : language === 'it'
+                ? `Pagamento per ${participants.filter(p => !p.age_range || parseInt(p.age_range.split('-')[0]) >= 10).length} adulti (10+) × 85₪ per tutto il trek`
+                : `Payment for ${participants.filter(p => !p.age_range || parseInt(p.age_range.split('-')[0]) >= 10).length} adults (age 10+) × 85₪ for entire trek`}
             </p>
           )}
         </div>
