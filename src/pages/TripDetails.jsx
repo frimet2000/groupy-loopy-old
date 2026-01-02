@@ -54,7 +54,7 @@ import {
   Calendar, MapPin, Clock, Users, Mountain, Dog, Tent,
   Share2, ArrowLeft, ArrowRight, Check, X, User,
   Droplets, TreePine, Sun, History, Building, Navigation, Edit, MessageCircle, Bike, Truck,
-  Info, GalleryHorizontal, Heart, MessageSquare, Radio, Backpack, Bookmark, DollarSign, Image, Loader2, Camera, Upload, Bell, Package, UserPlus, FileText, Shield, AlertTriangle } from
+  Info, GalleryHorizontal, Heart, MessageSquare, Radio, Backpack, Bookmark, DollarSign, Image, Loader2, Camera, Upload, Bell, Package, UserPlus, FileText, Shield, AlertTriangle, Settings, Eye, EyeOff } from
 'lucide-react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -117,6 +117,8 @@ export default function TripDetails() {
   const [showProfileDialog, setShowProfileDialog] = useState(false);
   const [selectedProfileEmail, setSelectedProfileEmail] = useState(null);
   const [showEditParticipantDialog, setShowEditParticipantDialog] = useState(false);
+  const [showTabSettingsDialog, setShowTabSettingsDialog] = useState(false);
+  const [hiddenTabs, setHiddenTabs] = useState(trip?.hidden_tabs || []);
 
   // Calculate age from birth date (only for adults with date format)
   const calculateAge = (birthDate) => {
@@ -1776,74 +1778,117 @@ export default function TripDetails() {
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="w-full mb-4">
+              {canEdit && (
+                <div className="flex justify-end mb-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowTabSettingsDialog(true)}
+                    className="gap-2"
+                  >
+                    <Settings className="w-4 h-4" />
+                    {language === 'he' ? 'הגדרות טאבים' : 'Tab Settings'}
+                  </Button>
+                </div>
+              )}
               <TabsList className="flex flex-wrap lg:grid lg:grid-cols-8 lg:auto-rows-fr w-full items-stretch gap-1.5 lg:gap-2 h-auto bg-gradient-to-r from-white via-gray-50 to-white border-2 border-gray-200/50 shadow-xl rounded-xl p-2 lg:p-3 text-xs md:text-sm" dir={language === 'he' ? 'rtl' : 'ltr'}>
-                <TabsTrigger value="details" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-500/50 data-[state=active]:border-2 data-[state=active]:border-emerald-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
-                  <Info className="w-4 h-4 text-emerald-600 group-data-[state=active]:text-white" />
-                  <span className="text-sm">{language === 'he' ? 'פרטים' : language === 'ru' ? 'Детали' : language === 'es' ? 'Detalles' : language === 'fr' ? 'Détails' : language === 'de' ? 'Details' : language === 'it' ? 'Dettagli' : 'Details'}</span>
-                </TabsTrigger>
-                <TabsTrigger value="map" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-purple-500/50 data-[state=active]:border-2 data-[state=active]:border-purple-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
-                  <MapPin className="w-4 h-4 text-purple-600 group-data-[state=active]:text-white" />
-                  <span className="text-sm">{language === 'he' ? 'מפה' : language === 'ru' ? 'Карта' : language === 'es' ? 'Mapa' : language === 'fr' ? 'Carte' : language === 'de' ? 'Karte' : language === 'it' ? 'Mappa' : 'Map'}</span>
-                </TabsTrigger>
-                <TabsTrigger value="navigate" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-green-500 data-[state=active]:to-green-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-green-500/50 data-[state=active]:border-2 data-[state=active]:border-green-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center" onClick={(e) => {
-                  e.preventDefault();
-                  setShowNavigationDialog(true);
-                }}>
-                  <Navigation className="w-4 h-4 text-green-600 group-data-[state=active]:text-white" />
-                  <span className="text-sm">{language === 'he' ? 'נווט' : 'Navigate'}</span>
-                </TabsTrigger>
-                <TabsTrigger value="participants" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-500/50 data-[state=active]:border-2 data-[state=active]:border-blue-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
-                  <Users className="w-4 h-4 text-blue-600 group-data-[state=active]:text-white" />
-                  <span className="text-sm">{language === 'he' ? 'משתתפים' : language === 'ru' ? 'Участники' : language === 'es' ? 'Participantes' : language === 'fr' ? 'Participants' : language === 'de' ? 'Teilnehmer' : language === 'it' ? 'Partecipanti' : 'Participants'}</span>
-                </TabsTrigger>
-                <TabsTrigger value="equipment" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-500/50 data-[state=active]:border-2 data-[state=active]:border-indigo-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
-                  <Backpack className="w-4 h-4 text-indigo-600 group-data-[state=active]:text-white" />
-                  <span className="text-sm">{language === 'he' ? 'ציוד' : language === 'ru' ? 'Снаряжение' : language === 'es' ? 'Equipo' : language === 'fr' ? 'Équipement' : language === 'de' ? 'Ausrüstung' : language === 'it' ? 'Attrezzatura' : 'Equipment'}</span>
-                </TabsTrigger>
-                <TabsTrigger value="itinerary" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-violet-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-violet-500/50 data-[state=active]:border-2 data-[state=active]:border-violet-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
-                  <Calendar className="w-4 h-4 text-violet-600 group-data-[state=active]:text-white" />
-                  <span className="text-sm">{language === 'he' ? 'לוח זמנים' : language === 'ru' ? 'Маршрут' : language === 'es' ? 'Itinerario' : language === 'fr' ? 'Itinéraire' : language === 'de' ? 'Reiseplan' : language === 'it' ? 'Itinerario' : 'Itinerary'}</span>
-                </TabsTrigger>
-                <TabsTrigger value="budget" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-amber-500/50 data-[state=active]:border-2 data-[state=active]:border-amber-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
-                  <DollarSign className="w-4 h-4 text-amber-600 group-data-[state=active]:text-white" />
-                  <span className="text-sm">{language === 'he' ? 'תקציב' : language === 'ru' ? 'Бюджет' : language === 'es' ? 'Presupuesto' : language === 'fr' ? 'Budget' : language === 'de' ? 'Budget' : language === 'it' ? 'Budget' : 'Budget'}</span>
-                </TabsTrigger>
-                <TabsTrigger value="social" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-sky-500 data-[state=active]:to-sky-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-sky-500/50 data-[state=active]:border-2 data-[state=active]:border-sky-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
-                  <MessageCircle className="w-4 h-4 text-sky-600 group-data-[state=active]:text-white" />
-                  <span className="text-sm">{language === 'he' ? 'חברתי' : language === 'ru' ? 'Соцсети' : language === 'es' ? 'Social' : language === 'fr' ? 'Social' : language === 'de' ? 'Sozial' : language === 'it' ? 'Sociale' : 'Social'}</span>
-                </TabsTrigger>
-                {(hasJoined || isOrganizer) &&
-                <>
-                    <TabsTrigger value="chat" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-orange-500/50 data-[state=active]:border-2 data-[state=active]:border-orange-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
-                      <MessageSquare className="w-4 h-4 text-orange-600 group-data-[state=active]:text-white" />
-                      <span className="text-sm">{language === 'he' ? 'צ\'אט' : language === 'ru' ? 'Чат' : language === 'es' ? 'Chat' : language === 'fr' ? 'Chat' : language === 'de' ? 'Chat' : language === 'it' ? 'Chat' : 'Chat'}</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="gallery" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-pink-500/50 data-[state=active]:border-2 data-[state=active]:border-pink-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
-                      <GalleryHorizontal className="w-4 h-4 text-pink-600 group-data-[state=active]:text-white" />
-                      <span className="text-sm">{language === 'he' ? 'גלריה' : language === 'ru' ? 'Галерея' : language === 'es' ? 'Galería' : language === 'fr' ? 'Galerie' : language === 'de' ? 'Galerie' : language === 'it' ? 'Galleria' : 'Gallery'}</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="experiences" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-rose-500 data-[state=active]:to-rose-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-rose-500/50 data-[state=active]:border-2 data-[state=active]:border-rose-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
-                      <Heart className="w-4 h-4 text-rose-600 group-data-[state=active]:text-white" />
-                      <span className="text-sm">{language === 'he' ? 'חוויות' : language === 'ru' ? 'Впечатления' : language === 'es' ? 'Experiencias' : language === 'fr' ? 'Expériences' : language === 'de' ? 'Erlebnisse' : language === 'it' ? 'Esperienze' : 'Experiences'}</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="location" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal-500 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-teal-500/50 data-[state=active]:border-2 data-[state=active]:border-teal-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
-                      <Radio className="w-4 h-4 text-teal-600 group-data-[state=active]:text-white" />
-                      <span className="text-sm">{language === 'he' ? 'מיקום חי' : 'Live Location'}</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="reminders" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-500 data-[state=active]:to-yellow-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-yellow-500/50 data-[state=active]:border-2 data-[state=active]:border-yellow-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
-                      <Bell className="w-4 h-4 text-yellow-600 group-data-[state=active]:text-white" />
-                      <span className="text-sm">{language === 'he' ? 'תזכורות' : 'Reminders'}</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="contributions" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-orange-500/50 data-[state=active]:border-2 data-[state=active]:border-orange-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
-                      <Package className="w-4 h-4 text-orange-600 group-data-[state=active]:text-white" />
-                      <span className="text-sm">{language === 'he' ? 'מביא' : 'Bringing'}</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="invite" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-cyan-500 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-cyan-500/50 data-[state=active]:border-2 data-[state=active]:border-cyan-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
-                      <UserPlus className="w-4 h-4 text-cyan-600 group-data-[state=active]:text-white" />
-                      <span className="text-sm">{language === 'he' ? 'הזמן' : 'Invite'}</span>
-                    </TabsTrigger>
-                    </>
-                }
+                {!hiddenTabs.includes('details') && (
+                  <TabsTrigger value="details" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-500/50 data-[state=active]:border-2 data-[state=active]:border-emerald-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
+                    <Info className="w-4 h-4 text-emerald-600 group-data-[state=active]:text-white" />
+                    <span className="text-sm">{language === 'he' ? 'פרטים' : language === 'ru' ? 'Детали' : language === 'es' ? 'Detalles' : language === 'fr' ? 'Détails' : language === 'de' ? 'Details' : language === 'it' ? 'Dettagli' : 'Details'}</span>
+                  </TabsTrigger>
+                )}
+                {!hiddenTabs.includes('map') && (
+                  <TabsTrigger value="map" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-purple-500/50 data-[state=active]:border-2 data-[state=active]:border-purple-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
+                    <MapPin className="w-4 h-4 text-purple-600 group-data-[state=active]:text-white" />
+                    <span className="text-sm">{language === 'he' ? 'מפה' : language === 'ru' ? 'Карта' : language === 'es' ? 'Mapa' : language === 'fr' ? 'Carte' : language === 'de' ? 'Karte' : language === 'it' ? 'Mappa' : 'Map'}</span>
+                  </TabsTrigger>
+                )}
+                {!hiddenTabs.includes('navigate') && (
+                  <TabsTrigger value="navigate" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-green-500 data-[state=active]:to-green-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-green-500/50 data-[state=active]:border-2 data-[state=active]:border-green-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center" onClick={(e) => {
+                    e.preventDefault();
+                    setShowNavigationDialog(true);
+                  }}>
+                    <Navigation className="w-4 h-4 text-green-600 group-data-[state=active]:text-white" />
+                    <span className="text-sm">{language === 'he' ? 'נווט' : 'Navigate'}</span>
+                  </TabsTrigger>
+                )}
+                {!hiddenTabs.includes('participants') && (
+                  <TabsTrigger value="participants" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-blue-500/50 data-[state=active]:border-2 data-[state=active]:border-blue-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
+                    <Users className="w-4 h-4 text-blue-600 group-data-[state=active]:text-white" />
+                    <span className="text-sm">{language === 'he' ? 'משתתפים' : language === 'ru' ? 'Участники' : language === 'es' ? 'Participantes' : language === 'fr' ? 'Participants' : language === 'de' ? 'Teilnehmer' : language === 'it' ? 'Partecipanti' : 'Participants'}</span>
+                  </TabsTrigger>
+                )}
+                {!hiddenTabs.includes('equipment') && (
+                  <TabsTrigger value="equipment" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-500/50 data-[state=active]:border-2 data-[state=active]:border-indigo-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
+                    <Backpack className="w-4 h-4 text-indigo-600 group-data-[state=active]:text-white" />
+                    <span className="text-sm">{language === 'he' ? 'ציוד' : language === 'ru' ? 'Снаряжение' : language === 'es' ? 'Equipo' : language === 'fr' ? 'Équipement' : language === 'de' ? 'Ausrüstung' : language === 'it' ? 'Attrezzatura' : 'Equipment'}</span>
+                  </TabsTrigger>
+                )}
+                {!hiddenTabs.includes('itinerary') && (
+                  <TabsTrigger value="itinerary" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-violet-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-violet-500/50 data-[state=active]:border-2 data-[state=active]:border-violet-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
+                    <Calendar className="w-4 h-4 text-violet-600 group-data-[state=active]:text-white" />
+                    <span className="text-sm">{language === 'he' ? 'לוח זמנים' : language === 'ru' ? 'Маршрут' : language === 'es' ? 'Itinerario' : language === 'fr' ? 'Itinéraire' : language === 'de' ? 'Reiseplan' : language === 'it' ? 'Itinerario' : 'Itinerary'}</span>
+                  </TabsTrigger>
+                )}
+                {!hiddenTabs.includes('budget') && (
+                  <TabsTrigger value="budget" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-amber-500/50 data-[state=active]:border-2 data-[state=active]:border-amber-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
+                    <DollarSign className="w-4 h-4 text-amber-600 group-data-[state=active]:text-white" />
+                    <span className="text-sm">{language === 'he' ? 'תקציב' : language === 'ru' ? 'Бюджет' : language === 'es' ? 'Presupuesto' : language === 'fr' ? 'Budget' : language === 'de' ? 'Budget' : language === 'it' ? 'Budget' : 'Budget'}</span>
+                  </TabsTrigger>
+                )}
+                {!hiddenTabs.includes('social') && (
+                  <TabsTrigger value="social" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-sky-500 data-[state=active]:to-sky-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-sky-500/50 data-[state=active]:border-2 data-[state=active]:border-sky-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
+                    <MessageCircle className="w-4 h-4 text-sky-600 group-data-[state=active]:text-white" />
+                    <span className="text-sm">{language === 'he' ? 'חברתי' : language === 'ru' ? 'Соцсети' : language === 'es' ? 'Social' : language === 'fr' ? 'Social' : language === 'de' ? 'Sozial' : language === 'it' ? 'Sociale' : 'Social'}</span>
+                  </TabsTrigger>
+                )}
+                {(hasJoined || isOrganizer) && (
+                  <>
+                    {!hiddenTabs.includes('chat') && (
+                      <TabsTrigger value="chat" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-orange-500/50 data-[state=active]:border-2 data-[state=active]:border-orange-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
+                        <MessageSquare className="w-4 h-4 text-orange-600 group-data-[state=active]:text-white" />
+                        <span className="text-sm">{language === 'he' ? 'צ\'אט' : language === 'ru' ? 'Чат' : language === 'es' ? 'Chat' : language === 'fr' ? 'Chat' : language === 'de' ? 'Chat' : language === 'it' ? 'Chat' : 'Chat'}</span>
+                      </TabsTrigger>
+                    )}
+                    {!hiddenTabs.includes('gallery') && (
+                      <TabsTrigger value="gallery" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-pink-500/50 data-[state=active]:border-2 data-[state=active]:border-pink-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
+                        <GalleryHorizontal className="w-4 h-4 text-pink-600 group-data-[state=active]:text-white" />
+                        <span className="text-sm">{language === 'he' ? 'גלריה' : language === 'ru' ? 'Галерея' : language === 'es' ? 'Galería' : language === 'fr' ? 'Galerie' : language === 'de' ? 'Galerie' : language === 'it' ? 'Galleria' : 'Gallery'}</span>
+                      </TabsTrigger>
+                    )}
+                    {!hiddenTabs.includes('experiences') && (
+                      <TabsTrigger value="experiences" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-rose-500 data-[state=active]:to-rose-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-rose-500/50 data-[state=active]:border-2 data-[state=active]:border-rose-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
+                        <Heart className="w-4 h-4 text-rose-600 group-data-[state=active]:text-white" />
+                        <span className="text-sm">{language === 'he' ? 'חוויות' : language === 'ru' ? 'Впечатления' : language === 'es' ? 'Experiencias' : language === 'fr' ? 'Expériences' : language === 'de' ? 'Erlebnisse' : language === 'it' ? 'Esperienze' : 'Experiences'}</span>
+                      </TabsTrigger>
+                    )}
+                    {!hiddenTabs.includes('location') && (
+                      <TabsTrigger value="location" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal-500 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-teal-500/50 data-[state=active]:border-2 data-[state=active]:border-teal-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
+                        <Radio className="w-4 h-4 text-teal-600 group-data-[state=active]:text-white" />
+                        <span className="text-sm">{language === 'he' ? 'מיקום חי' : 'Live Location'}</span>
+                      </TabsTrigger>
+                    )}
+                    {!hiddenTabs.includes('reminders') && (
+                      <TabsTrigger value="reminders" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-500 data-[state=active]:to-yellow-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-yellow-500/50 data-[state=active]:border-2 data-[state=active]:border-yellow-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
+                        <Bell className="w-4 h-4 text-yellow-600 group-data-[state=active]:text-white" />
+                        <span className="text-sm">{language === 'he' ? 'תזכורות' : 'Reminders'}</span>
+                      </TabsTrigger>
+                    )}
+                    {!hiddenTabs.includes('contributions') && (
+                      <TabsTrigger value="contributions" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-orange-500/50 data-[state=active]:border-2 data-[state=active]:border-orange-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
+                        <Package className="w-4 h-4 text-orange-600 group-data-[state=active]:text-white" />
+                        <span className="text-sm">{language === 'he' ? 'מביא' : 'Bringing'}</span>
+                      </TabsTrigger>
+                    )}
+                    {!hiddenTabs.includes('invite') && (
+                      <TabsTrigger value="invite" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-cyan-500 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-cyan-500/50 data-[state=active]:border-2 data-[state=active]:border-cyan-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
+                        <UserPlus className="w-4 h-4 text-cyan-600 group-data-[state=active]:text-white" />
+                        <span className="text-sm">{language === 'he' ? 'הזמן' : 'Invite'}</span>
+                      </TabsTrigger>
+                    )}
+                  </>
+                )}
                     <TabsTrigger value="waiver" className="group relative flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-red-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-red-500/50 data-[state=active]:border-2 data-[state=active]:border-red-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
                       {!trip.participants?.find((p) => p.email === user?.email)?.waiver_accepted &&
                   <motion.div
@@ -3867,6 +3912,93 @@ export default function TripDetails() {
         language={language} />
 
       }
+
+      {/* Tab Settings Dialog */}
+      <Dialog open={showTabSettingsDialog} onOpenChange={setShowTabSettingsDialog}>
+        <DialogContent className="sm:max-w-lg" dir={language === 'he' ? 'rtl' : 'ltr'}>
+          <DialogHeader>
+            <DialogTitle>
+              {language === 'he' ? 'הגדרות טאבים' : 'Tab Settings'}
+            </DialogTitle>
+            <DialogDescription>
+              {language === 'he' ? 'בחר אילו טאבים להציג למשתתפים' : 'Choose which tabs to show to participants'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-4">
+            {[
+              { value: 'details', icon: Info, label: language === 'he' ? 'פרטים' : 'Details' },
+              { value: 'map', icon: MapPin, label: language === 'he' ? 'מפה' : 'Map' },
+              { value: 'navigate', icon: Navigation, label: language === 'he' ? 'נווט' : 'Navigate' },
+              { value: 'participants', icon: Users, label: language === 'he' ? 'משתתפים' : 'Participants' },
+              { value: 'equipment', icon: Backpack, label: language === 'he' ? 'ציוד' : 'Equipment' },
+              { value: 'itinerary', icon: Calendar, label: language === 'he' ? 'לוח זמנים' : 'Itinerary' },
+              { value: 'budget', icon: DollarSign, label: language === 'he' ? 'תקציב' : 'Budget' },
+              { value: 'social', icon: MessageCircle, label: language === 'he' ? 'חברתי' : 'Social' },
+              { value: 'chat', icon: MessageSquare, label: language === 'he' ? 'צ\'אט' : 'Chat' },
+              { value: 'gallery', icon: GalleryHorizontal, label: language === 'he' ? 'גלריה' : 'Gallery' },
+              { value: 'experiences', icon: Heart, label: language === 'he' ? 'חוויות' : 'Experiences' },
+              { value: 'location', icon: Radio, label: language === 'he' ? 'מיקום חי' : 'Live Location' },
+              { value: 'reminders', icon: Bell, label: language === 'he' ? 'תזכורות' : 'Reminders' },
+              { value: 'contributions', icon: Package, label: language === 'he' ? 'מביא' : 'Bringing' },
+              { value: 'invite', icon: UserPlus, label: language === 'he' ? 'הזמן' : 'Invite' }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const isHidden = hiddenTabs.includes(tab.value);
+              return (
+                <div
+                  key={tab.value}
+                  className={`flex items-center justify-between p-3 rounded-lg border-2 transition-all cursor-pointer ${
+                    isHidden ? 'bg-gray-100 border-gray-300' : 'bg-white border-emerald-200'
+                  }`}
+                  onClick={() => {
+                    setHiddenTabs(prev =>
+                      prev.includes(tab.value)
+                        ? prev.filter(t => t !== tab.value)
+                        : [...prev, tab.value]
+                    );
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className={`w-5 h-5 ${isHidden ? 'text-gray-400' : 'text-emerald-600'}`} />
+                    <span className={`font-medium ${isHidden ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                      {tab.label}
+                    </span>
+                  </div>
+                  {isHidden ? (
+                    <EyeOff className="w-5 h-5 text-gray-400" />
+                  ) : (
+                    <Eye className="w-5 h-5 text-emerald-600" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setHiddenTabs(trip?.hidden_tabs || []);
+                setShowTabSettingsDialog(false);
+              }}
+            >
+              {language === 'he' ? 'ביטול' : 'Cancel'}
+            </Button>
+            <Button
+              onClick={async () => {
+                await base44.entities.Trip.update(tripId, { hidden_tabs: hiddenTabs });
+                queryClient.invalidateQueries(['trip', tripId]);
+                setShowTabSettingsDialog(false);
+                toast.success(language === 'he' ? 'ההגדרות נשמרו' : 'Settings saved');
+              }}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              <Check className="w-4 h-4 mr-2" />
+              {language === 'he' ? 'שמור' : 'Save'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       </div>);
 
 }
