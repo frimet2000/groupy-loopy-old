@@ -13,7 +13,7 @@ Disallow: /NifgashimDashboard
 Disallow: /NifgashimCheckIn
 
 # Sitemaps
-Sitemap: https://groupyloopy.app/api/sitemap
+Sitemap: https://groupyloopy.app/api/functions/sitemap
 
 # Crawl-delay
 Crawl-delay: 1
