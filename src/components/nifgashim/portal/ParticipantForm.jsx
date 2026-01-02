@@ -8,6 +8,7 @@ import { useLanguage } from '../../LanguageContext';
 import { Plus, Trash2, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 export default function ParticipantForm({ userType, participants, setParticipants, groupInfo, setGroupInfo }) {
   const { language, isRTL } = useLanguage();
@@ -34,7 +35,9 @@ export default function ParticipantForm({ userType, participants, setParticipant
       email: "אימייל (אופציונלי)",
       add: "הוסף משתתף",
       participants: "משתתפים",
-      selectAge: "בחר טווח גילאים"
+      selectAge: "בחר טווח גילאים",
+      duplicateId: "תעודת זהות זו כבר רשומה",
+      duplicatePhone: "מספר טלפון זה כבר רשום"
     },
     en: {
       title: "Participant Details",
@@ -50,7 +53,9 @@ export default function ParticipantForm({ userType, participants, setParticipant
       email: "Email (Optional)",
       add: "Add Participant",
       participants: "Participants",
-      selectAge: "Select Age Range"
+      selectAge: "Select Age Range",
+      duplicateId: "This ID number is already registered",
+      duplicatePhone: "This phone number is already registered"
     },
     ru: {
       title: "Данные участников",
@@ -66,7 +71,9 @@ export default function ParticipantForm({ userType, participants, setParticipant
       email: "Email (необязательно)",
       add: "Добавить участника",
       participants: "Участники",
-      selectAge: "Выберите возраст"
+      selectAge: "Выберите возраст",
+      duplicateId: "Этот ID уже зарегистрирован",
+      duplicatePhone: "Этот номер телефона уже зарегистрирован"
     },
     es: {
       title: "Detalles de participantes",
@@ -82,7 +89,9 @@ export default function ParticipantForm({ userType, participants, setParticipant
       email: "Email (opcional)",
       add: "Añadir participante",
       participants: "Participantes",
-      selectAge: "Seleccionar edad"
+      selectAge: "Seleccionar edad",
+      duplicateId: "Este número de ID ya está registrado",
+      duplicatePhone: "Este número de teléfono ya está registrado"
     },
     fr: {
       title: "Détails des participants",
@@ -98,7 +107,9 @@ export default function ParticipantForm({ userType, participants, setParticipant
       email: "Email (facultatif)",
       add: "Ajouter participant",
       participants: "Participants",
-      selectAge: "Sélectionner l'âge"
+      selectAge: "Sélectionner l'âge",
+      duplicateId: "Ce numéro d'ID est déjà enregistré",
+      duplicatePhone: "Ce numéro de téléphone est déjà enregistré"
     },
     de: {
       title: "Teilnehmerdetails",
@@ -114,7 +125,9 @@ export default function ParticipantForm({ userType, participants, setParticipant
       email: "Email (optional)",
       add: "Teilnehmer hinzufügen",
       participants: "Teilnehmer",
-      selectAge: "Altersbereich wählen"
+      selectAge: "Altersbereich wählen",
+      duplicateId: "Diese ID-Nummer ist bereits registriert",
+      duplicatePhone: "Diese Telefonnummer ist bereits registriert"
     },
     it: {
       title: "Dettagli partecipanti",
@@ -130,7 +143,9 @@ export default function ParticipantForm({ userType, participants, setParticipant
       email: "Email (facoltativo)",
       add: "Aggiungi partecipante",
       participants: "Partecipanti",
-      selectAge: "Seleziona età"
+      selectAge: "Seleziona età",
+      duplicateId: "Questo numero ID è già registrato",
+      duplicatePhone: "Questo numero di telefono è già registrato"
     }
   };
 
@@ -142,6 +157,23 @@ export default function ParticipantForm({ userType, participants, setParticipant
     if (!currentParticipant.name || !currentParticipant.id_number) {
       return;
     }
+
+    // Check for duplicate ID number
+    const duplicateId = participants.find(p => p.id_number === currentParticipant.id_number);
+    if (duplicateId) {
+      toast.error(trans.duplicateId);
+      return;
+    }
+
+    // Check for duplicate phone number (if provided)
+    if (currentParticipant.phone) {
+      const duplicatePhone = participants.find(p => p.phone === currentParticipant.phone);
+      if (duplicatePhone) {
+        toast.error(trans.duplicatePhone);
+        return;
+      }
+    }
+
     setParticipants([...participants, { ...currentParticipant, id: Date.now() }]);
     setCurrentParticipant({ name: '', id_number: '', age_range: '', phone: '', email: '' });
   };
