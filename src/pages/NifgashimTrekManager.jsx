@@ -334,6 +334,7 @@ export default function NifgashimTrekManager() {
                 />
               </DialogContent>
             </Dialog>
+            </div>
           </div>
         </motion.div>
 
