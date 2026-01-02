@@ -1,6 +1,11 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
+  // Ensure proper handling of all requests
+  if (req.method !== 'GET') {
+    return new Response('Method not allowed', { status: 405 });
+  }
+
   try {
     const base44 = createClientFromRequest(req);
     
@@ -78,13 +83,25 @@ Deno.serve(async (req) => {
     xml += '</urlset>';
     
     return new Response(xml, {
+      status: 200,
       headers: {
-        'Content-Type': 'application/xml',
-        'Cache-Control': 'public, max-age=3600'
+        'Content-Type': 'application/xml; charset=utf-8',
+        'Cache-Control': 'public, max-age=3600',
+        'X-Content-Type-Options': 'nosniff'
       }
     });
   } catch (error) {
-    console.error('Sitemap error:', error);
-    return new Response('Error generating sitemap', { status: 500 });
+    console.error('Sitemap generation error:', error);
+    
+    // Return a minimal valid XML even on error
+    const errorXml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>https://groupyloopy.app</loc>\n  </url>\n</urlset>';
+    
+    return new Response(errorXml, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/xml; charset=utf-8',
+        'Cache-Control': 'no-cache'
+      }
+    });
   }
 });
