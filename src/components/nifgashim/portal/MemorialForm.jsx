@@ -5,16 +5,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Heart, CheckCircle2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
+import { Heart, Upload, Image as ImageIcon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
 
 export default function MemorialForm({ formData, setFormData }) {
   const { language, isRTL } = useLanguage();
+  const [wantMemorial, setWantMemorial] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const translations = {
     he: {
-      title: "בקשת הנצחה (אופציונלי)",
-      subtitle: "שתפו אותנו בסיפור של יקירכם שנפל/ה למען המדינה",
+      title: "הנצחה",
+      subtitle: "לכבוד חללי ישראל",
+      wantMemorial: "אני מעוניין/ת להנציח חלל",
+      memorialInfo: "שתפו אותנו בסיפור של יקירכם שנפל/ה למען המדינה",
+      uploadImage: "העלה תמונה",
+      imageUploaded: "תמונה הועלתה",
       fallenName: "שם החלל/ה",
       fallenNamePlaceholder: "שם מלא",
       dateOfFall: "תאריך הנפילה",
@@ -38,8 +48,12 @@ export default function MemorialForm({ formData, setFormData }) {
       optional: "אופציונלי"
     },
     en: {
-      title: "Memorial Request (Optional)",
-      subtitle: "Share with us the story of your loved one who fell for our country",
+      title: "Memorial",
+      subtitle: "In Honor of Israel's Fallen",
+      wantMemorial: "I would like to commemorate a fallen soldier",
+      memorialInfo: "Share with us the story of your loved one who fell for our country",
+      uploadImage: "Upload Photo",
+      imageUploaded: "Photo Uploaded",
       fallenName: "Name of Fallen",
       fallenNamePlaceholder: "Full name",
       dateOfFall: "Date of Fall",
@@ -63,8 +77,12 @@ export default function MemorialForm({ formData, setFormData }) {
       optional: "Optional"
     },
     ru: {
-      title: "Запрос на увековечение (по желанию)",
-      subtitle: "Расскажите нам историю вашего близкого, павшего за нашу страну",
+      title: "Увековечение",
+      subtitle: "В честь павших Израиля",
+      wantMemorial: "Я хочу увековечить павшего",
+      memorialInfo: "Расскажите нам историю вашего близкого, павшего за нашу страну",
+      uploadImage: "Загрузить фото",
+      imageUploaded: "Фото загружено",
       fallenName: "Имя павшего",
       fallenNamePlaceholder: "Полное имя",
       dateOfFall: "Дата падения",
@@ -88,8 +106,12 @@ export default function MemorialForm({ formData, setFormData }) {
       optional: "По желанию"
     },
     es: {
-      title: "Solicitud de memorial (opcional)",
-      subtitle: "Comparta con nosotros la historia de su ser querido caído por nuestro país",
+      title: "Memorial",
+      subtitle: "En honor a los caídos de Israel",
+      wantMemorial: "Quiero conmemorar a un caído",
+      memorialInfo: "Comparta con nosotros la historia de su ser querido caído por nuestro país",
+      uploadImage: "Subir foto",
+      imageUploaded: "Foto subida",
       fallenName: "Nombre del caído",
       fallenNamePlaceholder: "Nombre completo",
       dateOfFall: "Fecha de caída",
@@ -113,8 +135,12 @@ export default function MemorialForm({ formData, setFormData }) {
       optional: "Opcional"
     },
     fr: {
-      title: "Demande de mémorial (facultatif)",
-      subtitle: "Partagez avec nous l'histoire de votre proche tombé pour notre pays",
+      title: "Mémorial",
+      subtitle: "En l'honneur des tombés d'Israël",
+      wantMemorial: "Je souhaite commémorer un tombé",
+      memorialInfo: "Partagez avec nous l'histoire de votre proche tombé pour notre pays",
+      uploadImage: "Télécharger photo",
+      imageUploaded: "Photo téléchargée",
       fallenName: "Nom du défunt",
       fallenNamePlaceholder: "Nom complet",
       dateOfFall: "Date de la chute",
@@ -138,8 +164,12 @@ export default function MemorialForm({ formData, setFormData }) {
       optional: "Facultatif"
     },
     de: {
-      title: "Gedenkantrag (optional)",
-      subtitle: "Teilen Sie mit uns die Geschichte Ihres geliebten Menschen, der für unser Land gefallen ist",
+      title: "Gedenkstätte",
+      subtitle: "Zu Ehren der Gefallenen Israels",
+      wantMemorial: "Ich möchte einen Gefallenen gedenken",
+      memorialInfo: "Teilen Sie mit uns die Geschichte Ihres geliebten Menschen, der für unser Land gefallen ist",
+      uploadImage: "Foto hochladen",
+      imageUploaded: "Foto hochgeladen",
       fallenName: "Name des Gefallenen",
       fallenNamePlaceholder: "Vollständiger Name",
       dateOfFall: "Datum des Falls",
@@ -163,8 +193,12 @@ export default function MemorialForm({ formData, setFormData }) {
       optional: "Optional"
     },
     it: {
-      title: "Richiesta memoriale (facoltativo)",
-      subtitle: "Condividi con noi la storia del tuo caro caduto per il nostro paese",
+      title: "Memoriale",
+      subtitle: "In onore dei caduti di Israele",
+      wantMemorial: "Vorrei commemorare un caduto",
+      memorialInfo: "Condividi con noi la storia del tuo caro caduto per il nostro paese",
+      uploadImage: "Carica foto",
+      imageUploaded: "Foto caricata",
       fallenName: "Nome del caduto",
       fallenNamePlaceholder: "Nome completo",
       dateOfFall: "Data della caduta",
@@ -191,6 +225,26 @@ export default function MemorialForm({ formData, setFormData }) {
 
   const trans = translations[language] || translations.en;
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setFormData({
+        ...formData,
+        memorial: { ...(formData.memorial || {}), image_url: file_url }
+      });
+      toast.success(trans.imageUploaded);
+    } catch (error) {
+      console.error(error);
+      toast.error('Error uploading image');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
@@ -205,8 +259,76 @@ export default function MemorialForm({ formData, setFormData }) {
         </div>
       </CardHeader>
       <CardContent className="pt-6 space-y-6">
-        {/* Fallen Info */}
-        <div className="space-y-4">
+        {/* Checkbox to enable memorial */}
+        <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+          <Checkbox
+            id="wantMemorial"
+            checked={wantMemorial}
+            onCheckedChange={(checked) => {
+              setWantMemorial(checked);
+              if (!checked) {
+                setFormData({ ...formData, memorial: null });
+              }
+            }}
+          />
+          <Label
+            htmlFor="wantMemorial"
+            className="text-base font-semibold cursor-pointer"
+          >
+            {trans.wantMemorial}
+          </Label>
+        </div>
+
+        {/* Memorial Form - Only show if checkbox is checked */}
+        <AnimatePresence>
+          {wantMemorial && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
+            >
+              <p className="text-sm text-gray-600 italic">{trans.memorialInfo}</p>
+              {/* Image Upload */}
+              <div>
+                <Label>{trans.uploadImage}</Label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    id="memorial-image"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => document.getElementById('memorial-image').click()}
+                    disabled={uploadingImage}
+                    className="w-full"
+                  >
+                    {uploadingImage ? (
+                      <Upload className="w-4 h-4 mr-2 animate-spin" />
+                    ) : formData.memorial?.image_url ? (
+                      <ImageIcon className="w-4 h-4 mr-2" />
+                    ) : (
+                      <Upload className="w-4 h-4 mr-2" />
+                    )}
+                    {formData.memorial?.image_url ? trans.imageUploaded : trans.uploadImage}
+                  </Button>
+                </div>
+                {formData.memorial?.image_url && (
+                  <img
+                    src={formData.memorial.image_url}
+                    alt="Memorial"
+                    className="mt-2 w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
+                  />
+                )}
+              </div>
+
+              {/* Fallen Info */}
+              <div className="space-y-4">
           <div>
             <Label htmlFor="fallen_name">{trans.fallenName}</Label>
             <Input
@@ -331,7 +453,10 @@ export default function MemorialForm({ formData, setFormData }) {
             rows={6}
             className="resize-none"
           />
-        </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </CardContent>
     </Card>
   );
