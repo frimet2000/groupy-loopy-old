@@ -88,12 +88,12 @@ function LayoutContent({ children, currentPageName }) {
     authorMeta.content = 'Groupy Loopy';
     document.head.appendChild(authorMeta);
 
-    // Add Google Ads Global Site Tag (gtag.js)
+    // Add Google Analytics Global Site Tag (gtag.js)
     if (!document.getElementById('gtag-script')) {
       const gtagScript = document.createElement('script');
       gtagScript.id = 'gtag-script';
       gtagScript.async = true;
-      gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXXXXX';
+      gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-3MPLC6YNQJ';
       document.head.appendChild(gtagScript);
 
       const gtagConfig = document.createElement('script');
@@ -102,7 +102,7 @@ function LayoutContent({ children, currentPageName }) {
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'AW-XXXXXXXXXX');
+        gtag('config', 'G-3MPLC6YNQJ');
       `;
       document.head.appendChild(gtagConfig);
     }
