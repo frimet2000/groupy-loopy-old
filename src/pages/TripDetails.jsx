@@ -1779,12 +1779,12 @@ export default function TripDetails() {
                   
                   {!user && (
                     isIsraelTrailTrip ?
-                    <Button
-                      onClick={() => navigate('/NifgashimPortal')}
-                      className="bg-emerald-600 hover:bg-emerald-700 gap-2 shadow-lg">
-                        <ArrowRight className="w-4 h-4" />
-                        {language === 'he' ? 'מעבר לפורטל' : 'Go to Portal'}
-                    </Button> :
+          <Button
+            onClick={() => navigate(`/NifgashimPortal?id=${trip.id}`)}
+            className="bg-emerald-600 hover:bg-emerald-700 gap-2 shadow-lg">
+            <ArrowRight className="w-4 h-4" />
+            {language === 'he' ? 'מעבר לפורטל' : 'Go to Portal'}
+          </Button> :
                     <Button
                       onClick={() => base44.auth.redirectToLogin(window.location.href)}
                       className="bg-emerald-600 hover:bg-emerald-700 shadow-lg">
