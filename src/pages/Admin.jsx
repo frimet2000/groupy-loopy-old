@@ -44,6 +44,12 @@ export default function Admin() {
   const [editTripData, setEditTripData] = useState(null);
   const [expandedTrip, setExpandedTrip] = useState(null);
   const [viewAllParticipants, setViewAllParticipants] = useState(false);
+  const [marketingConfig, setMarketingConfig] = useState({
+    facebook_page_id: '',
+    facebook_access_token: ''
+  });
+  const [savingConfig, setSavingConfig] = useState(false);
+  const [runningBot, setRunningBot] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -55,6 +61,11 @@ export default function Admin() {
           return;
         }
         setUser(userData);
+        // Load marketing config from user profile
+        setMarketingConfig({
+          facebook_page_id: userData.facebook_page_id || '',
+          facebook_access_token: userData.facebook_access_token || ''
+        });
       } catch (e) {
         base44.auth.redirectToLogin();
       }
@@ -211,6 +222,34 @@ export default function Admin() {
       tripId: editTripDialog.id,
       data: updatedData
     });
+  };
+
+  const handleSaveConfig = async () => {
+    setSavingConfig(true);
+    try {
+      await base44.auth.updateMe({
+        facebook_page_id: marketingConfig.facebook_page_id,
+        facebook_access_token: marketingConfig.facebook_access_token
+      });
+      toast.success(language === 'he' ? 'ההגדרות נשמרו' : 'Settings saved');
+    } catch (error) {
+      toast.error(language === 'he' ? 'שגיאה בשמירת הגדרות' : 'Error saving settings');
+    }
+    setSavingConfig(false);
+  };
+
+  const handleRunBot = async () => {
+    setRunningBot(true);
+    try {
+      await base44.functions.invoke('postTripToFacebook', {
+        facebook_page_id: marketingConfig.facebook_page_id,
+        facebook_access_token: marketingConfig.facebook_access_token
+      });
+      toast.success(language === 'he' ? 'הבוט רץ בהצלחה' : 'Bot ran successfully');
+    } catch (error) {
+      toast.error(language === 'he' ? 'שגיאה בהרצת הבוט' : 'Error running bot');
+    }
+    setRunningBot(false);
   };
 
   if (!user) {
