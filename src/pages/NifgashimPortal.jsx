@@ -24,8 +24,19 @@ import AdminDashboard from '../components/nifgashim/portal/AdminDashboard';
 let stripePromise = null;
 const getStripePromise = async () => {
   if (!stripePromise) {
-    const response = await base44.functions.invoke('getStripePublicKey');
-    stripePromise = loadStripe(response.data.publicKey);
+    try {
+      const response = await base44.functions.invoke('getStripePublicKey');
+      if (response.data.publicKey) {
+        stripePromise = loadStripe(response.data.publicKey);
+      }
+    } catch (error) {
+      console.error('Failed to load Stripe key:', error);
+      // Fallback to env variable if available
+      const envKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+      if (envKey) {
+        stripePromise = loadStripe(envKey);
+      }
+    }
   }
   return stripePromise;
 };
