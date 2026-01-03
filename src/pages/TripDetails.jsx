@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -203,6 +204,7 @@ export default function TripDetails() {
   const hasJoined = trip?.participants?.some((p) => p.email === user?.email);
   const hasPendingRequest = trip?.pending_requests?.some((r) => r.email === user?.email);
   const isFull = !trip?.flexible_participants && trip?.current_participants >= trip?.max_participants;
+  const isIsraelTrailTrip = trip?.title?.includes('שביל ישראל') || trip?.tags?.includes('shvil_israel');
 
   // Sync hidden tabs when trip loads
   useEffect(() => {
@@ -1603,6 +1605,7 @@ export default function TripDetails() {
                       }
                       </span>
                     </motion.div>
+                    {!isIsraelTrailTrip &&
                     <motion.div
                     className="flex items-center gap-3 bg-rose-600 px-5 py-3 rounded-xl shadow-2xl hover:shadow-[0_8px_30px_rgba(225,29,72,0.5)] transition-all border-2 border-rose-700"
                     whileHover={{ scale: 1.05, y: -3 }}>
@@ -1629,6 +1632,7 @@ export default function TripDetails() {
                         </span>
                       </div>
                     </motion.div>
+                    }
                     {trip.activity_type === 'cycling' &&
                   <motion.div
                     className="flex items-center gap-3 bg-cyan-600 px-5 py-3 rounded-xl shadow-2xl hover:shadow-[0_8px_30px_rgba(8,145,178,0.5)] transition-all border-2 border-cyan-700"
@@ -1765,14 +1769,21 @@ export default function TripDetails() {
                 })())
                 }
                   
-                  {!user &&
-                <Button
-                  onClick={() => base44.auth.redirectToLogin(window.location.href)}
-                  className="bg-emerald-600 hover:bg-emerald-700">
+                  {!user && (
+                    isIsraelTrailTrip ?
+                    <Button
+                      onClick={() => navigate('/NifgashimPortal')}
+                      className="bg-emerald-600 hover:bg-emerald-700 gap-2 shadow-lg">
+                        <ArrowRight className="w-4 h-4" />
+                        {language === 'he' ? 'מעבר לפורטל' : 'Go to Portal'}
+                    </Button> :
+                    <Button
+                      onClick={() => base44.auth.redirectToLogin(window.location.href)}
+                      className="bg-emerald-600 hover:bg-emerald-700 shadow-lg">
 
-                      {language === 'he' ? 'התחבר להצטרפות' : language === 'ru' ? 'Войти для присоединения' : language === 'es' ? 'Iniciar sesión para unirse' : language === 'fr' ? 'Se connecter pour rejoindre' : language === 'de' ? 'Anmelden zum Beitreten' : language === 'it' ? 'Accedi per unirti' : 'Login to Join'}
+                          {language === 'he' ? 'התחבר להצטרפות' : language === 'ru' ? 'Войти для присоединения' : language === 'es' ? 'Iniciar sesión para unirse' : language === 'fr' ? 'Se connecter pour rejoindre' : language === 'de' ? 'Anmelden zum Beitreten' : language === 'it' ? 'Accedi per unirti' : 'Login to Join'}
                     </Button>
-                }
+                  )}
 
                   {canEdit &&
                 <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-stretch sm:items-center">
@@ -3101,7 +3112,6 @@ export default function TripDetails() {
                     </CardContent>
                   </Card>
                 </TabsContent>
-                )}
                 </Tabs>
         </motion.div>
       </div>
