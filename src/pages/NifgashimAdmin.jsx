@@ -803,6 +803,38 @@ export default function NifgashimAdmin() {
     });
   });
 
+  // Age statistics
+  const ageStats = {
+    adults: 0,
+    children: 0,
+    childrenByAge: {
+      '0-2': 0,
+      '3-6': 0,
+      '7-10': 0,
+      '11-14': 0,
+      '15-18': 0,
+      '18-21': 0,
+      '21+': 0
+    }
+  };
+
+  registrations.forEach(reg => {
+    // Count adults (participant + spouse)
+    ageStats.adults += 1;
+    if (reg.family_members?.spouse) ageStats.adults += 1;
+    
+    // Count children
+    const childrenCount = reg.children_details?.length || 0;
+    ageStats.children += childrenCount;
+    
+    // Count by age range
+    (reg.children_details || []).forEach(child => {
+      if (child.age_range && ageStats.childrenByAge[child.age_range] !== undefined) {
+        ageStats.childrenByAge[child.age_range]++;
+      }
+    });
+  });
+
   // Download CSV
   const downloadCSV = () => {
     const headers = [
@@ -1391,7 +1423,38 @@ export default function NifgashimAdmin() {
               {/* Memorials Tab */}
               <TabsContent value="memorials">
                 {activeTrip ? (
-                  <MemorialsManager tripId={activeTrip.id} />
+                  <div className="space-y-6">
+                    {/* Trek Days Display */}
+                    {activeTrip.trek_days && activeTrip.trek_days.length > 0 && (
+                      <Card className="bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200">
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2">
+                            <Calendar className="w-5 h-5 text-purple-600" />
+                            {language === 'he' ? 'ימי הטראק' : 'Trek Days'}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                            {activeTrip.trek_days.sort((a, b) => a.day_number - b.day_number).map(day => (
+                              <div key={day.day_number} className="bg-white rounded-lg p-3 border-2 border-purple-200 hover:border-purple-400 transition-all">
+                                <div className="font-bold text-purple-900 mb-1">
+                                  {language === 'he' ? `יום ${day.day_number}` : `Day ${day.day_number}`}
+                                </div>
+                                <div className="text-xs text-gray-600 line-clamp-2">{day.daily_title}</div>
+                                {day.date && (
+                                  <div className="text-xs text-purple-600 mt-1">
+                                    {format(new Date(day.date), 'MMM d')}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    <MemorialsManager tripId={activeTrip.id} />
+                  </div>
                 ) : (
                   <Card>
                     <CardContent className="p-12 text-center text-gray-500">
@@ -1403,6 +1466,48 @@ export default function NifgashimAdmin() {
 
               {/* Statistics Tab */}
               <TabsContent value="statistics" className="space-y-6">
+                {/* Age Statistics */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                      <Users className="w-5 h-5" />
+                      {language === 'he' ? 'סטטיסטיקות גילאים' : 'Age Statistics'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border-2 border-blue-200">
+                        <div className="text-3xl font-bold text-blue-900">{ageStats.adults}</div>
+                        <div className="text-sm text-blue-700 font-medium">{language === 'he' ? 'מבוגרים' : 'Adults'}</div>
+                      </div>
+                      <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-4 border-2 border-pink-200">
+                        <div className="text-3xl font-bold text-pink-900">{ageStats.children}</div>
+                        <div className="text-sm text-pink-700 font-medium">{language === 'he' ? 'ילדים' : 'Children'}</div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold text-gray-700 mb-3">
+                        {language === 'he' ? 'פילוח ילדים לפי גיל:' : 'Children by Age:'}
+                      </p>
+                      {Object.entries(ageStats.childrenByAge).map(([range, count]) => (
+                        <div key={range} className="flex items-center gap-3">
+                          <div className="w-20 text-xs font-semibold text-gray-700">{range}</div>
+                          <div className="flex-1 bg-gray-100 rounded-full h-6 overflow-hidden">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: ageStats.children > 0 ? `${(count / ageStats.children) * 100}%` : '0%' }}
+                              className="h-full bg-gradient-to-r from-pink-400 to-pink-600 flex items-center justify-end px-2"
+                            >
+                              {count > 0 && <span className="text-white text-xs font-bold">{count}</span>}
+                            </motion.div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
                 {/* Registrations by Day Chart */}
                 <Card>
                   <CardHeader>
