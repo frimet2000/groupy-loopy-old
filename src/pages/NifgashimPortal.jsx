@@ -446,7 +446,6 @@ export default function NifgashimPortal() {
           linked_days_pairs: []
         };
       }
-    }
   });
 
   const trekDays = nifgashimTrip?.trek_days || [];
