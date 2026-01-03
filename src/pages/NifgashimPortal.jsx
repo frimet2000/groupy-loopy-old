@@ -20,7 +20,15 @@ import NifgashimRegistrationSummary from '../components/nifgashim/portal/Registr
 import ThankYouView from '../components/nifgashim/portal/ThankYouView';
 import AdminDashboard from '../components/nifgashim/portal/AdminDashboard';
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_placeholder');
+// Load stripe promise dynamically
+let stripePromise = null;
+const getStripePromise = async () => {
+  if (!stripePromise) {
+    const response = await base44.functions.invoke('getStripePublicKey');
+    stripePromise = loadStripe(response.data.publicKey);
+  }
+  return stripePromise;
+};
 
 function PaymentForm({ amount, onSuccess, onCancel }) {
   const stripe = useStripe();
@@ -147,6 +155,7 @@ export default function NifgashimPortal() {
   const [showThankYou, setShowThankYou] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+  const [stripeReady, setStripeReady] = useState(null);
 
   const { data: nifgashimTrip, isLoading, refetch } = useQuery({
     queryKey: ['nifgashimPortalTrip'],
@@ -159,6 +168,15 @@ export default function NifgashimPortal() {
   });
   const trekDays = nifgashimTrip?.trek_days || [];
   const linkedDaysPairs = nifgashimTrip?.linked_days_pairs || [];
+
+  // Load Stripe
+  React.useEffect(() => {
+    const loadStripePromise = async () => {
+      const promise = await getStripePromise();
+      setStripeReady(promise);
+    };
+    loadStripePromise();
+  }, []);
 
   // Check if user is admin
   React.useEffect(() => {
@@ -547,13 +565,19 @@ export default function NifgashimPortal() {
                   ? `סכום לתשלום: ${totalAmount}₪`
                   : `Amount to pay: ${totalAmount}₪`}
               </p>
-              <Elements stripe={stripePromise}>
-                <PaymentForm
-                  amount={totalAmount}
-                  onSuccess={completeRegistration}
-                  onCancel={() => setShowPayment(false)}
-                />
-              </Elements>
+              {stripeReady ? (
+                <Elements stripe={stripeReady}>
+                  <PaymentForm
+                    amount={totalAmount}
+                    onSuccess={completeRegistration}
+                    onCancel={() => setShowPayment(false)}
+                  />
+                </Elements>
+              ) : (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                </div>
+              )}
             </motion.div>
           </motion.div>
         )}
