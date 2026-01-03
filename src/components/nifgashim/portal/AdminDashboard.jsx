@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Download, Search, Users, DollarSign, Calendar, Shield } from 'lucide-react';
+import { Download, Search, Users, DollarSign, Calendar, Shield, Car } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function AdminDashboard({ trip, language, isRTL }) {
@@ -27,7 +27,11 @@ export default function AdminDashboard({ trip, language, isRTL }) {
       exempt: "פטור",
       groupType: "קבוצה",
       individual: "פרטי",
-      noParticipants: "אין משתתפים רשומים"
+      noParticipants: "אין משתתפים רשומים",
+      vehicle: "רכב",
+      hasVehicle: "מגיע ברכב",
+      noVehicle: "ללא רכב",
+      vehicleNumber: "מס' רכב"
     },
     en: {
       title: "Participants Management - Nifgashim for Israel",
@@ -46,7 +50,11 @@ export default function AdminDashboard({ trip, language, isRTL }) {
       exempt: "Exempt",
       groupType: "Group",
       individual: "Individual",
-      noParticipants: "No registered participants"
+      noParticipants: "No registered participants",
+      vehicle: "Vehicle",
+      hasVehicle: "Has Vehicle",
+      noVehicle: "No Vehicle",
+      vehicleNumber: "Vehicle #"
     },
     ru: {
       title: "Управление участниками - Нифгашим для Израиля",
@@ -168,6 +176,7 @@ export default function AdminDashboard({ trip, language, isRTL }) {
       trans.idNumber,
       trans.phone,
       trans.email,
+      trans.vehicle,
       trans.selectedDays,
       trans.paymentStatus,
       language === 'he' ? 'סכום' : 'Amount',
@@ -179,6 +188,7 @@ export default function AdminDashboard({ trip, language, isRTL }) {
       p.id_number || '',
       p.phone || '',
       p.email || '',
+      p.has_vehicle ? `${trans.hasVehicle} (${p.vehicle_number || ''})` : trans.noVehicle,
       (p.selected_days || []).join(';'),
       p.payment_status || 'pending',
       p.payment_amount || 0,
@@ -307,6 +317,7 @@ export default function AdminDashboard({ trip, language, isRTL }) {
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{trans.name}</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{trans.idNumber}</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 hidden sm:table-cell">{trans.phone}</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 hidden xl:table-cell">{trans.vehicle}</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 hidden md:table-cell">{trans.selectedDays}</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{trans.paymentStatus}</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 hidden lg:table-cell">{language === 'he' ? 'סכום' : 'Amount'}</th>
@@ -335,6 +346,16 @@ export default function AdminDashboard({ trip, language, isRTL }) {
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600 hidden sm:table-cell">
                         {participant.phone || '-'}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600 hidden xl:table-cell">
+                        {participant.has_vehicle ? (
+                          <div className="flex items-center gap-2">
+                            <Car className="w-4 h-4 text-blue-600" />
+                            <span>{participant.vehicle_number}</span>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400">-</span>
+                        )}
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell">
                         <div className="flex flex-wrap gap-1">

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
@@ -108,8 +109,8 @@ Deno.serve(async (req) => {
       sent: sentCount, 
       total: participantsForDate.length 
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error.message || 'Unknown error' }, { status: 500 });
   }
 });

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
@@ -25,13 +26,14 @@ let stripePromise = null;
 const getStripePromise = async () => {
   if (!stripePromise) {
     try {
-      const response = await base44.functions.invoke('getStripePublicKey');
+      const response = await base44.functions.invoke('getStripePublicKey', {});
       if (response.data.publicKey) {
         stripePromise = loadStripe(response.data.publicKey);
       }
     } catch (error) {
       console.error('Failed to load Stripe key:', error);
       // Fallback to env variable if available
+      // @ts-ignore
       const envKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
       if (envKey) {
         stripePromise = loadStripe(envKey);
@@ -41,38 +43,104 @@ const getStripePromise = async () => {
   return stripePromise;
 };
 
-function PaymentForm({ amount, onSuccess, onCancel }) {
+function PaymentForm({ amount, participants, userType, groupInfo, onSuccess, onCancel }) {
   const stripe = useStripe();
   const elements = useElements();
   const { language } = useLanguage();
   const [processing, setProcessing] = useState(false);
+  const [receiptType, setReceiptType] = useState('parent1');
+  const [customReceipt, setCustomReceipt] = useState({ name: '', email: '', id_number: '' });
+
+  // Determine available receipt options
+  const parent1 = participants[0];
+  const parent2 = participants.length > 1 && participants[0]?.hasSpouse ? participants[1] : null;
 
   const translations = {
     he: {
       payNow: "שלם עכשיו",
       processing: "מעבד תשלום...",
       cancel: "ביטול",
-      cardDetails: "פרטי כרטיס אשראי"
+      cardDetails: "פרטי כרטיס אשראי",
+      receiptDetails: "פרטי קבלה",
+      receiptFor: "עבור מי הקבלה?",
+      parent1: `הורה 1: ${parent1?.name || ''}`,
+      parent2: `הורה 2: ${parent2?.name || ''}`,
+      groupLeader: `ראש קבוצה: ${groupInfo?.leaderName || ''}`,
+      other: "אחר (הזנה ידנית)",
+      fullName: "שם מלא",
+      email: "אימייל",
+      idNumber: "תעודת זהות"
     },
     en: {
       payNow: "Pay Now",
       processing: "Processing...",
       cancel: "Cancel",
-      cardDetails: "Card Details"
+      cardDetails: "Card Details",
+      receiptDetails: "Receipt Details",
+      receiptFor: "Who is the receipt for?",
+      parent1: `Parent 1: ${parent1?.name || ''}`,
+      parent2: `Parent 2: ${parent2?.name || ''}`,
+      groupLeader: `Group Leader: ${groupInfo?.leaderName || ''}`,
+      other: "Other (Manual Entry)",
+      fullName: "Full Name",
+      email: "Email",
+      idNumber: "ID Number"
     }
   };
 
   const trans = translations[language] || translations.en;
 
+  // Initialize receipt type based on user type
+  useEffect(() => {
+    if (userType === 'group') {
+      setReceiptType('group');
+    } else {
+      setReceiptType('parent1');
+    }
+  }, [userType]);
+
+  const getReceiptDetails = () => {
+    if (receiptType === 'parent1') {
+      return {
+        name: parent1?.name,
+        email: parent1?.email,
+        id_number: parent1?.id_number
+      };
+    } else if (receiptType === 'parent2') {
+      return {
+        name: parent2?.name,
+        email: parent2?.email,
+        id_number: parent2?.id_number
+      };
+    } else if (receiptType === 'group') {
+      return {
+        name: groupInfo?.leaderName,
+        email: groupInfo?.leaderEmail,
+        id_number: '' // Group might not have ID here, usually organization
+      };
+    } else {
+      return customReceipt;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!stripe || !elements) return;
+
+    const receiptDetails = getReceiptDetails();
+    if (!receiptDetails.name || !receiptDetails.email) {
+      toast.error(language === 'he' ? 'נא למלא פרטי קבלה' : 'Please fill receipt details');
+      return;
+    }
 
     setProcessing(true);
     try {
       // Get client secret from backend
       const response = await base44.functions.invoke('processNifgashimPayment', {
-        amount: amount
+        amount: amount,
+        email: receiptDetails.email,
+        receiptName: receiptDetails.name,
+        receiptId: receiptDetails.id_number
       });
 
       if (!response.data.success || !response.data.clientSecret) {
@@ -87,6 +155,12 @@ function PaymentForm({ amount, onSuccess, onCancel }) {
         clientSecret: response.data.clientSecret,
         confirmParams: {
           return_url: window.location.href,
+          payment_method_data: {
+            billing_details: {
+              name: receiptDetails.name,
+              email: receiptDetails.email,
+            }
+          }
         },
         redirect: 'if_required'
       });
@@ -99,7 +173,12 @@ function PaymentForm({ amount, onSuccess, onCancel }) {
 
       if (paymentIntent.status === 'succeeded') {
         toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
-        onSuccess(paymentIntent.id);
+        try {
+          await onSuccess(paymentIntent.id);
+        } catch (err) {
+          console.error('Registration failed after payment:', err);
+          setProcessing(false);
+        }
       } else {
         toast.error(language === 'he' ? 'התשלום נכשל' : 'Payment failed');
         setProcessing(false);
@@ -112,7 +191,104 @@ function PaymentForm({ amount, onSuccess, onCancel }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-4">
+        <h3 className="font-semibold text-lg border-b pb-2">{trans.receiptDetails}</h3>
+        
+        <div className="space-y-2">
+          <label className="text-sm font-medium">{trans.receiptFor}</label>
+          <div className="grid gap-2">
+            {userType !== 'group' && parent1 && (
+              <label className="flex items-center space-x-2 space-x-reverse cursor-pointer p-2 border rounded hover:bg-gray-50">
+                <input
+                  type="radio"
+                  name="receiptType"
+                  value="parent1"
+                  checked={receiptType === 'parent1'}
+                  onChange={(e) => setReceiptType(e.target.value)}
+                  className="ml-2"
+                />
+                <span>{trans.parent1}</span>
+              </label>
+            )}
+            
+            {userType !== 'group' && parent2 && (
+              <label className="flex items-center space-x-2 space-x-reverse cursor-pointer p-2 border rounded hover:bg-gray-50">
+                <input
+                  type="radio"
+                  name="receiptType"
+                  value="parent2"
+                  checked={receiptType === 'parent2'}
+                  onChange={(e) => setReceiptType(e.target.value)}
+                  className="ml-2"
+                />
+                <span>{trans.parent2}</span>
+              </label>
+            )}
+
+            {userType === 'group' && (
+              <label className="flex items-center space-x-2 space-x-reverse cursor-pointer p-2 border rounded hover:bg-gray-50">
+                <input
+                  type="radio"
+                  name="receiptType"
+                  value="group"
+                  checked={receiptType === 'group'}
+                  onChange={(e) => setReceiptType(e.target.value)}
+                  className="ml-2"
+                />
+                <span>{trans.groupLeader}</span>
+              </label>
+            )}
+
+            <label className="flex items-center space-x-2 space-x-reverse cursor-pointer p-2 border rounded hover:bg-gray-50">
+              <input
+                type="radio"
+                name="receiptType"
+                value="custom"
+                checked={receiptType === 'custom'}
+                onChange={(e) => setReceiptType(e.target.value)}
+                className="ml-2"
+              />
+              <span>{trans.other}</span>
+            </label>
+          </div>
+        </div>
+
+        {receiptType === 'custom' && (
+          <div className="grid gap-3 p-3 bg-gray-50 rounded-lg animate-in fade-in slide-in-from-top-2">
+            <div>
+              <label className="text-sm font-medium">{trans.fullName}</label>
+              <input
+                type="text"
+                required
+                className="w-full p-2 border rounded"
+                value={customReceipt.name}
+                onChange={(e) => setCustomReceipt({ ...customReceipt, name: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">{trans.email}</label>
+              <input
+                type="email"
+                required
+                className="w-full p-2 border rounded"
+                value={customReceipt.email}
+                onChange={(e) => setCustomReceipt({ ...customReceipt, email: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">{trans.idNumber}</label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded"
+                value={customReceipt.id_number}
+                onChange={(e) => setCustomReceipt({ ...customReceipt, id_number: e.target.value })}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
       <div>
         <label className="block text-sm font-medium mb-2">{trans.cardDetails}</label>
         <div className="p-3 border-2 border-gray-200 rounded-lg">
@@ -129,7 +305,8 @@ function PaymentForm({ amount, onSuccess, onCancel }) {
           }} />
         </div>
       </div>
-      <div className="flex gap-3">
+
+      <div className="flex gap-3 pt-4">
         <Button
           type="button"
           variant="outline"
@@ -169,6 +346,7 @@ export default function NifgashimPortal() {
   const [participants, setParticipants] = useState([]);
   const [selectedDays, setSelectedDays] = useState([]);
   const [groupInfo, setGroupInfo] = useState({ name: '', leaderName: '', leaderEmail: '', leaderPhone: '' });
+  const [vehicleInfo, setVehicleInfo] = useState({ hasVehicle: false, number: '' });
   const [memorialData, setMemorialData] = useState({ memorial: null });
   const [submitting, setSubmitting] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
@@ -218,6 +396,94 @@ export default function NifgashimPortal() {
     };
     checkAdmin();
   }, []);
+
+  // Save state to local storage
+  useEffect(() => {
+    // Only save if we have some data
+    if (userType || participants.length > 0) {
+      const state = {
+        userType,
+        participants,
+        selectedDays,
+        groupInfo,
+        vehicleInfo,
+        memorialData,
+        currentStep,
+        totalAmount,
+        timestamp: Date.now()
+      };
+      localStorage.setItem('nifgashim_registration_state', JSON.stringify(state));
+    }
+  }, [userType, participants, selectedDays, groupInfo, memorialData, currentStep, totalAmount]);
+
+  // Load state on mount
+  useEffect(() => {
+    const savedState = localStorage.getItem('nifgashim_registration_state');
+    if (savedState) {
+      try {
+        const parsed = JSON.parse(savedState);
+        // Only restore if less than 24 hours old
+        if (Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) {
+          if (!userType && parsed.userType) {
+            setUserType(parsed.userType);
+            setParticipants(parsed.participants || []);
+            setSelectedDays(parsed.selectedDays || []);
+            setGroupInfo(parsed.groupInfo || { name: '', leaderName: '', leaderEmail: '', leaderPhone: '' });
+            setMemorialData(parsed.memorialData || { memorial: null });
+            setCurrentStep(parsed.currentStep || 1);
+            setTotalAmount(parsed.totalAmount || 0);
+          }
+        } else {
+          localStorage.removeItem('nifgashim_registration_state');
+        }
+      } catch (e) {
+        console.error('Failed to load state', e);
+      }
+    }
+  }, []);
+
+  // Handle Stripe redirect return
+  useEffect(() => {
+    const checkPaymentStatus = async () => {
+      if (!stripeReady || participants.length === 0) return;
+
+      const clientSecret = new URLSearchParams(window.location.search).get(
+        "payment_intent_client_secret"
+      );
+
+      if (!clientSecret) return;
+
+      try {
+        const { paymentIntent } = await stripeReady.retrievePaymentIntent(clientSecret);
+
+        if (paymentIntent && paymentIntent.status === 'succeeded') {
+          // Check if we already processed this
+          // (Simple check: if we are showing ThankYou, we are done)
+          if (showThankYou) return;
+
+          toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
+          
+          // Clear URL params to prevent double processing
+          const url = new URL(window.location);
+          url.searchParams.delete('payment_intent_client_secret');
+          url.searchParams.delete('payment_intent');
+          url.searchParams.delete('redirect_status');
+          window.history.replaceState({}, '', url);
+
+          // Complete registration
+          await completeRegistration(paymentIntent.id);
+          
+          // Clear saved state
+          localStorage.removeItem('nifgashim_registration_state');
+        }
+      } catch (err) {
+        console.error('Error checking payment status:', err);
+        toast.error(language === 'he' ? 'שגיאה בבדיקת סטטוס תשלום' : 'Error checking payment status');
+      }
+    };
+
+    checkPaymentStatus();
+  }, [stripeReady, participants, showThankYou]);
 
   const translations = {
     he: {
@@ -392,6 +658,8 @@ export default function NifgashimPortal() {
         is_organized_group: userType === 'group',
         group_type: userType === 'group' ? 'other' : null,
         group_name: userType === 'group' ? groupInfo.name : null,
+        vehicle_number: vehicleInfo.hasVehicle ? vehicleInfo.number : null,
+        has_vehicle: vehicleInfo.hasVehicle,
         payment_status: transactionId ? 'completed' : (userType === 'group' ? 'exempt' : 'pending'),
         payment_amount: totalAmount,
         payment_transaction_id: transactionId
@@ -410,14 +678,49 @@ export default function NifgashimPortal() {
         });
       }
 
+      // Send confirmation email to user
+      const payerEmail = userType === 'group' ? groupInfo.leaderEmail : (participants[0]?.email || '');
+      const payerName = userType === 'group' ? groupInfo.leaderName : (participants[0]?.name || '');
+      
+      try {
+        await base44.integrations.Core.SendEmail({
+          to: payerEmail,
+          subject: language === 'he' ? 'אישור הרשמה - נפגשים בשביל ישראל' : 'Registration Confirmation - Nifgashim',
+          body: language === 'he' 
+            ? `שלום ${payerName},\n\nתודה שנרשמת למסע נפגשים בשביל ישראל!\n\nפרטי ההרשמה נקלטו במערכת.\nמספר משתתפים: ${participants.length}\nסכום ששולם: ${totalAmount}₪\n\nקבלה נשלחה לכתובת המייל הזו.\n\nנתראה במסע!\nצוות נפגשים`
+            : `Hello ${payerName},\n\nThank you for registering for Nifgashim Bishvil Israel!\n\nYour registration details have been received.\nParticipants: ${participants.length}\nAmount paid: ${totalAmount}₪\n\nA receipt has been sent to this email address.\n\nSee you on the trek!\nNifgashim Team`
+        });
+      } catch (emailError) {
+        console.error('Failed to send confirmation email', emailError);
+      }
+
+      // Send notification to admin
+      try {
+        const adminEmail = nifgashimTrip?.organizer_email;
+        if (adminEmail) {
+             await base44.integrations.Core.SendEmail({
+              to: adminEmail,
+              subject: `New Registration: ${payerName}`,
+              body: `New registration received.\nUser: ${payerName} (${payerEmail})\nParticipants: ${participants.length}\nAmount: ${totalAmount}\nType: ${userType}`
+            });
+        }
+      } catch (adminEmailError) {
+        console.error('Failed to send admin email', adminEmailError);
+      }
+
       toast.success(trans.registrationSuccess);
       
+      // Clear saved state
+      localStorage.removeItem('nifgashim_registration_state');
+
       // Show Thank You view
       setShowThankYou(true);
+      return true;
     } catch (error) {
       console.error(error);
       toast.error(language === 'he' ? 'שגיאה בשליחת ההרשמה' : 'Error submitting registration');
       setSubmitting(false);
+      throw error;
     }
   };
 
@@ -531,6 +834,8 @@ export default function NifgashimPortal() {
                 setParticipants={setParticipants}
                 groupInfo={groupInfo}
                 setGroupInfo={setGroupInfo}
+                vehicleInfo={vehicleInfo}
+                setVehicleInfo={setVehicleInfo}
               />
             )}
 
@@ -590,6 +895,9 @@ export default function NifgashimPortal() {
                 <Elements stripe={stripeReady}>
                   <PaymentForm
                     amount={totalAmount}
+                    participants={participants}
+                    userType={userType}
+                    groupInfo={groupInfo}
                     onSuccess={completeRegistration}
                     onCancel={() => setShowPayment(false)}
                   />

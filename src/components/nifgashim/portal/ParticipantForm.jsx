@@ -1,4 +1,6 @@
 // @ts-nocheck
+'use client';
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
-export default function ParticipantForm({ userType, participants, setParticipants, groupInfo, setGroupInfo }) {
+export default function ParticipantForm({ userType, participants, setParticipants, groupInfo, setGroupInfo, vehicleInfo, setVehicleInfo }) {
   const { language, isRTL } = useLanguage();
   const [hasSpouse, setHasSpouse] = useState(false);
   const [currentParticipant, setCurrentParticipant] = useState({
@@ -22,6 +24,10 @@ export default function ParticipantForm({ userType, participants, setParticipant
     phone: '',
     email: ''
   });
+
+  // Determine if spouse exists based on the first participant's data if available,
+  // otherwise fallback to the local state (during the first entry).
+  const spouseExists = participants.length > 0 ? participants[0].hasSpouse : hasSpouse;
 
   const translations = {
     he: {
@@ -48,7 +54,12 @@ export default function ParticipantForm({ userType, participants, setParticipant
       invalidPhone: "טלפון נייד חייב להכיל 10 ספרות בדיוק",
       requiredFields: "יש למלא את כל השדות החובה",
       hasSpouse: "הורה נוסף מצטרף",
-      addId: "הוסף ת\"ז"
+      addId: "הוסף ת\"ז",
+      vehicleDetails: "פרטי רכב",
+      hasVehicle: "האם יש רכב?",
+      vehicleNumber: "מספר רכב",
+      optional: "אופציונלי",
+      vehiclePlaceholder: "12-345-67"
     },
     en: {
       title: "Participant Details",
@@ -74,7 +85,12 @@ export default function ParticipantForm({ userType, participants, setParticipant
       invalidPhone: "Phone must be exactly 10 digits",
       requiredFields: "Please fill in all required fields",
       hasSpouse: "Do you have a spouse/partner?",
-      addId: "Add ID"
+      addId: "Add ID",
+      vehicleDetails: "Vehicle Details",
+      hasVehicle: "Do you have a vehicle?",
+      vehicleNumber: "Vehicle Number",
+      optional: "Optional",
+      vehiclePlaceholder: "12-345-67"
     },
     ru: {
       title: "Данные участников",
@@ -93,7 +109,11 @@ export default function ParticipantForm({ userType, participants, setParticipant
       selectAge: "Выберите возраст",
       duplicateId: "Этот ID уже зарегистрирован",
       duplicatePhone: "Этот номер телефона уже зарегистрирован",
-      addId: "Добавить ID"
+      addId: "Добавить ID",
+      vehicleDetails: "Детали транспортного средства",
+      vehicleNumber: "Номер автомобиля",
+      optional: "необязательно",
+      vehiclePlaceholder: "12-345-67"
     },
     es: {
       title: "Detalles de participantes",
@@ -112,7 +132,11 @@ export default function ParticipantForm({ userType, participants, setParticipant
       selectAge: "Seleccionar edad",
       duplicateId: "Este número de ID ya está registrado",
       duplicatePhone: "Este número de teléfono ya está registrado",
-      addId: "Añadir ID"
+      addId: "Añadir ID",
+      vehicleDetails: "Detalles del vehículo",
+      vehicleNumber: "Número de vehículo",
+      optional: "Opcional",
+      vehiclePlaceholder: "12-345-67"
     },
     fr: {
       title: "Détails des participants",
@@ -169,7 +193,11 @@ export default function ParticipantForm({ userType, participants, setParticipant
       selectAge: "Seleziona età",
       duplicateId: "Questo numero ID è già registrato",
       duplicatePhone: "Questo numero di telefono è già registrato",
-      addId: "Aggiungi ID"
+      addId: "Aggiungi ID",
+      vehicleDetails: "Dettagli veicolo",
+      vehicleNumber: "Numero veicolo",
+      optional: "Facoltativo",
+      vehiclePlaceholder: "12-345-67"
     }
   };
 
@@ -193,9 +221,16 @@ export default function ParticipantForm({ userType, participants, setParticipant
     // Check if this is a child (age range starts with 0-17)
     const isChild = currentParticipant.age_range.startsWith('0-') || currentParticipant.age_range.startsWith('10-');
     
-    // For adults (parents): phone, email are required
+    // For adults (parents): phone is required. Email is optional for Parent 2.
     if (!isChild) {
-      if (!currentParticipant.phone || !currentParticipant.email) {
+      const isParent2 = participants.length === 1 && spouseExists;
+      
+      if (!currentParticipant.phone) {
+        toast.error(trans.requiredFields);
+        return;
+      }
+
+      if (!isParent2 && !currentParticipant.email) {
         toast.error(trans.requiredFields);
         return;
       }
@@ -258,10 +293,6 @@ export default function ParticipantForm({ userType, participants, setParticipant
     setCurrentParticipant({ ...currentParticipant, id_number: '' });
   };
 
-  // Determine if spouse exists based on the first participant's data if available,
-  // otherwise fallback to the local state (during the first entry).
-  const spouseExists = participants.length > 0 ? participants[0].hasSpouse : hasSpouse;
-
   const isParent = participants.length === 0 || (participants.length === 1 && spouseExists);
   const availableAgeRanges = isParent 
     ? ageRanges.filter(r => r !== '0-9' && r !== '10-17')
@@ -274,6 +305,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       </CardHeader>
       <CardContent className="p-6 space-y-6">
         {userType === 'group' && (
+          <>
           <div className="space-y-4 p-4 bg-emerald-50 rounded-lg border-2 border-emerald-200">
             <div>
               <Label>{trans.groupName} *</Label>
@@ -309,6 +341,37 @@ export default function ParticipantForm({ userType, participants, setParticipant
               />
             </div>
           </div>
+
+          <div className="pt-6 border-t mt-6">
+            <h3 className="font-semibold text-lg mb-4">{trans.vehicleDetails}</h3>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
+                <Checkbox
+                  id="groupHasVehicle"
+                  checked={vehicleInfo.hasVehicle}
+                  onCheckedChange={(checked) => setVehicleInfo({...vehicleInfo, hasVehicle: checked})}
+                />
+                <Label htmlFor="groupHasVehicle" className="cursor-pointer font-semibold">
+                  {trans.hasVehicle}
+                </Label>
+              </div>
+
+              {vehicleInfo.hasVehicle && (
+                <div className="grid sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                  <div>
+                    <Label>{trans.vehicleNumber}</Label>
+                    <Input 
+                      value={vehicleInfo?.number || ''}
+                      onChange={(e) => setVehicleInfo && setVehicleInfo({...vehicleInfo, number: e.target.value})}
+                      placeholder={trans.vehiclePlaceholder}
+                      dir="ltr"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          </>
         )}
 
         <div className="space-y-4">
@@ -421,7 +484,8 @@ export default function ParticipantForm({ userType, participants, setParticipant
                     <Label>
                       {trans.email} {(() => {
                         const isChild = currentParticipant.age_range && (currentParticipant.age_range.startsWith('0-') || currentParticipant.age_range.startsWith('10-'));
-                        return isChild ? '' : '*';
+                        const isParent2 = participants.length === 1 && spouseExists;
+                        return (isChild || isParent2) ? '' : '*';
                       })()}
                     </Label>
                     <Input
@@ -446,6 +510,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
         </div>
 
         {participants.length > 0 && (
+          <>
           <div className="space-y-3">
             <h3 className="font-semibold text-lg">{trans.participants} ({participants.length})</h3>
             <div className="space-y-2">
@@ -492,6 +557,37 @@ export default function ParticipantForm({ userType, participants, setParticipant
               ))}
             </div>
           </div>
+
+          <div className="pt-6 border-t mt-6">
+            <h3 className="font-semibold text-lg mb-4">{trans.vehicleDetails}</h3>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
+                <Checkbox
+                  id="participantHasVehicle"
+                  checked={vehicleInfo.hasVehicle}
+                  onCheckedChange={(checked) => setVehicleInfo({...vehicleInfo, hasVehicle: checked})}
+                />
+                <Label htmlFor="participantHasVehicle" className="cursor-pointer font-semibold">
+                  {trans.hasVehicle}
+                </Label>
+              </div>
+
+              {vehicleInfo.hasVehicle && (
+                <div className="grid sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                  <div>
+                    <Label>{trans.vehicleNumber}</Label>
+                    <Input 
+                      value={vehicleInfo?.number || ''}
+                      onChange={(e) => setVehicleInfo && setVehicleInfo({...vehicleInfo, number: e.target.value})}
+                      placeholder={trans.vehiclePlaceholder}
+                      dir="ltr"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          </>
         )}
       </CardContent>
     </Card>
