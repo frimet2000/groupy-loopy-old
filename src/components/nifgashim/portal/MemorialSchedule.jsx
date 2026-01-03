@@ -318,7 +318,7 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
                                   `}
                                 >
                                   <div className="font-semibold text-purple-900 line-clamp-1 flex items-center gap-1">
-                                    <Candle className="w-3 h-3 text-orange-400 shrink-0" />
+                                    <Flame className="w-3 h-3 text-orange-400 shrink-0" />
                                     {memorial.fallen_name}
                                   </div>
                                 </div>
@@ -361,7 +361,7 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
                    />
                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                      <div className="text-white text-sm font-medium flex items-center gap-2">
-                       <Candle className="w-4 h-4 text-orange-200" />
+                       <Flame className="w-4 h-4 text-orange-200" />
                        יהי זכרו ברוך
                      </div>
                    </div>
