@@ -9,39 +9,29 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     
-    const { paymentMethodId, amount } = await req.json();
+    const { amount } = await req.json();
 
-    if (!paymentMethodId || !amount) {
+    if (!amount) {
       return Response.json({ 
         success: false, 
         error: 'Missing required fields' 
       }, { status: 400 });
     }
 
-    // Create payment intent
+    // Create payment intent and return client secret
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount * 100, // Convert to agorot
       currency: 'ils',
-      payment_method: paymentMethodId,
-      confirm: true,
       automatic_payment_methods: {
-        enabled: true,
-        allow_redirects: 'never'
+        enabled: true
       },
       description: 'Nifgashim Bishvil Israel Trek Registration'
     });
 
-    if (paymentIntent.status === 'succeeded') {
-      return Response.json({
-        success: true,
-        transactionId: paymentIntent.id
-      });
-    } else {
-      return Response.json({
-        success: false,
-        error: 'Payment failed'
-      }, { status: 400 });
-    }
+    return Response.json({
+      success: true,
+      clientSecret: paymentIntent.client_secret
+    });
   } catch (error) {
     console.error('Payment error:', error);
     return Response.json({
