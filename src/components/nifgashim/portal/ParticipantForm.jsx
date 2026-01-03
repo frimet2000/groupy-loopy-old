@@ -29,15 +29,21 @@ export default function ParticipantForm({ userType, participants, setParticipant
       leaderEmail: "אימייל",
       leaderPhone: "טלפון",
       participantName: "שם מלא",
-      idNumber: "תעודת זהות",
+      idNumber: "תעודת זהות (9 ספרות)",
       ageRange: "טווח גילאים",
-      phone: "טלפון",
-      email: "אימייל (אופציונלי)",
+      phone: "טלפון נייד (10 ספרות)",
+      email: "אימייל",
       add: "הוסף משתתף",
       participants: "משתתפים",
       selectAge: "בחר טווח גילאים",
       duplicateId: "תעודת זהות זו כבר רשומה",
-      duplicatePhone: "מספר טלפון זה כבר רשום"
+      duplicatePhone: "מספר טלפון זה כבר רשום",
+      parent1: "הורה 1",
+      parent2: "הורה 2",
+      child: "ילד/ה",
+      invalidId: "תעודת זהות חייבת להכיל 9 ספרות בדיוק",
+      invalidPhone: "טלפון נייד חייב להכיל 10 ספרות בדיוק",
+      requiredFields: "יש למלא את כל השדות החובה"
     },
     en: {
       title: "Participant Details",
@@ -47,15 +53,21 @@ export default function ParticipantForm({ userType, participants, setParticipant
       leaderEmail: "Email",
       leaderPhone: "Phone",
       participantName: "Full Name",
-      idNumber: "ID Number",
+      idNumber: "ID Number (9 digits)",
       ageRange: "Age Range",
-      phone: "Phone",
-      email: "Email (Optional)",
+      phone: "Mobile Phone (10 digits)",
+      email: "Email",
       add: "Add Participant",
       participants: "Participants",
       selectAge: "Select Age Range",
       duplicateId: "This ID number is already registered",
-      duplicatePhone: "This phone number is already registered"
+      duplicatePhone: "This phone number is already registered",
+      parent1: "Parent 1",
+      parent2: "Parent 2",
+      child: "Child",
+      invalidId: "ID must be exactly 9 digits",
+      invalidPhone: "Phone must be exactly 10 digits",
+      requiredFields: "Please fill in all required fields"
     },
     ru: {
       title: "Данные участников",
@@ -154,8 +166,39 @@ export default function ParticipantForm({ userType, participants, setParticipant
   const ageRanges = ['0-9', '10-17', '18-25', '26-35', '36-50', '51-65', '65+'];
 
   const handleAdd = () => {
-    if (!currentParticipant.name || !currentParticipant.id_number) {
+    // Check required fields
+    if (!currentParticipant.name || !currentParticipant.id_number || !currentParticipant.age_range) {
+      toast.error(trans.requiredFields);
       return;
+    }
+
+    // Validate ID number (must be exactly 9 digits)
+    if (!/^\d{9}$/.test(currentParticipant.id_number)) {
+      toast.error(trans.invalidId);
+      return;
+    }
+
+    // Check if this is a child (age range starts with 0-17)
+    const isChild = currentParticipant.age_range.startsWith('0-') || currentParticipant.age_range.startsWith('10-');
+    
+    // For adults (parents): phone, email are required
+    if (!isChild) {
+      if (!currentParticipant.phone || !currentParticipant.email) {
+        toast.error(trans.requiredFields);
+        return;
+      }
+      
+      // Validate phone number (must be exactly 10 digits for adults)
+      if (!/^\d{10}$/.test(currentParticipant.phone)) {
+        toast.error(trans.invalidPhone);
+        return;
+      }
+    } else {
+      // For children: validate phone if provided (optional but must be 10 digits if entered)
+      if (currentParticipant.phone && !/^\d{10}$/.test(currentParticipant.phone)) {
+        toast.error(trans.invalidPhone);
+        return;
+      }
     }
 
     // Check for duplicate ID number
@@ -223,7 +266,9 @@ export default function ParticipantForm({ userType, participants, setParticipant
         )}
 
         <div className="space-y-4">
-          <h3 className="font-semibold text-lg">{trans.add}</h3>
+          <h3 className="font-semibold text-lg">
+            {participants.length === 0 ? trans.parent1 : participants.length === 1 ? trans.parent2 : trans.child} {participants.length + 1}
+          </h3>
           
           <div className="grid gap-4">
             <div>
@@ -232,6 +277,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
                 value={currentParticipant.name}
                 onChange={(e) => setCurrentParticipant({ ...currentParticipant, name: e.target.value })}
                 dir={isRTL ? 'rtl' : 'ltr'}
+                placeholder={language === 'he' ? 'שם מלא' : 'Full Name'}
               />
             </div>
 
@@ -240,12 +286,16 @@ export default function ParticipantForm({ userType, participants, setParticipant
                 <Label>{trans.idNumber} *</Label>
                 <Input
                   value={currentParticipant.id_number}
-                  onChange={(e) => setCurrentParticipant({ ...currentParticipant, id_number: e.target.value })}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    setCurrentParticipant({ ...currentParticipant, id_number: val });
+                  }}
                   maxLength={9}
+                  placeholder="123456789"
                 />
               </div>
               <div>
-                <Label>{trans.ageRange}</Label>
+                <Label>{trans.ageRange} *</Label>
                 <Select
                   value={currentParticipant.age_range}
                   onValueChange={(value) => setCurrentParticipant({ ...currentParticipant, age_range: value })}
@@ -264,18 +314,34 @@ export default function ParticipantForm({ userType, participants, setParticipant
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <Label>{trans.phone}</Label>
+                <Label>
+                  {trans.phone} {(() => {
+                    const isChild = currentParticipant.age_range && (currentParticipant.age_range.startsWith('0-') || currentParticipant.age_range.startsWith('10-'));
+                    return isChild ? '' : '*';
+                  })()}
+                </Label>
                 <Input
                   value={currentParticipant.phone}
-                  onChange={(e) => setCurrentParticipant({ ...currentParticipant, phone: e.target.value })}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    setCurrentParticipant({ ...currentParticipant, phone: val });
+                  }}
+                  maxLength={10}
+                  placeholder="0501234567"
                 />
               </div>
               <div>
-                <Label>{trans.email}</Label>
+                <Label>
+                  {trans.email} {(() => {
+                    const isChild = currentParticipant.age_range && (currentParticipant.age_range.startsWith('0-') || currentParticipant.age_range.startsWith('10-'));
+                    return isChild ? '' : '*';
+                  })()}
+                </Label>
                 <Input
                   type="email"
                   value={currentParticipant.email}
                   onChange={(e) => setCurrentParticipant({ ...currentParticipant, email: e.target.value })}
+                  placeholder={language === 'he' ? 'example@email.com' : 'example@email.com'}
                 />
               </div>
             </div>
@@ -283,7 +349,6 @@ export default function ParticipantForm({ userType, participants, setParticipant
             <Button
               onClick={handleAdd}
               className="w-full bg-blue-600 hover:bg-blue-700"
-              disabled={!currentParticipant.name || !currentParticipant.id_number}
             >
               <Plus className="w-4 h-4 mr-2" />
               {trans.add}
