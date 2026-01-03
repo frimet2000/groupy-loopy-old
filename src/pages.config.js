@@ -1,6 +1,7 @@
 import AIRecommendations from './pages/AIRecommendations';
 import AboutUs from './pages/AboutUs';
 import AccessibilityStatement from './pages/AccessibilityStatement';
+import Admin from './pages/Admin';
 import CodeAnalyzer from './pages/CodeAnalyzer';
 import Community from './pages/Community';
 import CookiePolicy from './pages/CookiePolicy';
@@ -34,7 +35,7 @@ import TripDetails from './pages/TripDetails';
 import TripPlanningGuide from './pages/TripPlanningGuide';
 import TripSummary from './pages/TripSummary';
 import Weather from './pages/Weather';
-import Admin from './pages/Admin';
+import NifgashimAdmin from './pages/NifgashimAdmin';
 import __Layout from './Layout.jsx';
 
 
@@ -42,6 +43,7 @@ export const PAGES = {
     "AIRecommendations": AIRecommendations,
     "AboutUs": AboutUs,
     "AccessibilityStatement": AccessibilityStatement,
+    "Admin": Admin,
     "CodeAnalyzer": CodeAnalyzer,
     "Community": Community,
     "CookiePolicy": CookiePolicy,
@@ -75,7 +77,7 @@ export const PAGES = {
     "TripPlanningGuide": TripPlanningGuide,
     "TripSummary": TripSummary,
     "Weather": Weather,
-    "Admin": Admin,
+    "NifgashimAdmin": NifgashimAdmin,
 }
 
 export const pagesConfig = {
