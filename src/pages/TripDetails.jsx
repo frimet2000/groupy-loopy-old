@@ -141,6 +141,9 @@ export default function TripDetails() {
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get('id');
 
+  // State for active tab - must be declared before useQuery that uses it
+  const [activeTab, setActiveTab] = useState('details');
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -195,9 +198,6 @@ export default function TripDetails() {
     retry: 1,
     staleTime: 60000
   });
-
-  // State for active tab
-  const [activeTab, setActiveTab] = useState('details');
 
   // Open chat tab if hash is #chat
   useEffect(() => {
