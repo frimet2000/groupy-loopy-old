@@ -1430,38 +1430,7 @@ export default function NifgashimAdmin() {
               {/* Memorials Tab */}
               <TabsContent value="memorials">
                 {activeTrip ? (
-                  <div className="space-y-6">
-                    {/* Trek Days Display */}
-                    {activeTrip.trek_days && activeTrip.trek_days.length > 0 && (
-                      <Card className="bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200">
-                        <CardHeader>
-                          <CardTitle className="flex items-center gap-2">
-                            <Calendar className="w-5 h-5 text-purple-600" />
-                            {language === 'he' ? 'ימי הטראק' : 'Trek Days'}
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                            {activeTrip.trek_days.sort((a, b) => a.day_number - b.day_number).map(day => (
-                              <div key={day.day_number} className="bg-white rounded-lg p-3 border-2 border-purple-200 hover:border-purple-400 transition-all">
-                                <div className="font-bold text-purple-900 mb-1">
-                                  {language === 'he' ? `יום ${day.day_number}` : `Day ${day.day_number}`}
-                                </div>
-                                <div className="text-xs text-gray-600 line-clamp-2">{day.daily_title}</div>
-                                {day.date && (
-                                  <div className="text-xs text-purple-600 mt-1">
-                                    {format(new Date(day.date), 'MMM d')}
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-
-                    <MemorialsManager tripId={activeTrip.id} />
-                  </div>
+                  <MemorialsManager tripId={activeTrip.id} showTrekDays={true} />
                 ) : (
                   <Card>
                     <CardContent className="p-12 text-center text-gray-500">

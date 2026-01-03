@@ -6,11 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { Heart, Check, X, Sparkles, Loader2, GripVertical } from 'lucide-react';
+import { Heart, Check, X, Sparkles, Loader2, GripVertical, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import { format } from 'date-fns';
 
-export default function MemorialsManager({ tripId }) {
+export default function MemorialsManager({ tripId, showTrekDays = false }) {
   const { language, isRTL } = useLanguage();
   const queryClient = useQueryClient();
   const [aiDistributing, setAiDistributing] = useState(false);
@@ -371,8 +372,62 @@ Return a JSON object mapping memorial indices (0-based) to day numbers. Example:
           {/* Drag and Drop Area */}
           {approvedMemorials.length > 0 && (
             <DragDropContext onDragEnd={handleDragEnd}>
-              <div className="grid gap-4">
-                {/* Unassigned */}
+              <div className="space-y-6">
+                {/* Trek Days Display with Drop Zones */}
+                {showTrekDays && trip?.trek_days && trip.trek_days.length > 0 && (
+                  <Card className="bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Calendar className="w-5 h-5 text-purple-600" />
+                        {language === 'he' ? 'ימי הטראק - גרור הנצחה למלבן' : 'Trek Days - Drag memorial to box'}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                        {trip.trek_days.sort((a, b) => a.day_number - b.day_number).map(day => (
+                          <Droppable key={day.day_number} droppableId={`day-${day.day_number}`}>
+                            {(provided, snapshot) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                                className={`bg-white rounded-lg p-3 border-2 transition-all min-h-[120px] ${
+                                  snapshot.isDraggingOver 
+                                    ? 'border-green-400 bg-green-50 shadow-lg scale-105' 
+                                    : 'border-purple-200 hover:border-purple-400'
+                                }`}
+                              >
+                                <div className="font-bold text-purple-900 mb-1">
+                                  {language === 'he' ? `יום ${day.day_number}` : `Day ${day.day_number}`}
+                                </div>
+                                <div className="text-xs text-gray-600 line-clamp-2 mb-2">{day.daily_title}</div>
+                                {day.date && (
+                                  <div className="text-xs text-purple-600 mb-2">
+                                    {format(new Date(day.date), 'MMM d')}
+                                  </div>
+                                )}
+                                
+                                {/* Show assigned memorials */}
+                                {(memorialsByDay[day.day_number] || []).length > 0 && (
+                                  <div className="mt-2 pt-2 border-t border-purple-200 space-y-1">
+                                    {(memorialsByDay[day.day_number] || []).map((memorial) => (
+                                      <div key={memorial.id} className="text-xs bg-red-50 border border-red-200 rounded px-2 py-1 flex items-center gap-1">
+                                        <Heart className="w-3 h-3 text-red-500 flex-shrink-0" />
+                                        <span className="truncate">{memorial.fallen_name}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                {provided.placeholder}
+                              </div>
+                            )}
+                          </Droppable>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Unassigned Memorials */}
                 <Droppable droppableId="unassigned">
                   {(provided, snapshot) => (
                     <Card
@@ -383,7 +438,7 @@ Return a JSON object mapping memorial indices (0-based) to day numbers. Example:
                       } transition-all min-h-[100px]`}
                     >
                       <CardHeader>
-                        <CardTitle className="text-sm">{trans.unassigned}</CardTitle>
+                        <CardTitle className="text-sm">{trans.unassigned} ({unassignedMemorials.length})</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-2">
                         {unassignedMemorials.map((memorial, index) => (
@@ -395,7 +450,7 @@ Return a JSON object mapping memorial indices (0-based) to day numbers. Example:
                                 {...provided.dragHandleProps}
                               >
                                 <div className="flex items-center gap-2">
-                                  <GripVertical className="w-4 h-4 text-gray-400" />
+                                  <GripVertical className="w-4 h-4 text-gray-400 flex-shrink-0" />
                                   <div className="flex-1">
                                     <MemorialCard memorial={memorial} isDragging={snapshot.isDragging} />
                                   </div>
@@ -405,52 +460,15 @@ Return a JSON object mapping memorial indices (0-based) to day numbers. Example:
                           </Draggable>
                         ))}
                         {provided.placeholder}
+                        {unassignedMemorials.length === 0 && (
+                          <div className="text-center text-gray-400 py-4 text-sm">
+                            {language === 'he' ? 'אין הנצחות שלא שויכו' : 'No unassigned memorials'}
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   )}
                 </Droppable>
-
-                {/* Days */}
-                {trip.trek_days.map(day => (
-                  <Droppable key={day.day_number} droppableId={`day-${day.day_number}`}>
-                    {(provided, snapshot) => (
-                      <Card
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                        className={`${
-                          snapshot.isDraggingOver ? 'border-2 border-green-400 bg-green-50' : ''
-                        } transition-all min-h-[100px]`}
-                      >
-                        <CardHeader>
-                          <CardTitle className="text-sm">
-                            {trans.day} {day.day_number} - {day.daily_title}
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                          {(memorialsByDay[day.day_number] || []).map((memorial, index) => (
-                            <Draggable key={memorial.id} draggableId={memorial.id} index={index}>
-                              {(provided, snapshot) => (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <GripVertical className="w-4 h-4 text-gray-400" />
-                                    <div className="flex-1">
-                                      <MemorialCard memorial={memorial} isDragging={snapshot.isDragging} />
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                          {provided.placeholder}
-                        </CardContent>
-                      </Card>
-                    )}
-                  </Droppable>
-                ))}
               </div>
             </DragDropContext>
           )}
