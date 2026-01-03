@@ -70,9 +70,25 @@ function PaymentForm({ amount, onSuccess, onCancel }) {
 
     setProcessing(true);
     try {
-      const { error, paymentMethod } = await stripe.createPaymentMethod({
-        type: 'card',
-        card: elements.getElement(CardElement),
+      // Get client secret from backend
+      const response = await base44.functions.invoke('processNifgashimPayment', {
+        amount: amount
+      });
+
+      if (!response.data.success || !response.data.clientSecret) {
+        toast.error(response.data.error || (language === 'he' ? 'שגיאה ביצירת תשלום' : 'Failed to initialize payment'));
+        setProcessing(false);
+        return;
+      }
+
+      // Confirm payment with Stripe
+      const { error, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        clientSecret: response.data.clientSecret,
+        confirmParams: {
+          return_url: window.location.href,
+        },
+        redirect: 'if_required'
       });
 
       if (error) {
@@ -81,22 +97,16 @@ function PaymentForm({ amount, onSuccess, onCancel }) {
         return;
       }
 
-      // Process payment via backend
-      const response = await base44.functions.invoke('processNifgashimPayment', {
-        paymentMethodId: paymentMethod.id,
-        amount: amount
-      });
-
-      if (response.data.success) {
+      if (paymentIntent.status === 'succeeded') {
         toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
-        onSuccess(response.data.transactionId);
+        onSuccess(paymentIntent.id);
       } else {
-        toast.error(language === 'he' ? 'שגיאה בתשלום' : 'Payment failed');
+        toast.error(language === 'he' ? 'התשלום נכשל' : 'Payment failed');
         setProcessing(false);
       }
     } catch (error) {
       console.error(error);
-      toast.error(language === 'he' ? 'שגיאה בתשלום' : 'Payment error');
+      toast.error(language === 'he' ? 'שגיאה בתשלום. אנא נסה שוב.' : 'Payment error. Please try again.');
       setProcessing(false);
     }
   };
