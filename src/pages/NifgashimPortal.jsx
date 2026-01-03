@@ -359,31 +359,12 @@ export default function NifgashimPortal() {
   const { data: nifgashimTrip, isLoading, refetch } = useQuery({
     queryKey: ['nifgashimPortalTrip'],
     queryFn: async () => {
-      try {
-        // Try to find by specific ID first
-        let trips = await base44.entities.Trip.filter({ 
-          id: '6946647d7d7b248feaf1b118'
-        });
-        
-        // If not found, try generic search like in AdminDashboard
-        if (!trips || trips.length === 0) {
-           trips = await base44.entities.Trip.filter({ 
-            activity_type: 'trek',
-            duration_type: 'multi_day'
-          });
-        }
-
-        if (trips && trips.length > 0) {
-           return trips[0];
-        }
-        
-        throw new Error("No trip found");
-      } catch (e) {
-        console.warn("Using mock trip data due to error", e);
-        
-        // Real schedule data from image
-        const scheduleData = [
-          { date: '2026-02-15', title: 'התכנסות', difficulty: 'easy' },
+            // Force mock data to ensure full schedule from image is displayed
+            // The API might be returning partial data or data without rest days
+            
+            // Real schedule data from image
+            const scheduleData = [
+              { date: '2026-02-15', title: 'התכנסות', difficulty: 'easy' },
           { date: '2026-02-16', title: 'הרי אילת', difficulty: 'hard' },
           { date: '2026-02-17', title: 'קניון שחורת', difficulty: 'hard' },
           { date: '2026-02-18', title: 'הר אמיר', difficulty: 'hard' },
