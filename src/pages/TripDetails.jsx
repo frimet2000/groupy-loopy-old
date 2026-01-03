@@ -2261,8 +2261,8 @@ export default function TripDetails() {
                           <Avatar className="h-10 w-10">
                             <AvatarFallback className="bg-emerald-600 text-white">
                               {(() => {
-                                const displayName = userProfiles[trip.organizer_email]?.name || trip.organizer_name;
-                                return typeof displayName === 'string' && displayName ? displayName.charAt(0) : 'O';
+                                const displayName = userProfiles[trip.organizer_email]?.name || trip.organizer_name || trip.organizer_email;
+                                return typeof displayName === 'string' && displayName.length > 0 ? displayName.charAt(0).toUpperCase() : 'O';
                               })()}
                             </AvatarFallback>
                           </Avatar>
@@ -2308,7 +2308,7 @@ export default function TripDetails() {
                               <AvatarFallback className="bg-emerald-500 text-white">
                                 {(() => {
                                   const displayName = userProfiles[organizer.email]?.name || organizer.name || organizer.email;
-                                  return typeof displayName === 'string' && displayName ? displayName.charAt(0) : 'O';
+                                  return typeof displayName === 'string' && displayName.length > 0 ? displayName.charAt(0).toUpperCase() : 'O';
                                 })()}
                               </AvatarFallback>
                             </Avatar>
@@ -2470,8 +2470,8 @@ export default function TripDetails() {
                                          <Avatar className="h-9 w-9">
                                            <AvatarFallback className={isOrganizerRow ? 'bg-emerald-600 text-white' : 'bg-blue-100 text-blue-700'}>
                                              {(() => {
-                                               const displayName = participantProfile?.name || participant.name;
-                                               return typeof displayName === 'string' && displayName ? displayName.charAt(0) : 'P';
+                                               const displayName = participantProfile?.name || participant.name || participant.email;
+                                               return typeof displayName === 'string' && displayName.length > 0 ? displayName.charAt(0).toUpperCase() : 'P';
                                              })()}
                                            </AvatarFallback>
                                          </Avatar>
@@ -3358,8 +3358,8 @@ export default function TripDetails() {
                     <Avatar className="h-12 w-12">
                       <AvatarFallback className="bg-emerald-100 text-emerald-700">
                         {(() => {
-                          const name = trip.pending_requests[currentRequestIndex].name;
-                          return typeof name === 'string' && name ? name.charAt(0) : 'P';
+                          const name = trip.pending_requests[currentRequestIndex].name || trip.pending_requests[currentRequestIndex].email;
+                          return typeof name === 'string' && name.length > 0 ? name.charAt(0).toUpperCase() : 'P';
                         })()}
                       </AvatarFallback>
                     </Avatar>
