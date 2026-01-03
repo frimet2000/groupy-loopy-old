@@ -165,7 +165,11 @@ export default function TripDetails() {
       return trips[0];
     },
     enabled: !!tripId,
-    refetchInterval: 2000 // Refresh every 2 seconds for real-time chat updates
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: 1,
+    staleTime: 30000,
+    refetchInterval: activeTab === 'chat' ? 5000 : false // Only refetch when in chat tab
   });
 
   // Fetch user profiles for all participants to show updated names and family info
@@ -185,7 +189,11 @@ export default function TripDetails() {
       const response = await base44.functions.invoke('getUserProfiles', { emails: allProfileEmails });
       return response.data.profiles || {};
     },
-    enabled: allProfileEmails.length > 0
+    enabled: allProfileEmails.length > 0,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: 1,
+    staleTime: 60000
   });
 
   // State for active tab
