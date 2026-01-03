@@ -5,8 +5,9 @@ import { useLanguage } from '../LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { Heart, Check, X, Sparkles, Loader2, GripVertical, Calendar } from 'lucide-react';
+import { Heart, Check, X, Sparkles, Loader2, GripVertical, Calendar, Trash2, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
@@ -15,6 +16,7 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
   const { language, isRTL } = useLanguage();
   const queryClient = useQueryClient();
   const [aiDistributing, setAiDistributing] = useState(false);
+  const [selectedMemorial, setSelectedMemorial] = useState(null);
 
   const translations = {
     he: {
@@ -31,7 +33,18 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       fallenName: "שם החלל/ה",
       requester: "מבקש",
       relation: "קרבה",
-      day: "יום"
+      day: "יום",
+      delete: "מחק",
+      viewDetails: "פרטים",
+      memorialDetails: "פרטי ההנצחה",
+      dateOfFall: "תאריך נפילה",
+      placeOfFall: "מקום נפילה",
+      story: "סיפור",
+      phone: "טלפון",
+      email: "אימייל",
+      close: "סגור",
+      confirmDelete: "האם למחוק הנצחה זו?",
+      deleted: "הוסר בהצלחה"
     },
     en: {
       title: "Memorial Management",
@@ -47,7 +60,18 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       fallenName: "Name of Fallen",
       requester: "Requester",
       relation: "Relation",
-      day: "Day"
+      day: "Day",
+      delete: "Delete",
+      viewDetails: "Details",
+      memorialDetails: "Memorial Details",
+      dateOfFall: "Date of Fall",
+      placeOfFall: "Place of Fall",
+      story: "Story",
+      phone: "Phone",
+      email: "Email",
+      close: "Close",
+      confirmDelete: "Delete this memorial?",
+      deleted: "Deleted successfully"
     },
     ru: {
       title: "Управление мемориалами",
@@ -63,7 +87,18 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       fallenName: "Имя павшего",
       requester: "Заявитель",
       relation: "Отношение",
-      day: "День"
+      day: "День",
+      delete: "Удалить",
+      viewDetails: "Детали",
+      memorialDetails: "Детали мемориала",
+      dateOfFall: "Дата падения",
+      placeOfFall: "Место падения",
+      story: "История",
+      phone: "Телефон",
+      email: "Email",
+      close: "Закрыть",
+      confirmDelete: "Удалить этот мемориал?",
+      deleted: "Удалено"
     },
     es: {
       title: "Gestión de memoriales",
@@ -79,7 +114,18 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       fallenName: "Nombre del caído",
       requester: "Solicitante",
       relation: "Relación",
-      day: "Día"
+      day: "Día",
+      delete: "Eliminar",
+      viewDetails: "Detalles",
+      memorialDetails: "Detalles del memorial",
+      dateOfFall: "Fecha de caída",
+      placeOfFall: "Lugar de caída",
+      story: "Historia",
+      phone: "Teléfono",
+      email: "Email",
+      close: "Cerrar",
+      confirmDelete: "¿Eliminar este memorial?",
+      deleted: "Eliminado"
     },
     fr: {
       title: "Gestion des mémoriaux",
@@ -95,7 +141,18 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       fallenName: "Nom du tombé",
       requester: "Demandeur",
       relation: "Relation",
-      day: "Jour"
+      day: "Jour",
+      delete: "Supprimer",
+      viewDetails: "Détails",
+      memorialDetails: "Détails du mémorial",
+      dateOfFall: "Date de chute",
+      placeOfFall: "Lieu de chute",
+      story: "Histoire",
+      phone: "Téléphone",
+      email: "Email",
+      close: "Fermer",
+      confirmDelete: "Supprimer ce mémorial?",
+      deleted: "Supprimé"
     },
     de: {
       title: "Gedenkstättenverwaltung",
@@ -111,7 +168,18 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       fallenName: "Name des Gefallenen",
       requester: "Antragsteller",
       relation: "Beziehung",
-      day: "Tag"
+      day: "Tag",
+      delete: "Löschen",
+      viewDetails: "Details",
+      memorialDetails: "Memorial Details",
+      dateOfFall: "Todesdatum",
+      placeOfFall: "Todesort",
+      story: "Geschichte",
+      phone: "Telefon",
+      email: "Email",
+      close: "Schließen",
+      confirmDelete: "Dieses Memorial löschen?",
+      deleted: "Gelöscht"
     },
     it: {
       title: "Gestione memoriali",
@@ -127,7 +195,18 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       fallenName: "Nome del caduto",
       requester: "Richiedente",
       relation: "Relazione",
-      day: "Giorno"
+      day: "Giorno",
+      delete: "Elimina",
+      viewDetails: "Dettagli",
+      memorialDetails: "Dettagli memoriale",
+      dateOfFall: "Data della caduta",
+      placeOfFall: "Luogo della caduta",
+      story: "Storia",
+      phone: "Telefono",
+      email: "Email",
+      close: "Chiudi",
+      confirmDelete: "Eliminare questo memoriale?",
+      deleted: "Eliminato"
     }
   };
 
@@ -159,6 +238,14 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
     }
   });
 
+  const deleteMemorialMutation = useMutation({
+    mutationFn: (id) => base44.entities.Memorial.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['memorials', tripId]);
+      toast.success(trans.deleted);
+    }
+  });
+
   const handleApprove = (memorial) => {
     updateMemorialMutation.mutate({
       id: memorial.id,
@@ -171,6 +258,12 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       id: memorial.id,
       data: { status: 'rejected' }
     });
+  };
+
+  const handleDelete = (memorial) => {
+    if (confirm(trans.confirmDelete)) {
+      deleteMemorialMutation.mutate(memorial.id);
+    }
   };
 
   const handleDragEnd = (result) => {
@@ -325,7 +418,7 @@ Return a JSON object mapping memorial indices (0-based) to day numbers. Example:
   );
 
   return (
-    <div className={`space-y-6 ${isRTL ? 'rtl' : 'ltr'}`}>
+    <div className="space-y-6" dir="rtl">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold flex items-center gap-2">
           <Heart className="w-6 h-6 text-red-500" />
@@ -421,15 +514,40 @@ Return a JSON object mapping memorial indices (0-based) to day numbers. Example:
                                       <div
                                         ref={dragProvided.innerRef}
                                         {...dragProvided.draggableProps}
-                                        {...dragProvided.dragHandleProps}
-                                        className="mt-1"
+                                        className="mt-1 group relative"
                                       >
-                                        <div className={`text-xs bg-red-50 border border-red-200 rounded px-2 py-1 flex items-center gap-1 cursor-move ${
+                                        <div className={`text-xs bg-red-50 border border-red-200 rounded px-2 py-1 flex items-center gap-1 ${
                                           dragSnapshot.isDragging ? 'shadow-lg opacity-80' : ''
                                         }`}>
-                                          <GripVertical className="w-2 h-2 text-gray-400 flex-shrink-0" />
-                                          <Heart className="w-3 h-3 text-red-500 flex-shrink-0" />
-                                          <span className="truncate">{memorial.fallen_name}</span>
+                                          <div {...dragProvided.dragHandleProps} className="cursor-move flex items-center gap-1 flex-1 min-w-0">
+                                            <GripVertical className="w-2 h-2 text-gray-400 flex-shrink-0" />
+                                            <Heart className="w-3 h-3 text-red-500 flex-shrink-0" />
+                                            <span className="truncate">{memorial.fallen_name}</span>
+                                          </div>
+                                          <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Button
+                                              size="sm"
+                                              variant="ghost"
+                                              className="h-5 w-5 p-0 hover:bg-blue-100"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedMemorial(memorial);
+                                              }}
+                                            >
+                                              <Info className="w-3 h-3 text-blue-600" />
+                                            </Button>
+                                            <Button
+                                              size="sm"
+                                              variant="ghost"
+                                              className="h-5 w-5 p-0 hover:bg-red-100"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDelete(memorial);
+                                              }}
+                                            >
+                                              <Trash2 className="w-3 h-3 text-red-600" />
+                                            </Button>
+                                          </div>
                                         </div>
                                       </div>
                                     )}
@@ -492,6 +610,97 @@ Return a JSON object mapping memorial indices (0-based) to day numbers. Example:
           )}
         </>
       )}
+
+      {/* Memorial Details Dialog */}
+      <Dialog open={!!selectedMemorial} onOpenChange={() => setSelectedMemorial(null)}>
+        <DialogContent className="max-w-2xl" dir={isRTL ? 'rtl' : 'ltr'}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Heart className="w-6 h-6 text-red-500" />
+              {trans.memorialDetails}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedMemorial && (
+            <div className="space-y-6 py-4">
+              {/* Image */}
+              {selectedMemorial.image_url && (
+                <div className="flex justify-center">
+                  <img
+                    src={selectedMemorial.image_url}
+                    alt={selectedMemorial.fallen_name}
+                    className="w-48 h-48 object-cover rounded-lg shadow-lg border-4 border-gray-100"
+                  />
+                </div>
+              )}
+
+              {/* Name */}
+              <div className="text-center bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-6 border-2 border-red-200">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  {selectedMemorial.fallen_name}
+                </h3>
+                {selectedMemorial.date_of_fall && (
+                  <p className="text-sm text-gray-600">
+                    {trans.dateOfFall}: {format(new Date(selectedMemorial.date_of_fall), 'dd/MM/yyyy')}
+                  </p>
+                )}
+              </div>
+
+              {/* Details Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {selectedMemorial.place_of_fall && (
+                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                    <p className="text-xs font-semibold text-blue-900 mb-1">{trans.placeOfFall}</p>
+                    <p className="text-sm text-blue-800">{selectedMemorial.place_of_fall}</p>
+                  </div>
+                )}
+
+                {selectedMemorial.family_relation && (
+                  <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                    <p className="text-xs font-semibold text-purple-900 mb-1">{trans.relation}</p>
+                    <p className="text-sm text-purple-800">{selectedMemorial.family_relation}</p>
+                  </div>
+                )}
+
+                <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                  <p className="text-xs font-semibold text-green-900 mb-1">{trans.requester}</p>
+                  <p className="text-sm text-green-800">{selectedMemorial.requester_name}</p>
+                  {selectedMemorial.requester_phone && (
+                    <p className="text-xs text-green-700 mt-1" dir="ltr">{selectedMemorial.requester_phone}</p>
+                  )}
+                </div>
+
+                {selectedMemorial.requester_email && (
+                  <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                    <p className="text-xs font-semibold text-amber-900 mb-1">{trans.email}</p>
+                    <p className="text-sm text-amber-800 break-all">{selectedMemorial.requester_email}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Story */}
+              {selectedMemorial.story && (
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border-2 border-gray-200">
+                  <p className="text-sm font-semibold text-gray-900 mb-3">{trans.story}</p>
+                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                    {selectedMemorial.story}
+                  </p>
+                </div>
+              )}
+
+              {/* Close Button */}
+              <div className="flex justify-center pt-4">
+                <Button
+                  onClick={() => setSelectedMemorial(null)}
+                  className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 px-8"
+                >
+                  {trans.close}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
