@@ -93,8 +93,7 @@ export const AuthProvider = ({ children }) => {
     try {
       // Now check if the user is authenticated
       setIsLoadingAuth(true);
-      // const currentUser = await base44.auth.me();
-      const currentUser = null; // Temporary fix for debugging
+      const currentUser = await base44.auth.me();
       setUser(currentUser);
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
