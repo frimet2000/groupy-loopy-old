@@ -5,15 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Calendar, Heart, MapPin, User, Check, X, GripVertical, Clock, Map, List, RefreshCw, Loader2 } from 'lucide-react';
+import { Calendar, Heart, MapPin, User, Check, X, GripVertical } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function MemorialSchedule({ trip, participants, onUpdateParticipant, onRefresh }) {
+export default function MemorialSchedule({ trip, participants, onUpdateParticipant }) {
   // Local state for memorials to handle drag and drop immediately
   const [memorials, setMemorials] = useState([]);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [currentDayNumber, setCurrentDayNumber] = useState(1); // Determine current day based on date
 
   useEffect(() => {
     // Extract memorials from participants
@@ -29,44 +27,6 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
       }));
     setMemorials(extractedMemorials);
   }, [participants]);
-
-  // Determine current day of the trip
-  useEffect(() => {
-    if (trip?.date) {
-      const startDate = new Date(trip.date);
-      const today = new Date();
-      // Calculate difference in days
-      const diffTime = Math.abs(today - startDate);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-      
-      if (today >= startDate && diffDays <= (trip.duration_value || 5)) {
-        setCurrentDayNumber(diffDays);
-      }
-    }
-  }, [trip]);
-
-  // Auto refresh every 5 minutes
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      handleManualRefresh();
-    }, 5 * 60 * 1000);
-
-    return () => clearInterval(interval);
-  }, [onRefresh]);
-
-  const handleManualRefresh = async () => {
-    if (onRefresh) {
-      setIsRefreshing(true);
-      try {
-        await onRefresh();
-        toast.success('הנתונים רועננו בהצלחה');
-      } catch (error) {
-        toast.error('שגיאה ברענון הנתונים');
-      } finally {
-        setIsRefreshing(false);
-      }
-    }
-  };
 
   const handleDragEnd = (result) => {
     const { source, destination, draggableId } = result;
@@ -102,14 +62,14 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
     setMemorials(updatedMemorials);
     
     // Propagate update to parent/backend
+    // In a real app, this would be an API call
+    // For now, we simulate updating the participant object
     onUpdateParticipant(movedMemorial.participantId, {
       memorial: {
         ...movedMemorial,
         assigned_day: movedMemorial.assigned_day
       }
     });
-    
-    toast.success('השיבוץ עודכן בהצלחה');
   };
 
   const handleApprove = (memorial) => {
@@ -131,6 +91,7 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
   };
 
   const handleReject = (memorial) => {
+    // Implementation for reject if needed
     const updatedMemorials = memorials.map(m => 
         m.participantId === memorial.participantId 
           ? { ...m, status: 'rejected', assigned_day: null } 
@@ -152,48 +113,13 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
   const pendingMemorials = memorials.filter(m => m.status === 'pending');
   const approvedUnassigned = memorials.filter(m => m.status === 'approved' && !m.assigned_day);
   
-  // Generate days array based on trip duration and merge with trek_days info
-  const daysCount = trip?.duration_value || 5;
-  const trekDaysInfo = trip?.trek_days || [];
-  
-  const tripDays = Array.from({ length: daysCount }, (_, i) => {
-    const dayNum = i + 1;
-    const trekDay = trekDaysInfo.find(d => d.day_number === dayNum) || {};
-    
-    // Calculate date
-    const tripStartDate = new Date(trip?.date || new Date());
-    const currentDayDate = new Date(tripStartDate);
-    currentDayDate.setDate(tripStartDate.getDate() + (dayNum - 1));
-    
-    return {
-      dayNum,
-      date: currentDayDate,
-      destinations: trekDay.destinations || [],
-      attractions: trekDay.attractions || [], // Should be array of { type, count/name }
-      startTime: trekDay.start_time || '08:00',
-      endTime: trekDay.end_time || '17:00',
-      isCurrent: dayNum === currentDayDate
-    };
-  });
+  // Generate days array based on trip duration
+  const tripDays = Array.from({ length: trip.duration_value || 5 }, (_, i) => i + 1);
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="space-y-8 p-4 relative">
+      <div className="space-y-8 p-4">
         
-        {/* Refresh Button */}
-        <div className="absolute top-0 left-4 z-10">
-            <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleManualRefresh}
-                disabled={isRefreshing}
-                className="bg-white/80 backdrop-blur"
-            >
-                <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-                {isRefreshing ? 'מרענן...' : 'רענן נתונים'}
-            </Button>
-        </div>
-
         {/* Pending Requests Section */}
         {pendingMemorials.length > 0 && (
           <Card className="border-orange-200 bg-orange-50/30">
@@ -252,7 +178,7 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Approved Bank (Draggable Source) - Sticky Sidebar */}
+          {/* Approved Bank (Draggable Source) */}
           <div className="lg:col-span-1 space-y-4">
             <div className="bg-white rounded-xl shadow-sm border p-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
@@ -288,7 +214,7 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             className={`
-                              bg-white p-3 rounded-lg border shadow-sm group hover:border-purple-300 transition-all cursor-grab active:cursor-grabbing
+                              bg-white p-3 rounded-lg border shadow-sm group hover:border-purple-300 transition-all
                               ${snapshot.isDragging ? 'shadow-xl ring-2 ring-purple-400 rotate-2' : ''}
                             `}
                           >
@@ -310,137 +236,77 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
             </div>
           </div>
 
-          {/* Days List (Droppable Targets) */}
-          <div className="lg:col-span-3 space-y-6">
-            <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900 flex items-center gap-2 text-xl">
-                <Calendar className="w-6 h-6 text-blue-600" />
-                תוכנית המסע ושיבוץ הנצחות
-                </h3>
-            </div>
+          {/* Days Grid (Droppable Targets) */}
+          <div className="lg:col-span-3">
+            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-blue-600" />
+              שיבוץ לימי הטיול
+            </h3>
             
-            <div className="space-y-4">
-              {tripDays.map((day) => {
-                const dayMemorials = memorials.filter(m => m.assigned_day === day.dayNum && m.status === 'approved');
-                const isToday = day.dayNum === currentDayNumber;
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+              {tripDays.map((dayNum) => {
+                // Get start date from trip date
+                const tripStartDate = new Date(trip.date || new Date());
+                const currentDayDate = new Date(tripStartDate);
+                currentDayDate.setDate(tripStartDate.getDate() + (dayNum - 1));
+                
+                const dayMemorials = memorials.filter(m => m.assigned_day === dayNum && m.status === 'approved');
 
                 return (
-                  <Droppable key={day.dayNum} droppableId={`day-${day.dayNum}`}>
+                  <Droppable key={dayNum} droppableId={`day-${dayNum}`}>
                     {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                         className={`
-                          relative overflow-hidden rounded-xl border-2 transition-all
-                          ${isToday ? 'border-blue-400 shadow-md ring-1 ring-blue-200' : 'border-gray-200 hover:border-gray-300'}
-                          ${snapshot.isDraggingOver ? 'border-purple-500 bg-purple-50/50' : 'bg-white'}
+                          bg-white rounded-lg p-3 border-2 transition-all min-h-[150px] flex flex-col
+                          ${snapshot.isDraggingOver ? 'border-purple-500 bg-purple-50 ring-4 ring-purple-100' : 'border-purple-100 hover:border-purple-300'}
                         `}
                       >
-                        {isToday && (
-                          <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs px-2 py-1 rounded-bl-lg font-bold">
-                            היום הנוכחי
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <div className="font-bold text-purple-900">יום {dayNum}</div>
+                            <div className="text-xs text-purple-600 mt-0.5">
+                              {currentDayDate.toLocaleDateString('he-IL', { month: 'short', day: 'numeric' })}
+                            </div>
+                          </div>
+                          <Badge variant="outline" className="bg-white text-xs">
+                            {dayMemorials.length}
+                          </Badge>
+                        </div>
+
+                        <div className="flex-1 space-y-2">
+                          {dayMemorials.map((memorial, index) => (
+                            <Draggable 
+                              key={memorial.participantId.toString()} 
+                              draggableId={memorial.participantId.toString()} 
+                              index={index}
+                            >
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className={`
+                                    bg-purple-50 p-2 rounded border border-purple-200 text-sm shadow-sm
+                                    ${snapshot.isDragging ? 'opacity-50' : ''}
+                                  `}
+                                >
+                                  <div className="font-semibold text-purple-900 line-clamp-1">
+                                    {memorial.fallen_name}
+                                  </div>
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                        
+                        {dayMemorials.length === 0 && !snapshot.isDraggingOver && (
+                          <div className="flex-1 flex items-center justify-center text-xs text-gray-300 border-2 border-dashed border-gray-100 rounded">
+                            גרירה לכאן
                           </div>
                         )}
-
-                        <div className="p-5 flex flex-col md:flex-row gap-6">
-                            {/* Day Info Column */}
-                            <div className="md:w-1/3 space-y-4 border-l pl-6">
-                                <div>
-                                    <div className="flex items-baseline gap-2">
-                                        <span className="text-3xl font-bold text-gray-900">יום {day.dayNum}</span>
-                                        <span className="text-gray-500 font-medium">
-                                            {day.date.toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long' })}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-gray-600 mt-2 text-sm">
-                                        <Clock className="w-4 h-4" />
-                                        <span>{day.startTime} - {day.endTime}</span>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <div className="flex items-start gap-2 text-sm">
-                                        <MapPin className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
-                                        <div>
-                                            <span className="font-semibold block mb-1">יעדים:</span>
-                                            {day.destinations && day.destinations.length > 0 ? (
-                                                <ul className="list-disc list-inside text-gray-600 space-y-0.5">
-                                                    {day.destinations.map((dest, i) => (
-                                                        <li key={i}>{dest}</li>
-                                                    ))}
-                                                </ul>
-                                            ) : (
-                                                <span className="text-gray-400 italic">לא עודכנו יעדים</span>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {day.attractions && day.attractions.length > 0 && (
-                                        <div className="flex items-start gap-2 text-sm mt-3">
-                                            <Map className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
-                                            <div>
-                                                <span className="font-semibold block mb-1">אטרקציות ({day.attractions.length}):</span>
-                                                <div className="flex flex-wrap gap-1">
-                                                    {day.attractions.map((attr, i) => (
-                                                        <Badge key={i} variant="secondary" className="text-xs font-normal">
-                                                            {typeof attr === 'string' ? attr : attr.type || 'אטרקציה'}
-                                                        </Badge>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Memorials Column */}
-                            <div className="flex-1 bg-gray-50/50 rounded-lg p-4 min-h-[120px]">
-                                <h4 className="font-semibold text-gray-700 mb-3 flex items-center gap-2 text-sm">
-                                    <Heart className="w-4 h-4 text-purple-500" />
-                                    הנצחות משובצות ({dayMemorials.length})
-                                </h4>
-                                
-                                <div className="space-y-2">
-                                    {dayMemorials.length === 0 && !snapshot.isDraggingOver && (
-                                        <div className="text-center py-6 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
-                                            גרור לכאן הנצחות מהמאגר
-                                        </div>
-                                    )}
-
-                                    {dayMemorials.map((memorial, index) => (
-                                        <Draggable 
-                                            key={memorial.participantId.toString()} 
-                                            draggableId={memorial.participantId.toString()} 
-                                            index={index}
-                                        >
-                                            {(provided, snapshot) => (
-                                                <div
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                    className={`
-                                                        bg-white p-3 rounded-lg border border-purple-100 shadow-sm flex items-center justify-between group
-                                                        ${snapshot.isDragging ? 'shadow-lg ring-2 ring-purple-400' : 'hover:border-purple-300'}
-                                                    `}
-                                                >
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs">
-                                                            {index + 1}
-                                                        </div>
-                                                        <div>
-                                                            <div className="font-bold text-gray-900">{memorial.fallen_name}</div>
-                                                            <div className="text-xs text-gray-500">ע"י {memorial.participantName}</div>
-                                                        </div>
-                                                    </div>
-                                                    <GripVertical className="w-4 h-4 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                </div>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                </div>
-                            </div>
-                        </div>
                       </div>
                     )}
                   </Droppable>
