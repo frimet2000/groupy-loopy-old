@@ -794,6 +794,12 @@ Include water recommendation in liters and detailed equipment list.`,
       };
 
       const createdTrip = await base44.entities.Trip.create(tripData);
+      
+      // Track conversion for trip creation
+      if (window.gtag) {
+        window.gtag('event', 'conversion', {'send_to': 'AW-17752551436/7_p1CJDNw9sbEIzgiZFC'});
+      }
+      
       navigate(createPageUrl('TripSummary') + '?id=' + createdTrip.id);
     } catch (error) {
       console.error('Error creating trip:', error);

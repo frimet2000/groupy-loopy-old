@@ -492,6 +492,10 @@ export default function TripDetails() {
       setShowJoinDialog(false);
 
       if (result?.autoJoined) {
+        // Track conversion for auto-join
+        if (window.gtag) {
+          window.gtag('event', 'conversion', {'send_to': 'AW-17752551436/7_p1CJDNw9sbEIzgiZFC'});
+        }
         toast.success(language === 'he' ? 'הצטרפת לטיול!' : language === 'ru' ? 'Вы присоединились!' : language === 'es' ? '¡Te has unido!' : language === 'fr' ? 'Vous avez rejoint!' : language === 'de' ? 'Sie sind beigetreten!' : language === 'it' ? 'Ti sei unito!' : 'You have joined!');
       } else {
         toast.success(language === 'he' ? 'הבקשה נשלחה למארגן' : language === 'ru' ? 'Запрос отправлен организатору' : language === 'es' ? 'Solicitud enviada al organizador' : language === 'fr' ? 'Demande envoyée à l\'organisateur' : language === 'de' ? 'Anfrage an Organisator gesendet' : language === 'it' ? 'Richiesta inviata all\'organizzatore' : 'Request sent to organizer');
@@ -601,6 +605,10 @@ export default function TripDetails() {
       }
     },
     onSuccess: () => {
+      // Track conversion for approval
+      if (window.gtag) {
+        window.gtag('event', 'conversion', {'send_to': 'AW-17752551436/7_p1CJDNw9sbEIzgiZFC'});
+      }
       queryClient.invalidateQueries(['trip', tripId]);
       toast.success(language === 'he' ? 'הבקשה אושרה' : language === 'ru' ? 'Запрос одобрен' : language === 'es' ? 'Solicitud aprobada' : language === 'fr' ? 'Demande approuvée' : language === 'de' ? 'Anfrage genehmigt' : language === 'it' ? 'Richiesta approvata' : 'Request approved');
 

@@ -294,6 +294,11 @@ export default function Onboarding() {
       // Mark first login as completed for PWA install prompt
       localStorage.setItem('first_login_completed', 'true');
 
+      // Track conversion for onboarding completion
+      if (window.gtag) {
+        window.gtag('event', 'conversion', {'send_to': 'AW-17752551436/7_p1CJDNw9sbEIzgiZFC'});
+      }
+
       toast.success(language === 'he' ? 'הפרופיל נשמר בהצלחה!' : 'Profile saved successfully!');
       setCompleted(true);
     } catch (error) {
