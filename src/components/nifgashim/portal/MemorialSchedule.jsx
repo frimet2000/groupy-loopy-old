@@ -5,13 +5,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Calendar, Heart, MapPin, User, Check, X, GripVertical } from 'lucide-react';
+import { Calendar, Heart, MapPin, User, Check, X, GripVertical, Trash2, BookOpen, Flame } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
-export default function MemorialSchedule({ trip, participants, onUpdateParticipant }) {
+export default function MemorialSchedule({ trip, participants, onUpdateParticipant, language, isRTL }) {
   // Local state for memorials to handle drag and drop immediately
   const [memorials, setMemorials] = useState([]);
+  const [selectedMemorial, setSelectedMemorial] = useState(null);
 
   useEffect(() => {
     // Extract memorials from participants
@@ -109,6 +118,19 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
       toast.info(`ההנצחה של ${memorial.fallen_name} נדחתה`);
   };
 
+  const handleDelete = (memorial) => {
+    // Remove memorial data from participant
+    onUpdateParticipant(memorial.participantId, {
+        memorial: null
+    });
+    
+    // Update local state
+    setMemorials(prev => prev.filter(m => m.participantId !== memorial.participantId));
+    
+    setSelectedMemorial(null);
+    toast.success(`ההנצחה של ${memorial.fallen_name} נמחקה`);
+  };
+
   // Group memorials
   const pendingMemorials = memorials.filter(m => m.status === 'pending');
   const approvedUnassigned = memorials.filter(m => m.status === 'approved' && !m.assigned_day);
@@ -118,7 +140,7 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="space-y-8 p-4">
+      <div className="space-y-8 p-4" dir={isRTL ? 'rtl' : 'ltr'}>
         
         {/* Pending Requests Section */}
         {pendingMemorials.length > 0 && (
@@ -132,7 +154,7 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {pendingMemorials.map((memorial) => (
-                  <Card key={memorial.participantId} className="bg-white border-orange-100 shadow-sm">
+                  <Card key={memorial.participantId} className="bg-white border-orange-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => setSelectedMemorial(memorial)}>
                     <CardContent className="p-4 space-y-3">
                       <div className="flex justify-between items-start">
                         <div>
@@ -141,7 +163,7 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
                             מבקש/ת: {memorial.participantName}
                           </p>
                         </div>
-                        <Heart className="w-4 h-4 text-orange-400" />
+                        <Heart className="w-4 h-4 text-red-500 fill-red-500" />
                       </div>
                       
                       {memorial.story && (
@@ -150,7 +172,7 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
                         </p>
                       )}
                       
-                      <div className="flex gap-2 pt-2">
+                      <div className="flex gap-2 pt-2" onClick={(e) => e.stopPropagation()}>
                         <Button 
                           size="sm" 
                           className="flex-1 bg-green-600 hover:bg-green-700 text-white"
@@ -182,9 +204,9 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
           <div className="lg:col-span-1 space-y-4">
             <div className="bg-white rounded-xl shadow-sm border p-4 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <Heart className="w-4 h-4 text-purple-600" />
+                <Heart className="w-4 h-4 text-red-600 fill-red-100" />
                 מאגר הנצחות מאושרות
-                <Badge variant="secondary" className="ml-auto">{approvedUnassigned.length}</Badge>
+                <Badge variant="secondary" className="mr-auto">{approvedUnassigned.length}</Badge>
               </h3>
               
               <Droppable droppableId="approved-bank">
@@ -213,8 +235,9 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
+                            onClick={() => setSelectedMemorial(memorial)}
                             className={`
-                              bg-white p-3 rounded-lg border shadow-sm group hover:border-purple-300 transition-all
+                              bg-white p-3 rounded-lg border shadow-sm group hover:border-purple-300 transition-all cursor-pointer
                               ${snapshot.isDragging ? 'shadow-xl ring-2 ring-purple-400 rotate-2' : ''}
                             `}
                           >
@@ -222,7 +245,8 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
                               <GripVertical className="w-4 h-4 text-gray-300 group-hover:text-gray-500" />
                               <span className="font-bold text-gray-800">{memorial.fallen_name}</span>
                             </div>
-                            <div className="text-xs text-gray-500 pr-6">
+                            <div className="text-xs text-gray-500 pr-6 flex items-center gap-1">
+                              <User className="w-3 h-3 text-indigo-400" />
                               {memorial.participantName}
                             </div>
                           </div>
@@ -287,12 +311,14 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
+                                  onClick={() => setSelectedMemorial(memorial)}
                                   className={`
-                                    bg-purple-50 p-2 rounded border border-purple-200 text-sm shadow-sm
+                                    bg-purple-50 p-2 rounded border border-purple-200 text-sm shadow-sm cursor-pointer hover:bg-purple-100 transition-colors
                                     ${snapshot.isDragging ? 'opacity-50' : ''}
                                   `}
                                 >
-                                  <div className="font-semibold text-purple-900 line-clamp-1">
+                                  <div className="font-semibold text-purple-900 line-clamp-1 flex items-center gap-1">
+                                    <Candle className="w-3 h-3 text-orange-400 shrink-0" />
                                     {memorial.fallen_name}
                                   </div>
                                 </div>
@@ -315,6 +341,73 @@ export default function MemorialSchedule({ trip, participants, onUpdateParticipa
             </div>
           </div>
         </div>
+
+        {/* Memorial Details Dialog */}
+        <Dialog open={!!selectedMemorial} onOpenChange={(open) => !open && setSelectedMemorial(null)}>
+          <DialogContent className="max-w-md" dir={isRTL ? 'rtl' : 'ltr'}>
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-serif text-center border-b pb-4 text-stone-800">
+                 נר לזכר {selectedMemorial?.fallen_name}
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4 py-4">
+               {selectedMemorial?.image_url ? (
+                 <div className="relative h-64 w-full rounded-lg overflow-hidden border-4 border-amber-100 shadow-inner">
+                   <img 
+                     src={selectedMemorial.image_url} 
+                     alt={selectedMemorial.fallen_name} 
+                     className="w-full h-full object-cover"
+                   />
+                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                     <div className="text-white text-sm font-medium flex items-center gap-2">
+                       <Candle className="w-4 h-4 text-orange-200" />
+                       יהי זכרו ברוך
+                     </div>
+                   </div>
+                 </div>
+               ) : (
+                 <div className="h-48 bg-stone-50 rounded-lg flex items-center justify-center border-2 border-stone-100 border-dashed">
+                    <div className="text-center">
+                        <Flame className="w-12 h-12 text-stone-300 mx-auto mb-2" />
+                        <span className="text-stone-400 text-sm">אין תמונה זמינה</span>
+                    </div>
+                 </div>
+               )}
+               
+               <div className="bg-stone-50 p-4 rounded-lg border border-stone-100 relative">
+                 <div className="absolute -top-3 right-4 bg-white px-2 text-stone-500 text-xs font-semibold border rounded-full flex items-center gap-1">
+                    <BookOpen className="w-3 h-3" />
+                    סיפור חיים
+                 </div>
+                 <p className="text-stone-700 leading-relaxed whitespace-pre-wrap text-sm mt-2">
+                   {selectedMemorial?.story || 'לא הוזן סיפור חיים'}
+                 </p>
+               </div>
+               
+               <div className="flex items-center gap-2 text-sm text-gray-500 border-t pt-4 bg-gray-50 p-3 rounded-lg">
+                 <User className="w-4 h-4 text-blue-400" />
+                 <span>ביקש/ה להנציח: </span>
+                 <span className="font-semibold text-gray-700">{selectedMemorial?.participantName}</span>
+               </div>
+            </div>
+
+            <DialogFooter className="sm:justify-between gap-2 border-t pt-4">
+              <Button 
+                variant="destructive" 
+                onClick={() => handleDelete(selectedMemorial)}
+                className="flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 shadow-sm"
+              >
+                <Trash2 className="w-4 h-4" />
+                מחק הנצחה
+              </Button>
+              <Button variant="outline" onClick={() => setSelectedMemorial(null)}>
+                סגור
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
       </div>
     </DragDropContext>
   );

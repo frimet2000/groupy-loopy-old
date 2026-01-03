@@ -419,6 +419,8 @@ export default function AdminDashboard({ trip, language, isRTL }) {
                 trip={trip} 
                 participants={localParticipants}
                 onUpdateParticipant={handleUpdateParticipant}
+                language={language}
+                isRTL={isRTL}
               />
             </TabsContent>
           </Tabs>
