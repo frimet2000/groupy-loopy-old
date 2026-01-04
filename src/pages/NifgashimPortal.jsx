@@ -28,8 +28,21 @@ function MeshulamPaymentForm({ amount, tripId, participants, userType, groupInfo
   const handlePayment = async () => {
     setProcessing(true);
     try {
+      const parentName = parent1?.name || groupInfo?.leaderName;
+      const parentEmail = parent1?.email || groupInfo?.leaderEmail;
+      const parentPhone = parent1?.phone || groupInfo?.leaderPhone;
+      
+      // Calculate locked amount: 85 ILS per participant (10+)
+      const adultsCount = participants.filter(p => {
+        if (!p.age_range) return true;
+        const age = parseInt(p.age_range.split('-')[0]);
+        return age >= 10;
+      }).length;
+      
+      const lockedAmount = adultsCount * 85;
+
       const response = await base44.functions.invoke('createMeshulamPayment', {
-        amount,
+        amount: lockedAmount, // Use locked amount
         tripId,
         participants,
         userType,
@@ -37,10 +50,11 @@ function MeshulamPaymentForm({ amount, tripId, participants, userType, groupInfo
         selectedDays,
         memorialData,
         vehicleInfo,
-        customerName: parent1?.name || groupInfo?.leaderName,
-        customerEmail: parent1?.email || groupInfo?.leaderEmail,
-        customerPhone: parent1?.phone || groupInfo?.leaderPhone,
-        customerIdNumber: parent1?.id_number
+        customerName: parentName,
+        customerEmail: parentEmail,
+        customerPhone: parentPhone,
+        customerIdNumber: parent1?.id_number,
+        description: `תשלום עבור הרשמה למסע נפגשים - ${participants.length} משתתפים` // Auto-filled description
       });
 
       if (response.data.paymentUrl) {
