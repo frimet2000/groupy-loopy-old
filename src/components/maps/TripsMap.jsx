@@ -98,19 +98,26 @@ export default function TripsMap({ trips }) {
         className="w-full h-full"
         scrollWheelZoom={true}
       >
-        {/* Base terrain layer with topography */}
+        {/* Base map with roads and terrain */}
         <TileLayer
-          url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-          attribution='Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
-          maxZoom={17}
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         
         {/* Hiking trails overlay */}
         <TileLayer
+          attribution='&copy; <a href="https://waymarkedtrails.org">Waymarked Trails</a> - Hiking'
           url="https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://hiking.waymarkedtrails.org">Waymarked Trails</a>'
-          maxZoom={18}
-          opacity={0.7}
+          opacity={0.6}
+          zIndex={1000}
+        />
+        
+        {/* Cycling trails overlay */}
+        <TileLayer
+          attribution='&copy; <a href="https://waymarkedtrails.org">Waymarked Trails</a> - Cycling'
+          url="https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png"
+          opacity={0.4}
+          zIndex={1001}
         />
         
         <MapBounds trips={validTrips} />
