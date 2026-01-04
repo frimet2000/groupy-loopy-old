@@ -39,7 +39,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       leaderPhone: "טלפון",
       participantName: "שם מלא",
       idNumber: "תעודת זהות (9 ספרות)",
-      ageRange: "טווח גילאים",
+      ageRange: "טווח גילאים (עד 18 לילד)",
       phone: "טלפון נייד (10 ספרות)",
       email: "אימייל",
       add: "הוסף משתתף",
