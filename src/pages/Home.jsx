@@ -105,50 +105,7 @@ export default function Home() {
     return acc;
   }, {});
 
-  const displayedTrips = sortedTrips.slice(0, visibleCount);
 
-  // Sort filtered trips
-  const sortedTrips = useMemo(() => {
-    return [...filteredTrips].sort((a, b) => {
-      switch (sortBy) {
-        case 'date':
-          return new Date(a.date).getTime() - new Date(b.date).getTime();
-        case 'date_desc':
-          return new Date(b.date).getTime() - new Date(a.date).getTime();
-        case 'popularity':
-          return (b.current_participants || 0) - (a.current_participants || 0);
-        case 'likes':
-          return (b.likes?.length || 0) - (a.likes?.length || 0);
-        case 'comments':
-          return (b.comments?.length || 0) - (a.comments?.length || 0);
-        case 'newest':
-          return new Date(b.created_date).getTime() - new Date(a.created_date).getTime();
-        case 'title':
-          const titleA = a.title || a.title_he || a.title_en || '';
-          const titleB = b.title || b.title_he || b.title_en || '';
-          return titleA.localeCompare(titleB);
-        default:
-          return 0;
-      }
-    });
-  }, [filteredTrips, sortBy]);
-
-  // Group trips by country
-  const tripsByCountry = sortedTrips.reduce((acc, trip) => {
-    let country = trip.country || '';
-    if (!country && trip.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(trip.region)) {
-      country = 'israel';
-    }
-    if (!country) {
-      country = 'other';
-    }
-    
-    if (!acc[country]) acc[country] = [];
-    acc[country].push(trip);
-    return acc;
-  }, {});
-
-  const displayedTrips = sortedTrips.slice(0, visibleCount);
 
   // Get past trips
   const pastTrips = trips.filter(trip => {
@@ -702,7 +659,6 @@ export default function Home() {
               )}
             </div>
           </div>
-        </div>
 
         {viewMode === 'map' ? (
           <div>
@@ -753,7 +709,7 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
-                  </motion.div>
+                </motion.div>
               );
             })}
 
