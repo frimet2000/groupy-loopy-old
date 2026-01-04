@@ -1,0 +1,15 @@
+[ 
+   { 
+     "relation": [ 
+       "delegate_permission/common.handle_all_urls", 
+       "delegate_permission/common.get_login_creds" 
+     ], 
+     "target": { 
+       "namespace": "android_app", 
+       "package_name": "com.groupyloopy.app", 
+       "sha256_cert_fingerprints": [ 
+         "A0:85:DC:00:05:B6:A1:7A:EA:99:3E:12:53:82:0A:FE:92:33:0C:6E:8F:FB:85:42:DE:3E:E4:64:77:D7:34:50" 
+       ] 
+     } 
+   } 
+ ]
