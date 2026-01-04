@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Shield, Users, Map, Search, Trash2, Ban, Loader2, CheckCircle, Edit, UserMinus, UserPlus, RefreshCw, Calendar, MapPin, UserCog, ChevronDown, ChevronUp, Facebook, Save, Play, Database, Copy, MessageCircle, Share } from 'lucide-react';
+import { Shield, Users, Map, Search, Trash2, Ban, Loader2, CheckCircle, Edit, UserMinus, UserPlus, RefreshCw, Calendar, MapPin, UserCog, ChevronDown, ChevronUp, Facebook, Save, Play, Database, Copy, MessageCircle, Share, FileText } from 'lucide-react';
 import { toast } from "sonner";
 import { motion } from 'framer-motion';
 import { seedItalianTrips } from '@/utils/seedItalianTrips';
