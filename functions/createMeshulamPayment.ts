@@ -24,7 +24,6 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Create pending registration record
     const registrationData = {
       trip_id: tripId,
       participants,
@@ -41,18 +40,15 @@ Deno.serve(async (req) => {
     const newRegistration = await base44.asServiceRole.entities.NifgashimRegistration.create(registrationData);
     const registrationId = newRegistration.id;
 
-    // Get the origin from the request
     const origin = new URL(req.url).origin;
     
-    // Build Meshulam payment page URL with custom fields
     const successUrl = `${origin}/NifgashimPortal?id=${tripId}&payment_success=true&registration_id=${registrationId}`;
     const cancelUrl = `${origin}/NifgashimPortal?id=${tripId}`;
 
-    // Meshulam payment page with parameters
     const basePaymentUrl = 'https://meshulam.co.il/s/bc8d0eda-efc0-ebd2-43c0-71efbd570304';
     
     const params = new URLSearchParams({
-      sum: amount.toString(),
+      amount: amount.toString(),
       description: `הרשמה למסע נפגשים - ${participants.length} משתתפים`,
       fullName: customerName || '',
       email: customerEmail || '',
