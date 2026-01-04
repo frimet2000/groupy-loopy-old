@@ -50,6 +50,7 @@ export default function Home() {
   const [showLiveTripsDialog, setShowLiveTripsDialog] = useState(false);
   const [joiningLiveTrip, setJoiningLiveTrip] = useState(false);
   const [userCountry, setUserCountry] = useState(null);
+  const [autoFilterByCountry, setAutoFilterByCountry] = useState(true);
 
   // Auto-detect user country
   useEffect(() => {
@@ -59,6 +60,28 @@ export default function Home() {
         if (data.country_name) {
           console.log('Detected country:', data.country_name);
           setUserCountry(data.country_name);
+          
+          // Map detected country to our country codes
+          const countryMap = {
+            'Israel': 'israel',
+            'France': 'france',
+            'Italy': 'italy',
+            'Germany': 'germany',
+            'Spain': 'spain',
+            'United Kingdom': 'uk',
+            'United States': 'usa',
+            'Canada': 'canada',
+            'Australia': 'australia',
+            'Switzerland': 'switzerland',
+            'Austria': 'austria',
+            'Netherlands': 'netherlands',
+            'Belgium': 'belgium',
+          };
+          
+          const mappedCountry = countryMap[data.country_name];
+          if (mappedCountry && autoFilterByCountry) {
+            setFilters(prev => ({ ...prev, country: mappedCountry }));
+          }
         }
       })
       .catch(err => console.error('Error detecting country:', err));
@@ -748,6 +771,21 @@ export default function Home() {
               </p>
             </div>
             <div className="flex items-center gap-2 flex-wrap justify-start sm:justify-end">
+              {/* Auto-filter indicator and clear button */}
+              {autoFilterByCountry && filters.country && (
+                <Badge 
+                  variant="secondary" 
+                  className="gap-2 h-10 sm:h-11 px-3 bg-emerald-50 text-emerald-700 border-emerald-200 cursor-pointer hover:bg-emerald-100"
+                  onClick={() => {
+                    setAutoFilterByCountry(false);
+                    setFilters(prev => ({ ...prev, country: '' }));
+                  }}
+                >
+                  <Globe className="w-4 h-4" />
+                  {language === 'he' ? `מסונן ל${t(filters.country)} (לחץ לביטול)` : language === 'ru' ? `Фильтр: ${t(filters.country)} (нажми для отмены)` : language === 'es' ? `Filtro: ${t(filters.country)} (clic para cancelar)` : language === 'fr' ? `Filtre: ${t(filters.country)} (clic pour annuler)` : language === 'de' ? `Filter: ${t(filters.country)} (klicken zum Abbrechen)` : language === 'it' ? `Filtro: ${t(filters.country)} (clicca per annullare)` : `Filter: ${t(filters.country)} (click to clear)`}
+                </Badge>
+              )}
+
               {/* Continent Filter */}
               <Select value={selectedContinent} onValueChange={setSelectedContinent}>
                 <SelectTrigger className="w-[140px] sm:w-[200px] h-10 sm:h-11 text-sm">
