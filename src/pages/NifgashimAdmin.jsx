@@ -737,8 +737,10 @@ export default function NifgashimAdmin() {
     enabled: !!user,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
+    refetchOnMount: false,
     retry: 1,
-    staleTime: 60000
+    staleTime: 60000,
+    refetchInterval: 120000
   });
 
   // Get the latest/active Nifgashim trip
@@ -751,9 +753,10 @@ export default function NifgashimAdmin() {
     enabled: !!user,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
+    refetchOnMount: false,
     retry: 1,
-    refetchInterval: false,
-    staleTime: 30000
+    staleTime: 60000,
+    refetchInterval: 120000
   });
 
   const updateRegistrationMutation = useMutation({
