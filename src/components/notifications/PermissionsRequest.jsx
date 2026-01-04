@@ -42,7 +42,7 @@ export default function PermissionsRequest() {
       if ('geolocation' in navigator && navigator.permissions) {
         try {
           const result = await navigator.permissions.query({ name: 'geolocation' });
-          setLocationGranted(result && result.state === 'granted');
+          setLocationGranted(result?.state === 'granted');
         } catch (e) {
           console.log('Cannot check location permission');
         }
