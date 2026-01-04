@@ -371,50 +371,64 @@ Return a JSON object mapping memorial indices (0-based) to day numbers. Example:
   });
 
   const MemorialCard = ({ memorial, isDragging }) => (
-    <Card className={`${isDragging ? 'shadow-2xl rotate-2' : ''} transition-all`}>
-      <CardContent className="p-3">
-        <div className="flex items-start gap-3">
-          {memorial.image_url && (
-            <img
-              src={memorial.image_url}
-              alt={memorial.fallen_name}
-              className="w-16 h-16 object-cover rounded-lg"
-            />
-          )}
-          <div className="flex-1">
-            <div className="font-semibold">{memorial.fallen_name}</div>
-            <div className="text-xs text-gray-600">
-              {trans.requester}: {memorial.requester_name}
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+    >
+      <Card 
+        className={`${isDragging ? 'shadow-2xl rotate-2' : 'cursor-pointer hover:shadow-lg'} transition-all`}
+        onClick={() => memorial.status !== 'pending' && setSelectedMemorial(memorial)}
+      >
+        <CardContent className="p-3">
+          <div className="flex items-start gap-3">
+            {memorial.image_url && (
+              <img
+                src={memorial.image_url}
+                alt={memorial.fallen_name}
+                className="w-16 h-16 object-cover rounded-lg shadow-md"
+              />
+            )}
+            <div className="flex-1">
+              <div className="font-semibold">{memorial.fallen_name}</div>
+              <div className="text-xs text-gray-600">
+                {trans.requester}: {memorial.requester_name}
+              </div>
+              {memorial.family_relation && (
+                <div className="text-xs text-gray-500">
+                  {trans.relation}: {memorial.family_relation}
+                </div>
+              )}
             </div>
-            {memorial.family_relation && (
-              <div className="text-xs text-gray-500">
-                {trans.relation}: {memorial.family_relation}
+            {memorial.status === 'pending' && (
+              <div className="flex gap-1">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleApprove(memorial);
+                  }}
+                  className="text-green-600 hover:bg-green-50"
+                >
+                  <Check className="w-4 h-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleReject(memorial);
+                  }}
+                  className="text-red-600 hover:bg-red-50"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
               </div>
             )}
           </div>
-          {memorial.status === 'pending' && (
-            <div className="flex gap-1">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => handleApprove(memorial)}
-                className="text-green-600 hover:bg-green-50"
-              >
-                <Check className="w-4 h-4" />
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => handleReject(memorial)}
-                className="text-red-600 hover:bg-red-50"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 
   return (
@@ -612,95 +626,147 @@ Return a JSON object mapping memorial indices (0-based) to day numbers. Example:
       )}
 
       {/* Memorial Details Dialog */}
-      <Dialog open={!!selectedMemorial} onOpenChange={() => setSelectedMemorial(null)}>
-        <DialogContent className="max-w-2xl" dir={isRTL ? 'rtl' : 'ltr'}>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <Heart className="w-6 h-6 text-red-500" />
-              {trans.memorialDetails}
-            </DialogTitle>
-          </DialogHeader>
+      <AnimatePresence>
+        {selectedMemorial && (
+          <Dialog open={!!selectedMemorial} onOpenChange={() => setSelectedMemorial(null)}>
+            <DialogContent className="max-w-2xl sm:max-w-3xl max-h-[90vh] overflow-y-auto" dir={isRTL ? 'rtl' : 'ltr'}>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-xl sm:text-2xl">
+                    <Heart className="w-6 h-6 sm:w-7 sm:h-7 text-red-500" />
+                    {trans.memorialDetails}
+                  </DialogTitle>
+                </DialogHeader>
 
-          {selectedMemorial && (
-            <div className="space-y-6 py-4">
-              {/* Image */}
-              {selectedMemorial.image_url && (
-                <div className="flex justify-center">
-                  <img
-                    src={selectedMemorial.image_url}
-                    alt={selectedMemorial.fallen_name}
-                    className="w-48 h-48 object-cover rounded-lg shadow-lg border-4 border-gray-100"
-                  />
-                </div>
-              )}
-
-              {/* Name */}
-              <div className="text-center bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-6 border-2 border-red-200">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  {selectedMemorial.fallen_name}
-                </h3>
-                {selectedMemorial.date_of_fall && (
-                  <p className="text-sm text-gray-600">
-                    {trans.dateOfFall}: {format(new Date(selectedMemorial.date_of_fall), 'dd/MM/yyyy')}
-                  </p>
-                )}
-              </div>
-
-              {/* Details Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {selectedMemorial.place_of_fall && (
-                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                    <p className="text-xs font-semibold text-blue-900 mb-1">{trans.placeOfFall}</p>
-                    <p className="text-sm text-blue-800">{selectedMemorial.place_of_fall}</p>
-                  </div>
-                )}
-
-                {selectedMemorial.family_relation && (
-                  <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-                    <p className="text-xs font-semibold text-purple-900 mb-1">{trans.relation}</p>
-                    <p className="text-sm text-purple-800">{selectedMemorial.family_relation}</p>
-                  </div>
-                )}
-
-                <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                  <p className="text-xs font-semibold text-green-900 mb-1">{trans.requester}</p>
-                  <p className="text-sm text-green-800">{selectedMemorial.requester_name}</p>
-                  {selectedMemorial.requester_phone && (
-                    <p className="text-xs text-green-700 mt-1" dir="ltr">{selectedMemorial.requester_phone}</p>
+                <div className="space-y-6 py-4">
+                  {/* Image */}
+                  {selectedMemorial.image_url && (
+                    <motion.div 
+                      className="flex justify-center"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.1 }}
+                    >
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-br from-red-200 to-orange-200 rounded-2xl blur-xl opacity-50" />
+                        <img
+                          src={selectedMemorial.image_url}
+                          alt={selectedMemorial.fallen_name}
+                          className="relative w-48 h-48 sm:w-64 sm:h-64 object-cover rounded-2xl shadow-2xl border-4 border-white"
+                        />
+                      </div>
+                    </motion.div>
                   )}
+
+                  {/* Name */}
+                  <motion.div 
+                    className="text-center bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 rounded-2xl p-6 sm:p-8 border-2 border-red-200 shadow-lg"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+                      {selectedMemorial.fallen_name}
+                    </h3>
+                    {selectedMemorial.date_of_fall && (
+                      <p className="text-sm sm:text-base text-gray-700 font-medium">
+                        {trans.dateOfFall}: {format(new Date(selectedMemorial.date_of_fall), 'dd/MM/yyyy')}
+                      </p>
+                    )}
+                  </motion.div>
+
+                  {/* Details Grid */}
+                  <motion.div 
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    {selectedMemorial.place_of_fall && (
+                      <motion.div 
+                        className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border-2 border-blue-200 shadow-md"
+                        whileHover={{ scale: 1.02, boxShadow: "0 10px 30px rgba(59, 130, 246, 0.3)" }}
+                      >
+                        <p className="text-xs font-semibold text-blue-900 mb-2">{trans.placeOfFall}</p>
+                        <p className="text-sm sm:text-base text-blue-800 font-medium">{selectedMemorial.place_of_fall}</p>
+                      </motion.div>
+                    )}
+
+                    {selectedMemorial.family_relation && (
+                      <motion.div 
+                        className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border-2 border-purple-200 shadow-md"
+                        whileHover={{ scale: 1.02, boxShadow: "0 10px 30px rgba(168, 85, 247, 0.3)" }}
+                      >
+                        <p className="text-xs font-semibold text-purple-900 mb-2">{trans.relation}</p>
+                        <p className="text-sm sm:text-base text-purple-800 font-medium">{selectedMemorial.family_relation}</p>
+                      </motion.div>
+                    )}
+
+                    <motion.div 
+                      className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border-2 border-green-200 shadow-md"
+                      whileHover={{ scale: 1.02, boxShadow: "0 10px 30px rgba(34, 197, 94, 0.3)" }}
+                    >
+                      <p className="text-xs font-semibold text-green-900 mb-2">{trans.requester}</p>
+                      <p className="text-sm sm:text-base text-green-800 font-medium">{selectedMemorial.requester_name}</p>
+                      {selectedMemorial.requester_phone && (
+                        <p className="text-xs sm:text-sm text-green-700 mt-2" dir="ltr">{selectedMemorial.requester_phone}</p>
+                      )}
+                    </motion.div>
+
+                    {selectedMemorial.requester_email && (
+                      <motion.div 
+                        className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 border-2 border-amber-200 shadow-md"
+                        whileHover={{ scale: 1.02, boxShadow: "0 10px 30px rgba(251, 191, 36, 0.3)" }}
+                      >
+                        <p className="text-xs font-semibold text-amber-900 mb-2">{trans.email}</p>
+                        <p className="text-xs sm:text-sm text-amber-800 break-all">{selectedMemorial.requester_email}</p>
+                      </motion.div>
+                    )}
+                  </motion.div>
+
+                  {/* Story */}
+                  {selectedMemorial.story && (
+                    <motion.div 
+                      className="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 rounded-2xl p-6 border-2 border-gray-200 shadow-lg"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <p className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <Heart className="w-4 h-4 text-red-500" />
+                        {trans.story}
+                      </p>
+                      <p className="text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">
+                        {selectedMemorial.story}
+                      </p>
+                    </motion.div>
+                  )}
+
+                  {/* Close Button */}
+                  <motion.div 
+                    className="flex justify-center pt-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <Button
+                      onClick={() => setSelectedMemorial(null)}
+                      className="bg-gradient-to-r from-gray-600 to-gray-800 hover:from-gray-700 hover:to-gray-900 px-8 sm:px-12 py-3 text-base shadow-lg hover:shadow-xl transition-all"
+                    >
+                      {trans.close}
+                    </Button>
+                  </motion.div>
                 </div>
-
-                {selectedMemorial.requester_email && (
-                  <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                    <p className="text-xs font-semibold text-amber-900 mb-1">{trans.email}</p>
-                    <p className="text-sm text-amber-800 break-all">{selectedMemorial.requester_email}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Story */}
-              {selectedMemorial.story && (
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border-2 border-gray-200">
-                  <p className="text-sm font-semibold text-gray-900 mb-3">{trans.story}</p>
-                  <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                    {selectedMemorial.story}
-                  </p>
-                </div>
-              )}
-
-              {/* Close Button */}
-              <div className="flex justify-center pt-4">
-                <Button
-                  onClick={() => setSelectedMemorial(null)}
-                  className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 px-8"
-                >
-                  {trans.close}
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+              </motion.div>
+            </DialogContent>
+          </Dialog>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
