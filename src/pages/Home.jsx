@@ -107,33 +107,6 @@ export default function Home() {
 
   const displayedTrips = sortedTrips.slice(0, visibleCount);
 
-  // Get past trips
-  const pastTrips = trips.filter(trip => {
-    const tripDate = new Date(trip.date);
-    tripDate.setHours(0, 0, 0, 0);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    if (tripDate >= today) return false;
-    if (trip.status !== 'open' && trip.status !== 'completed') return false;
-    
-    // Apply same privacy filters
-    if (trip.privacy === 'private') {
-      if (!user) return false;
-      const isOrganizerOrParticipant = trip.organizer_email === user.email || 
-        trip.participants?.some(p => p.email === user.email);
-      if (!isOrganizerOrParticipant) return false;
-    } else if (trip.privacy === 'invite_only') {
-      if (!user) return false;
-      const isInvitedOrParticipant = trip.invited_emails?.includes(user.email) ||
-        trip.organizer_email === user.email ||
-        trip.participants?.some(p => p.email === user.email);
-      if (!isInvitedOrParticipant) return false;
-    }
-    
-    return true;
-  }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
   // Sort filtered trips
   const sortedTrips = useMemo(() => {
     return [...filteredTrips].sort((a, b) => {
@@ -176,6 +149,33 @@ export default function Home() {
   }, {});
 
   const displayedTrips = sortedTrips.slice(0, visibleCount);
+
+  // Get past trips
+  const pastTrips = trips.filter(trip => {
+    const tripDate = new Date(trip.date);
+    tripDate.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (tripDate >= today) return false;
+    if (trip.status !== 'open' && trip.status !== 'completed') return false;
+    
+    // Apply same privacy filters
+    if (trip.privacy === 'private') {
+      if (!user) return false;
+      const isOrganizerOrParticipant = trip.organizer_email === user.email || 
+        trip.participants?.some(p => p.email === user.email);
+      if (!isOrganizerOrParticipant) return false;
+    } else if (trip.privacy === 'invite_only') {
+      if (!user) return false;
+      const isInvitedOrParticipant = trip.invited_emails?.includes(user.email) ||
+        trip.organizer_email === user.email ||
+        trip.participants?.some(p => p.email === user.email);
+      if (!isInvitedOrParticipant) return false;
+    }
+    
+    return true;
+  }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const openTrips = trips.filter(t => {
     if (t.status !== 'open') return false;
