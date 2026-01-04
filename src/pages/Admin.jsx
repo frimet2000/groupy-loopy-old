@@ -351,26 +351,7 @@ export default function Admin() {
         trip.title?.toLowerCase().includes(keyword)
       );
 
-    // Check if trip is in Russia
-    const russiaKeywords = [
-      'russia', 'rossiya', 'רוסיה',
-      'moscow', 'moskva', 'מוסקבה',
-      'saint petersburg', 'sankt-peterburg', 'סנט פטרסבורג',
-      'altai', 'алтай',
-      'baikal', 'байкал',
-      'siberia', 'сибирь', 'סיביר'
-    ];
-
-    const isRussia = 
-      trip.country?.toLowerCase() === 'russia' || 
-      trip.country?.toLowerCase() === 'rossiya' ||
-      trip.country === 'רוסיה' ||
-      russiaKeywords.some(keyword => 
-        trip.location?.toLowerCase().includes(keyword) || 
-        trip.title?.toLowerCase().includes(keyword)
-      );
-
-    const dateLocale = isItaly ? 'it-IT' : isGermany ? 'de-DE' : isRussia ? 'ru-RU' : 'he-IL';
+    const dateLocale = isItaly ? 'it-IT' : isGermany ? 'de-DE' : 'he-IL';
     const date = new Date(trip.date).toLocaleDateString(dateLocale);
     let text = '';
 
@@ -408,24 +389,6 @@ ${tripUrl}`;
         text = `Ich habe einen verrückten Ort in ${trip.location} gefunden! 🤯
 Ich organisiere eine kleine Gruppe, um am ${date} dorthin zu gehen. 
 Das ist keine Reise, die man jeden Tag sieht. Wer an echter Natur interessiert ist - folgt oder klickt auf den Link:
-${tripUrl}`;
-      }
-    } else if (isRussia) {
-      if (type === 'solo') {
-        text = `Всем привет, я еду в ${trip.title} ${date}.
-Я спланировал невероятный маршрут в ${trip.location}, но пока я один.
-Ищу серьезных попутчиков, которые хотят присоединиться к приключению (это не коммерческий тур, просто классная компания).
-Все детали и регистрация здесь:
-${tripUrl}`;
-      } else if (type === 'advice') {
-        text = `Кто-нибудь был в ${trip.location}? 
-Я планирую маршрут, который проходит там ${date}.
-Буду рад рекомендациям, и если кто-то хочет присоединиться, я создал страницу с деталями:
-${tripUrl}`;
-      } else if (type === 'hidden_gem') {
-        text = `Я нашел сумасшедшее место в ${trip.location}! 🤯
-Организую небольшую группу, чтобы поехать туда ${date}. 
-Это не то путешествие, которое видишь каждый день. Кому интересна настоящая природа - подписывайтесь или жмите на ссылку:
 ${tripUrl}`;
       }
     } else {
