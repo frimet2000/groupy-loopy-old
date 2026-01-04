@@ -67,117 +67,6 @@ export default function Home() {
     queryFn: () => base44.entities.Trip.list('-created_date'),
   });
 
-  const filteredTrips = trips.filter(trip => {
-    if (trip.status !== 'open') return false;
-
-    // Privacy filtering
-    if (trip.privacy === 'private') {
-      if (!user) return false;
-      const isOrganizerOrParticipant = trip.organizer_email === user.email || 
-        trip.participants?.some(p => p.email === user.email);
-      if (!isOrganizerOrParticipant) return false;
-    } else if (trip.privacy === 'invite_only') {
-      if (!user) return false;
-      const isInvitedOrParticipant = trip.invited_emails?.includes(user.email) ||
-        trip.organizer_email === user.email ||
-        trip.participants?.some(p => p.email === user.email);
-      if (!isInvitedOrParticipant) return false;
-    }
-
-    // Only show future trips
-    const tripDate = new Date(trip.date);
-    tripDate.setHours(0, 0, 0, 0);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (tripDate < today) return false;
-
-    return true;
-  }).sort((a, b) => {
-    // Smart sorting: prioritize user's location and interests
-    if (sortBy === 'date') {
-      let aCountry = (a.country || '').toLowerCase();
-      let bCountry = (b.country || '').toLowerCase();
-      
-      // Only infer Israel for trips with Israeli regions
-      if (!aCountry && a.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(a.region)) {
-        aCountry = 'israel';
-      }
-      if (!bCountry && b.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(b.region)) {
-        bCountry = 'israel';
-      }
-      
-      // 1. Priority: Detected Country (IP) or User Home
-      let priorityCountry = null;
-      
-      if (userCountry) {
-         priorityCountry = userCountry.toLowerCase();
-      } else if (user?.home_region) {
-         const regionTrip = trips.find(t => t.region === user.home_region);
-         if (regionTrip?.country) priorityCountry = regionTrip.country.toLowerCase();
-      } else {
-         // Default to Israel if nothing detected yet
-         priorityCountry = 'israel';
-      }
-
-      // Handle IP API returning "Israel" vs our data "israel"
-      // Also handle "Italy" vs "italy"
-      
-      const isAPriority = aCountry === priorityCountry;
-      const isBPriority = bCountry === priorityCountry;
-
-      if (isAPriority && !isBPriority) return -1;
-      if (!isAPriority && isBPriority) return 1;
-
-      // 2. Priority: User History (if logged in)
-      if (user) {
-          const userCountries = new Set();
-          trips.forEach(t => {
-            if (t.participants?.some(p => p.email === user.email) ||
-                t.views?.some(v => v.email === user.email) ||
-                t.likes?.some(l => l.email === user.email)) {
-              let tCountry = (t.country || '').toLowerCase();
-              if (!tCountry && t.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(t.region)) {
-                tCountry = 'israel';
-              }
-              if (tCountry) {
-                userCountries.add(tCountry);
-              }
-            }
-          });
-          
-          const aHistory = userCountries.has(aCountry);
-          const bHistory = userCountries.has(bCountry);
-          
-          if (aHistory && !bHistory) return -1;
-          if (!aHistory && bHistory) return 1;
-      }
-      
-      // 3. Sort by date
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    }
-
-    switch (sortBy) {
-      case 'date':
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
-      case 'date_desc':
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      case 'popularity':
-        return (b.current_participants || 0) - (a.current_participants || 0);
-      case 'likes':
-        return (b.likes?.length || 0) - (a.likes?.length || 0);
-      case 'comments':
-        return (b.comments?.length || 0) - (a.comments?.length || 0);
-      case 'newest':
-        return new Date(b.created_date).getTime() - new Date(a.created_date).getTime();
-      case 'title':
-        const titleA = a.title || a.title_he || a.title_en;
-        const titleB = b.title || b.title_he || b.title_en;
-        return titleA.localeCompare(titleB);
-      default:
-        return 0;
-    }
-  });
-
   // Get past trips
   const pastTrips = trips.filter(trip => {
     const tripDate = new Date(trip.date);
@@ -205,15 +94,38 @@ export default function Home() {
     return true;
   }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
+  // Sort filtered trips
+  const sortedTrips = useMemo(() => {
+    return [...filteredTrips].sort((a, b) => {
+      switch (sortBy) {
+        case 'date':
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        case 'date_desc':
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        case 'popularity':
+          return (b.current_participants || 0) - (a.current_participants || 0);
+        case 'likes':
+          return (b.likes?.length || 0) - (a.likes?.length || 0);
+        case 'comments':
+          return (b.comments?.length || 0) - (a.comments?.length || 0);
+        case 'newest':
+          return new Date(b.created_date).getTime() - new Date(a.created_date).getTime();
+        case 'title':
+          const titleA = a.title || a.title_he || a.title_en || '';
+          const titleB = b.title || b.title_he || b.title_en || '';
+          return titleA.localeCompare(titleB);
+        default:
+          return 0;
+      }
+    });
+  }, [filteredTrips, sortBy]);
+
   // Group trips by country
-  const tripsByCountry = filteredTrips.reduce((acc, trip) => {
-    // Only group trips that have a country defined
-    // For trips without country, only infer Israel if they have Israeli regions
-    let country = trip.country;
+  const tripsByCountry = sortedTrips.reduce((acc, trip) => {
+    let country = trip.country || '';
     if (!country && trip.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(trip.region)) {
       country = 'israel';
     }
-    // If no country defined, group as "other"
     if (!country) {
       country = 'other';
     }
@@ -223,7 +135,7 @@ export default function Home() {
     return acc;
   }, {});
 
-  const displayedTrips = filteredTrips.slice(0, visibleCount);
+  const displayedTrips = sortedTrips.slice(0, visibleCount);
 
   const openTrips = trips.filter(t => {
     if (t.status !== 'open') return false;
@@ -686,18 +598,18 @@ export default function Home() {
 
       {/* Trips Section */}
       <section id="trips-section" className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12 pb-20 sm:pb-8">
-        <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <ModernTripFilters 
+            trips={trips}
+            onFilteredTripsChange={setFilteredTrips}
+          />
+
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6 mb-6">
             <div>
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
-                {language === 'he' ? 'גלה טיולים' : language === 'ru' ? 'Найти поездки' : language === 'es' ? 'Descubre viajes' : language === 'fr' ? 'Découvrir des voyages' : language === 'de' ? 'Reisen entdecken' : language === 'it' ? 'Scopri viaggi' : 'Discover Trips'}
-              </h2>
-              <p className="text-sm sm:text-base text-gray-600 mt-1">
-                {filteredTrips.length} {language === 'he' ? 'טיולים נמצאו' : language === 'ru' ? 'поездок найдено' : language === 'es' ? 'viajes encontrados' : language === 'fr' ? 'voyages trouvés' : language === 'de' ? 'Reisen gefunden' : language === 'it' ? 'viaggi trovati' : 'trips found'}
+              <p className="text-sm sm:text-base text-gray-600">
+                {sortedTrips.length} {language === 'he' ? 'טיולים נמצאו' : language === 'ru' ? 'поездок найдено' : language === 'es' ? 'viajes encontrados' : language === 'fr' ? 'voyages trouvés' : language === 'de' ? 'Reisen gefunden' : language === 'it' ? 'viaggi trovati' : 'trips found'}
               </p>
             </div>
             <div className="flex items-center gap-2 flex-wrap justify-start sm:justify-end">
-              {/* View Mode Toggle */}
               <div className="flex bg-gray-100 rounded-lg p-0.5 sm:p-1 touch-manipulation">
                 <Button
                   variant="ghost"
@@ -754,7 +666,7 @@ export default function Home() {
 
         {viewMode === 'map' ? (
           <div>
-            <TripsMap trips={filteredTrips} />
+            <TripsMap trips={sortedTrips} />
           </div>
         ) : isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
@@ -805,7 +717,7 @@ export default function Home() {
               );
             })}
 
-            {filteredTrips.length > visibleCount && (
+            {sortedTrips.length > visibleCount && (
               <div className="flex justify-center mt-8 sm:mt-10">
                 <Button
                   variant="outline"
