@@ -6,7 +6,7 @@ import { createPageUrl } from '@/utils';
 import { useLanguage } from '../LanguageContext';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Users, MapPin, Navigation, Layers, Mountain } from 'lucide-react';
+import { Calendar, Users, MapPin, Navigation, Mountain } from 'lucide-react';
 import { format } from 'date-fns';
 import 'leaflet/dist/leaflet.css';
 
@@ -57,7 +57,6 @@ export default function TripsMap({ trips }) {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const [showTopo, setShowTopo] = useState(false);
-  const [showTrails, setShowTrails] = useState(true);
   
   // Filter trips that have valid coordinates and are in the future
   const validTrips = useMemo(() => 
@@ -112,24 +111,6 @@ export default function TripsMap({ trips }) {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-        )}
-        
-        {/* Trail overlays - can be toggled */}
-        {showTrails && (
-          <>
-            <TileLayer
-              attribution='&copy; <a href="https://waymarkedtrails.org">Waymarked Trails</a> - Hiking'
-              url="https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png"
-              opacity={0.6}
-              zIndex={1000}
-            />
-            <TileLayer
-              attribution='&copy; <a href="https://waymarkedtrails.org">Waymarked Trails</a> - Cycling'
-              url="https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png"
-              opacity={0.4}
-              zIndex={1001}
-            />
-          </>
         )}
         
         <MapBounds trips={validTrips} />
@@ -208,7 +189,7 @@ export default function TripsMap({ trips }) {
       </MapContainer>
       
       {/* Layer controls */}
-      <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-xl z-[1000] space-y-2">
+      <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-xl z-[1000]">
         <Button
           size="sm"
           variant={showTopo ? "default" : "outline"}
@@ -218,17 +199,6 @@ export default function TripsMap({ trips }) {
           <Mountain className="w-4 h-4" />
           <span className="text-xs">
             {language === 'he' ? 'טופוגרפיה' : language === 'ru' ? 'Рельеф' : language === 'es' ? 'Topografía' : language === 'fr' ? 'Topographie' : language === 'de' ? 'Topographie' : language === 'it' ? 'Topografia' : 'Topography'}
-          </span>
-        </Button>
-        <Button
-          size="sm"
-          variant={showTrails ? "default" : "outline"}
-          onClick={() => setShowTrails(!showTrails)}
-          className={`w-full justify-start gap-2 ${showTrails ? 'bg-emerald-600 hover:bg-emerald-700' : ''}`}
-        >
-          <Layers className="w-4 h-4" />
-          <span className="text-xs">
-            {language === 'he' ? 'שבילים' : language === 'ru' ? 'Тропы' : language === 'es' ? 'Senderos' : language === 'fr' ? 'Sentiers' : language === 'de' ? 'Wanderwege' : language === 'it' ? 'Sentieri' : 'Trails'}
           </span>
         </Button>
       </div>
