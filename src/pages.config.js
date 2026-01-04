@@ -36,6 +36,7 @@ import TripSummary from './pages/TripSummary';
 import Weather from './pages/Weather';
 import TripDetails from './pages/TripDetails';
 import Admin from './pages/Admin';
+import VisualEditor from './pages/VisualEditor';
 import __Layout from './Layout.jsx';
 
 
@@ -78,6 +79,7 @@ export const PAGES = {
     "Weather": Weather,
     "TripDetails": TripDetails,
     "Admin": Admin,
+    "VisualEditor": VisualEditor,
 }
 
 export const pagesConfig = {
