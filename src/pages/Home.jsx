@@ -140,28 +140,18 @@ export default function Home() {
       const filterCountry = filters.country.toLowerCase();
       let tripCountry = (trip.country || '').toLowerCase();
       
-      // Smart detection for trips with missing country
+      // Smart detection for trips with missing country - ONLY for Israeli regions
       if (!tripCountry) {
-        // If no country, try to infer from region
+        // Only infer Israel if the region is a known Israeli region
         if (trip.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(trip.region)) {
           tripCountry = 'israel';
-        } else {
-          // If we can't infer, assume Israel ONLY if the filter is Israel (legacy support)
-          // BUT exclude if it has a known non-Israel region
-          const knownNonIsraelRegions = [
-            'scotland', 'london', 'wales', // UK
-            'bavaria', 'berlin', // Germany
-            'tuscany', 'sicily', // Italy
-            'alp', 'pyrenees', // France
-            'northeast', 'southeast', 'midwest', 'west' // USA (generic but safer to exclude)
-          ];
-          
-          const isKnownNonIsrael = knownNonIsraelRegions.some(r => trip.region?.toLowerCase().includes(r));
-          if (!isKnownNonIsrael) {
-             tripCountry = 'israel';
-          }
         }
+        // For any other case - if no country is set, don't show the trip when filtering
+        // This prevents showing trips from other countries when filtering for a specific country
       }
+      
+      // If trip still has no country after inference, exclude it
+      if (!tripCountry) return false;
       
       if (tripCountry !== filterCountry) return false;
     }

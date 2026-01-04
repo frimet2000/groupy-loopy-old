@@ -1,6 +1,7 @@
 import AIRecommendations from './pages/AIRecommendations';
 import AboutUs from './pages/AboutUs';
 import AccessibilityStatement from './pages/AccessibilityStatement';
+import Admin from './pages/Admin';
 import CodeAnalyzer from './pages/CodeAnalyzer';
 import Community from './pages/Community';
 import CookiePolicy from './pages/CookiePolicy';
@@ -30,13 +31,12 @@ import Settings from './pages/Settings';
 import TermsOfService from './pages/TermsOfService';
 import TermsOfUse from './pages/TermsOfUse';
 import TravelJournal from './pages/TravelJournal';
-import TripPlanningGuide from './pages/TripPlanningGuide';
-import TripSummary from './pages/TripSummary';
-import Weather from './pages/Weather';
 import TripDetails from './pages/TripDetails';
-import Admin from './pages/Admin';
-import Home from './pages/Home';
+import TripSummary from './pages/TripSummary';
 import VisualEditor from './pages/VisualEditor';
+import Weather from './pages/Weather';
+import TripPlanningGuide from './pages/TripPlanningGuide';
+import Home from './pages/Home';
 import __Layout from './Layout.jsx';
 
 
@@ -44,6 +44,7 @@ export const PAGES = {
     "AIRecommendations": AIRecommendations,
     "AboutUs": AboutUs,
     "AccessibilityStatement": AccessibilityStatement,
+    "Admin": Admin,
     "CodeAnalyzer": CodeAnalyzer,
     "Community": Community,
     "CookiePolicy": CookiePolicy,
@@ -73,13 +74,12 @@ export const PAGES = {
     "TermsOfService": TermsOfService,
     "TermsOfUse": TermsOfUse,
     "TravelJournal": TravelJournal,
-    "TripPlanningGuide": TripPlanningGuide,
-    "TripSummary": TripSummary,
-    "Weather": Weather,
     "TripDetails": TripDetails,
-    "Admin": Admin,
-    "Home": Home,
+    "TripSummary": TripSummary,
     "VisualEditor": VisualEditor,
+    "Weather": Weather,
+    "TripPlanningGuide": TripPlanningGuide,
+    "Home": Home,
 }
 
 export const pagesConfig = {
