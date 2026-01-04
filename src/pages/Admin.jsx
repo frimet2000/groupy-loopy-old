@@ -252,7 +252,7 @@ export default function Admin() {
   const handleRunBot = async () => {
     setRunningBot(true);
     try {
-      await base44.functions.invoke('postTripToFacebook', {
+      const response = await base44.functions.invoke('autoPostToFacebook', {
         facebook_page_id: marketingConfig.facebook_page_id,
         facebook_access_token: marketingConfig.facebook_access_token
       });
@@ -515,40 +515,36 @@ ${finalTripUrl}`;
       return;
     }
     
-    // Check if facebook credentials are set
     if (!marketingConfig.facebook_page_id || !marketingConfig.facebook_access_token) {
-        toast.error(language === 'he' ? 'חסרים פרטי התחברות לפייסבוק בהגדרות' : 'Missing Facebook credentials in settings');
-        return;
+      toast.error(language === 'he' ? 'חסרים פרטי התחברות לפייסבוק בהגדרות' : 'Missing Facebook credentials in settings');
+      return;
     }
 
     setRunningBot(true);
     try {
       const response = await base44.functions.invoke('autoPostToFacebook', {
-         facebook_page_id: marketingConfig.facebook_page_id,
-         facebook_access_token: marketingConfig.facebook_access_token,
-         custom_message: generatedPosts[trip.id],
-         trip_id: trip.id
+        facebook_page_id: marketingConfig.facebook_page_id,
+        facebook_access_token: marketingConfig.facebook_access_token,
+        custom_message: generatedPosts[trip.id],
+        trip_id: trip.id
       });
       
-      if (response.data.success) {
-        toast.success(language === 'he' ? 'הפוסט פורסם בהצלחה!' : 'Post published successfully!');
-        
-        // Log the successful activity
+      if (response.data?.success) {
         const newLog = {
-            id: Date.now(),
-            tripTitle: trip.title,
-            tripLocation: trip.location,
-            date: new Date().toISOString(),
-            type: 'auto_post_success'
+          id: Date.now(),
+          tripTitle: trip.title,
+          tripLocation: trip.location,
+          date: new Date().toISOString(),
+          type: 'auto_post_success'
         };
         setMarketingLog(prev => [newLog, ...prev]);
-
+        toast.success(language === 'he' ? 'הפוסט פורסם בהצלחה!' : 'Post published successfully!');
       } else {
-        toast.error(language === 'he' ? 'שגיאה בפרסום' : 'Error publishing post');
+        toast.error(language === 'he' ? 'שגיאה בפרסום: ' + (response.data?.error || '') : 'Error posting: ' + (response.data?.error || ''));
       }
     } catch (error) {
       console.error(error);
-      toast.error(language === 'he' ? 'שגיאה בהפעלת הבוט' : 'Error running bot');
+      toast.error(language === 'he' ? 'שגיאה בפרסום' : 'Error posting');
     }
     setRunningBot(false);
   };

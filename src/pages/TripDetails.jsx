@@ -258,7 +258,7 @@ export default function TripDetails() {
     // Check if user is logged in
     if (!user) {
       toast.info(language === 'he' ? 'יש להתחבר כדי להצטרף לטיול' : 'Please login to join the trip');
-      base44.auth.redirectToLogin(window.location.pathname);
+      base44.auth.redirectToLogin(window.location.href);
       return;
     }
 

@@ -34,8 +34,8 @@ import TravelJournal from './pages/TravelJournal';
 import TripPlanningGuide from './pages/TripPlanningGuide';
 import TripSummary from './pages/TripSummary';
 import Weather from './pages/Weather';
-import Admin from './pages/Admin';
 import TripDetails from './pages/TripDetails';
+import Admin from './pages/Admin';
 import __Layout from './Layout.jsx';
 
 
@@ -76,8 +76,8 @@ export const PAGES = {
     "TripPlanningGuide": TripPlanningGuide,
     "TripSummary": TripSummary,
     "Weather": Weather,
-    "Admin": Admin,
     "TripDetails": TripDetails,
+    "Admin": Admin,
 }
 
 export const pagesConfig = {
