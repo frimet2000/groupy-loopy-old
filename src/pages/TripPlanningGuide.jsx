@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
   CheckCircle, Users, CreditCard, MapPin, 
-  Calendar, Shield, ArrowLeft, Sparkles
+  Calendar, Shield, ArrowLeft, Sparkles, Heart
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -28,12 +28,21 @@ export default function TripPlanningGuide() {
       );
     }
 
-    // Add keywords
-    const keywordsMeta = document.querySelector('meta[name="keywords"]') || document.createElement('meta');
-    keywordsMeta.name = 'keywords';
-    keywordsMeta.content = 'רשימת ציוד לטיול, גביית כספים, ניהול משתתפים, שביל ישראל, ארגון טיול קבוצתי, טופס הרשמה לטיול, מערכת ניהול טיולים';
-    if (!document.querySelector('meta[name="keywords"]')) {
-      document.head.appendChild(keywordsMeta);
+    // Add keywords safely
+    try {
+      let keywordsMeta = document.querySelector('meta[name="keywords"]');
+      if (!keywordsMeta) {
+        keywordsMeta = document.createElement('meta');
+        keywordsMeta.name = 'keywords';
+        if (document.head) {
+          document.head.appendChild(keywordsMeta);
+        }
+      }
+      if (keywordsMeta) {
+        keywordsMeta.content = 'רשימת ציוד לטיול, גביית כספים, ניהול משתתפים, שביל ישראל, ארגון טיול קבוצתי, טופס הרשמה לטיול, מערכת ניהול טיולים';
+      }
+    } catch (e) {
+      console.error('Error updating keywords meta tag:', e);
     }
 
     return () => {
