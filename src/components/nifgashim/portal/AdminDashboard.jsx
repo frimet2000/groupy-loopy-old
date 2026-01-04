@@ -4,14 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Download, Search, Users, DollarSign, Calendar, Shield, Car, Heart } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Download, Search, Users, DollarSign, Calendar, Shield, Car, Heart, ChevronDown, ChevronUp, Baby, User } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import MemorialSchedule from './MemorialSchedule';
 
 export default function AdminDashboard({ trip, language, isRTL }) {
   const [searchTerm, setSearchTerm] = useState('');
-  // Initialize local participants state to support updates
+  const [expandedRow, setExpandedRow] = useState(null);
   const [localParticipants, setLocalParticipants] = useState(trip?.participants || []);
 
   const handleUpdateParticipant = (participantId, updates) => {
@@ -42,7 +42,15 @@ export default function AdminDashboard({ trip, language, isRTL }) {
       vehicle: "רכב",
       hasVehicle: "מגיע ברכב",
       noVehicle: "ללא רכב",
-      vehicleNumber: "מס' רכב"
+      vehicleNumber: "מס' רכב",
+      familyMembers: "בני משפחה",
+      ages: "גילאים",
+      totalPeople: "סה\"ך אנשים",
+      adultsCount: "מבוגרים",
+      childrenCount: "ילדים",
+      groupLeader: "מנהיג קבוצה",
+      viewDetails: "הצג פרטים",
+      hideDetails: "הסתר"
     },
     en: {
       title: "Participants Management - Nifgashim for Israel",
@@ -65,7 +73,15 @@ export default function AdminDashboard({ trip, language, isRTL }) {
       vehicle: "Vehicle",
       hasVehicle: "Has Vehicle",
       noVehicle: "No Vehicle",
-      vehicleNumber: "Vehicle #"
+      vehicleNumber: "Vehicle #",
+      familyMembers: "Family Members",
+      ages: "Ages",
+      totalPeople: "Total People",
+      adultsCount: "Adults",
+      childrenCount: "Children",
+      groupLeader: "Group Leader",
+      viewDetails: "View Details",
+      hideDetails: "Hide"
     },
     ru: {
       title: "Управление участниками - Нифгашим для Израиля",
@@ -84,7 +100,15 @@ export default function AdminDashboard({ trip, language, isRTL }) {
       exempt: "Освобожден",
       groupType: "Группа",
       individual: "Индивидуальный",
-      noParticipants: "Нет зарегистрированных участников"
+      noParticipants: "Нет зарегистрированных участников",
+      familyMembers: "Члены семьи",
+      ages: "Возраст",
+      totalPeople: "Всего людей",
+      adultsCount: "Взрослые",
+      childrenCount: "Дети",
+      groupLeader: "Лидер группы",
+      viewDetails: "Показать",
+      hideDetails: "Скрыть"
     },
     es: {
       title: "Gestión de participantes - Nifgashim para Israel",
@@ -103,7 +127,15 @@ export default function AdminDashboard({ trip, language, isRTL }) {
       exempt: "Exento",
       groupType: "Grupo",
       individual: "Individual",
-      noParticipants: "Sin participantes registrados"
+      noParticipants: "Sin participantes registrados",
+      familyMembers: "Miembros",
+      ages: "Edades",
+      totalPeople: "Total",
+      adultsCount: "Adultos",
+      childrenCount: "Niños",
+      groupLeader: "Líder",
+      viewDetails: "Ver",
+      hideDetails: "Ocultar"
     },
     fr: {
       title: "Gestion des participants - Nifgashim pour Israël",
@@ -122,7 +154,15 @@ export default function AdminDashboard({ trip, language, isRTL }) {
       exempt: "Exempté",
       groupType: "Groupe",
       individual: "Individuel",
-      noParticipants: "Aucun participant inscrit"
+      noParticipants: "Aucun participant inscrit",
+      familyMembers: "Famille",
+      ages: "Âges",
+      totalPeople: "Total",
+      adultsCount: "Adultes",
+      childrenCount: "Enfants",
+      groupLeader: "Chef",
+      viewDetails: "Voir",
+      hideDetails: "Masquer"
     },
     de: {
       title: "Teilnehmerverwaltung - Nifgashim für Israel",
@@ -141,7 +181,15 @@ export default function AdminDashboard({ trip, language, isRTL }) {
       exempt: "Befreit",
       groupType: "Gruppe",
       individual: "Individuell",
-      noParticipants: "Keine registrierten Teilnehmer"
+      noParticipants: "Keine registrierten Teilnehmer",
+      familyMembers: "Familie",
+      ages: "Alter",
+      totalPeople: "Gesamt",
+      adultsCount: "Erwachsene",
+      childrenCount: "Kinder",
+      groupLeader: "Leiter",
+      viewDetails: "Zeigen",
+      hideDetails: "Verbergen"
     },
     it: {
       title: "Gestione partecipanti - Nifgashim per Israele",
@@ -160,15 +208,21 @@ export default function AdminDashboard({ trip, language, isRTL }) {
       exempt: "Esente",
       groupType: "Gruppo",
       individual: "Individuale",
-      noParticipants: "Nessun partecipante registrato"
+      noParticipants: "Nessun partecipante registrato",
+      familyMembers: "Famiglia",
+      ages: "Età",
+      totalPeople: "Totale",
+      adultsCount: "Adulti",
+      childrenCount: "Bambini",
+      groupLeader: "Leader",
+      viewDetails: "Mostra",
+      hideDetails: "Nascondi"
     }
   };
 
   const trans = translations[language] || translations.en;
-  // Use local state instead of prop directly
   const participants = localParticipants;
 
-  // Filter participants based on search
   const filteredParticipants = participants.filter(p => 
     p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -176,12 +230,10 @@ export default function AdminDashboard({ trip, language, isRTL }) {
     p.id_number?.includes(searchTerm)
   );
 
-  // Calculate statistics
   const totalPaid = participants.filter(p => p.payment_status === 'completed').length;
   const totalPending = participants.filter(p => p.payment_status === 'pending').length;
   const totalRevenue = participants.reduce((sum, p) => sum + (p.payment_amount || 0), 0);
 
-  // Download CSV
   const downloadCSV = () => {
     const headers = [
       trans.name,
@@ -190,6 +242,8 @@ export default function AdminDashboard({ trip, language, isRTL }) {
       trans.email,
       trans.vehicle,
       trans.selectedDays,
+      trans.totalPeople,
+      trans.ages,
       trans.paymentStatus,
       language === 'he' ? 'סכום' : 'Amount',
       trans.registeredAt
@@ -202,6 +256,8 @@ export default function AdminDashboard({ trip, language, isRTL }) {
       p.email || '',
       p.has_vehicle ? `${trans.hasVehicle} (${p.vehicle_number || ''})` : trans.noVehicle,
       (p.selected_days || []).join(';'),
+      p.total_people || 1,
+      p.age_range || '',
       p.payment_status || 'pending',
       p.payment_amount || 0,
       p.joined_at ? new Date(p.joined_at).toLocaleDateString('he-IL') : ''
@@ -227,7 +283,6 @@ export default function AdminDashboard({ trip, language, isRTL }) {
 
   return (
     <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
-      {/* Header */}
       <Card className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-2xl">
@@ -237,7 +292,6 @@ export default function AdminDashboard({ trip, language, isRTL }) {
         </CardHeader>
       </Card>
 
-      {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
@@ -288,7 +342,6 @@ export default function AdminDashboard({ trip, language, isRTL }) {
         </Card>
       </div>
 
-      {/* Toolbar */}
       <Card>
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4 justify-between">
@@ -312,7 +365,6 @@ export default function AdminDashboard({ trip, language, isRTL }) {
         </CardContent>
       </Card>
 
-      {/* Participants Table */}
       <Card>
         <CardContent className="p-0">
           <Tabs defaultValue="participants" className="w-full">
@@ -320,7 +372,7 @@ export default function AdminDashboard({ trip, language, isRTL }) {
               <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
                 <TabsTrigger value="participants" className="gap-2">
                   <Users className="w-4 h-4" />
-                  {trans.participants || (language === 'he' ? 'משתתפים' : 'Participants')}
+                  {language === 'he' ? 'משתתפים' : 'Participants'}
                 </TabsTrigger>
                 <TabsTrigger value="memorials" className="gap-2">
                   <Heart className="w-4 h-4" />
@@ -340,73 +392,196 @@ export default function AdminDashboard({ trip, language, isRTL }) {
                   <table className="w-full">
                     <thead className="bg-gray-50 border-b-2 border-gray-200">
                       <tr>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">#</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 w-8"></th>
                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{trans.name}</th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{trans.idNumber}</th>
                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 hidden sm:table-cell">{trans.phone}</th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 hidden xl:table-cell">{trans.vehicle}</th>
                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 hidden md:table-cell">{trans.selectedDays}</th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 hidden lg:table-cell">{trans.totalPeople}</th>
                         <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">{trans.paymentStatus}</th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 hidden lg:table-cell">{language === 'he' ? 'סכום' : 'Amount'}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                       {filteredParticipants.map((participant, idx) => (
-                        <motion.tr
-                          key={idx}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: idx * 0.02 }}
-                          className="hover:bg-gray-50"
-                        >
-                          <td className="px-4 py-3 text-sm text-gray-600">{idx + 1}</td>
-                          <td className="px-4 py-3">
-                            <div className="font-semibold text-gray-900">{participant.name}</div>
-                            {participant.is_organized_group && (
-                              <Badge variant="outline" className="mt-1 text-xs bg-blue-50">
-                                {participant.group_name || trans.groupType}
-                              </Badge>
-                            )}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-gray-600 font-mono">
-                            {participant.id_number}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-gray-600 hidden sm:table-cell">
-                            {participant.phone || '-'}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-gray-600 hidden xl:table-cell">
-                            {participant.has_vehicle ? (
-                              <div className="flex items-center gap-2">
-                                <Car className="w-4 h-4 text-blue-600" />
-                                <span>{participant.vehicle_number}</span>
-                              </div>
-                            ) : (
-                              <span className="text-gray-400">-</span>
-                            )}
-                          </td>
-                          <td className="px-4 py-3 hidden md:table-cell">
-                            <div className="flex flex-wrap gap-1">
-                              {(participant.selected_days || []).slice(0, 3).map((day, i) => (
-                                <Badge key={i} variant="outline" className="text-xs bg-purple-50">
-                                  {language === 'he' ? `יום ${day}` : `Day ${day}`}
-                                </Badge>
-                              ))}
-                              {(participant.selected_days || []).length > 3 && (
-                                <Badge variant="outline" className="text-xs">
-                                  +{(participant.selected_days || []).length - 3}
+                        <React.Fragment key={idx}>
+                          <motion.tr
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: idx * 0.02 }}
+                            className="hover:bg-gray-50 cursor-pointer"
+                            onClick={() => setExpandedRow(expandedRow === idx ? null : idx)}
+                          >
+                            <td className="px-4 py-3">
+                              <Button variant="ghost" size="sm" className="p-0 h-8 w-8">
+                                {expandedRow === idx ? (
+                                  <ChevronUp className="w-4 h-4 text-gray-600" />
+                                ) : (
+                                  <ChevronDown className="w-4 h-4 text-gray-600" />
+                                )}
+                              </Button>
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="font-semibold text-gray-900">{participant.name}</div>
+                              {participant.is_organized_group && (
+                                <Badge variant="outline" className="mt-1 text-xs bg-blue-50">
+                                  {participant.group_name || trans.groupType}
                                 </Badge>
                               )}
-                            </div>
-                          </td>
-                          <td className="px-4 py-3">
-                            <Badge variant="outline" className={`border ${getPaymentStatusColor(participant.payment_status)}`}>
-                              {trans[participant.payment_status] || participant.payment_status}
-                            </Badge>
-                          </td>
-                          <td className="px-4 py-3 text-sm font-semibold text-gray-900 hidden lg:table-cell">
-                            {participant.payment_amount ? `₪${participant.payment_amount}` : '-'}
-                          </td>
-                        </motion.tr>
+                              <div className="text-xs text-gray-500 mt-1">{participant.email}</div>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-600 hidden sm:table-cell">
+                              {participant.phone || '-'}
+                            </td>
+                            <td className="px-4 py-3 hidden md:table-cell">
+                              <div className="flex flex-wrap gap-1">
+                                {(participant.selected_days || []).slice(0, 3).map((day, i) => (
+                                  <Badge key={i} variant="outline" className="text-xs bg-purple-50">
+                                    {language === 'he' ? `יום ${day}` : `Day ${day}`}
+                                  </Badge>
+                                ))}
+                                {(participant.selected_days || []).length > 3 && (
+                                  <Badge variant="outline" className="text-xs">
+                                    +{(participant.selected_days || []).length - 3}
+                                  </Badge>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-sm font-semibold text-gray-900 hidden lg:table-cell">
+                              {participant.total_people || 1}
+                            </td>
+                            <td className="px-4 py-3">
+                              <Badge variant="outline" className={`border ${getPaymentStatusColor(participant.payment_status)}`}>
+                                {trans[participant.payment_status] || participant.payment_status}
+                              </Badge>
+                            </td>
+                          </motion.tr>
+
+                          {/* Expanded Details */}
+                          <AnimatePresence>
+                            {expandedRow === idx && (
+                              <motion.tr
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="bg-blue-50/30"
+                              >
+                                <td colSpan="6" className="px-4 py-4">
+                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-white rounded-lg shadow-sm">
+                                    {/* Basic Info */}
+                                    <div className="space-y-2">
+                                      <h4 className="font-semibold text-sm text-gray-700 border-b pb-1">
+                                        {language === 'he' ? 'פרטים בסיסיים' : 'Basic Info'}
+                                      </h4>
+                                      <div className="text-sm space-y-1">
+                                        <div><span className="font-medium">{trans.idNumber}:</span> {participant.id_number || '-'}</div>
+                                        <div><span className="font-medium">{trans.email}:</span> {participant.email || '-'}</div>
+                                        <div><span className="font-medium">{trans.phone}:</span> {participant.phone || '-'}</div>
+                                        {participant.age_range && (
+                                          <div><span className="font-medium">{trans.ages}:</span> {participant.age_range}</div>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* Selected Days Details */}
+                                    <div className="space-y-2">
+                                      <h4 className="font-semibold text-sm text-gray-700 border-b pb-1">
+                                        {trans.selectedDays}
+                                      </h4>
+                                      <div className="flex flex-wrap gap-1">
+                                        {(participant.selected_days || []).map((day, i) => (
+                                          <Badge key={i} variant="outline" className="text-xs bg-purple-50">
+                                            {language === 'he' ? `יום ${day}` : `Day ${day}`}
+                                          </Badge>
+                                        ))}
+                                        {(participant.selected_days || []).length === 0 && (
+                                          <span className="text-sm text-gray-400">{language === 'he' ? 'לא נבחרו ימים' : 'No days selected'}</span>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* Family/Group Info */}
+                                    {(participant.is_organized_group || participant.total_people > 1) && (
+                                      <div className="space-y-2">
+                                        <h4 className="font-semibold text-sm text-gray-700 border-b pb-1">
+                                          {participant.is_organized_group ? trans.groupType : trans.familyMembers}
+                                        </h4>
+                                        <div className="text-sm space-y-1">
+                                          {participant.is_organized_group && (
+                                            <>
+                                              <div><span className="font-medium">{language === 'he' ? 'שם קבוצה:' : 'Group Name:'}:</span> {participant.group_name || '-'}</div>
+                                              <div><span className="font-medium">{language === 'he' ? 'סוג:' : 'Type:'}:</span> {participant.group_type || '-'}</div>
+                                            </>
+                                          )}
+                                          <div className="flex items-center gap-2">
+                                            <Users className="w-4 h-4 text-blue-600" />
+                                            <span className="font-medium">{trans.totalPeople}:</span> {participant.total_people || 1}
+                                          </div>
+                                          {participant.children_details && participant.children_details.length > 0 && (
+                                            <div className="mt-2 space-y-1">
+                                              <div className="font-medium text-xs text-gray-600">{language === 'he' ? 'ילדים:' : 'Children:'}</div>
+                                              {participant.children_details.map((child, i) => (
+                                                <div key={i} className="flex items-center gap-2 text-xs bg-blue-50 p-2 rounded">
+                                                  <Baby className="w-3 h-3 text-blue-600" />
+                                                  <span>{child.full_name}</span>
+                                                  <span className="text-gray-500">({child.age || child.age_range})</span>
+                                                </div>
+                                              ))}
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Vehicle Info */}
+                                    {participant.has_vehicle && (
+                                      <div className="space-y-2">
+                                        <h4 className="font-semibold text-sm text-gray-700 border-b pb-1">
+                                          {trans.vehicle}
+                                        </h4>
+                                        <div className="flex items-center gap-2 text-sm">
+                                          <Car className="w-4 h-4 text-blue-600" />
+                                          <span className="font-medium">{trans.vehicleNumber}:</span>
+                                          <span className="font-mono">{participant.vehicle_number || '-'}</span>
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Payment Info */}
+                                    <div className="space-y-2">
+                                      <h4 className="font-semibold text-sm text-gray-700 border-b pb-1">
+                                        {language === 'he' ? 'מידע תשלום' : 'Payment Info'}
+                                      </h4>
+                                      <div className="text-sm space-y-1">
+                                        <div><span className="font-medium">{language === 'he' ? 'סכום:' : 'Amount:'}:</span> ₪{participant.payment_amount || 0}</div>
+                                        <div><span className="font-medium">{language === 'he' ? 'סטטוס:' : 'Status:'}:</span> {trans[participant.payment_status] || participant.payment_status}</div>
+                                        {participant.payment_transaction_id && (
+                                          <div className="text-xs text-gray-500">
+                                            <span className="font-medium">{language === 'he' ? 'מס\' עסקה:' : 'Transaction:'}:</span> {participant.payment_transaction_id}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* Registration Date */}
+                                    <div className="space-y-2">
+                                      <h4 className="font-semibold text-sm text-gray-700 border-b pb-1">
+                                        {trans.registeredAt}
+                                      </h4>
+                                      <div className="text-sm">
+                                        {participant.joined_at ? new Date(participant.joined_at).toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US', {
+                                          year: 'numeric',
+                                          month: 'long',
+                                          day: 'numeric',
+                                          hour: '2-digit',
+                                          minute: '2-digit'
+                                        }) : '-'}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                              </motion.tr>
+                            )}
+                          </AnimatePresence>
+                        </React.Fragment>
                       ))}
                     </tbody>
                   </table>
@@ -420,7 +595,7 @@ export default function AdminDashboard({ trip, language, isRTL }) {
                 participants={localParticipants}
                 onUpdateParticipant={handleUpdateParticipant}
                 language={language}
-                isRTL={isRightToLeft}
+                isRTL={isRTL}
               />
             </TabsContent>
           </Tabs>
