@@ -847,29 +847,27 @@ export default function NifgashimPortal() {
         <Card className="mb-6">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-3">
-              {steps.map((step, idx) => (
-                <React.Fragment key={step.id}>
-                  <div className={`flex flex-col items-center gap-1 ${currentStep >= step.id ? 'opacity-100' : 'opacity-40'}`}>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                      currentStep > step.id 
-                        ? 'bg-green-500 text-white' 
-                        : currentStep === step.id 
-                        ? 'bg-blue-600 text-white' 
-                        : 'bg-gray-200 text-gray-500'
-                    }`}>
-                      {currentStep > step.id ? <Check className="w-5 h-5" /> : step.id}
-                    </div>
-                    <span className="text-xs font-semibold text-center hidden sm:block">
-                      {step.label}
-                    </span>
+              {steps.map((step, idx) => [
+                <div key={step.id} className={`flex flex-col items-center gap-1 ${currentStep >= step.id ? 'opacity-100' : 'opacity-40'}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                    currentStep > step.id 
+                      ? 'bg-green-500 text-white' 
+                      : currentStep === step.id 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-200 text-gray-500'
+                  }`}>
+                    {currentStep > step.id ? <Check className="w-5 h-5" /> : step.id}
                   </div>
-                  {idx < steps.length - 1 && (
-                    <div className={`flex-1 h-1 mx-2 rounded-full ${
-                      currentStep > step.id ? 'bg-green-500' : 'bg-gray-200'
-                    }`} />
-                  )}
-                </React.Fragment>
-              ))}
+                  <span className="text-xs font-semibold text-center hidden sm:block">
+                    {step.label}
+                  </span>
+                </div>,
+                idx < steps.length - 1 && (
+                  <div key={`sep-${step.id}`} className={`flex-1 h-1 mx-2 rounded-full ${
+                    currentStep > step.id ? 'bg-green-500' : 'bg-gray-200'
+                  }`} />
+                )
+              ])}
             </div>
             <Progress value={progressPercent} className="h-2" />
           </CardContent>

@@ -465,6 +465,7 @@ function LayoutContent({ children, currentPageName }) {
   return (
     <div className={`min-h-screen bg-gray-50 ${isRTL ? 'rtl' : 'ltr'}`}>
       {/* Desktop Header */}
+      {currentPageName !== 'NifgashimPortal' && (
       <header className="bg-gradient-to-r from-white via-emerald-50/30 to-white backdrop-blur-xl border-b-2 border-emerald-200/50 sticky top-0 z-50 shadow-lg shadow-emerald-100/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
@@ -649,6 +650,7 @@ function LayoutContent({ children, currentPageName }) {
           </div>
         </div>
       </header>
+      )}
 
       {/* Main Content */}
       <main className="min-h-[calc(100vh-64px)]">
