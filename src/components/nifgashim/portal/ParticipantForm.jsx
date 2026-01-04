@@ -296,7 +296,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
   const isParent = participants.length === 0 || (participants.length === 1 && spouseExists);
   const availableAgeRanges = isParent 
     ? ageRanges.filter(r => r !== '0-9' && r !== '10-18')
-    : ageRanges;
+    : ageRanges.filter(r => r === '0-9' || r === '10-18');
 
   return (
     <Card>
