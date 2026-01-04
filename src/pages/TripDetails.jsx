@@ -248,7 +248,7 @@ export default function TripDetails() {
   }, []);
 
   useEffect(() => {
-    if (trip && user) {isOrganizer && trip.pending_requests?.length > 0 && !showRequestDialog) {
+    if (trip && user && isOrganizer && trip.pending_requests?.length > 0 && !showRequestDialog) {
       setShowRequestDialog(true);
       setCurrentRequestIndex(0);
     }
