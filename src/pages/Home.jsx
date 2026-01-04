@@ -6,7 +6,7 @@ import { useLanguage } from '../components/LanguageContext';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import TripCard from '../components/trips/TripCard';
-import TripFilters from '../components/trips/TripFilters';
+
 import TripsMap from '../components/maps/TripsMap';
 import { getContinentForCountry, continents } from '../components/utils/ContinentMapping';
 import OrganizerAlerts from '../components/organizer/OrganizerAlerts';
@@ -29,67 +29,17 @@ import AnnouncementToast from '../components/announcements/AnnouncementToast';
 export default function Home() {
   const { t, isRTL, language, setLanguage } = useLanguage();
   const navigate = useNavigate();
-  const [filters, setFilters] = useState({
-    search: '',
-    country: '',
-    region: '',
-    difficulty: '',
-    duration_type: '',
-    activity_type: '',
-    pets_allowed: false,
-    camping_available: false,
-    trail_type: [],
-    interests: [],
-    date_from: null,
-    date_to: null,
-    available_spots: false,
-    favorites: false
-  });
+
   const [visibleCount, setVisibleCount] = useState(8);
   const [sortBy, setSortBy] = useState('date');
   const [user, setUser] = useState(null);
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'map'
   const [selectedContinent, setSelectedContinent] = useState('all');
   const [showLiveTripsDialog, setShowLiveTripsDialog] = useState(false);
   const [joiningLiveTrip, setJoiningLiveTrip] = useState(false);
   const [userCountry, setUserCountry] = useState(null);
-  const [autoFilterByCountry, setAutoFilterByCountry] = useState(true);
 
-  // Auto-detect user country
-  useEffect(() => {
-    fetch('https://ipapi.co/json/')
-      .then(res => res.json())
-      .then(data => {
-        if (data.country_name) {
-          console.log('Detected country:', data.country_name);
-          setUserCountry(data.country_name);
-          
-          // Map detected country to our country codes
-          const countryMap = {
-            'Israel': 'israel',
-            'France': 'france',
-            'Italy': 'italy',
-            'Germany': 'germany',
-            'Spain': 'spain',
-            'United Kingdom': 'uk',
-            'United States': 'usa',
-            'Canada': 'canada',
-            'Australia': 'australia',
-            'Switzerland': 'switzerland',
-            'Austria': 'austria',
-            'Netherlands': 'netherlands',
-            'Belgium': 'belgium',
-          };
-          
-          const mappedCountry = countryMap[data.country_name];
-          if (mappedCountry && autoFilterByCountry) {
-            setFilters(prev => ({ ...prev, country: mappedCountry }));
-          }
-        }
-      })
-      .catch(err => console.error('Error detecting country:', err));
-  }, []);
 
   // Auto-detect and set language from URL parameter
   useEffect(() => {
@@ -118,88 +68,15 @@ export default function Home() {
   });
 
   const filteredTrips = trips.filter(trip => {
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      const title = trip.title || trip.title_he || trip.title_en;
-      const desc = trip.description || trip.description_he || trip.description_en;
-      if (!title?.toLowerCase().includes(searchLower) && 
-          !desc?.toLowerCase().includes(searchLower) &&
-          !trip.location?.toLowerCase().includes(searchLower)) {
-        return false;
-      }
-    }
-    
-    // If specific country filter is active, use it (takes priority over continent filter)
-    if (filters.country) {
-      const filterCountry = filters.country.toLowerCase();
-      let tripCountry = (trip.country || '').toLowerCase();
-      
-      // Smart detection for trips with missing country - ONLY for Israeli regions
-      if (!tripCountry) {
-        // Only infer Israel if the region is a known Israeli region
-        if (trip.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(trip.region)) {
-          tripCountry = 'israel';
-        }
-        // For any other case - if no country is set, don't show the trip when filtering
-        // This prevents showing trips from other countries when filtering for a specific country
-      }
-      
-      // If trip still has no country after inference, exclude it
-      if (!tripCountry) return false;
-      
-      if (tripCountry !== filterCountry) return false;
-    } else if (selectedContinent !== 'all') {
-      // Only apply continent filter if no specific country filter is active
-      let tripCountry = (trip.country || '').toLowerCase();
-      // Only infer Israel for trips with Israeli regions
-      if (!tripCountry && trip.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(trip.region)) {
-        tripCountry = 'israel';
-      }
-      // Skip trips without country when continent filter is active
-      if (!tripCountry) return false;
-      
-      const tripContinent = getContinentForCountry(tripCountry);
-      if (tripContinent !== selectedContinent) return false;
-    }
-    
-    if (filters.region && trip.region !== filters.region) return false;
-    if (filters.difficulty && trip.difficulty !== filters.difficulty) return false;
-    if (filters.duration_type && trip.duration_type !== filters.duration_type) return false;
-    if (filters.activity_type && trip.activity_type !== filters.activity_type) return false;
-    if (filters.pets_allowed && !trip.pets_allowed) return false;
-    if (filters.camping_available && !trip.camping_available) return false;
-    if (filters.trail_type?.length > 0) {
-      if (!trip.trail_type?.some(t => filters.trail_type.includes(t))) return false;
-    }
-    if (filters.interests?.length > 0) {
-      if (!trip.interests?.some(i => filters.interests.includes(i))) return false;
-    }
-    if (filters.date_from && new Date(trip.date) < new Date(filters.date_from)) return false;
-    if (filters.date_to && new Date(trip.date) > new Date(filters.date_to)) return false;
-
-    // Filter by available spots
-    if (filters.available_spots) {
-      const hasSpots = !trip.max_participants || 
-        (trip.current_participants || 1) < trip.max_participants;
-      if (!hasSpots) return false;
-    }
-
-    // Favorites filter
-    if (filters.favorites) {
-      if (!user || !trip.likes?.some(like => like.email === user.email)) return false;
-    }
-
     if (trip.status !== 'open') return false;
 
     // Privacy filtering
     if (trip.privacy === 'private') {
-      // Only show to organizer and participants
       if (!user) return false;
       const isOrganizerOrParticipant = trip.organizer_email === user.email || 
         trip.participants?.some(p => p.email === user.email);
       if (!isOrganizerOrParticipant) return false;
     } else if (trip.privacy === 'invite_only') {
-      // Only show to invited users, organizer, and participants
       if (!user) return false;
       const isInvitedOrParticipant = trip.invited_emails?.includes(user.email) ||
         trip.organizer_email === user.email ||
@@ -207,7 +84,7 @@ export default function Home() {
       if (!isInvitedOrParticipant) return false;
     }
 
-    // Only show future trips in main section
+    // Only show future trips
     const tripDate = new Date(trip.date);
     tripDate.setHours(0, 0, 0, 0);
     const today = new Date();
@@ -810,7 +687,7 @@ export default function Home() {
       {/* Trips Section */}
       <section id="trips-section" className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12 pb-20 sm:pb-8">
         <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
                 {language === 'he' ? 'גלה טיולים' : language === 'ru' ? 'Найти поездки' : language === 'es' ? 'Descubre viajes' : language === 'fr' ? 'Découvrir des voyages' : language === 'de' ? 'Reisen entdecken' : language === 'it' ? 'Scopri viaggi' : 'Discover Trips'}
@@ -820,37 +697,6 @@ export default function Home() {
               </p>
             </div>
             <div className="flex items-center gap-2 flex-wrap justify-start sm:justify-end">
-              {/* Auto-filter indicator and clear button */}
-              {autoFilterByCountry && filters.country && (
-                <Badge 
-                  variant="secondary" 
-                  className="gap-2 h-10 sm:h-11 px-3 bg-emerald-50 text-emerald-700 border-emerald-200 cursor-pointer hover:bg-emerald-100"
-                  onClick={() => {
-                    setAutoFilterByCountry(false);
-                    setFilters(prev => ({ ...prev, country: '' }));
-                  }}
-                >
-                  <Globe className="w-4 h-4" />
-                  {language === 'he' ? `מסונן ל${t(filters.country)} (לחץ לביטול)` : language === 'ru' ? `Фильтр: ${t(filters.country)} (нажми для отмены)` : language === 'es' ? `Filtro: ${t(filters.country)} (clic para cancelar)` : language === 'fr' ? `Filtre: ${t(filters.country)} (clic pour annuler)` : language === 'de' ? `Filter: ${t(filters.country)} (klicken zum Abbrechen)` : language === 'it' ? `Filtro: ${t(filters.country)} (clicca per annullare)` : `Filter: ${t(filters.country)} (click to clear)`}
-                </Badge>
-              )}
-
-              {/* Continent Filter */}
-              <Select value={selectedContinent} onValueChange={setSelectedContinent}>
-                <SelectTrigger className="w-[140px] sm:w-[200px] h-10 sm:h-11 text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{language === 'he' ? 'כל היבשות' : language === 'ru' ? 'Все континенты' : language === 'es' ? 'Todos los continentes' : language === 'fr' ? 'Tous les continents' : language === 'de' ? 'Alle Kontinente' : language === 'it' ? 'Tutti i continenti' : 'All Continents'}</SelectItem>
-                  <SelectItem value="europe">{language === 'he' ? 'אירופה' : language === 'ru' ? 'Европа' : language === 'es' ? 'Europa' : language === 'fr' ? 'Europe' : language === 'de' ? 'Europa' : language === 'it' ? 'Europa' : 'Europe'}</SelectItem>
-                  <SelectItem value="asia">{language === 'he' ? 'אסיה' : language === 'ru' ? 'Азия' : language === 'es' ? 'Asia' : language === 'fr' ? 'Asie' : language === 'de' ? 'Asien' : language === 'it' ? 'Asia' : 'Asia'}</SelectItem>
-                  <SelectItem value="africa">{language === 'he' ? 'אפריקה' : language === 'ru' ? 'Африка' : language === 'es' ? 'África' : language === 'fr' ? 'Afrique' : language === 'de' ? 'Afrika' : language === 'it' ? 'Africa' : 'Africa'}</SelectItem>
-                  <SelectItem value="north_america">{language === 'he' ? 'צפון אמריקה' : language === 'ru' ? 'Северная Америка' : language === 'es' ? 'América del Norte' : language === 'fr' ? 'Amérique du Nord' : language === 'de' ? 'Nordamerika' : language === 'it' ? 'Nord America' : 'North America'}</SelectItem>
-                  <SelectItem value="south_america">{language === 'he' ? 'דרום אמריקה' : language === 'ru' ? 'Южная Америка' : language === 'es' ? 'América del Sur' : language === 'fr' ? 'Amérique du Sud' : language === 'de' ? 'Südamerika' : language === 'it' ? 'Sud America' : 'South America'}</SelectItem>
-                  <SelectItem value="oceania">{language === 'he' ? 'אוקיאניה' : language === 'ru' ? 'Океания' : language === 'es' ? 'Oceanía' : language === 'fr' ? 'Océanie' : language === 'de' ? 'Ozeanien' : language === 'it' ? 'Oceania' : 'Oceania'}</SelectItem>
-                </SelectContent>
-              </Select>
-
               {/* View Mode Toggle */}
               <div className="flex bg-gray-100 rounded-lg p-0.5 sm:p-1 touch-manipulation">
                 <Button
@@ -874,23 +720,14 @@ export default function Home() {
               </div>
 
               {user && (
-                <>
-                  <Button 
-                    variant={filters.favorites ? "default" : "outline"}
-                    className={`gap-1 sm:gap-2 h-10 sm:h-11 px-2 sm:px-4 text-xs sm:text-sm min-h-[44px] touch-manipulation ${filters.favorites ? 'bg-rose-600 hover:bg-rose-700 text-white' : ''}`}
-                    onClick={() => setFilters(prev => ({ ...prev, favorites: !prev.favorites }))}
-                  >
-                    <Heart className={`w-3 h-3 sm:w-4 sm:h-4 ${filters.favorites ? 'fill-white' : ''}`} />
-                    <span className="hidden sm:inline">{language === 'he' ? 'מועדפים' : language === 'ru' ? 'Избранное' : language === 'es' ? 'Favoritos' : language === 'fr' ? 'Favoris' : language === 'de' ? 'Favoriten' : language === 'it' ? 'Preferiti' : 'Favorites'}</span>
+                <Link to={createPageUrl('MyLists')} className="hidden sm:block">
+                  <Button variant="outline" className="gap-2 h-10 sm:h-11 text-sm min-h-[44px] touch-manipulation">
+                    <List className="w-4 h-4" />
+                    {language === 'he' ? 'הרשימות שלי' : language === 'ru' ? 'Мои списки' : language === 'es' ? 'Mis listas' : language === 'fr' ? 'Mes listes' : language === 'de' ? 'Meine Listen' : language === 'it' ? 'Le mie liste' : 'My Lists'}
                   </Button>
-                  <Link to={createPageUrl('MyLists')} className="hidden sm:block">
-                    <Button variant="outline" className="gap-2 h-10 sm:h-11 text-sm min-h-[44px] touch-manipulation">
-                      <List className="w-4 h-4" />
-                      {language === 'he' ? 'הרשימות שלי' : language === 'ru' ? 'Мои списки' : language === 'es' ? 'Mis listas' : language === 'fr' ? 'Mes listes' : language === 'de' ? 'Meine Listen' : language === 'it' ? 'Le mie liste' : 'My Lists'}
-                    </Button>
-                  </Link>
-                </>
+                </Link>
               )}
+              
               {viewMode === 'grid' && (
                 <div className="flex items-center gap-1 sm:gap-2 w-full sm:w-auto">
                   <span className="text-xs sm:text-sm text-gray-600 hidden sm:inline">
@@ -913,10 +750,6 @@ export default function Home() {
               )}
             </div>
           </div>
-          <TripFilters 
-            filters={filters} 
-            setFilters={setFilters} 
-          />
         </div>
 
         {viewMode === 'map' ? (
