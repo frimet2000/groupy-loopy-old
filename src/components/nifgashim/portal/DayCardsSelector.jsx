@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, MapPin, Mountain, CheckCircle2, Info, X } from 'lucide-react';
+import { Calendar, MapPin, Mountain, CheckCircle2, Info, X, Map, Download, Loader2 } from 'lucide-react';
 import { useLanguage } from '../../LanguageContext';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 export default function NifgashimDayCardsSelector({ 
   trekDays = [], 
   linkedDaysPairs = [], 
   selectedDays = [], 
   onDaysChange,
-  maxDays = 8 
+  maxDays = 8,
+  mapUrl = null
 }) {
   const { language, isRTL } = useLanguage();
   const [selectedDayForInfo, setSelectedDayForInfo] = useState(null);
+  const [showMap, setShowMap] = useState(false);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const pdfRef = useRef(null);
 
   const translations = {
     he: {
@@ -28,7 +35,11 @@ export default function NifgashimDayCardsSelector({
       km: "ק״מ",
       meters: "מ׳ טיפוס",
       readMore: "קרא עוד",
-      close: "סגור"
+      close: "סגור",
+      viewMap: "צפה במפה",
+      downloadPdf: "הורד PDF",
+      generating: "מכין קובץ...",
+      selectedDaysTitle: "ימי המסע שנבחרו"
     },
     en: {
       selectDays: "Select Your Trek Days",
@@ -43,11 +54,91 @@ export default function NifgashimDayCardsSelector({
       km: "km",
       meters: "m climb",
       readMore: "Read More",
-      close: "Close"
+      close: "Close",
+      viewMap: "View Map",
+      downloadPdf: "Download PDF",
+      generating: "Generating...",
+      selectedDaysTitle: "Selected Trek Days"
     }
   };
 
   const trans = translations[language] || translations.en;
+
+  const handleDownloadPDF = async () => {
+    if (selectedDays.length === 0) return;
+    
+    setIsGeneratingPdf(true);
+    
+    try {
+        // Wait a moment for images to potentially load if they were hidden (though here we use a hidden div that is always present but off-screen)
+        const element = pdfRef.current;
+        if (!element) return;
+
+        const canvas = await html2canvas(element, {
+            scale: 2, // Better quality
+            useCORS: true, // For images
+            logging: false,
+            direction: isRTL ? 'rtl' : 'ltr'
+        });
+        
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = pdfWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+        let heightLeft = imgHeight;
+        let position = 0;
+        
+        // First page
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pdfHeight;
+        
+        // Additional pages if content is long
+        while (heightLeft > 0) {
+            position = heightLeft - imgHeight; // This logic for multi-page in jsPDF with one long image is tricky. 
+            // Usually we just add new page and put the image shifted up.
+            // But let's try a simpler approach: 
+            // If it fits on one page, great. If not, the simple addImage cut might look weird.
+            // A robust solution slices the canvas or adds page. 
+            // For now, let's assume standard behavior:
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, -1 * (imgHeight - heightLeft), imgWidth, imgHeight); // This is approximate
+            heightLeft -= pdfHeight;
+        }
+        
+        // Better multi-page approach for long content:
+        // Actually, let's stick to single page if possible or just standard addImage which might stretch/cut.
+        // Given we are generating a list, let's rely on standard 'add page' logic if we were rendering text manually.
+        // But since we are screenshotting, let's stick to the basic implementation:
+        // If content is longer than 1 page:
+        if (imgHeight > pdfHeight) {
+             // Reset and do a simple loop
+             const pdf2 = new jsPDF('p', 'mm', 'a4');
+             let heightLeft2 = imgHeight;
+             let position2 = 0;
+             
+             pdf2.addImage(imgData, 'PNG', 0, position2, imgWidth, imgHeight);
+             heightLeft2 -= pdfHeight;
+             
+             while (heightLeft2 > 0) {
+                position2 -= pdfHeight; // Move the image up
+                pdf2.addPage();
+                pdf2.addImage(imgData, 'PNG', 0, position2, imgWidth, imgHeight);
+                heightLeft2 -= pdfHeight;
+             }
+             pdf2.save('trek-days.pdf');
+        } else {
+             pdf.save('trek-days.pdf');
+        }
+        
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+    } finally {
+        setIsGeneratingPdf(false);
+    }
+  };
 
   const isSelected = (dayId) => {
     return selectedDays.some(d => d.id === dayId);
@@ -139,11 +230,38 @@ export default function NifgashimDayCardsSelector({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">{trans.selectDays}</h2>
-        <div className={cn(
-          "px-4 py-2 rounded-full text-sm font-bold transition-colors",
-          isMaxReached ? "bg-red-100 text-red-700" : "bg-blue-50 text-blue-700"
-        )}>
-          {selectedDays.length} / {maxDays} {trans.selected}
+        <div className="flex items-center gap-3">
+          {selectedDays.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadPDF}
+              disabled={isGeneratingPdf}
+              className="gap-2 text-green-600 border-green-200 hover:bg-green-50"
+            >
+              {isGeneratingPdf ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4" />
+              )}
+              {isGeneratingPdf ? trans.generating : trans.downloadPdf}
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowMap(true)}
+            className="gap-2 text-indigo-600 border-indigo-200 hover:bg-indigo-50"
+          >
+            <Map className="w-4 h-4" />
+            {trans.viewMap}
+          </Button>
+          <div className={cn(
+            "px-4 py-2 rounded-full text-sm font-bold transition-colors",
+            isMaxReached ? "bg-red-100 text-red-700" : "bg-blue-50 text-blue-700"
+          )}>
+            {selectedDays.length} / {maxDays} {trans.selected}
+          </div>
         </div>
       </div>
 
@@ -366,6 +484,124 @@ export default function NifgashimDayCardsSelector({
           </>
         )}
       </AnimatePresence>
+
+      {/* Map Modal */}
+      <AnimatePresence>
+        {showMap && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowMap(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[80vh] overflow-hidden relative flex flex-col"
+            >
+              <div className="p-4 border-b flex items-center justify-between bg-gray-50">
+                <h3 className="font-bold text-lg flex items-center gap-2">
+                    <Map className="w-5 h-5 text-indigo-600" />
+                    {language === 'he' ? 'מפת המסלול' : 'Route Map'}
+                </h3>
+                <button
+                  onClick={() => setShowMap(false)}
+                  className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <div className="flex-1 w-full h-full bg-gray-100 relative">
+                  {mapUrl ? (
+                    <iframe 
+                      src={mapUrl}
+                      className="w-full h-full border-0"
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-gray-400 flex-col gap-4">
+                        <Map className="w-16 h-16 opacity-20" />
+                        <p>{language === 'he' ? 'מפה לא זמינה כרגע' : 'Map currently unavailable'}</p>
+                    </div>
+                  )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Hidden PDF Content */}
+      <div 
+        style={{ 
+          position: 'absolute', 
+          left: '-9999px', 
+          top: 0, 
+          width: '210mm', // A4 width
+          minHeight: '297mm', // A4 height
+          background: 'white', 
+          padding: '20mm',
+          direction: isRTL ? 'rtl' : 'ltr',
+          fontFamily: 'Arial, sans-serif' // Standard font
+        }} 
+        ref={pdfRef}
+      >
+          <h1 style={{ textAlign: 'center', marginBottom: '20px', fontSize: '24px', fontWeight: 'bold', color: '#333' }}>
+              {trans.selectedDaysTitle}
+          </h1>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {selectedDays.sort((a, b) => new Date(a.date) - new Date(b.date)).map((day, index) => (
+                  <div key={day.id} style={{ border: '1px solid #eee', padding: '20px', borderRadius: '8px', pageBreakInside: 'avoid', backgroundColor: '#fff' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>
+                          <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold', color: '#111' }}>{day.daily_title}</h3>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#666' }}>
+                              <Calendar style={{ width: '16px', height: '16px' }} />
+                              <span>{formatDate(day.date)}</span>
+                          </div>
+                      </div>
+                      
+                      <div style={{ display: 'flex', gap: '20px', marginBottom: '15px', fontSize: '14px', color: '#555', backgroundColor: '#f9fafb', padding: '10px', borderRadius: '6px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                              <span style={{ fontWeight: 'bold' }}>{trans.difficulty[day.difficulty] || day.difficulty}</span>
+                          </div>
+                          <div style={{ width: '1px', height: '20px', background: '#ddd' }} />
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                              <MapPin style={{ width: '16px', height: '16px' }} />
+                              <span>{day.daily_distance_km} {trans.km}</span>
+                          </div>
+                          {day.elevation_gain_m > 0 && (
+                            <>
+                              <div style={{ width: '1px', height: '20px', background: '#ddd' }} />
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                  <Mountain style={{ width: '16px', height: '16px' }} />
+                                  <span>{day.elevation_gain_m} {trans.meters}</span>
+                              </div>
+                            </>
+                          )}
+                      </div>
+                      
+                      {day.description && (
+                        <div 
+                          style={{ fontSize: '14px', lineHeight: '1.6', color: '#333' }} 
+                          dangerouslySetInnerHTML={{ 
+                              __html: day.description.includes('<') 
+                                ? day.description 
+                                : day.description.replace(/\n/g, '<br/>') 
+                          }} 
+                        />
+                      )}
+                  </div>
+              ))}
+          </div>
+          <div style={{ marginTop: '40px', textAlign: 'center', fontSize: '12px', color: '#999', borderTop: '1px solid #eee', paddingTop: '10px' }}>
+              Generated by Groupy
+          </div>
+      </div>
     </div>
   );
 }

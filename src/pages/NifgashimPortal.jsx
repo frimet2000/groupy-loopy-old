@@ -413,6 +413,10 @@ export default function NifgashimPortal() {
     });
   }, [nifgashimTrip]);
 
+  const trekMapUrl = React.useMemo(() => {
+    return nifgashimTrip?.map_url || nifgashimTrip?.map_image_url || null;
+  }, [nifgashimTrip]);
+
   const linkedDaysPairs = React.useMemo(() => {
     const pairs = nifgashimTrip?.linked_days_pairs || nifgashimTrip?.day_pairs || [];
     
@@ -906,6 +910,7 @@ export default function NifgashimPortal() {
                 selectedDays={selectedDays}
                 onDaysChange={setSelectedDays}
                 maxDays={nifgashimTrip?.payment_settings?.overall_max_selectable_days || 8}
+                mapUrl={trekMapUrl}
               />
             )}
 
