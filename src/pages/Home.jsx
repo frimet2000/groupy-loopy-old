@@ -27,7 +27,7 @@ export default function Home() {
   const navigate = useNavigate();
   const [filters, setFilters] = useState({
     search: '',
-    country: '',
+    country: 'israel',
     region: '',
     difficulty: '',
     duration_type: '',
@@ -104,15 +104,16 @@ export default function Home() {
     
     // Continent filter from dropdown
     if (selectedContinent !== 'all') {
-      const tripCountry = trip.country || 'israel'; // backward compatibility
+      const tripCountry = (trip.country || 'israel').toLowerCase();
       const tripContinent = getContinentForCountry(tripCountry);
       if (tripContinent !== selectedContinent) return false;
     }
     
-    if (filters.country && trip.country !== filters.country) {
-      // For backward compatibility, if trip has no country, assume israel
-      if (!trip.country && filters.country !== 'israel') return false;
-      if (trip.country && trip.country !== filters.country) return false;
+    if (filters.country) {
+      const filterCountry = filters.country.toLowerCase();
+      const tripCountry = (trip.country || 'israel').toLowerCase();
+      
+      if (tripCountry !== filterCountry) return false;
     }
     if (filters.region && trip.region !== filters.region) return false;
     if (filters.difficulty && trip.difficulty !== filters.difficulty) return false;

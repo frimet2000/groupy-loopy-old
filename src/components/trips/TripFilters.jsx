@@ -12,7 +12,6 @@ import { Card } from "@/components/ui/card";
 import { SlidersHorizontal, X, Search, RotateCcw, Sparkles, MapPin, Calendar as CalendarIcon, TrendingUp } from 'lucide-react';
 import { getAllCountries, getCountryRegions } from '../utils/CountryRegions';
 import { motion, AnimatePresence } from 'framer-motion';
-import { detectCountryFromLocation } from '../utils/LocationDetector';
 const difficulties = ['easy', 'moderate', 'challenging', 'hard'];
 const durations = ['hours', 'half_day', 'full_day', 'overnight', 'multi_day'];
 const activityTypes = ['hiking', 'cycling', 'offroad'];
@@ -30,19 +29,6 @@ export default function TripFilters({ filters, setFilters, onSearch = () => {}, 
   const filteredCountries = countries.filter(c => 
     t(c).toLowerCase().includes(countrySearch.toLowerCase())
   );
-
-  // Auto-detect country on mount if not set
-  useEffect(() => {
-    const initializeCountry = async () => {
-      if (!filters.country) {
-        const detectedCountry = await detectCountryFromLocation();
-        if (detectedCountry) {
-          setFilters(prev => ({ ...prev, country: detectedCountry }));
-        }
-      }
-    };
-    initializeCountry();
-  }, []);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
