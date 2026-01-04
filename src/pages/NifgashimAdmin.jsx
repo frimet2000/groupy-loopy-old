@@ -1236,13 +1236,31 @@ export default function NifgashimAdmin() {
                                       {reg.user_email}
                                     </h3>
                                     <div className="flex flex-wrap gap-1 sm:gap-2">
-                                      <Badge className={getStatusColor(reg.registration_status)}>
-                                        {trans[reg.registration_status] || reg.registration_status}
+                                      <Badge className={getPaymentStatusColor(reg.payment_status)}>
+                                        {trans[reg.payment_status] || reg.payment_status}
                                       </Badge>
                                       {reg.is_organized_group && (
-                                        <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-300">
-                                          <UsersRound className="w-3 h-3 mr-1" />
-                                          {reg.group_name || trans.organizedGroups}
+                                        <>
+                                          <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-300">
+                                            <UsersRound className="w-3 h-3 mr-1" />
+                                            {reg.group_name || trans.organizedGroups}
+                                          </Badge>
+                                          {reg.group_approval_status === 'pending' && (
+                                            <Badge className="bg-red-500 text-white animate-pulse">
+                                              {language === 'he' ? 'ממתין לאישור' : 'Needs Approval'}
+                                            </Badge>
+                                          )}
+                                          {reg.group_approval_status === 'approved' && (
+                                            <Badge className="bg-green-500 text-white">
+                                              {language === 'he' ? 'אושר' : 'Approved'}
+                                            </Badge>
+                                          )}
+                                        </>
+                                      )}
+                                      {reg.vehicle_number && (
+                                        <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">
+                                          <MapPin className="w-3 h-3 mr-1" />
+                                          {reg.vehicle_number}
                                         </Badge>
                                       )}
                                     </div>
@@ -1263,9 +1281,7 @@ export default function NifgashimAdmin() {
                                     </div>
                                     <div className="flex items-center gap-1">
                                       <DollarSign className="w-3 h-3 sm:w-4 sm:h-4" />
-                                      <Badge className={`border text-xs ${getPaymentStatusColor(reg.payment_status)}`}>
-                                        ₪{reg.total_amount || 0}
-                                      </Badge>
+                                      ₪{reg.total_amount || reg.amount || 0}
                                     </div>
                                   </div>
                                 </div>
@@ -1340,6 +1356,83 @@ export default function NifgashimAdmin() {
                                     exit={{ opacity: 0, height: 0 }}
                                     className="mt-4 pt-4 border-t space-y-3"
                                   >
+                                    {/* Payment & Registration Info */}
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                      <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-3 border border-green-200">
+                                        <p className="text-xs font-semibold text-green-900 mb-1">
+                                          {language === 'he' ? 'סכום כולל' : 'Total Amount'}
+                                        </p>
+                                        <p className="text-lg font-bold text-green-700">₪{reg.total_amount || reg.amount || 0}</p>
+                                      </div>
+                                      {reg.amount_paid !== undefined && (
+                                        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-3 border border-blue-200">
+                                          <p className="text-xs font-semibold text-blue-900 mb-1">
+                                            {language === 'he' ? 'שולם' : 'Paid'}
+                                          </p>
+                                          <p className="text-lg font-bold text-blue-700">₪{reg.amount_paid || 0}</p>
+                                        </div>
+                                      )}
+                                      {reg.transaction_id && (
+                                        <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-lg p-3 border border-purple-200">
+                                          <p className="text-xs font-semibold text-purple-900 mb-1">
+                                            {language === 'he' ? 'מס\' עסקה' : 'Transaction ID'}
+                                          </p>
+                                          <p className="text-xs text-purple-700 font-mono truncate">{reg.transaction_id}</p>
+                                        </div>
+                                      )}
+                                      {reg.created_date && (
+                                        <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-lg p-3 border border-gray-200">
+                                          <p className="text-xs font-semibold text-gray-900 mb-1">
+                                            {language === 'he' ? 'תאריך רישום' : 'Registered'}
+                                          </p>
+                                          <p className="text-xs text-gray-700">{format(new Date(reg.created_date), 'dd/MM/yy HH:mm')}</p>
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    {/* Vehicle Info */}
+                                    {(reg.vehicle_number || reg.vehicle_info) && (
+                                      <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-lg p-3 border-2 border-indigo-200">
+                                        <p className="text-xs font-semibold text-indigo-900 mb-2 flex items-center gap-1">
+                                          <MapPin className="w-4 h-4" />
+                                          {language === 'he' ? 'פרטי רכב' : 'Vehicle Info'}
+                                        </p>
+                                        <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm text-indigo-700">
+                                          {reg.vehicle_number && (
+                                            <div>
+                                              <span className="font-semibold">{language === 'he' ? 'מספר רכב:' : 'License Plate:'}</span> {reg.vehicle_number}
+                                            </div>
+                                          )}
+                                          {reg.vehicle_info?.hasVehicle !== undefined && (
+                                            <div>
+                                              <span className="font-semibold">{language === 'he' ? 'יש רכב:' : 'Has Vehicle:'}</span> {reg.vehicle_info.hasVehicle ? '✓' : '✗'}
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Group Info */}
+                                    {reg.is_organized_group && (
+                                      <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-lg p-3 border-2 border-orange-200">
+                                        <p className="text-xs font-semibold text-orange-900 mb-2 flex items-center gap-1">
+                                          <UsersRound className="w-4 h-4" />
+                                          {language === 'he' ? 'פרטי קבוצה' : 'Group Info'}
+                                        </p>
+                                        <div className="space-y-1 text-xs sm:text-sm text-orange-700">
+                                          {reg.group_name && (
+                                            <div><span className="font-semibold">{language === 'he' ? 'שם:' : 'Name:'}</span> {reg.group_name}</div>
+                                          )}
+                                          {reg.group_type && (
+                                            <div><span className="font-semibold">{language === 'he' ? 'סוג:' : 'Type:'}</span> {trans[reg.group_type] || reg.group_type}</div>
+                                          )}
+                                          {reg.group_approval_status && (
+                                            <div><span className="font-semibold">{language === 'he' ? 'סטטוס:' : 'Status:'}</span> {trans[reg.group_approval_status] || reg.group_approval_status}</div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    )}
+
                                     {/* Selected Days */}
                                     <div>
                                       <p className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">{trans.selectedDays}:</p>
@@ -1373,6 +1466,27 @@ export default function NifgashimAdmin() {
                                       </div>
                                     )}
 
+                                    {/* Participants List */}
+                                    {reg.participants && reg.participants.length > 0 && (
+                                      <div>
+                                        <p className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">
+                                          {language === 'he' ? 'רשימת משתתפים:' : 'Participants:'}
+                                        </p>
+                                        <div className="space-y-2">
+                                          {reg.participants.map((p, i) => (
+                                            <div key={i} className="bg-gray-50 rounded-lg p-2 sm:p-3 text-xs sm:text-sm">
+                                              <div className="font-semibold text-gray-900">{p.name || p.email}</div>
+                                              <div className="grid grid-cols-2 gap-1 text-gray-600 mt-1">
+                                                {p.id_number && <div><span className="font-semibold">ת.ז:</span> {p.id_number}</div>}
+                                                {p.phone && <div><span className="font-semibold">{language === 'he' ? 'טלפון:' : 'Phone:'}</span> {p.phone}</div>}
+                                                {p.age && <div><span className="font-semibold">{language === 'he' ? 'גיל:' : 'Age:'}</span> {p.age}</div>}
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+
                                     {/* Family Members */}
                                     {(reg.family_members || reg.children_details?.length > 0) && (
                                       <div>
@@ -1387,7 +1501,10 @@ export default function NifgashimAdmin() {
                                               <p className="font-semibold mb-1">{trans.childDetails}:</p>
                                               {reg.children_details.map((child, i) => (
                                                 <div key={i} className="ml-2">
-                                                  • {child.full_name} ({child.age} {language === 'he' ? 'שנים' : 'years'})
+                                                  • {child.full_name} 
+                                                  {child.age && ` (${child.age} ${language === 'he' ? 'שנים' : 'years'})`}
+                                                  {child.id_number && ` - ת.ז: ${child.id_number}`}
+                                                  {child.age_range && ` - ${child.age_range}`}
                                                 </div>
                                               ))}
                                             </div>
@@ -1399,7 +1516,7 @@ export default function NifgashimAdmin() {
                                     {/* Emergency & Medical */}
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                       {reg.emergency_contact_name && (
-                                        <div className="bg-blue-50 rounded-lg p-2 sm:p-3">
+                                        <div className="bg-blue-50 rounded-lg p-2 sm:p-3 border border-blue-200">
                                           <p className="text-xs font-semibold text-blue-900 mb-1">{trans.emergencyContact}:</p>
                                           <p className="text-xs sm:text-sm text-blue-700">{reg.emergency_contact_name}</p>
                                           {reg.emergency_contact_phone && (
@@ -1408,13 +1525,13 @@ export default function NifgashimAdmin() {
                                         </div>
                                       )}
                                       {reg.dietary_restrictions && (
-                                        <div className="bg-green-50 rounded-lg p-2 sm:p-3">
+                                        <div className="bg-green-50 rounded-lg p-2 sm:p-3 border border-green-200">
                                           <p className="text-xs font-semibold text-green-900 mb-1">{trans.dietary}:</p>
                                           <p className="text-xs sm:text-sm text-green-700">{reg.dietary_restrictions}</p>
                                         </div>
                                       )}
                                       {reg.medical_conditions && (
-                                        <div className="bg-red-50 rounded-lg p-2 sm:p-3">
+                                        <div className="bg-red-50 rounded-lg p-2 sm:p-3 border border-red-200">
                                           <p className="text-xs font-semibold text-red-900 mb-1">{trans.medical}:</p>
                                           <p className="text-xs sm:text-sm text-red-700">{reg.medical_conditions}</p>
                                         </div>
