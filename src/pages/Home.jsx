@@ -16,7 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, 
-  Share2, SlidersHorizontal, List, Globe, Heart, Radio, Bike, Mountain, 
+  Share2, List, Globe, Heart, Radio, Bike, Mountain, 
   Truck, History, CreditCard, BookOpen 
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -31,7 +31,7 @@ export default function Home() {
   const navigate = useNavigate();
   const [filters, setFilters] = useState({
     search: '',
-    country: '',
+    country: 'israel',
     region: '',
     difficulty: '',
     duration_type: '',
@@ -138,7 +138,30 @@ export default function Home() {
     
     if (filters.country) {
       const filterCountry = filters.country.toLowerCase();
-      const tripCountry = (trip.country || 'israel').toLowerCase();
+      let tripCountry = (trip.country || '').toLowerCase();
+      
+      // Smart detection for trips with missing country
+      if (!tripCountry) {
+        // If no country, try to infer from region
+        if (trip.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(trip.region)) {
+          tripCountry = 'israel';
+        } else {
+          // If we can't infer, assume Israel ONLY if the filter is Israel (legacy support)
+          // BUT exclude if it has a known non-Israel region
+          const knownNonIsraelRegions = [
+            'scotland', 'london', 'wales', // UK
+            'bavaria', 'berlin', // Germany
+            'tuscany', 'sicily', // Italy
+            'alp', 'pyrenees', // France
+            'northeast', 'southeast', 'midwest', 'west' // USA (generic but safer to exclude)
+          ];
+          
+          const isKnownNonIsrael = knownNonIsraelRegions.some(r => trip.region?.toLowerCase().includes(r));
+          if (!isKnownNonIsrael) {
+             tripCountry = 'israel';
+          }
+        }
+      }
       
       if (tripCountry !== filterCountry) return false;
     }
@@ -847,15 +870,6 @@ export default function Home() {
                   </Link>
                 </>
               )}
-              <Button
-                variant="outline"
-                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                className="gap-1 sm:gap-2 h-10 sm:h-11 px-2 sm:px-4 text-xs sm:text-sm min-h-[44px] touch-manipulation"
-              >
-                <SlidersHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">{language === 'he' ? 'סינון מתקדם' : language === 'ru' ? 'Расширенные фильтры' : language === 'es' ? 'Filtros avanzados' : language === 'fr' ? 'Filtres avancés' : language === 'de' ? 'Erweiterte Filter' : language === 'it' ? 'Filtri avanzati' : 'Advanced Filters'}</span>
-                <span className="sm:hidden">{language === 'he' ? 'סינון' : language === 'ru' ? 'Фильтры' : language === 'es' ? 'Filtros' : language === 'fr' ? 'Filtres' : language === 'de' ? 'Filter' : language === 'it' ? 'Filtri' : 'Filters'}</span>
-              </Button>
               {viewMode === 'grid' && (
                 <div className="flex items-center gap-1 sm:gap-2 w-full sm:w-auto">
                   <span className="text-xs sm:text-sm text-gray-600 hidden sm:inline">
@@ -881,7 +895,6 @@ export default function Home() {
           <TripFilters 
             filters={filters} 
             setFilters={setFilters} 
-            showAdvanced={showAdvancedFilters}
           />
         </div>
 

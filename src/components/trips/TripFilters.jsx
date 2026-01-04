@@ -1,30 +1,39 @@
 // @ts-nocheck
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from '../LanguageContext';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Slider } from "@/components/ui/slider";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { SlidersHorizontal, X, Search, RotateCcw, Sparkles, MapPin, Calendar as CalendarIcon, TrendingUp } from 'lucide-react';
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { 
+  SlidersHorizontal, Search, RotateCcw, MapPin, Calendar as CalendarIcon, 
+  TrendingUp, Sparkles, Filter, X 
+} from 'lucide-react';
 import { getAllCountries, getCountryRegions } from '../utils/CountryRegions';
 import { motion, AnimatePresence } from 'framer-motion';
+
 const difficulties = ['easy', 'moderate', 'challenging', 'hard'];
 const durations = ['hours', 'half_day', 'full_day', 'overnight', 'multi_day'];
 const activityTypes = ['hiking', 'cycling', 'offroad'];
 const trailTypes = ['water', 'full_shade', 'partial_shade', 'desert', 'forest', 'coastal', 'mountain', 'historical', 'urban'];
 const interests = ['nature', 'history', 'photography', 'birdwatching', 'archaeology', 'geology', 'botany', 'extreme_sports', 'family_friendly', 'romantic'];
 
-export default function TripFilters({ filters, setFilters, onSearch = () => {}, showAdvanced }) {
+export default function TripFilters({ filters, setFilters, showAdvanced }) {
   const { t, isRTL, language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(filters.search || '');
   const [countrySearch, setCountrySearch] = useState('');
   
+  // Sync with prop if provided, but allow internal toggle
+  React.useEffect(() => {
+    if (showAdvanced !== undefined) {
+      setIsOpen(showAdvanced);
+    }
+  }, [showAdvanced]);
+
   const countries = getAllCountries().sort((a, b) => t(a).localeCompare(t(b)));
   const regions = filters.country ? getCountryRegions(filters.country) : getCountryRegions('israel');
   const filteredCountries = countries.filter(c => 
@@ -36,290 +45,253 @@ export default function TripFilters({ filters, setFilters, onSearch = () => {}, 
   };
 
   const clearFilters = () => {
-    setFilters({});
-    setSearchTerm('');
-  };
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    handleFilterChange('search', searchTerm);
+    setFilters(prev => ({
+      ...prev,
+      region: '',
+      difficulty: '',
+      duration_type: '',
+      activity_type: '',
+      date_from: null,
+      date_to: null,
+      trail_type: [],
+      interests: [],
+      pets_allowed: false,
+      camping_available: false,
+      available_spots: false
+    }));
   };
 
   const activeFiltersCount = Object.keys(filters).filter(k => 
+    k !== 'search' && k !== 'country' && 
     filters[k] && (Array.isArray(filters[k]) ? filters[k].length > 0 : true)
   ).length;
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-4"
-    >
-      {/* Search Bar */}
-      <form onSubmit={handleSearchSubmit} className="flex gap-3">
-        <motion.div 
-          className="relative flex-1"
-          whileHover={{ scale: 1.01 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
+    <div className="space-y-4">
+      {/* Search Bar & Toggle */}
+      <div className="flex gap-3">
+        <div className="relative flex-1">
           <div className={`absolute ${isRTL ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2`}>
-            <motion.div 
-              className="p-2 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl shadow-lg"
-              animate={{ 
-                boxShadow: ['0 0 0 0 rgba(16,185,129,0.4)', '0 0 0 8px rgba(16,185,129,0)', '0 0 0 0 rgba(16,185,129,0)']
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              <Search className="w-5 h-5 text-white" />
-            </motion.div>
+            <Search className="w-5 h-5 text-gray-400" />
           </div>
           <Input
             placeholder={t('search') + '...'}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={`${isRTL ? 'pr-16 md:pr-20' : 'pl-16 md:pl-20'} h-12 md:h-14 text-base bg-white/90 backdrop-blur-xl border-2 border-gray-200/50 focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 rounded-2xl shadow-lg hover:shadow-xl transition-all font-medium`}
+            value={filters.search || ''}
+            onChange={(e) => handleFilterChange('search', e.target.value)}
+            className={`${isRTL ? 'pr-12' : 'pl-12'} h-12 text-lg bg-white shadow-sm border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-xl transition-all`}
           />
-        </motion.div>
+        </div>
         
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button 
-                variant="outline" 
-                className="h-12 md:h-14 px-4 md:px-6 bg-gradient-to-r from-white to-gray-50/80 backdrop-blur-xl border-2 border-gray-200/50 hover:border-emerald-400 hover:from-emerald-50 hover:to-teal-50 rounded-2xl shadow-lg hover:shadow-xl transition-all group"
-              >
-                <motion.div 
-                  className="p-1.5 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl shadow-md"
-                  whileHover={{ rotate: 90 }}
-                  transition={{ duration: 0.3 }}
+        <Button 
+          onClick={() => setIsOpen(!isOpen)}
+          variant={isOpen ? "secondary" : "outline"}
+          className={`h-12 px-6 gap-2 rounded-xl shadow-sm border-2 ${isOpen ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-white border-gray-200 hover:border-emerald-200 hover:text-emerald-600'}`}
+        >
+          <SlidersHorizontal className="w-5 h-5" />
+          <span className="hidden sm:inline font-semibold">{t('filter')}</span>
+          {activeFiltersCount > 0 && (
+            <span className="bg-emerald-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+              {activeFiltersCount}
+            </span>
+          )}
+        </Button>
+      </div>
+
+      {/* Expandable Filters Panel */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <Card className="p-6 bg-white border-2 border-gray-100 shadow-lg rounded-2xl">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-bold flex items-center gap-2 text-gray-800">
+                  <Filter className="w-5 h-5 text-emerald-600" />
+                  {language === 'he' ? 'סינון מתקדם' : 'Advanced Filters'}
+                </h3>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={clearFilters}
+                  className="text-gray-500 hover:text-red-600 hover:bg-red-50"
                 >
-                  <SlidersHorizontal className="w-4 h-4 md:w-5 md:h-5 text-white" />
-                </motion.div>
-                <span className="hidden sm:inline ml-2 font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                  {t('filter')}
-                </span>
-                {activeFiltersCount > 0 && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="ml-2"
-                  >
-                    <Badge className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg px-2.5 py-0.5 font-bold">
-                      {activeFiltersCount}
-                    </Badge>
-                  </motion.div>
-                )}
-              </Button>
-            </motion.div>
-          </SheetTrigger>
-          
-          <SheetContent side={isRTL ? 'right' : 'left'} className="w-full sm:max-w-md overflow-y-auto bg-gradient-to-br from-gray-50 to-white z-[100]">
-            <SheetHeader className="mb-6">
-              <SheetTitle className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl">
-                    <Sparkles className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                    {t('filter')}
-                  </span>
-                </div>
-                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={clearFilters} 
-                    className="text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-xl"
-                  >
-                    <RotateCcw className="w-4 h-4 mr-1" />
-                    {t('clear')}
-                  </Button>
-                </motion.div>
-              </SheetTitle>
-            </SheetHeader>
-            
-            <div className="space-y-5">
-              {/* Country */}
-              <Card className="p-4 bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-md hover:shadow-lg transition-all">
-                <Label className="text-sm font-bold flex items-center gap-2 mb-3">
-                  <MapPin className="w-4 h-4 text-emerald-600" />
-                  {t('country')}
-                </Label>
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  {t('clear')}
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Country Selection */}
                 <div className="space-y-2">
-                  <Input
-                    placeholder={
-                      language === 'he' ? 'חפש מדינה...' :
-                      language === 'ru' ? 'Поиск страны...' :
-                      language === 'es' ? 'Buscar país...' :
-                      language === 'fr' ? 'Rechercher pays...' :
-                      language === 'de' ? 'Land suchen...' :
-                      language === 'it' ? 'Cerca paese...' :
-                      'Search country...'
-                    }
-                    value={countrySearch}
-                    onChange={(e) => setCountrySearch(e.target.value)}
-                    className="h-10 border-2 hover:border-emerald-300 rounded-xl"
-                    dir={isRTL ? 'rtl' : 'ltr'}
-                  />
+                  <Label className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <MapPin className="w-4 h-4 text-emerald-500" />
+                    {t('country')}
+                  </Label>
+                  <div className="space-y-2">
+                    <Input
+                      placeholder={language === 'he' ? 'חפש מדינה...' : 'Search country...'}
+                      value={countrySearch}
+                      onChange={(e) => setCountrySearch(e.target.value)}
+                      className="h-10 text-sm"
+                    />
+                    <Select 
+                      value={filters.country || 'israel'} 
+                      onValueChange={(v) => {
+                        handleFilterChange('country', v);
+                        if (v !== filters.country) handleFilterChange('region', '');
+                        setCountrySearch('');
+                      }}
+                    >
+                      <SelectTrigger className="h-11 bg-gray-50/50">
+                        <SelectValue placeholder={t('selectCountry')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {filteredCountries.map(c => (
+                          <SelectItem key={c} value={c}>{t(c)}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Region Selection */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <MapPin className="w-4 h-4 text-blue-500" />
+                    {t('region')}
+                  </Label>
                   <Select 
-                    value={filters.country || 'israel'} 
-                    onValueChange={(v) => {
-                      handleFilterChange('country', v);
-                      if (v !== filters.country) {
-                        handleFilterChange('region', '');
-                      }
-                      setCountrySearch('');
-                    }}
+                    value={filters.region || ''} 
+                    onValueChange={(v) => handleFilterChange('region', v === 'all' ? '' : v)}
                   >
-                    <SelectTrigger className="h-12 border-2 hover:border-emerald-400 rounded-xl transition-all">
-                      <SelectValue placeholder={t('selectCountry')} />
+                    <SelectTrigger className="h-11 bg-gray-50/50">
+                      <SelectValue placeholder={t('allRegions')} />
                     </SelectTrigger>
-                    <SelectContent className="max-h-[300px] z-[150]">
-                      {filteredCountries.map(c => (
-                        <SelectItem key={c} value={c}>{t(c)}</SelectItem>
+                    <SelectContent>
+                      <SelectItem value="all">{t('allRegions')}</SelectItem>
+                      {regions.map(r => (
+                        <SelectItem key={r} value={r}>{t(r)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-              </Card>
 
-              {/* Region */}
-              <Card className="p-4 bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-md hover:shadow-lg transition-all">
-                <Label className="text-sm font-bold flex items-center gap-2 mb-3">
-                  <MapPin className="w-4 h-4 text-blue-600" />
-                  {t('region')}
-                </Label>
-                <Select 
-                  value={filters.region || ''} 
-                  onValueChange={(v) => handleFilterChange('region', v === 'all' ? '' : v)}
-                >
-                  <SelectTrigger className="h-12 border-2 hover:border-blue-400 rounded-xl transition-all">
-                    <SelectValue placeholder={t('allRegions')} />
-                  </SelectTrigger>
-                  <SelectContent className="z-[150]">
-                    <SelectItem value="all">{t('allRegions')}</SelectItem>
-                    {regions.map(r => (
-                      <SelectItem key={r} value={r}>{t(r)}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Card>
-
-              {/* Difficulty */}
-              <Card className="p-4 bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-md hover:shadow-lg transition-all">
-                <Label className="text-sm font-bold flex items-center gap-2 mb-3">
-                  <TrendingUp className="w-4 h-4 text-orange-600" />
-                  {t('difficulty')}
-                </Label>
-                <Select 
-                  value={filters.difficulty || ''} 
-                  onValueChange={(v) => handleFilterChange('difficulty', v === 'all' ? '' : v)}
-                >
-                  <SelectTrigger className="h-12 border-2 hover:border-orange-400 rounded-xl transition-all">
-                    <SelectValue placeholder={t('allDifficulties')} />
-                  </SelectTrigger>
-                  <SelectContent className="z-[150]">
-                    <SelectItem value="all">{t('allDifficulties')}</SelectItem>
-                    {difficulties.map(d => (
-                      <SelectItem key={d} value={d}>{t(d)}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Card>
-
-              {/* Duration */}
-              <Card className="p-4 bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-md hover:shadow-lg transition-all">
-                <Label className="text-sm font-bold flex items-center gap-2 mb-3">
-                  <CalendarIcon className="w-4 h-4 text-purple-600" />
-                  {t('duration')}
-                </Label>
-                <Select 
-                  value={filters.duration_type || ''} 
-                  onValueChange={(v) => handleFilterChange('duration_type', v === 'all' ? '' : v)}
-                >
-                  <SelectTrigger className="h-12 border-2 hover:border-purple-400 rounded-xl transition-all">
-                    <SelectValue placeholder={t('allDurations')} />
-                  </SelectTrigger>
-                  <SelectContent className="z-[150]">
-                    <SelectItem value="all">{t('allDurations')}</SelectItem>
-                    {durations.map(d => (
-                      <SelectItem key={d} value={d}>{t(d)}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Card>
-
-              {/* Activity Type */}
-              <Card className="p-4 bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-md hover:shadow-lg transition-all">
-                <Label className="text-sm font-bold flex items-center gap-2 mb-3">
-                  <Sparkles className="w-4 h-4 text-pink-600" />
-                  {t('activityType')}
-                </Label>
-                <Select 
-                  value={filters.activity_type || ''} 
-                  onValueChange={(v) => handleFilterChange('activity_type', v === 'all' ? '' : v)}
-                >
-                  <SelectTrigger className="h-12 border-2 hover:border-pink-400 rounded-xl transition-all">
-                    <SelectValue placeholder={t('activityType')} />
-                  </SelectTrigger>
-                  <SelectContent className="z-[150]">
-                    <SelectItem value="all">{language === 'he' ? 'כל הסוגים' : 'All Types'}</SelectItem>
-                    {activityTypes.map(a => (
-                      <SelectItem key={a} value={a}>{t(a)}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </Card>
-
-              {/* Date Range */}
-              <Card className="p-4 bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-md hover:shadow-lg transition-all">
-                <Label className="text-sm font-bold flex items-center gap-2 mb-3">
-                  <CalendarIcon className="w-4 h-4 text-indigo-600" />
-                  {t('dateRange')}
-                </Label>
-                <div className="space-y-3">
-                  <div className="space-y-2">
-                    <Label className="text-xs font-semibold text-gray-600">{t('from')}</Label>
-                    <Input
-                      type="date"
-                      value={filters.date_from || ''}
-                      onChange={(e) => handleFilterChange('date_from', e.target.value)}
-                      className="h-11 border-2 hover:border-indigo-400 rounded-xl transition-all"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-semibold text-gray-600">{t('to')}</Label>
-                    <Input
-                      type="date"
-                      value={filters.date_to || ''}
-                      onChange={(e) => handleFilterChange('date_to', e.target.value)}
-                      className="h-11 border-2 hover:border-indigo-400 rounded-xl transition-all"
-                    />
+                {/* Date Range */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <CalendarIcon className="w-4 h-4 text-indigo-500" />
+                    {t('dateRange')}
+                  </Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label className="text-xs text-gray-500 mb-1 block">{t('from')}</Label>
+                      <Input
+                        type="date"
+                        value={filters.date_from || ''}
+                        onChange={(e) => handleFilterChange('date_from', e.target.value)}
+                        className="h-11 bg-gray-50/50"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-gray-500 mb-1 block">{t('to')}</Label>
+                      <Input
+                        type="date"
+                        value={filters.date_to || ''}
+                        onChange={(e) => handleFilterChange('date_to', e.target.value)}
+                        className="h-11 bg-gray-50/50"
+                      />
+                    </div>
                   </div>
                 </div>
-              </Card>
 
-              {/* Trail Types */}
-              <Card className="p-4 bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-md hover:shadow-lg transition-all">
-                <Label className="text-sm font-bold flex items-center gap-2 mb-3">
-                  <Sparkles className="w-4 h-4 text-teal-600" />
-                  {t('trailType')}
-                </Label>
-                <div className="flex flex-wrap gap-2">
-                  {trailTypes.map(type => (
-                    <motion.div
-                      key={type}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
+                {/* Difficulty */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <TrendingUp className="w-4 h-4 text-orange-500" />
+                    {t('difficulty')}
+                  </Label>
+                  <Select 
+                    value={filters.difficulty || ''} 
+                    onValueChange={(v) => handleFilterChange('difficulty', v === 'all' ? '' : v)}
+                  >
+                    <SelectTrigger className="h-11 bg-gray-50/50">
+                      <SelectValue placeholder={t('allDifficulties')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t('allDifficulties')}</SelectItem>
+                      {difficulties.map(d => (
+                        <SelectItem key={d} value={d}>{t(d)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Duration */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <CalendarIcon className="w-4 h-4 text-purple-500" />
+                    {t('duration')}
+                  </Label>
+                  <Select 
+                    value={filters.duration_type || ''} 
+                    onValueChange={(v) => handleFilterChange('duration_type', v === 'all' ? '' : v)}
+                  >
+                    <SelectTrigger className="h-11 bg-gray-50/50">
+                      <SelectValue placeholder={t('allDurations')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t('allDurations')}</SelectItem>
+                      {durations.map(d => (
+                        <SelectItem key={d} value={d}>{t(d)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Activity Type */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <Sparkles className="w-4 h-4 text-pink-500" />
+                    {t('activityType')}
+                  </Label>
+                  <Select 
+                    value={filters.activity_type || ''} 
+                    onValueChange={(v) => handleFilterChange('activity_type', v === 'all' ? '' : v)}
+                  >
+                    <SelectTrigger className="h-11 bg-gray-50/50">
+                      <SelectValue placeholder={t('activityType')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{language === 'he' ? 'כל הסוגים' : 'All Types'}</SelectItem>
+                      {activityTypes.map(a => (
+                        <SelectItem key={a} value={a}>{t(a)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <Separator className="my-6" />
+
+              <div className="space-y-6">
+                {/* Trail Types */}
+                <div>
+                  <Label className="text-sm font-semibold flex items-center gap-2 mb-3 text-gray-700">
+                    <Sparkles className="w-4 h-4 text-teal-600" />
+                    {t('trailType')}
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {trailTypes.map(type => (
                       <Badge
+                        key={type}
                         variant={filters.trail_type?.includes(type) ? 'default' : 'outline'}
-                        className={`cursor-pointer transition-all shadow-sm ${
+                        className={`cursor-pointer transition-all ${
                           filters.trail_type?.includes(type) 
-                            ? 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg' 
+                            ? 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white border-0' 
                             : 'hover:border-emerald-400 hover:text-emerald-600 hover:bg-emerald-50'
                         }`}
                         onClick={() => {
@@ -332,29 +304,24 @@ export default function TripFilters({ filters, setFilters, onSearch = () => {}, 
                       >
                         {t(type)}
                       </Badge>
-                    </motion.div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </Card>
 
-              {/* Interests */}
-              <Card className="p-4 bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-md hover:shadow-lg transition-all">
-                <Label className="text-sm font-bold flex items-center gap-2 mb-3">
-                  <Sparkles className="w-4 h-4 text-blue-600" />
-                  {t('interests')}
-                </Label>
-                <div className="flex flex-wrap gap-2">
-                  {interests.map(interest => (
-                    <motion.div
-                      key={interest}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
+                {/* Interests */}
+                <div>
+                  <Label className="text-sm font-semibold flex items-center gap-2 mb-3 text-gray-700">
+                    <Sparkles className="w-4 h-4 text-blue-600" />
+                    {t('interests')}
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {interests.map(interest => (
                       <Badge
+                        key={interest}
                         variant={filters.interests?.includes(interest) ? 'default' : 'outline'}
-                        className={`cursor-pointer transition-all shadow-sm ${
+                        className={`cursor-pointer transition-all ${
                           filters.interests?.includes(interest) 
-                            ? 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg' 
+                            ? 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white border-0' 
                             : 'hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50'
                         }`}
                         onClick={() => {
@@ -367,73 +334,59 @@ export default function TripFilters({ filters, setFilters, onSearch = () => {}, 
                       >
                         {t(interest)}
                       </Badge>
-                    </motion.div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </Card>
 
-              {/* Boolean Filters */}
-              <Card className="p-4 bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-md hover:shadow-lg transition-all">
-                <div className="space-y-4">
-                  <motion.div 
-                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all cursor-pointer"
-                    whileHover={{ x: 5 }}
-                  >
+                {/* Boolean Filters */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-all cursor-pointer bg-gray-50/50">
                     <Checkbox
                       id="pets"
                       checked={filters.pets_allowed || false}
                       onCheckedChange={(checked) => handleFilterChange('pets_allowed', checked)}
-                      className="data-[state=checked]:bg-gradient-to-br data-[state=checked]:from-emerald-500 data-[state=checked]:to-teal-600 border-2"
+                      className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
                     />
-                    <Label htmlFor="pets" className="cursor-pointer font-medium">{t('petsAllowed')}</Label>
-                  </motion.div>
+                    <Label htmlFor="pets" className="cursor-pointer font-medium text-sm">{t('petsAllowed')}</Label>
+                  </div>
                   
-                  <motion.div 
-                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all cursor-pointer"
-                    whileHover={{ x: 5 }}
-                  >
+                  <div className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-all cursor-pointer bg-gray-50/50">
                     <Checkbox
                       id="camping"
                       checked={filters.camping_available || false}
                       onCheckedChange={(checked) => handleFilterChange('camping_available', checked)}
-                      className="data-[state=checked]:bg-gradient-to-br data-[state=checked]:from-emerald-500 data-[state=checked]:to-teal-600 border-2"
+                      className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
                     />
-                    <Label htmlFor="camping" className="cursor-pointer font-medium">{t('campingAvailable')}</Label>
-                  </motion.div>
+                    <Label htmlFor="camping" className="cursor-pointer font-medium text-sm">{t('campingAvailable')}</Label>
+                  </div>
 
-                  <motion.div 
-                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all cursor-pointer"
-                    whileHover={{ x: 5 }}
-                  >
+                  <div className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-all cursor-pointer bg-gray-50/50">
                     <Checkbox
                       id="available_spots"
                       checked={filters.available_spots || false}
                       onCheckedChange={(checked) => handleFilterChange('available_spots', checked)}
-                      className="data-[state=checked]:bg-gradient-to-br data-[state=checked]:from-emerald-500 data-[state=checked]:to-teal-600 border-2"
+                      className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
                     />
-                    <Label htmlFor="available_spots" className="cursor-pointer font-medium">
-                      {language === 'he' ? 'רק טיולים עם מקומות פנויים' : 'Only trips with available spots'}
+                    <Label htmlFor="available_spots" className="cursor-pointer font-medium text-sm">
+                      {language === 'he' ? 'מקומות פנויים' : 'Available Spots'}
                     </Label>
-                  </motion.div>
+                  </div>
                 </div>
-              </Card>
+              </div>
 
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
+              <div className="mt-8 flex justify-end">
                 <Button 
                   onClick={() => setIsOpen(false)} 
-                  className="w-full h-14 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all mt-4"
+                  className="w-full sm:w-auto px-8 h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
                 >
-                  <Sparkles className="w-5 h-5 mr-2" />
+                  <Sparkles className="w-4 h-4 mr-2" />
                   {t('apply')}
                 </Button>
-              </motion.div>
-            </div>
-          </SheetContent>
-        </Sheet>
-      </form>
+              </div>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Active Filters Display */}
       <AnimatePresence>
@@ -442,134 +395,68 @@ export default function TripFilters({ filters, setFilters, onSearch = () => {}, 
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="flex flex-wrap gap-2 p-4 bg-gradient-to-r from-gray-50 to-white rounded-2xl border-2 border-gray-100 shadow-md"
+            className="flex flex-wrap gap-2"
           >
             {filters.country && filters.country !== 'israel' && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-              >
-                <Badge className="pl-3 pr-2 py-2 gap-2 bg-gradient-to-r from-emerald-400 to-teal-500 text-white shadow-md hover:shadow-lg transition-all">
-                  {t(filters.country)}
-                  <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
-                    <X 
-                      className="w-4 h-4 cursor-pointer hover:bg-white/20 rounded-full" 
-                      onClick={() => {
-                        handleFilterChange('country', 'israel');
-                        handleFilterChange('region', '');
-                      }} 
-                    />
-                  </motion.div>
-                </Badge>
-              </motion.div>
+              <Badge className="pl-3 pr-2 py-1.5 gap-2 bg-white border-2 border-emerald-100 text-emerald-700 hover:bg-emerald-50">
+                {t(filters.country)}
+                <X 
+                  className="w-3 h-3 cursor-pointer hover:text-red-500" 
+                  onClick={() => {
+                    handleFilterChange('country', 'israel');
+                    handleFilterChange('region', '');
+                  }} 
+                />
+              </Badge>
             )}
             {filters.region && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-              >
-                <Badge className="pl-3 pr-2 py-2 gap-2 bg-gradient-to-r from-blue-400 to-indigo-500 text-white shadow-md hover:shadow-lg transition-all">
-                  {t(filters.region)}
-                  <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
-                    <X 
-                      className="w-4 h-4 cursor-pointer hover:bg-white/20 rounded-full" 
-                      onClick={() => handleFilterChange('region', '')} 
-                    />
-                  </motion.div>
-                </Badge>
-              </motion.div>
+              <Badge className="pl-3 pr-2 py-1.5 gap-2 bg-white border-2 border-blue-100 text-blue-700 hover:bg-blue-50">
+                {t(filters.region)}
+                <X 
+                  className="w-3 h-3 cursor-pointer hover:text-red-500" 
+                  onClick={() => handleFilterChange('region', '')} 
+                />
+              </Badge>
             )}
             {filters.difficulty && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-              >
-                <Badge className="pl-3 pr-2 py-2 gap-2 bg-gradient-to-r from-orange-400 to-red-500 text-white shadow-md hover:shadow-lg transition-all">
-                  {t(filters.difficulty)}
-                  <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
-                    <X 
-                      className="w-4 h-4 cursor-pointer hover:bg-white/20 rounded-full" 
-                      onClick={() => handleFilterChange('difficulty', '')} 
-                    />
-                  </motion.div>
-                </Badge>
-              </motion.div>
+              <Badge className="pl-3 pr-2 py-1.5 gap-2 bg-white border-2 border-orange-100 text-orange-700 hover:bg-orange-50">
+                {t(filters.difficulty)}
+                <X 
+                  className="w-3 h-3 cursor-pointer hover:text-red-500" 
+                  onClick={() => handleFilterChange('difficulty', '')} 
+                />
+              </Badge>
             )}
             {filters.activity_type && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-              >
-                <Badge className="pl-3 pr-2 py-2 gap-2 bg-gradient-to-r from-pink-400 to-purple-500 text-white shadow-md hover:shadow-lg transition-all">
-                  {t(filters.activity_type)}
-                  <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
-                    <X 
-                      className="w-4 h-4 cursor-pointer hover:bg-white/20 rounded-full" 
-                      onClick={() => handleFilterChange('activity_type', '')} 
-                    />
-                  </motion.div>
-                </Badge>
-              </motion.div>
-            )}
-            {filters.date_from && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-              >
-                <Badge className="pl-3 pr-2 py-2 gap-2 bg-gradient-to-r from-indigo-400 to-purple-500 text-white shadow-md hover:shadow-lg transition-all">
-                  {language === 'he' ? 'מ-' : 'From '}{filters.date_from}
-                  <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
-                    <X 
-                      className="w-4 h-4 cursor-pointer hover:bg-white/20 rounded-full" 
-                      onClick={() => handleFilterChange('date_from', '')} 
-                    />
-                  </motion.div>
-                </Badge>
-              </motion.div>
-            )}
-            {filters.date_to && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-              >
-                <Badge className="pl-3 pr-2 py-2 gap-2 bg-gradient-to-r from-indigo-400 to-purple-500 text-white shadow-md hover:shadow-lg transition-all">
-                  {language === 'he' ? 'עד-' : 'To '}{filters.date_to}
-                  <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
-                    <X 
-                      className="w-4 h-4 cursor-pointer hover:bg-white/20 rounded-full" 
-                      onClick={() => handleFilterChange('date_to', '')} 
-                    />
-                  </motion.div>
-                </Badge>
-              </motion.div>
+              <Badge className="pl-3 pr-2 py-1.5 gap-2 bg-white border-2 border-pink-100 text-pink-700 hover:bg-pink-50">
+                {t(filters.activity_type)}
+                <X 
+                  className="w-3 h-3 cursor-pointer hover:text-red-500" 
+                  onClick={() => handleFilterChange('activity_type', '')} 
+                />
+              </Badge>
             )}
             {filters.trail_type?.map(type => (
-              <motion.div
-                key={type}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0 }}
-              >
-                <Badge className="pl-3 pr-2 py-2 gap-2 bg-gradient-to-r from-teal-400 to-cyan-500 text-white shadow-md hover:shadow-lg transition-all">
-                  {t(type)}
-                  <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
-                    <X 
-                      className="w-4 h-4 cursor-pointer hover:bg-white/20 rounded-full" 
-                      onClick={() => handleFilterChange('trail_type', filters.trail_type.filter(t => t !== type))} 
-                    />
-                  </motion.div>
-                </Badge>
-              </motion.div>
+              <Badge key={type} className="pl-3 pr-2 py-1.5 gap-2 bg-white border-2 border-teal-100 text-teal-700 hover:bg-teal-50">
+                {t(type)}
+                <X 
+                  className="w-3 h-3 cursor-pointer hover:text-red-500" 
+                  onClick={() => handleFilterChange('trail_type', filters.trail_type.filter(t => t !== type))} 
+                />
+              </Badge>
+            ))}
+            {filters.interests?.map(interest => (
+              <Badge key={interest} className="pl-3 pr-2 py-1.5 gap-2 bg-white border-2 border-indigo-100 text-indigo-700 hover:bg-indigo-50">
+                {t(interest)}
+                <X 
+                  className="w-3 h-3 cursor-pointer hover:text-red-500" 
+                  onClick={() => handleFilterChange('interests', filters.interests.filter(i => i !== interest))} 
+                />
+              </Badge>
             ))}
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 }
