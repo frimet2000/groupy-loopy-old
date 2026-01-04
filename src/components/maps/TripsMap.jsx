@@ -109,30 +109,19 @@ export default function TripsMap({ trips }) {
         scrollWheelZoom={true}
       >
         {isIsraelRegion ? (
-          <>
-            {/* Israel Hiking Map - Hebrew labels and terrain */}
-            <TileLayer
-              url="https://israelhiking.osm.org.il/Hebrew/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://israelhiking.osm.org.il">Israel Hiking</a> | <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              maxZoom={16}
-            />
-          </>
+          /* Israel Hiking Map - Hebrew labels with terrain included */
+          <TileLayer
+            url="https://israelhiking.osm.org.il/Hebrew/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://israelhiking.osm.org.il">Israel Hiking</a> | <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            maxZoom={16}
+          />
         ) : (
-          <>
-            {/* OpenStreetMap base layer - international */}
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              maxZoom={19}
-            />
-            {/* Terrain/Topography overlay */}
-            <TileLayer
-              url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-              attribution='Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
-              maxZoom={17}
-              opacity={0.4}
-            />
-          </>
+          /* OpenStreetMap Humanitarian - local language labels with terrain */
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="https://www.hotosm.org/">Humanitarian OpenStreetMap Team</a>'
+            maxZoom={19}
+          />
         )}
         <MapBounds trips={validTrips} />
         
