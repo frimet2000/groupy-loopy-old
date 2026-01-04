@@ -126,20 +126,20 @@ export default function TripsMap({ trips }) {
               position={[trip.latitude, trip.longitude]}
               icon={icon}
             >
-              <Popup maxWidth={300} className="custom-popup">
-                <div className="p-2 space-y-3">
+              <Popup maxWidth={280} className="custom-popup">
+                <div className="p-1.5 md:p-2 space-y-2 md:space-y-3">
                   {trip.image_url && (
                     <img
                       src={trip.image_url}
                       alt={title}
-                      className="w-full h-32 object-cover rounded-lg"
+                      className="w-full h-24 md:h-32 object-cover rounded-lg"
                     />
                   )}
                   
                   <div>
-                    <h3 className="font-bold text-lg mb-2 line-clamp-2">{title}</h3>
-                    
-                    <div className="space-y-2 text-sm">
+                    <h3 className="font-bold text-sm md:text-lg mb-1.5 md:mb-2 line-clamp-2">{title}</h3>
+
+                    <div className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
                       <div className="flex items-center gap-2 text-gray-600">
                         <Calendar className="w-4 h-4 text-emerald-600" />
                         <span>{format(new Date(trip.date), 'MMM d, yyyy')}</span>
@@ -162,11 +162,11 @@ export default function TripsMap({ trips }) {
                         )}
                       </div>
                       
-                      <div className="flex gap-2 flex-wrap">
-                        <Badge className="bg-emerald-100 text-emerald-700">
+                      <div className="flex gap-1.5 md:gap-2 flex-wrap">
+                        <Badge className="bg-emerald-100 text-emerald-700 text-[10px] md:text-xs">
                           {t(trip.activity_type)}
                         </Badge>
-                        <Badge variant="outline">
+                        <Badge variant="outline" className="text-[10px] md:text-xs">
                           {t(trip.difficulty)}
                         </Badge>
                       </div>
@@ -175,11 +175,11 @@ export default function TripsMap({ trips }) {
                   
                   <Button
                     size="sm"
-                    className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+                    className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 h-8 md:h-9 text-xs md:text-sm"
                     onClick={() => navigate(createPageUrl('TripDetails') + '?id=' + trip.id)}
                   >
-                    <Navigation className="w-4 h-4 mr-2" />
-                    {language === 'he' ? 'פרטים מלאים' : 'View Details'}
+                    <Navigation className="w-3 h-3 md:w-4 md:h-4 mr-1.5 md:mr-2" />
+                    {language === 'he' ? 'פרטים' : 'Details'}
                   </Button>
                 </div>
               </Popup>
