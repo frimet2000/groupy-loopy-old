@@ -252,7 +252,7 @@ export default function Admin() {
   const handleRunBot = async () => {
     setRunningBot(true);
     try {
-      await base44.functions.invoke('postTripToFacebook', {
+      const response = await base44.functions.invoke('autoPostToFacebook', {
         facebook_page_id: marketingConfig.facebook_page_id,
         facebook_access_token: marketingConfig.facebook_access_token
       });
