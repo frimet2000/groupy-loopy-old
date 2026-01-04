@@ -103,6 +103,15 @@ Deno.serve(async (req) => {
     const payerEmail = registration.customer_email;
     const payerName = participantsData[0]?.name;
     
+    // Invite user to Groupy Loopy platform
+    if (payerEmail) {
+      try {
+        await base44.asServiceRole.users.inviteUser(payerEmail, "user");
+      } catch (inviteError) {
+        console.log('User invite failed (might already exist):', inviteError.message);
+      }
+    }
+    
     if (payerEmail) {
       try {
         await base44.asServiceRole.integrations.Core.SendEmail({
