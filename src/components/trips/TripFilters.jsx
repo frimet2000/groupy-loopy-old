@@ -139,9 +139,9 @@ export default function TripFilters({ filters, setFilters, showAdvanced }) {
                       className="h-10 text-sm"
                     />
                     <Select 
-                      value={filters.country || 'israel'} 
+                      value={filters.country || ''} 
                       onValueChange={(v) => {
-                        handleFilterChange('country', v);
+                        handleFilterChange('country', v === 'all' ? '' : v);
                         if (v !== filters.country) handleFilterChange('region', '');
                         setCountrySearch('');
                       }}
@@ -150,6 +150,7 @@ export default function TripFilters({ filters, setFilters, showAdvanced }) {
                         <SelectValue placeholder={t('selectCountry')} />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="all">{language === 'he' ? 'כל המדינות' : 'All Countries'}</SelectItem>
                         {filteredCountries.map(c => (
                           <SelectItem key={c} value={c}>{t(c)}</SelectItem>
                         ))}
@@ -397,13 +398,13 @@ export default function TripFilters({ filters, setFilters, showAdvanced }) {
             exit={{ opacity: 0, height: 0 }}
             className="flex flex-wrap gap-2"
           >
-            {filters.country && filters.country !== 'israel' && (
+            {filters.country && (
               <Badge className="pl-3 pr-2 py-1.5 gap-2 bg-white border-2 border-emerald-100 text-emerald-700 hover:bg-emerald-50">
                 {t(filters.country)}
                 <X 
                   className="w-3 h-3 cursor-pointer hover:text-red-500" 
                   onClick={() => {
-                    handleFilterChange('country', 'israel');
+                    handleFilterChange('country', '');
                     handleFilterChange('region', '');
                   }} 
                 />
