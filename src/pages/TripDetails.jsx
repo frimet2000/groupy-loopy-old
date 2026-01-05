@@ -963,8 +963,8 @@ export default function TripDetails() {
 
   }
 
-  const title = trip.title || trip.title_he || trip.title_en;
-  const description = trip.description || trip.description_he || trip.description_en;
+  const title = trip.title || trip.title_he || trip.title_en || '';
+  const description = trip.description || trip.description_he || trip.description_en || '';
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32 md:pb-8 overflow-y-auto">
