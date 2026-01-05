@@ -1,84 +1,325 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLanguage } from '../LanguageContext';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { 
+  SlidersHorizontal, Search, RotateCcw, MapPin, Calendar as CalendarIcon, 
+  TrendingUp, Sparkles, Filter, X 
+} from 'lucide-react';
+import { getAllCountries, getCountryRegions } from '../utils/CountryRegions';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const TripFilters = ({ onSearch }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+const difficulties = ['easy', 'moderate', 'challenging', 'hard'];
+const durations = ['hours', 'half_day', 'full_day', 'overnight', 'multi_day'];
+const activityTypes = ['hiking', 'cycling', 'offroad'];
+const trailTypes = ['water', 'full_shade', 'partial_shade', 'desert', 'forest', 'coastal', 'mountain', 'historical', 'urban'];
+const interests = ['nature', 'history', 'photography', 'birdwatching', 'archaeology', 'geology', 'botany', 'extreme_sports', 'family_friendly', 'romantic'];
+
+export default function TripFilters({ filters, setFilters, showAdvanced }) {
+  const { t, isRTL, language } = useLanguage();
+  const [isOpen, setIsOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState('');
   
-  // ניהול ה-State המקומי של הטופס
-  const [query, setQuery] = useState(searchParams.get('q') || '');
-  const [country, setCountry] = useState(searchParams.get('country') || '');
-
-  // רשימת מדינות (אפשר להוסיף כאן עוד או למשוך מה-DB)
-  const countries = [
-    { value: 'Israel', label: 'ישראל 🇮🇱' },
-    { value: 'USA', label: 'ארה"ב 🇺🇸' },
-    { value: 'Greece', label: 'יוון 🇬🇷' },
-    { value: 'Italy', label: 'איטליה 🇮🇹' },
-    { value: 'France', label: 'צרפת 🇫🇷' }
-  ];
-
-  // לוגיקת "ישראל תחילה" בטעינה ראשונה
+  // Sync with prop if provided, but allow internal toggle
   useEffect(() => {
-    const currentCountry = searchParams.get('country');
-    if (!currentCountry) {
-      const isIsraeli = navigator.language.includes('he') || Intl.DateTimeFormat().resolvedOptions().timeZone === 'Asia/Jerusalem';
-      if (isIsraeli) {
-        setCountry('Israel');
-        executeSearch('Israel', query);
-      }
+    if (showAdvanced !== undefined) {
+      setIsOpen(showAdvanced);
     }
-  }, []);
+  }, [showAdvanced]);
 
-  const executeSearch = (selectedCountry, selectedQuery) => {
-    // עדכון ה-URL (חשוב ל-SEO ולגוגל)
-    const newParams = {};
-    if (selectedQuery) newParams.q = selectedQuery;
-    if (selectedCountry) newParams.country = selectedCountry;
-    
-    setSearchParams(newParams);
-
-    // הפעלת החיפוש האמיתי (שמגיע מה-Props)
-    if (onSearch) {
-      onSearch({ q: selectedQuery, country: selectedCountry });
-    }
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault(); // מניעת ריענון דף
-    executeSearch(country, query);
+  const clearFilters = () => {
+    setFilters({
+      search: '',
+      country: '',
+      region: '',
+      difficulty: '',
+      duration_type: '',
+      activity_type: '',
+      pets_allowed: false,
+      camping_available: false,
+      trail_type: [],
+      interests: [],
+      date_from: null,
+      date_to: null,
+      available_spots: false,
+      favorites: false
+    });
   };
+
+  const activeFiltersCount = Object.entries(filters).filter(([key, value]) => {
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === 'boolean') return value;
+    return value && value !== '';
+  }).length;
 
   return (
-    <form className="trip-filters-form" onSubmit={handleFormSubmit} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-      
-      {/* 1. תיבת חיפוש טקסט */}
-      <input 
-        type="text" 
-        placeholder="חפש טיול..." 
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="filter-input"
-      />
+    <Card className="border-none shadow-sm bg-white/50 backdrop-blur-sm mb-6">
+      <div className="p-4">
+        {/* Search and Basic Toggles */}
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div className="relative w-full md:w-96">
+            <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4`} />
+            <Input
+              placeholder={language === 'he' ? 'חפש טיולים...' : language === 'ru' ? 'Поиск поездок...' : language === 'es' ? 'Buscar viajes...' : language === 'fr' ? 'Rechercher voyages...' : language === 'de' ? 'Reisen suchen...' : language === 'it' ? 'Cerca viaggi...' : 'Search trips...'}
+              value={filters.search}
+              onChange={(e) => handleFilterChange('search', e.target.value)}
+              className={`${isRTL ? 'pr-9' : 'pl-9'} bg-white border-emerald-100 focus:border-emerald-300 transition-all`}
+            />
+          </div>
 
-      {/* 2. רשימת מדינות (Dropdown) */}
-      <select 
-        value={country} 
-        onChange={(e) => setCountry(e.target.value)}
-        className="filter-select"
-      >
-        <option value="">כל המדינות</option>
-        {countries.map((c) => (
-          <option key={c.value} value={c.value}>{c.label}</option>
-        ))}
-      </select>
+          <div className="flex items-center gap-2 w-full md:w-auto">
+             <Button
+              variant={isOpen ? "secondary" : "outline"}
+              onClick={() => setIsOpen(!isOpen)}
+              className="gap-2 w-full md:w-auto border-emerald-200 hover:bg-emerald-50 text-emerald-700"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              {language === 'he' ? 'סינון מתקדם' : language === 'ru' ? 'Фильтры' : language === 'es' ? 'Filtros' : language === 'fr' ? 'Filtres' : language === 'de' ? 'Filter' : language === 'it' ? 'Filtri' : 'Filters'}
+              {activeFiltersCount > 0 && (
+                <Badge variant="secondary" className="ml-1 bg-emerald-100 text-emerald-700 hover:bg-emerald-200">
+                  {activeFiltersCount}
+                </Badge>
+              )}
+            </Button>
 
-      {/* 3. כפתור חיפוש (Submit) */}
-      <button type="submit" className="search-button">
-        חפש 🔍
-      </button>
+            {activeFiltersCount > 0 && (
+              <Button
+                variant="ghost"
+                onClick={clearFilters}
+                className="text-gray-500 hover:text-red-500"
+                size="icon"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+        </div>
 
-    </form>
+        {/* Active Filters Display */}
+        {activeFiltersCount > 0 && !isOpen && (
+          <div className="flex flex-wrap gap-2 mt-3">
+             {filters.country && (
+               <Badge variant="outline" className="gap-1 bg-white">
+                 {t(filters.country)}
+                 <X className="w-3 h-3 cursor-pointer" onClick={() => handleFilterChange('country', '')} />
+               </Badge>
+             )}
+             {filters.region && (
+               <Badge variant="outline" className="gap-1 bg-white">
+                 {t(filters.region)}
+                 <X className="w-3 h-3 cursor-pointer" onClick={() => handleFilterChange('region', '')} />
+               </Badge>
+             )}
+             {filters.difficulty && (
+               <Badge variant="outline" className="gap-1 bg-white">
+                 {t(filters.difficulty)}
+                 <X className="w-3 h-3 cursor-pointer" onClick={() => handleFilterChange('difficulty', '')} />
+               </Badge>
+             )}
+          </div>
+        )}
+
+        {/* Expandable Advanced Filters */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="pt-6 space-y-6">
+                <Separator className="bg-emerald-100/50" />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {/* Location Section */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-emerald-700 font-medium">
+                      <MapPin className="w-4 h-4" />
+                      {language === 'he' ? 'מיקום' : language === 'ru' ? 'Местоположение' : language === 'es' ? 'Ubicación' : language === 'fr' ? 'Lieu' : language === 'de' ? 'Standort' : language === 'it' ? 'Posizione' : 'Location'}
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div>
+                        <Label className="text-xs text-gray-500 mb-1.5 block">{t('country')}</Label>
+                        <Select value={filters.country} onValueChange={(v) => handleFilterChange('country', v)}>
+                          <SelectTrigger className="bg-white border-gray-200">
+                            <SelectValue placeholder={t('selectCountry')} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <div className="p-2">
+                                <Input 
+                                  placeholder={language === 'he' ? 'חפש מדינה...' : language === 'ru' ? 'Поиск страны...' : language === 'es' ? 'Buscar país...' : language === 'fr' ? 'Rechercher pays...' : language === 'de' ? 'Land suchen...' : language === 'it' ? 'Cerca paese...' : 'Search country...'} 
+                                  className="h-8 text-xs"
+                                  value={countrySearch}
+                                  onChange={(e) => setCountrySearch(e.target.value)}
+                                />
+                            </div>
+                            <SelectItem value={null}>{language === 'he' ? 'כל המדינות' : language === 'ru' ? 'Все страны' : language === 'es' ? 'Todos los países' : language === 'fr' ? 'Tous les pays' : language === 'de' ? 'Alle Länder' : language === 'it' ? 'Tutti i paesi' : 'All Countries'}</SelectItem>
+                            {getAllCountries()
+                                .filter(c => c.label && typeof c.label === 'string' && c.label.toLowerCase().includes(countrySearch.toLowerCase()))
+                                .map(country => (
+                              <SelectItem key={country.value} value={country.value}>
+                                {country.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {filters.country && getCountryRegions(filters.country).length > 0 && (
+                        <div>
+                          <Label className="text-xs text-gray-500 mb-1.5 block">{t('region')}</Label>
+                          <Select value={filters.region} onValueChange={(v) => handleFilterChange('region', v)}>
+                            <SelectTrigger className="bg-white border-gray-200">
+                              <SelectValue placeholder={t('allRegions')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all_regions">{t('allRegions')}</SelectItem>
+                              {getCountryRegions(filters.country).map(region => (
+                                <SelectItem key={region} value={region}>
+                                  {t(region)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Trip Details Section */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-emerald-700 font-medium">
+                      <TrendingUp className="w-4 h-4" />
+                      {language === 'he' ? 'פרטי הטיול' : language === 'ru' ? 'Детали поездки' : language === 'es' ? 'Detalles del viaje' : language === 'fr' ? 'Détails du voyage' : language === 'de' ? 'Reisedetails' : language === 'it' ? 'Dettagli viaggio' : 'Trip Details'}
+                    </div>
+
+                    <div className="space-y-3">
+                       <div>
+                        <Label className="text-xs text-gray-500 mb-1.5 block">{t('difficulty')}</Label>
+                        <Select value={filters.difficulty} onValueChange={(v) => handleFilterChange('difficulty', v)}>
+                          <SelectTrigger className="bg-white border-gray-200">
+                            <SelectValue placeholder={t('anyDifficulty')} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">{t('anyDifficulty')}</SelectItem>
+                            {difficulties.map(diff => (
+                              <SelectItem key={diff} value={diff}>{t(diff)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label className="text-xs text-gray-500 mb-1.5 block">{t('duration')}</Label>
+                        <Select value={filters.duration_type} onValueChange={(v) => handleFilterChange('duration_type', v)}>
+                          <SelectTrigger className="bg-white border-gray-200">
+                            <SelectValue placeholder={t('anyDuration')} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">{t('anyDuration')}</SelectItem>
+                            {durations.map(dur => (
+                              <SelectItem key={dur} value={dur}>{t(dur)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Type & Preferences */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-emerald-700 font-medium">
+                      <Sparkles className="w-4 h-4" />
+                      {language === 'he' ? 'סוג והעדפות' : language === 'ru' ? 'Тип и предпочтения' : language === 'es' ? 'Tipo y preferencias' : language === 'fr' ? 'Type et préférences' : language === 'de' ? 'Typ & Einstellungen' : language === 'it' ? 'Tipo e preferenze' : 'Type & Preferences'}
+                    </div>
+
+                    <div className="space-y-3">
+                      <div>
+                        <Label className="text-xs text-gray-500 mb-1.5 block">{t('activityType')}</Label>
+                        <Select value={filters.activity_type} onValueChange={(v) => handleFilterChange('activity_type', v)}>
+                          <SelectTrigger className="bg-white border-gray-200">
+                            <SelectValue placeholder={t('anyActivity')} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">{t('anyActivity')}</SelectItem>
+                            {activityTypes.map(type => (
+                              <SelectItem key={type} value={type}>{t(type)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="flex flex-col gap-2 pt-1">
+                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                          <Checkbox 
+                            id="available_spots" 
+                            checked={filters.available_spots}
+                            onCheckedChange={(checked) => handleFilterChange('available_spots', checked)}
+                          />
+                          <label htmlFor="available_spots" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-gray-600">
+                            {language === 'he' ? 'מקומות פנויים בלבד' : language === 'ru' ? 'Только доступные места' : language === 'es' ? 'Solo lugares disponibles' : language === 'fr' ? 'Places disponibles uniquement' : language === 'de' ? 'Nur verfügbare Plätze' : language === 'it' ? 'Solo posti disponibili' : 'Available spots only'}
+                          </label>
+                        </div>
+                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                          <Checkbox 
+                            id="favorites" 
+                            checked={filters.favorites}
+                            onCheckedChange={(checked) => handleFilterChange('favorites', checked)}
+                          />
+                          <label htmlFor="favorites" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-gray-600">
+                            {language === 'he' ? 'מועדפים בלבד' : language === 'ru' ? 'Только избранное' : language === 'es' ? 'Solo favoritos' : language === 'fr' ? 'Favoris uniquement' : language === 'de' ? 'Nur Favoriten' : language === 'it' ? 'Solo preferiti' : 'Favorites only'}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                   {/* Tags Section */}
+                   <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-emerald-700 font-medium">
+                      <Filter className="w-4 h-4" />
+                      {language === 'he' ? 'תגיות' : language === 'ru' ? 'Теги' : language === 'es' ? 'Etiquetas' : language === 'fr' ? 'Étiquettes' : language === 'de' ? 'Tags' : language === 'it' ? 'Tag' : 'Tags'}
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto pr-1 custom-scrollbar">
+                      {trailTypes.map(type => (
+                        <Badge 
+                          key={type}
+                          variant={filters.trail_type.includes(type) ? "default" : "outline"}
+                          className={`cursor-pointer ${filters.trail_type.includes(type) ? 'bg-emerald-600 hover:bg-emerald-700' : 'hover:bg-emerald-50 text-gray-600 border-gray-200'}`}
+                          onClick={() => {
+                            const newTypes = filters.trail_type.includes(type)
+                              ? filters.trail_type.filter(t => t !== type)
+                              : [...filters.trail_type, type];
+                            handleFilterChange('trail_type', newTypes);
+                          }}
+                        >
+                          {t(type)}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </Card>
   );
-};
-
-export default TripFilters;
+}
