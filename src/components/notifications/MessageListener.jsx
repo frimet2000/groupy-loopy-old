@@ -13,7 +13,10 @@ export default function MessageListener() {
 
   const { data: user } = useQuery({
     queryKey: ['me'],
-    queryFn: () => base44.auth.me(),
+    queryFn: () => base44.auth.me().catch(() => null),
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const { data: unreadMessages = [] } = useQuery({
@@ -21,6 +24,9 @@ export default function MessageListener() {
     queryFn: () => base44.entities.Message.filter({ recipient_email: user.email, read: false }, '-sent_at'),
     enabled: !!user?.email,
     refetchInterval: 30000,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   useEffect(() => {

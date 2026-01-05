@@ -59,6 +59,9 @@ export default function NotificationBell({ userEmail }) {
     enabled: !!userEmail,
     staleTime: 60000,
     refetchInterval: 60000,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const { data: reminders = [] } = useQuery({
@@ -70,6 +73,9 @@ export default function NotificationBell({ userEmail }) {
     enabled: !!userEmail,
     staleTime: 60000,
     refetchInterval: 60000,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const { data: currentUser } = useQuery({
@@ -78,6 +84,9 @@ export default function NotificationBell({ userEmail }) {
     enabled: !!userEmail,
     staleTime: 60000,
     refetchInterval: 60000,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   // Fetch unread messages
@@ -91,6 +100,9 @@ export default function NotificationBell({ userEmail }) {
     enabled: !!userEmail,
     staleTime: 60000,
     refetchInterval: 60000,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const { data: allUsers = [] } = useQuery({
@@ -99,6 +111,9 @@ export default function NotificationBell({ userEmail }) {
     enabled: !!userEmail && (currentUser?.friend_requests?.length > 0),
     staleTime: 60000,
     refetchInterval: 60000,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const organizedTrips = userTrips.filter(t => t.organizer_email === userEmail);
