@@ -68,32 +68,42 @@ function LayoutContent({ children, currentPageName }) {
   const unreadCount = unreadMessages.length;
 
   useEffect(() => {
-    // Aggressive AdSense cleanup - runs continuously
-    const cleanupAdSense = () => {
-      const adsenseScripts = document.querySelectorAll('script[src*="adsbygoogle"], script[src*="pagead"], script[src*="googlesyndication"]');
-      adsenseScripts.forEach(script => script.remove());
+    // Block AdSense from loading
+    const blockAdSense = () => {
+      // Remove all AdSense elements
+      document.querySelectorAll('script[src*="adsbygoogle"], script[src*="pagead"], script[src*="googlesyndication"]').forEach(el => el.remove());
+      document.querySelectorAll('ins.adsbygoogle').forEach(el => el.remove());
       
-      const adsenseIns = document.querySelectorAll('ins.adsbygoogle');
-      adsenseIns.forEach(ins => ins.remove());
-      
-      // Remove adsbygoogle global
-      if (window.adsbygoogle) {
-        delete window.adsbygoogle;
+      // Clear adsbygoogle array
+      if (window.adsbygoogle && Array.isArray(window.adsbygoogle)) {
+        window.adsbygoogle.length = 0;
       }
+      delete window.adsbygoogle;
     };
 
-    // Initial cleanup
-    cleanupAdSense();
+    // Block immediately
+    blockAdSense();
     
-    // Monitor for AdSense being added by extensions
-    const observer = new MutationObserver(() => {
-      cleanupAdSense();
+    // Override adsbygoogle to prevent it from being used
+    Object.defineProperty(window, 'adsbygoogle', {
+      get: () => [],
+      set: () => {},
+      configurable: false
+    });
+    
+    // Continuous monitoring
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach(() => blockAdSense());
     });
     
     observer.observe(document.documentElement, {
       childList: true,
-      subtree: true
+      subtree: true,
+      attributes: false
     });
+    
+    // Interval cleanup as backup
+    const interval = setInterval(blockAdSense, 500);
 
     // Add Facebook domain verification meta tag
     const metaTag = document.createElement('meta');
@@ -137,6 +147,7 @@ function LayoutContent({ children, currentPageName }) {
 
     return () => {
       observer.disconnect();
+      clearInterval(interval);
       document.head.removeChild(metaTag);
       document.head.removeChild(keywordsMeta);
       document.head.removeChild(authorMeta);
