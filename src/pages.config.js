@@ -5,10 +5,12 @@ import Admin from './pages/Admin';
 import CodeAnalyzer from './pages/CodeAnalyzer';
 import Community from './pages/Community';
 import CookiePolicy from './pages/CookiePolicy';
+import CreateTrip from './pages/CreateTrip';
 import Dashboard from './pages/Dashboard';
 import EditTrip from './pages/EditTrip';
 import Features from './pages/Features';
 import Feedback from './pages/Feedback';
+import Home from './pages/Home';
 import Inbox from './pages/Inbox';
 import JournalEditor from './pages/JournalEditor';
 import JournalEntry from './pages/JournalEntry';
@@ -30,13 +32,11 @@ import Settings from './pages/Settings';
 import TermsOfService from './pages/TermsOfService';
 import TermsOfUse from './pages/TermsOfUse';
 import TravelJournal from './pages/TravelJournal';
+import TripDetails from './pages/TripDetails';
 import TripPlanningGuide from './pages/TripPlanningGuide';
 import TripSummary from './pages/TripSummary';
 import VisualEditor from './pages/VisualEditor';
 import Weather from './pages/Weather';
-import CreateTrip from './pages/CreateTrip';
-import Home from './pages/Home';
-import TripDetails from './pages/TripDetails';
 import __Layout from './Layout.jsx';
 
 
@@ -48,10 +48,12 @@ export const PAGES = {
     "CodeAnalyzer": CodeAnalyzer,
     "Community": Community,
     "CookiePolicy": CookiePolicy,
+    "CreateTrip": CreateTrip,
     "Dashboard": Dashboard,
     "EditTrip": EditTrip,
     "Features": Features,
     "Feedback": Feedback,
+    "Home": Home,
     "Inbox": Inbox,
     "JournalEditor": JournalEditor,
     "JournalEntry": JournalEntry,
@@ -73,13 +75,11 @@ export const PAGES = {
     "TermsOfService": TermsOfService,
     "TermsOfUse": TermsOfUse,
     "TravelJournal": TravelJournal,
+    "TripDetails": TripDetails,
     "TripPlanningGuide": TripPlanningGuide,
     "TripSummary": TripSummary,
     "VisualEditor": VisualEditor,
     "Weather": Weather,
-    "CreateTrip": CreateTrip,
-    "Home": Home,
-    "TripDetails": TripDetails,
 }
 
 export const pagesConfig = {

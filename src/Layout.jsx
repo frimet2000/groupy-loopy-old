@@ -69,6 +69,14 @@ function LayoutContent({ children, currentPageName }) {
   const unreadCount = unreadMessages.length;
 
   useEffect(() => {
+    // Clean up any AdSense scripts that might have been added
+    const adsenseScripts = document.querySelectorAll('script[src*="adsbygoogle"]');
+    adsenseScripts.forEach(script => script.remove());
+    
+    // Remove any AdSense ins elements
+    const adsenseIns = document.querySelectorAll('ins.adsbygoogle');
+    adsenseIns.forEach(ins => ins.remove());
+
     // Add Facebook domain verification meta tag
     const metaTag = document.createElement('meta');
     metaTag.name = 'facebook-domain-verification';
