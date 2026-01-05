@@ -237,6 +237,10 @@ export default function TripDetails() {
   }, [trip, isOrganizer]);
 
   const handleJoinClick = async () => {
+    if (!user) {
+      base44.auth.redirectToLogin(window.location.href);
+      return;
+    }
     // Check if registration is open
     if (trip.registration_start_date) {
       const registrationOpens = new Date(trip.registration_start_date);
@@ -293,185 +297,19 @@ export default function TripDetails() {
 
   const joinMutation = useMutation({
     mutationFn: async () => {
-      const userName = user.first_name && user.last_name ?
-      `${user.first_name} ${user.last_name}` :
-      user.full_name;
-
-      console.log('=== JOIN MUTATION START ===');
-      console.log('User:', userName, user.email);
-      console.log('Family Members:', familyMembers);
-      console.log('Selected Children:', selectedChildren);
-      console.log('Other Member Name:', otherMemberName);
-
-      // For treks, validate day selection
       if (trip.activity_type === 'trek' && selectedTrekDays.length === 0) {
         throw new Error(language === 'he' ? 'נא לבחור לפחות יום אחד' : 'Please select at least one day');
       }
-
-      // Build family members info
-      const familyInfo = [];
-      if (familyMembers.spouse) familyInfo.push(language === 'he' ? 'בן/בת זוג' : 'Spouse');
-      if (selectedChildren.length > 0) {
-        familyInfo.push(`${selectedChildren.length} ${language === 'he' ? 'ילדים' : 'children'}`);
-      }
-      if (familyMembers.pets) familyInfo.push(language === 'he' ? 'בעלי חיים' : 'Pets');
-      if (familyMembers.other && otherMemberName) familyInfo.push(otherMemberName);
-
-      const familyMessage = familyInfo.length > 0 ?
-      `\n${language === 'he' ? 'מצטרפים:' : 'Joining:'} ${familyInfo.join(', ')}` :
-      '';
-      const fullMessage = joinMessage + familyMessage;
-
-      // Calculate total people joining (excluding pets)
-      let totalPeopleJoining = 1; // User themselves
-      if (familyMembers.spouse) totalPeopleJoining++;
-      if (selectedChildren.length > 0) totalPeopleJoining += selectedChildren.length;
-      if (familyMembers.other && otherMemberName) totalPeopleJoining++;
-      // Note: pets are not counted in total people
-
-      console.log('Total People Joining:', totalPeopleJoining);
-      console.log('Family Message:', familyMessage);
-
-      // Get parent age range from user profile
-      const parentAgeRange = user.parent_age_range || user.age_range;
-
-      // Build children details snapshot from current user's profile
-      const toRange = (a) => {
-        if (a == null || isNaN(a)) return null;
-        if (a < 3) return '0-2';
-        if (a < 7) return '3-6';
-        if (a < 11) return '7-10';
-        if (a < 15) return '11-14';
-        if (a < 19) return '15-18';
-        if (a < 22) return '18-21';
-        return '21+';
-      };
-      let myKids = Array.isArray(user.children_age_ranges) && user.children_age_ranges.length > 0 ?
-      user.children_age_ranges :
-      Array.isArray(user.children_birth_dates) ? user.children_birth_dates.map((c) => ({ id: c.id, name: c.name, age_range: toRange((() => {// derive age
-          const d = new Date(c.birth_date);
-          if (isNaN(d.getTime())) return null;
-          const today = new Date();
-          let age = today.getFullYear() - d.getFullYear();
-          const m = today.getMonth() - d.getMonth();
-          if (m < 0 || m === 0 && today.getDate() < d.getDate()) age--;
-          return age;
-        })()), gender: c.gender })) : [];
-      // Normalize IDs so each child has a stable identifier
-      myKids = (myKids || []).map((k, i) => ({ ...k, id: k?.id || `idx_${i}` }));
-      const selSet = new Set(selectedChildren || []);
-      const childrenDetails = myKids.filter((k) => selSet.has(k.id)).map((k) => ({ id: k.id, name: k.name, age_range: k.age_range, gender: k.gender }));
-
-      // Check if approval is needed:
-      // 1. approval_required is true, OR
-      // 2. flexible participants enabled AND exceeding max capacity
-      const needsApproval = trip.approval_required === true ||
-      trip.flexible_participants && trip.current_participants >= trip.max_participants;
-
-      if (!needsApproval) {
-        const participantData = {
-          email: user.email,
-          name: userName,
-          joined_at: new Date().toISOString(),
-          accessibility_needs: accessibilityNeeds,
-          waiver_accepted: true,
-          waiver_timestamp: new Date().toISOString(),
-          family_members: familyMembers,
-          selected_children: selectedChildren,
-          other_member_name: otherMemberName,
-          total_people: totalPeopleJoining,
-          children_details: childrenDetails,
-          parent_age_range: parentAgeRange
-        };
-
-        console.log('Participant Data Being Saved:', participantData);
-
-        const updatedParticipants = [
-        ...(trip.participants || []),
-        participantData];
-
-
-        // Calculate total participants across all families
-        const totalParticipantsCount = updatedParticipants.reduce((sum, p) => sum + (p.total_people || 1), 0);
-
-        const updateData = {
-          participants: updatedParticipants,
-          current_participants: totalParticipantsCount
-        };
-
-        // For treks, add selected days
-        if (trip.activity_type === 'trek') {
-          const updatedSelectedDays = [
-          ...(trip.participants_selected_days || []),
-          {
-            email: user.email,
-            name: userName,
-            days: selectedTrekDays
-          }];
-
-          updateData.participants_selected_days = updatedSelectedDays;
-        }
-
-        console.log('=== UPDATE DATA BEING SENT ===');
-        console.log(JSON.stringify(updateData, null, 2));
-
-        const result = await base44.entities.Trip.update(tripId, updateData);
-
-        console.log('=== UPDATE RESULT ===');
-        console.log(JSON.stringify(result, null, 2));
-
-        return { autoJoined: true };
-      }
-
-      // Otherwise, add to pending requests
-      const updatedPendingRequests = [
-      ...(trip.pending_requests || []),
-      {
-        email: user.email,
-        name: userName,
-        requested_at: new Date().toISOString(),
-        message: fullMessage,
-        accessibility_needs: accessibilityNeeds,
-        waiver_accepted: false,
-        waiver_timestamp: null,
-        selected_days: trip.activity_type === 'trek' ? selectedTrekDays : [],
-        family_members: familyMembers,
-        selected_children: selectedChildren,
-        other_member_name: otherMemberName,
-        children_details: childrenDetails,
-        parent_age_range: parentAgeRange
-      }];
-
-
-      // Update trip immediately - this is the only blocking operation
-      await base44.entities.Trip.update(tripId, {
-        pending_requests: updatedPendingRequests
+      const response = await base44.functions.invoke('participantJoinTrip', {
+        tripId,
+        joinMessage,
+        accessibilityNeeds,
+        selectedTrekDays,
+        familyMembers,
+        selectedChildren,
+        otherMemberName
       });
-
-      // Send email and notification in background (non-blocking)
-      const title = trip.title || trip.title_he || trip.title_en;
-      const fullUserName = userName;
-      const emailBody = language === 'he' ?
-      `שלום ${trip.organizer_name},\n\n${fullUserName} מבקש להצטרף לטיול "${title}" שלך.${joinMessage ? `\n\nהודעה מהמשתתף:\n"${joinMessage}"` : ''}\n\nהיכנס לעמוד הטיול כדי לאשר או לדחות את הבקשה.\n\nבברכה,\nצוות TripMate` :
-      `Hello ${trip.organizer_name},\n\n${fullUserName} has requested to join your trip "${title}".${joinMessage ? `\n\nMessage from participant:\n"${joinMessage}"` : ''}\n\nVisit the trip page to approve or reject the request.\n\nBest regards,\nTripMate Team`;
-
-      // Fire and forget - don't await these
-      base44.integrations.Core.SendEmail({
-        to: trip.organizer_email,
-        subject: language === 'he' ?
-        `בקשה להצטרפות לטיול "${title}"` :
-        `Join request for trip "${title}"`,
-        body: emailBody
-      }).catch((err) => console.log('Email error:', err));
-
-      base44.functions.invoke('sendPushNotification', {
-        recipient_email: trip.organizer_email,
-        notification_type: 'join_requests',
-        title: language === 'he' ? 'בקשה להצטרפות חדשה' : 'New Join Request',
-        body: language === 'he' ?
-        `${fullUserName} מבקש להצטרף לטיול "${title}"` :
-        `${fullUserName} requested to join "${title}"`
-      }).catch((err) => console.log('Notification error:', err));
+      return response.data;
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
@@ -496,19 +334,15 @@ export default function TripDetails() {
 
   const leaveMutation = useMutation({
     mutationFn: async () => {
-      const updatedParticipants = (trip.participants || []).filter(
-        (p) => p.email !== user.email
-      );
-      // Recalculate total participants
-      const totalParticipantsCount = updatedParticipants.reduce((sum, p) => sum + (p.total_people || 1), 0);
-      await base44.entities.Trip.update(tripId, {
-        participants: updatedParticipants,
-        current_participants: totalParticipantsCount
-      });
+      const response = await base44.functions.invoke('participantLeaveTrip', { tripId });
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       toast.success(t('leftTrip'));
+    },
+    onError: (error) => {
+      toast.error(error.message || (language === 'he' ? 'שגיאה בעזיבה' : 'Error leaving'));
     }
   });
 

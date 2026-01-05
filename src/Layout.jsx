@@ -72,11 +72,17 @@ function LayoutContent({ children, currentPageName }) {
   const unreadCount = unreadMessages.length;
 
   useEffect(() => {
-    // Add Facebook domain verification meta tag
-    const metaTag = document.createElement('meta');
-    metaTag.name = 'facebook-domain-verification';
-    metaTag.content = 'u7wujwd6860x2d554lgdr2kycajfrs';
-    document.head.appendChild(metaTag);
+    const host = window.location.hostname;
+    const isProdHost = /groupyloopy\.com$|groupyloopy\.app$/.test(host);
+    const isLocal = ['localhost', '127.0.0.1'].includes(host);
+
+    let metaTag;
+    if (isProdHost) {
+      metaTag = document.createElement('meta');
+      metaTag.name = 'facebook-domain-verification';
+      metaTag.content = 'u7wujwd6860x2d554lgdr2kycajfrs';
+      document.head.appendChild(metaTag);
+    }
 
     // Add keywords meta tag
     const keywordsMeta = document.createElement('meta');
@@ -92,9 +98,7 @@ function LayoutContent({ children, currentPageName }) {
     authorMeta.content = 'Groupy Loopy';
     document.head.appendChild(authorMeta);
 
-    // Add Google Analytics only in production
-    const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-    if (!isLocal && !window.gtag && !document.getElementById('gtag-script')) {
+    if (isProdHost && !window.gtag && !document.getElementById('gtag-script')) {
       const gtagScript = document.createElement('script');
       gtagScript.id = 'gtag-script';
       gtagScript.async = true;
@@ -113,8 +117,7 @@ function LayoutContent({ children, currentPageName }) {
       document.head.appendChild(gtagConfig);
     }
 
-    // Load AdSense only in production
-    if (!isLocal && !document.getElementById('adsense-script')) {
+    if (isProdHost && !document.getElementById('adsense-script')) {
       const adsScript = document.createElement('script');
       adsScript.id = 'adsense-script';
       adsScript.async = true;
@@ -124,7 +127,7 @@ function LayoutContent({ children, currentPageName }) {
     }
 
     return () => {
-      document.head.removeChild(metaTag);
+      if (metaTag) document.head.removeChild(metaTag);
       document.head.removeChild(keywordsMeta);
       document.head.removeChild(authorMeta);
     };
