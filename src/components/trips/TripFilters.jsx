@@ -283,27 +283,27 @@ export default function TripFilters({ filters, setFilters }) {
             </SelectContent>
           </Select>
 
-          {/* Difficulty */}
-          <Select value={filters.difficulty || ""} onValueChange={(v) => handleFilterChange('difficulty', v)}>
+          {/* Activity Type */}
+          <Select value={filters.activity_type || ""} onValueChange={(v) => handleFilterChange('activity_type', v)}>
             <SelectTrigger className="bg-white border-2 border-gray-200 h-12 hover:border-emerald-400 transition-all shadow-sm">
               <div className="flex items-center gap-2 w-full">
-                <Mountain className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                <span className={`flex-1 text-start truncate ${filters.difficulty ? 'text-gray-900' : 'text-gray-500'}`}>
-                  {filters.difficulty === 'easy' ? (language === 'he' ? 'קל' : language === 'ru' ? 'Легко' : language === 'es' ? 'Fácil' : language === 'fr' ? 'Facile' : language === 'de' ? 'Leicht' : language === 'it' ? 'Facile' : 'Easy')
-                  : filters.difficulty === 'moderate' ? (language === 'he' ? 'בינוני' : language === 'ru' ? 'Средне' : language === 'es' ? 'Moderado' : language === 'fr' ? 'Modéré' : language === 'de' ? 'Mäßig' : language === 'it' ? 'Moderato' : 'Moderate')
-                  : filters.difficulty === 'challenging' ? (language === 'he' ? 'מאתגר' : language === 'ru' ? 'Сложно' : language === 'es' ? 'Desafiante' : language === 'fr' ? 'Difficile' : language === 'de' ? 'Anspruchsvoll' : language === 'it' ? 'Impegnativo' : 'Challenging')
-                  : filters.difficulty === 'hard' ? (language === 'he' ? 'קשה' : language === 'ru' ? 'Трудно' : language === 'es' ? 'Difícil' : language === 'fr' ? 'Dur' : language === 'de' ? 'Schwer' : language === 'it' ? 'Difficile' : 'Hard')
-                  : (language === 'he' ? 'רמת קושי' : language === 'ru' ? 'Сложность' : language === 'es' ? 'Dificultad' : language === 'fr' ? 'Difficulté' : language === 'de' ? 'Schwierigkeit' : language === 'it' ? 'Difficoltà' : 'Difficulty')
+                <Zap className="w-4 h-4 text-orange-600 flex-shrink-0" />
+                <span className={`flex-1 text-start truncate ${filters.activity_type ? 'text-gray-900' : 'text-gray-500'}`}>
+                  {filters.activity_type === 'hiking' ? (language === 'he' ? 'הליכה' : language === 'ru' ? 'Пеший туризм' : language === 'es' ? 'Senderismo' : language === 'fr' ? 'Randonnée' : language === 'de' ? 'Wandern' : language === 'it' ? 'Trekking' : 'Hiking')
+                  : filters.activity_type === 'cycling' ? (language === 'he' ? 'אופניים' : language === 'ru' ? 'Велоспорт' : language === 'es' ? 'Ciclismo' : language === 'fr' ? 'Vélo' : language === 'de' ? 'Radfahren' : language === 'it' ? 'Ciclismo' : 'Cycling')
+                  : filters.activity_type === 'offroad' ? (language === 'he' ? 'שטח' : language === 'ru' ? 'Внедорожник' : language === 'es' ? 'Todoterreno' : language === 'fr' ? 'Tout-terrain' : language === 'de' ? 'Offroad' : language === 'it' ? 'Fuoristrada' : 'Off-road')
+                  : filters.activity_type === 'trek' ? (language === 'he' ? 'טרק' : language === 'ru' ? 'Трек' : language === 'es' ? 'Trek' : language === 'fr' ? 'Trek' : language === 'de' ? 'Trek' : language === 'it' ? 'Trek' : 'Trek')
+                  : (language === 'he' ? 'סוג פעילות' : language === 'ru' ? 'Тип' : language === 'es' ? 'Tipo' : language === 'fr' ? 'Type' : language === 'de' ? 'Typ' : language === 'it' ? 'Tipo' : 'Activity')
                   }
                 </span>
               </div>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={null}>{language === 'he' ? 'הכל' : language === 'ru' ? 'Все' : language === 'es' ? 'Todos' : language === 'fr' ? 'Tous' : language === 'de' ? 'Alle' : language === 'it' ? 'Tutti' : 'All'}</SelectItem>
-              <SelectItem value="easy">{language === 'he' ? 'קל' : language === 'ru' ? 'Легко' : language === 'es' ? 'Fácil' : language === 'fr' ? 'Facile' : language === 'de' ? 'Leicht' : language === 'it' ? 'Facile' : 'Easy'}</SelectItem>
-              <SelectItem value="moderate">{language === 'he' ? 'בינוני' : language === 'ru' ? 'Средне' : language === 'es' ? 'Moderado' : language === 'fr' ? 'Modéré' : language === 'de' ? 'Mäßig' : language === 'it' ? 'Moderato' : 'Moderate'}</SelectItem>
-              <SelectItem value="challenging">{language === 'he' ? 'מאתגר' : language === 'ru' ? 'Сложно' : language === 'es' ? 'Desafiante' : language === 'fr' ? 'Difficile' : language === 'de' ? 'Anspruchsvoll' : language === 'it' ? 'Impegnativo' : 'Challenging'}</SelectItem>
-              <SelectItem value="hard">{language === 'he' ? 'קשה' : language === 'ru' ? 'Трудно' : language === 'es' ? 'Difícil' : language === 'fr' ? 'Dur' : language === 'de' ? 'Schwer' : language === 'it' ? 'Difficile' : 'Hard'}</SelectItem>
+              <SelectItem value="hiking">{language === 'he' ? 'הליכה' : language === 'ru' ? 'Пеший туризм' : language === 'es' ? 'Senderismo' : language === 'fr' ? 'Randonnée' : language === 'de' ? 'Wandern' : language === 'it' ? 'Trekking' : 'Hiking'}</SelectItem>
+              <SelectItem value="cycling">{language === 'he' ? 'אופניים' : language === 'ru' ? 'Велоспорт' : language === 'es' ? 'Ciclismo' : language === 'fr' ? 'Vélo' : language === 'de' ? 'Radfahren' : language === 'it' ? 'Ciclismo' : 'Cycling'}</SelectItem>
+              <SelectItem value="offroad">{language === 'he' ? 'שטח' : language === 'ru' ? 'Внедорожник' : language === 'es' ? 'Todoterreno' : language === 'fr' ? 'Tout-terrain' : language === 'de' ? 'Offroad' : language === 'it' ? 'Fuoristrada' : 'Off-road'}</SelectItem>
+              <SelectItem value="trek">{language === 'he' ? 'טרק' : language === 'ru' ? 'Трек' : language === 'es' ? 'Trek' : language === 'fr' ? 'Trek' : language === 'de' ? 'Trek' : language === 'it' ? 'Trek' : 'Trek'}</SelectItem>
             </SelectContent>
           </Select>
         </div>
