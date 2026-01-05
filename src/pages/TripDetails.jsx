@@ -1032,15 +1032,18 @@ export default function TripDetails() {
 
   }
 
+  const title = trip.title || trip.title_he || trip.title_en || '';
+  const description = trip.description || trip.description_he || trip.description_en || '';
+
   return (
     <div className="min-h-screen bg-gray-50 pb-32 md:pb-8 overflow-y-auto">
       {eventSchema && <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>}
-      <SEO title={trip.title || trip.title_he || trip.title_en} description={trip.description || trip.description_he || trip.description_en} />
+      <SEO title={title} description={description} />
       {/* Hero Image */}
       <div className="relative h-72 md:h-96 overflow-hidden">
         <img
           src={trip.image_url || 'https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=1920'}
-          alt={trip.title || trip.title_he || trip.title_en || 'Trip'}
+          alt={title}
           className="w-full h-full object-cover" />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
