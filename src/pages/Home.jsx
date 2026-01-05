@@ -24,6 +24,7 @@ import { motion } from 'framer-motion';
 import { format, isPast, isToday, isTomorrow } from 'date-fns';
 import { toast } from "sonner";
 import AnnouncementToast from '../components/announcements/AnnouncementToast';
+import { SEO } from '@/components/SEO';
 
 export default function Home() {
   const { t, isRTL, language, setLanguage } = useLanguage();
@@ -531,6 +532,7 @@ export default function Home() {
     <div className="pb-8">
       {/* Announcement Toast */}
       <AnnouncementToast />
+      <SEO title="Groupy Loopy" description="Plan, organize and join group trips. Smart tools for organizers and communities." />
 
       {/* Organizer Alerts */}
       {user && (

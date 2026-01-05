@@ -26,6 +26,7 @@ import ProfilePreviewDialog from '../components/profile/ProfilePreviewDialog';
 import ParticipantStats from '../components/participants/ParticipantStats';
 import EditParticipantDialog from '../components/participants/EditParticipantDialog';
 import JoinTripDialog from '../components/dialogs/JoinTripDialog';
+import { SEO } from '@/components/SEO';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -1033,6 +1034,7 @@ export default function TripDetails() {
   return (
     <div className="min-h-screen bg-gray-50 pb-32 md:pb-8 overflow-y-auto">
       <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>
+      <SEO title={title} description={description} />
       {/* Hero Image */}
       <div className="relative h-72 md:h-96 overflow-hidden">
         <img
