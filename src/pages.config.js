@@ -32,11 +32,11 @@ import Settings from './pages/Settings';
 import TermsOfService from './pages/TermsOfService';
 import TermsOfUse from './pages/TermsOfUse';
 import TravelJournal from './pages/TravelJournal';
-import TripDetails from './pages/TripDetails';
 import TripPlanningGuide from './pages/TripPlanningGuide';
 import TripSummary from './pages/TripSummary';
 import VisualEditor from './pages/VisualEditor';
 import Weather from './pages/Weather';
+import TripDetails from './pages/TripDetails';
 import __Layout from './Layout.jsx';
 
 
@@ -75,11 +75,11 @@ export const PAGES = {
     "TermsOfService": TermsOfService,
     "TermsOfUse": TermsOfUse,
     "TravelJournal": TravelJournal,
-    "TripDetails": TripDetails,
     "TripPlanningGuide": TripPlanningGuide,
     "TripSummary": TripSummary,
     "VisualEditor": VisualEditor,
     "Weather": Weather,
+    "TripDetails": TripDetails,
 }
 
 export const pagesConfig = {

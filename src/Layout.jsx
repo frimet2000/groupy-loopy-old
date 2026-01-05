@@ -454,22 +454,22 @@ function LayoutContent({ children, currentPageName }) {
   };
 
   const allNavItems = [
-        { name: 'Home', icon: Home, label: t('home'), color: 'text-emerald-600' },
-        { name: 'Dashboard', icon: BarChart3, label: language === 'he' ? 'לוח מחוונים' : language === 'ru' ? 'Панель' : language === 'es' ? 'Panel' : language === 'fr' ? 'Tableau' : language === 'de' ? 'Dashboard' : language === 'it' ? 'Dashboard' : 'Dashboard', color: 'text-cyan-600' },
-        { name: 'MyTrips', icon: Map, label: t('myTrips'), color: 'text-blue-600' },
-        { name: 'CreateTrip', icon: Plus, label: t('createTrip'), color: 'text-purple-600' },
-        { name: 'Weather', icon: CloudSun, label: language === 'he' ? 'מזג אוויר' : language === 'ru' ? 'Погода' : language === 'es' ? 'Clima' : language === 'fr' ? 'Météo' : language === 'de' ? 'Wetter' : language === 'it' ? 'Meteo' : 'Weather', color: 'text-sky-500' },
-        { name: 'TravelJournal', icon: BookOpen, label: language === 'he' ? 'יומן מסע' : language === 'ru' ? 'Дневник' : language === 'es' ? 'Diario' : language === 'fr' ? 'Journal' : language === 'de' ? 'Tagebuch' : language === 'it' ? 'Diario' : 'Journal', color: 'text-rose-600' },
-        { name: 'AIRecommendations', icon: Sparkles, label: t('aiRecommendations'), color: 'text-indigo-600' },
-        { name: 'Community', icon: Users, label: language === 'he' ? 'קהילה' : language === 'ru' ? 'Сообщество' : language === 'es' ? 'Comunidad' : language === 'fr' ? 'Communauté' : language === 'de' ? 'Gemeinschaft' : language === 'it' ? 'Comunità' : 'Community', color: 'text-pink-600' },
-        { name: 'Inbox', icon: Mail, label: language === 'he' ? 'הודעות' : language === 'ru' ? 'Сообщения' : language === 'es' ? 'Mensajes' : language === 'fr' ? 'Messages' : language === 'de' ? 'Nachrichten' : language === 'it' ? 'Messaggi' : 'Messages', color: 'text-amber-600' },
-        { name: 'Feedback', icon: MessageSquare, label: language === 'he' ? 'משוב' : language === 'ru' ? 'Отзывы' : language === 'es' ? 'Comentarios' : language === 'fr' ? 'Retour' : language === 'de' ? 'Feedback' : language === 'it' ? 'Feedback' : 'Feedback', color: 'text-indigo-600' },
-        { name: 'Settings', icon: SettingsIcon, label: language === 'he' ? 'הגדרות' : language === 'ru' ? 'Настройки' : language === 'es' ? 'Configuración' : language === 'fr' ? 'Paramètres' : language === 'de' ? 'Einstellungen' : language === 'it' ? 'Impostazioni' : 'Settings', color: 'text-gray-600' },
+        { name: 'Home', icon: Home, label: t('home'), color: 'text-emerald-600', requireAuth: false },
+        { name: 'Dashboard', icon: BarChart3, label: language === 'he' ? 'לוח מחוונים' : language === 'ru' ? 'Панель' : language === 'es' ? 'Panel' : language === 'fr' ? 'Tableau' : language === 'de' ? 'Dashboard' : language === 'it' ? 'Dashboard' : 'Dashboard', color: 'text-cyan-600', requireAuth: true },
+        { name: 'MyTrips', icon: Map, label: t('myTrips'), color: 'text-blue-600', requireAuth: true },
+        { name: 'CreateTrip', icon: Plus, label: t('createTrip'), color: 'text-purple-600', requireAuth: true },
+        { name: 'Weather', icon: CloudSun, label: language === 'he' ? 'מזג אוויר' : language === 'ru' ? 'Погода' : language === 'es' ? 'Clima' : language === 'fr' ? 'Météo' : language === 'de' ? 'Wetter' : language === 'it' ? 'Meteo' : 'Weather', color: 'text-sky-500', requireAuth: false },
+        { name: 'TravelJournal', icon: BookOpen, label: language === 'he' ? 'יומן מסע' : language === 'ru' ? 'Дневник' : language === 'es' ? 'Diario' : language === 'fr' ? 'Journal' : language === 'de' ? 'Tagebuch' : language === 'it' ? 'Diario' : 'Journal', color: 'text-rose-600', requireAuth: true },
+        { name: 'AIRecommendations', icon: Sparkles, label: t('aiRecommendations'), color: 'text-indigo-600', requireAuth: false },
+        { name: 'Community', icon: Users, label: language === 'he' ? 'קהילה' : language === 'ru' ? 'Сообщество' : language === 'es' ? 'Comunidad' : language === 'fr' ? 'Communauté' : language === 'de' ? 'Gemeinschaft' : language === 'it' ? 'Comunità' : 'Community', color: 'text-pink-600', requireAuth: true },
+        { name: 'Inbox', icon: Mail, label: language === 'he' ? 'הודעות' : language === 'ru' ? 'Сообщения' : language === 'es' ? 'Mensajes' : language === 'fr' ? 'Messages' : language === 'de' ? 'Nachrichten' : language === 'it' ? 'Messaggi' : 'Messages', color: 'text-amber-600', requireAuth: true },
+        { name: 'Feedback', icon: MessageSquare, label: language === 'he' ? 'משוב' : language === 'ru' ? 'Отзывы' : language === 'es' ? 'Comentarios' : language === 'fr' ? 'Retour' : language === 'de' ? 'Feedback' : language === 'it' ? 'Feedback' : 'Feedback', color: 'text-indigo-600', requireAuth: true },
+        { name: 'Settings', icon: SettingsIcon, label: language === 'he' ? 'הגדרות' : language === 'ru' ? 'Настройки' : language === 'es' ? 'Configuración' : language === 'fr' ? 'Paramètres' : language === 'de' ? 'Einstellungen' : language === 'it' ? 'Impostazioni' : 'Settings', color: 'text-gray-600', requireAuth: true },
       ];
 
   const navItems = user?.role === 'admin' 
-    ? allNavItems 
-    : allNavItems.filter(item => item.name !== 'Community');
+    ? allNavItems.filter(item => !item.requireAuth || user)
+    : allNavItems.filter(item => item.name !== 'Community' && (!item.requireAuth || user));
 
   const isActive = (pageName) => currentPageName === pageName;
 
@@ -710,7 +710,7 @@ function LayoutContent({ children, currentPageName }) {
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/98 backdrop-blur-xl border-t-2 border-gray-200 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 8px)' }}>
         <div className="flex items-center justify-around h-20 px-2">
-          {[navItems[0], navItems.find(item => item.name === 'CreateTrip'), navItems[2]].filter(Boolean).map((item, idx) => (
+          {[navItems.find(item => item.name === 'Home'), user ? navItems.find(item => item.name === 'CreateTrip') : null, navItems.find(item => item.name === 'MyTrips' && user)].filter(Boolean).map((item, idx) => (
             <Link 
               key={item.name} 
               to={createPageUrl(item.name)}
