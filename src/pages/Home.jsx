@@ -120,42 +120,7 @@ export default function Home() {
     };
   });
 
-  const AdSenseSlot = ({ slot }) => {
-    const ref = useRef(null);
-    useEffect(() => {
-      const el = ref.current;
-      if (!el) return;
-      if ('IntersectionObserver' in window) {
-        const io = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              try {
-                (window.adsbygoogle = window.adsbygoogle || []).push({});
-              } catch (e) {}
-              io.unobserve(el);
-            }
-          });
-        });
-        io.observe(el);
-        return () => io.disconnect();
-      } else {
-        try {
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
-        } catch (e) {}
-      }
-    }, []);
-    return (
-      <ins
-        ref={ref}
-        className="adsbygoogle"
-        style={{ display: 'block' }}
-        data-ad-client="ca-pub-4551819767344595"
-        data-ad-slot={slot}
-        data-ad-format="auto"
-        data-full-width-responsive="true"
-      />
-    );
-  };
+
 
 
   // Auto-detect and set language from URL parameter
@@ -855,11 +820,7 @@ export default function Home() {
             filters={filters} 
             setFilters={setFilters} 
           />
-          {React.useMemo(() => (
-            <div className="my-6">
-              <AdSenseSlot slot="8237409556" />
-            </div>
-          ), [])}
+
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6 mb-6">
           <div>
