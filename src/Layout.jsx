@@ -68,13 +68,32 @@ function LayoutContent({ children, currentPageName }) {
   const unreadCount = unreadMessages.length;
 
   useEffect(() => {
-    // Clean up any AdSense scripts that might have been added
-    const adsenseScripts = document.querySelectorAll('script[src*="adsbygoogle"]');
-    adsenseScripts.forEach(script => script.remove());
+    // Aggressive AdSense cleanup - runs continuously
+    const cleanupAdSense = () => {
+      const adsenseScripts = document.querySelectorAll('script[src*="adsbygoogle"], script[src*="pagead"], script[src*="googlesyndication"]');
+      adsenseScripts.forEach(script => script.remove());
+      
+      const adsenseIns = document.querySelectorAll('ins.adsbygoogle');
+      adsenseIns.forEach(ins => ins.remove());
+      
+      // Remove adsbygoogle global
+      if (window.adsbygoogle) {
+        delete window.adsbygoogle;
+      }
+    };
+
+    // Initial cleanup
+    cleanupAdSense();
     
-    // Remove any AdSense ins elements
-    const adsenseIns = document.querySelectorAll('ins.adsbygoogle');
-    adsenseIns.forEach(ins => ins.remove());
+    // Monitor for AdSense being added by extensions
+    const observer = new MutationObserver(() => {
+      cleanupAdSense();
+    });
+    
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
 
     // Add Facebook domain verification meta tag
     const metaTag = document.createElement('meta');
@@ -117,11 +136,12 @@ function LayoutContent({ children, currentPageName }) {
     }
 
     return () => {
+      observer.disconnect();
       document.head.removeChild(metaTag);
       document.head.removeChild(keywordsMeta);
       document.head.removeChild(authorMeta);
     };
-  }, [language]);
+  }, [language, currentPageName]);
 
   // SEO meta tags (dynamic per page + language)
   useEffect(() => {
