@@ -139,6 +139,10 @@ export default function TripDetails() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get('id');
+  
+  console.log('TripDetails - Full URL:', window.location.href);
+  console.log('TripDetails - Search params:', window.location.search);
+  console.log('TripDetails - Extracted tripId:', tripId);
 
   useEffect(() => {
     const fetchUser = async () => {
