@@ -36,6 +36,7 @@ export default function Home() {
   const [showLiveTripsDialog, setShowLiveTripsDialog] = useState(false);
   const [joiningLiveTrip, setJoiningLiveTrip] = useState(false);
   const [filteredTrips, setFilteredTrips] = useState([]);
+  const [filteredTrips, setFilteredTrips] = useState([]);
 
 
   // Auto-detect and set language from URL parameter
