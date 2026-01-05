@@ -71,7 +71,7 @@ export default function CreateTrip() {
   const [organizerSelectedChildren, setOrganizerSelectedChildren] = useState([]);
   const [organizerOtherMemberName, setOrganizerOtherMemberName] = useState('');
   
-  const countries = getAllCountries();
+  const countries = getAllCountries(language);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -1121,7 +1121,7 @@ Include water recommendation in liters and detailed equipment list.`,
                         </SelectTrigger>
                         <SelectContent className="max-h-60">
                           {countries.map(c => (
-                            <SelectItem key={c} value={c}>{t(c)}</SelectItem>
+                            <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
