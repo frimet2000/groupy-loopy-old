@@ -1026,11 +1026,6 @@ export default function Home() {
               {sortedTrips.slice(0, visibleCount).map((trip, index) => (
                 <React.Fragment key={trip.id}>
                   <TripCard trip={trip} user={user} />
-                  {index === 5 && sortedTrips.length >= 8 && (
-                    <div className="col-span-full my-6 hidden md:block">
-                      <AdSenseSlot slot="8237409556" />
-                    </div>
-                  )}
                 </React.Fragment>
               ))}
               {sortedTrips.length === 0 && (
