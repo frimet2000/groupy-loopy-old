@@ -74,13 +74,7 @@ export default function NotificationBell({ userEmail }) {
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUserForNotifications', userEmail],
-    queryFn: async () => {
-      try {
-        return await base44.auth.me();
-      } catch (e) {
-        return null;
-      }
-    },
+    queryFn: () => base44.auth.me(),
     enabled: !!userEmail,
     staleTime: 60000,
     refetchInterval: 60000,
@@ -101,14 +95,8 @@ export default function NotificationBell({ userEmail }) {
 
   const { data: allUsers = [] } = useQuery({
     queryKey: ['usersForNotifications'],
-    queryFn: async () => {
-      try {
-        return await base44.entities.User.list();
-      } catch (e) {
-        return [];
-      }
-    },
-    enabled: !!userEmail && !!currentUser && (currentUser?.friend_requests?.length > 0),
+    queryFn: () => base44.entities.User.list(),
+    enabled: !!userEmail && (currentUser?.friend_requests?.length > 0),
     staleTime: 60000,
     refetchInterval: 60000,
   });

@@ -7,7 +7,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import TripCard from '../components/trips/TripCard';
 import TripsMap from '../components/maps/TripsMap';
-import ModernTripFilters from '../components/trips/ModernTripFilters';
+import TripFilters from '../components/trips/TripFilters';
 import OrganizerAlerts from '../components/organizer/OrganizerAlerts';
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -35,7 +35,23 @@ export default function Home() {
   const [viewMode, setViewMode] = useState('grid');
   const [showLiveTripsDialog, setShowLiveTripsDialog] = useState(false);
   const [joiningLiveTrip, setJoiningLiveTrip] = useState(false);
-  const [filteredTrips, setFilteredTrips] = useState([]);
+  
+  const [filters, setFilters] = useState({
+    search: '',
+    country: 'israel',
+    region: '',
+    difficulty: '',
+    duration_type: '',
+    activity_type: '',
+    pets_allowed: false,
+    camping_available: false,
+    trail_type: [],
+    interests: [],
+    date_from: null,
+    date_to: null,
+    available_spots: false,
+    favorites: false
+  });
 
 
   // Auto-detect and set language from URL parameter
@@ -63,6 +79,98 @@ export default function Home() {
     queryKey: ['trips'],
     queryFn: () => base44.entities.Trip.list('-created_date'),
   });
+
+  const filteredTrips = useMemo(() => {
+    return trips.filter(trip => {
+      // Search
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        const title = (trip.title || trip.title_he || trip.title_en || '').toLowerCase();
+        const description = (trip.description || trip.description_he || trip.description_en || '').toLowerCase();
+        const location = (trip.location_description || '').toLowerCase();
+        
+        if (!title.includes(searchLower) && 
+            !description.includes(searchLower) && 
+            !location.includes(searchLower)) {
+          return false;
+        }
+      }
+
+      // Country
+      if (filters.country) {
+        const filterCountry = filters.country.toLowerCase();
+        let tripCountry = (trip.country || '').toLowerCase();
+        
+        // Smart detection for trips with missing country
+        if (!tripCountry) {
+           if (trip.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(trip.region)) {
+             tripCountry = 'israel';
+           } else {
+             // If we can't infer, assume Israel ONLY if the filter is Israel (legacy support)
+             // BUT exclude if it has a known non-Israel region
+             const knownNonIsraelRegions = [
+               'scotland', 'london', 'wales', // UK
+               'bavaria', 'berlin', // Germany
+               'tuscany', 'sicily', // Italy
+               'alp', 'pyrenees', // France
+               'northeast', 'southeast', 'midwest', 'west' // USA (generic but safer to exclude)
+             ];
+             
+             const isKnownNonIsrael = knownNonIsraelRegions.some(r => trip.region?.toLowerCase().includes(r));
+             if (!isKnownNonIsrael) {
+                tripCountry = 'israel';
+             }
+           }
+        }
+        
+        if (tripCountry !== filterCountry) return false;
+      }
+
+      // Region
+      if (filters.region && filters.region !== 'all_regions') {
+        if (trip.region !== filters.region) return false;
+      }
+
+      // Difficulty
+      if (filters.difficulty && filters.difficulty !== 'all') {
+        if (trip.difficulty !== filters.difficulty) return false;
+      }
+
+      // Duration
+      if (filters.duration_type && filters.duration_type !== 'all') {
+        if (trip.duration_type !== filters.duration_type) return false;
+      }
+
+      // Activity Type
+      if (filters.activity_type && filters.activity_type !== 'all') {
+        if (trip.activity_type !== filters.activity_type) return false;
+      }
+
+      // Available Spots
+      if (filters.available_spots) {
+        if (trip.max_participants && (trip.current_participants || 0) >= trip.max_participants) return false;
+      }
+
+      // Favorites
+      if (filters.favorites) {
+        // Implement favorite logic if available in trip data or user data
+        // For now skipping as logic depends on implementation
+      }
+      
+      // Trail Types (Tags)
+      if (filters.trail_type && filters.trail_type.length > 0) {
+         // Assuming trip has tags or trail_type array
+         // This might need adjustment based on actual data structure
+         const tripTags = trip.tags || [];
+         const hasTag = filters.trail_type.some(tag => tripTags.includes(tag));
+         // If we want strict matching (all tags), use every. For now using some (any tag).
+         // Or if trip.trail_type is a single value
+         if (!hasTag && !filters.trail_type.includes(trip.trail_type)) return false;
+      }
+
+      return true;
+    });
+  }, [trips, filters]);
 
   // Sort filtered trips
   const sortedTrips = useMemo(() => {
@@ -104,8 +212,6 @@ export default function Home() {
     acc[country].push(trip);
     return acc;
   }, {});
-
-
 
   // Get past trips
   const pastTrips = trips.filter(trip => {
@@ -595,9 +701,9 @@ export default function Home() {
 
       {/* Trips Section */}
       <section id="trips-section" className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12 pb-20 sm:pb-8">
-          <ModernTripFilters 
-            trips={trips}
-            onFilteredTripsChange={setFilteredTrips}
+          <TripFilters 
+            filters={filters} 
+            setFilters={setFilters} 
           />
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6 mb-6">
@@ -652,223 +758,126 @@ export default function Home() {
                     <option value="popularity">{language === 'he' ? 'פופולריות' : language === 'ru' ? 'Популярность' : language === 'es' ? 'Popularidad' : language === 'fr' ? 'Popularité' : language === 'de' ? 'Beliebtheit' : language === 'it' ? 'Popolarità' : 'Popularity'}</option>
                     <option value="likes">{language === 'he' ? 'לייקים' : language === 'ru' ? 'Больше всего лайков' : language === 'es' ? 'Más gustados' : language === 'fr' ? 'Les plus aimés' : language === 'de' ? 'Am beliebtesten' : language === 'it' ? 'Più apprezzati' : 'Most Liked'}</option>
                     <option value="comments">{language === 'he' ? 'הכי מדוברים' : language === 'ru' ? 'Больше всего обсуждаемые' : language === 'es' ? 'Más comentados' : language === 'fr' ? 'Les plus commentés' : language === 'de' ? 'Am meisten diskutiert' : language === 'it' ? 'Più commentati' : 'Most Discussed'}</option>
-                    <option value="newest">{language === 'he' ? 'החדשים ביותר' : language === 'ru' ? 'Новейшие' : language === 'es' ? 'Más recientes' : language === 'fr' ? 'Les plus récents' : language === 'de' ? 'Neueste' : language === 'it' ? 'Più recenti' : 'Newest'}</option>
-                    <option value="title">{language === 'he' ? 'א-ת' : language === 'ru' ? 'А-Я' : language === 'es' ? 'A-Z' : language === 'fr' ? 'A-Z' : language === 'de' ? 'A-Z' : language === 'it' ? 'A-Z' : 'A-Z'}</option>
+                    <option value="newest">{language === 'he' ? 'הכי חדש' : language === 'ru' ? 'Самые новые' : language === 'es' ? 'Más recientes' : language === 'fr' ? 'Les plus récents' : language === 'de' ? 'Neueste' : language === 'it' ? 'Più recenti' : 'Newest'}</option>
+                    <option value="title">{language === 'he' ? 'שם הטיול' : language === 'ru' ? 'Название' : language === 'es' ? 'Título' : language === 'fr' ? 'Titre' : language === 'de' ? 'Titel' : language === 'it' ? 'Titolo' : 'Title'}</option>
                   </select>
                 </div>
               )}
             </div>
           </div>
 
-        {viewMode === 'map' ? (
-          <div>
-            <TripsMap trips={sortedTrips} />
-          </div>
-        ) : isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="space-y-4">
-                <Skeleton className="h-48 w-full rounded-xl" />
-                <Skeleton className="h-6 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-              </div>
-            ))}
-          </div>
-        ) : displayedTrips.length > 0 ? (
-          <>
-            {Object.entries(tripsByCountry).map(([country, countryTrips]) => {
-              const visibleCountryTrips = countryTrips.slice(0, visibleCount);
-
-              return (
-                <motion.div
-                  key={country}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-12"
-                >
-                  {/* Country Header */}
-                  <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-emerald-300 to-transparent" />
-                    <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl sm:rounded-2xl border border-emerald-200/50 shadow-sm">
-                      <Globe className="w-4 h-4 sm:w-6 sm:h-6 text-emerald-600" />
-                      <h3 className="text-base sm:text-2xl font-bold bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent">
-                        {t(country)}
-                      </h3>
-                      <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 font-semibold text-xs sm:text-sm">
-                        {countryTrips.length}
-                      </Badge>
-                    </div>
-                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-emerald-300 to-transparent" />
-                  </div>
-
-                  {/* Trips Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-                    {visibleCountryTrips.map((trip, index) => (
-                      <div key={trip.id}>
-                        <TripCard trip={trip} currentUser={user} />
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              );
-            })}
-
-            {sortedTrips.length > visibleCount && (
-              <div className="flex justify-center mt-8 sm:mt-10">
-                <Button
-                  variant="outline"
-                  onClick={() => setVisibleCount(prev => prev + 8)}
-                  className="gap-2 h-12 px-8 text-base font-semibold touch-manipulation min-h-[44px]"
-                >
-                  <ChevronDown className="w-5 h-5" />
-                  {language === 'he' ? 'הצג עוד' : language === 'ru' ? 'Загрузить ещё' : language === 'es' ? 'Cargar más' : language === 'fr' ? 'Charger plus' : language === 'de' ? 'Mehr laden' : language === 'it' ? 'Carica altro' : 'Load More'}
-                </Button>
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="relative text-center py-20 bg-gradient-to-br from-white to-gray-50 rounded-3xl border border-gray-200 shadow-xl overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.05),transparent_60%)]" />
-            <div className="relative">
-              <Compass className="w-20 h-20 text-emerald-400 mx-auto mb-6" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('noTripsFound')}</h3>
-              <p className="text-gray-600 mb-8 text-lg">{t('createFirstTrip')}</p>
-              <Link to={createPageUrl('CreateTrip')}>
-                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white h-14 px-8 text-lg font-bold shadow-xl border-2 border-emerald-700 hover:border-emerald-800">
-                  <Plus className="w-5 h-5 mr-2" />
-                  {t('createTrip')}
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* Past Trips Section */}
-      {pastTrips.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-6 pb-20 sm:pb-8">
-          <div className="flex items-center gap-2 sm:gap-3 mb-6">
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
-            <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm">
-              <History className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-              <h3 className="text-lg sm:text-2xl font-bold text-gray-700">
-                {language === 'he' ? 'טיולים שהיו' : language === 'ru' ? 'Прошедшие поездки' : language === 'es' ? 'Viajes pasados' : language === 'fr' ? 'Voyages passés' : language === 'de' ? 'Vergangene Reisen' : language === 'it' ? 'Viaggi passati' : 'Past Trips'}
-              </h3>
-              <Badge variant="secondary" className="bg-gray-200 text-gray-700 font-semibold text-xs sm:text-sm">
-                {pastTrips.length}
-              </Badge>
-            </div>
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
-          </div>
-
-          {/* Group past trips by country */}
-          {Object.entries(pastTrips.reduce((acc, trip) => {
-            let country = trip.country;
-            if (!country && trip.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(trip.region)) {
-              country = 'israel';
-            }
-            if (!country) {
-              country = 'other';
-            }
-            if (!acc[country]) acc[country] = [];
-            acc[country].push(trip);
-            return acc;
-          }, {})).map(([country, countryTrips]) => (
-            <motion.div
-              key={country}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
-            >
-              {/* Country Header */}
-              <div className="flex items-center gap-2 sm:gap-3 mb-4">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-200">
-                  <Globe className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm font-semibold text-gray-600">{t(country)}</span>
-                  <Badge variant="outline" className="bg-white text-gray-600 text-xs">
-                    {countryTrips.length}
-                  </Badge>
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="space-y-3">
+                  <Skeleton className="h-48 w-full rounded-xl" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
                 </div>
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-                {countryTrips.map((trip) => (
-                  <div
-                    key={trip.id}
-                    className="opacity-75 hover:opacity-100 transition-opacity"
-                  >
-                    <TripCard trip={trip} currentUser={user} />
+              ))}
+            </div>
+          ) : viewMode === 'grid' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {sortedTrips.slice(0, visibleCount).map((trip) => (
+                <TripCard key={trip.id} trip={trip} user={user} />
+              ))}
+              {sortedTrips.length === 0 && (
+                <div className="col-span-full text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+                  <div className="max-w-md mx-auto">
+                    <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <Search className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      {language === 'he' ? 'לא נמצאו טיולים' : language === 'ru' ? 'Поездки не найдены' : language === 'es' ? 'No se encontraron viajes' : language === 'fr' ? 'Aucun voyage trouvé' : language === 'de' ? 'Keine Reisen gefunden' : language === 'it' ? 'Nessun viaggio trovato' : 'No trips found'}
+                    </h3>
+                    <p className="text-gray-500 mb-6">
+                      {language === 'he' ? 'נסה לשנות את סינון החיפוש או ' : language === 'ru' ? 'Попробуйте изменить фильтры или ' : language === 'es' ? 'Intenta cambiar los filtros o ' : language === 'fr' ? 'Essayez de changer les filtres ou ' : language === 'de' ? 'Versuchen Sie, die Filter zu ändern oder ' : language === 'it' ? 'Prova a cambiare i filtri o ' : 'Try adjusting your filters or '}
+                      <Link to={createPageUrl('CreateTrip')} className="text-emerald-600 font-bold hover:underline">
+                        {language === 'he' ? 'צור טיול חדש' : language === 'ru' ? 'создайте новую поездку' : language === 'es' ? 'crear un nuevo viaje' : language === 'fr' ? 'créer un nouveau voyage' : language === 'de' ? 'eine neue Reise erstellen' : language === 'it' ? 'creare un nuovo viaggio' : 'create a new trip'}
+                      </Link>
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setFilters({
+                        search: '',
+                        country: '',
+                        region: '',
+                        difficulty: '',
+                        duration_type: '',
+                        activity_type: '',
+                        pets_allowed: false,
+                        camping_available: false,
+                        trail_type: [],
+                        interests: [],
+                        date_from: null,
+                        date_to: null,
+                        available_spots: false,
+                        favorites: false
+                      })}
+                      className="border-gray-300 text-gray-700"
+                    >
+                      {language === 'he' ? 'נקה סינון' : language === 'ru' ? 'Очистить фильтры' : language === 'es' ? 'Limpiar filtros' : language === 'fr' ? 'Effacer les filtres' : language === 'de' ? 'Filter löschen' : language === 'it' ? 'Cancella filtri' : 'Clear Filters'}
+                    </Button>
                   </div>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </section>
-      )}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="h-[600px] rounded-2xl overflow-hidden shadow-xl border-2 border-emerald-100">
+              <TripsMap trips={sortedTrips} />
+            </div>
+          )}
+
+          {sortedTrips.length > visibleCount && viewMode === 'grid' && (
+            <div className="mt-12 text-center">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => setVisibleCount(prev => prev + 8)}
+                className="min-w-[200px] bg-white hover:bg-emerald-50 border-2 border-emerald-200 text-emerald-700 font-bold shadow-lg hover:shadow-emerald-100 transition-all h-12"
+              >
+                {language === 'he' ? 'טען עוד טיולים' : language === 'ru' ? 'Загрузить еще' : language === 'es' ? 'Cargar más' : language === 'fr' ? 'Charger plus' : language === 'de' ? 'Mehr laden' : language === 'it' ? 'Carica altro' : 'Load More'}
+                <ChevronDown className="w-4 h-4 mr-2" />
+              </Button>
+            </div>
+          )}
+      </section>
 
       {/* Live Trips Dialog */}
       <Dialog open={showLiveTripsDialog} onOpenChange={setShowLiveTripsDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-center justify-center">
-              <Radio className="w-6 h-6 text-emerald-600" />
-              {language === 'he' ? 'הצטרף לטיול חי' : language === 'ru' ? 'Присоединиться к живой поездке' : language === 'es' ? 'Únete a un viaje en vivo' : language === 'fr' ? 'Rejoindre un voyage en direct' : language === 'de' ? 'Live-Reise beitreten' : language === 'it' ? 'Unisciti a un viaggio live' : 'Join a Live Trip'}
+            <DialogTitle>
+              {language === 'he' ? 'הצטרפות לטיול חי' : language === 'ru' ? 'Присоединиться к живой поездке' : language === 'es' ? 'Unirse a un viaje en vivo' : language === 'fr' ? 'Rejoindre un voyage en direct' : language === 'de' ? 'Einer Live-Reise beitreten' : language === 'it' ? 'Unisciti a un viaggio dal vivo' : 'Join Live Trip'}
             </DialogTitle>
-            <DialogDescription className="text-center">
-              {language === 'he' 
-                ? 'בחר את סוג הפעילות שאתה מעוניין בה היום'
-                : language === 'ru' ? 'Выберите тип активности, которая вас интересует сегодня'
-                : language === 'es' ? 'Elige el tipo de actividad que te interesa hoy'
-                : language === 'fr' ? 'Choisissez le type d\'activité qui vous intéresse aujourd\'hui'
-                : language === 'de' ? 'Wählen Sie die Aktivität, die Sie heute interessiert'
-                : language === 'it' ? 'Scegli il tipo di attività che ti interessa oggi'
-                : 'Choose the activity type you\'re interested in today'}
+            <DialogDescription>
+              {language === 'he' ? 'בחר את סוג הפעילות שברצונך להצטרף אליה היום' : language === 'ru' ? 'Выберите тип активности, к которой вы хотите присоединиться сегодня' : language === 'es' ? 'Elige el tipo de actividad a la que quieres unirte hoy' : language === 'fr' ? 'Choisissez le type d\'activité que vous souhaitez rejoindre aujourd\'hui' : language === 'de' ? 'Wählen Sie die Art der Aktivität, an der Sie heute teilnehmen möchten' : language === 'it' ? 'Scegli il tipo di attività a cui vuoi unirti oggi' : 'Choose the type of activity you want to join today'}
             </DialogDescription>
           </DialogHeader>
-
-          <div className="grid grid-cols-1 gap-3 py-4">
-            <Button
+          <div className="grid grid-cols-1 gap-4 py-4">
+            <Button 
               onClick={() => handleJoinLiveTrip('hiking')}
+              className="h-14 justify-start text-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
               disabled={joiningLiveTrip}
-              className="h-20 flex items-center justify-start gap-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
             >
-              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                <Mountain className="w-6 h-6" />
-              </div>
-              <div className="text-right flex-1">
-                <p className="font-bold text-lg">{t('hiking')}</p>
-                <p className="text-sm text-green-100">{language === 'he' ? 'טיולי רגלי' : language === 'ru' ? 'Пешие прогулки' : language === 'es' ? 'Senderismo' : language === 'fr' ? 'Randonnée' : language === 'de' ? 'Wandern' : language === 'it' ? 'Escursioni' : 'Hiking trips'}</p>
-              </div>
+              <span className="text-2xl mr-3">🥾</span>
+              {language === 'he' ? 'הליכה / טיול רגלי' : language === 'ru' ? 'Пеший туризм' : language === 'es' ? 'Senderismo' : language === 'fr' ? 'Randonnée' : language === 'de' ? 'Wandern' : language === 'it' ? 'Escursionismo' : 'Hiking'}
             </Button>
-
-            <Button
+            <Button 
               onClick={() => handleJoinLiveTrip('cycling')}
+              className="h-14 justify-start text-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200"
               disabled={joiningLiveTrip}
-              className="h-20 flex items-center justify-start gap-4 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white"
             >
-              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                <Bike className="w-6 h-6" />
-              </div>
-              <div className="text-right flex-1">
-                <p className="font-bold text-lg">{t('cycling')}</p>
-                <p className="text-sm text-blue-100">{language === 'he' ? 'רכיבת אופניים' : language === 'ru' ? 'Велоспорт' : language === 'es' ? 'Ciclismo' : language === 'fr' ? 'Cyclisme' : language === 'de' ? 'Radfahren' : language === 'it' ? 'Ciclismo' : 'Cycling trips'}</p>
-              </div>
+              <span className="text-2xl mr-3">🚴</span>
+              {language === 'he' ? 'אופניים' : language === 'ru' ? 'Велоспорт' : language === 'es' ? 'Ciclismo' : language === 'fr' ? 'Cyclisme' : language === 'de' ? 'Radfahren' : language === 'it' ? 'Ciclismo' : 'Cycling'}
             </Button>
-
-            <Button
+            <Button 
               onClick={() => handleJoinLiveTrip('offroad')}
+              className="h-14 justify-start text-lg bg-orange-50 text-orange-700 hover:bg-orange-100 border border-orange-200"
               disabled={joiningLiveTrip}
-              className="h-20 flex items-center justify-start gap-4 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
             >
-              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                <Truck className="w-6 h-6" />
-              </div>
-              <div className="text-right flex-1">
-                <p className="font-bold text-lg">{t('offroad')}</p>
-                <p className="text-sm text-orange-100">{language === 'he' ? 'טיולי שטח' : language === 'ru' ? 'Внедорожные' : language === 'es' ? 'Todo terreno' : language === 'fr' ? 'Tout-terrain' : language === 'de' ? 'Offroad' : language === 'it' ? 'Fuoristrada' : 'Off-road trips'}</p>
-              </div>
+              <span className="text-2xl mr-3">🚙</span>
+              {language === 'he' ? 'שטח / 4X4' : language === 'ru' ? 'Внедорожник' : language === 'es' ? 'Todoterreno' : language === 'fr' ? 'Tout-terrain' : language === 'de' ? 'Offroad' : language === 'it' ? 'Fuoristrada' : 'Off-road'}
             </Button>
           </div>
         </DialogContent>
