@@ -1035,29 +1035,6 @@ export default function TripDetails() {
 
   const title = trip.title || trip.title_he || trip.title_en;
   const description = trip.description || trip.description_he || trip.description_en;
-  const eventSchema = useMemo(() => {
-    const start = trip.date ? new Date(trip.date).toISOString() : undefined;
-    return {
-      "@context": "https://schema.org",
-      "@type": "Event",
-      name: title,
-      description,
-      startDate: start,
-      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-      eventStatus: "https://schema.org/EventScheduled",
-      image: trip.image_url ? [trip.image_url] : undefined,
-      location: {
-        "@type": "Place",
-        name: trip.location || "",
-        address: trip.location || ""
-      },
-      organizer: {
-        "@type": "Organization",
-        name: "Groupy Loopy",
-        url: "https://groupyloopy.com/"
-      }
-    };
-  }, [trip?.date, trip?.image_url, trip?.location, title, description]);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32 md:pb-8 overflow-y-auto">
