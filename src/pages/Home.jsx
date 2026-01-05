@@ -752,7 +752,7 @@ export default function Home() {
                 </Link>
               )}
               
-              {viewMode === 'grid' && (
+              {(viewMode === 'grid' || viewMode === 'list') && (
                 <div className="flex items-center gap-1 sm:gap-2 w-full sm:w-auto">
                   <span className="text-xs sm:text-sm text-gray-600 hidden sm:inline">
                     {language === 'he' ? 'מיין:' : language === 'ru' ? 'Сортировка:' : language === 'es' ? 'Ordenar:' : language === 'fr' ? 'Trier :' : language === 'de' ? 'Sortieren:' : language === 'it' ? 'Ordina:' : 'Sort:'}
@@ -865,7 +865,7 @@ export default function Home() {
                   </Link>
                 );
               })}
-              {sortedTrips.length === 0 && (
+            </div>
           ) : viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {sortedTrips.slice(0, visibleCount).map((trip) => (
