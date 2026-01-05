@@ -36,21 +36,36 @@ export default function Home() {
   const [showLiveTripsDialog, setShowLiveTripsDialog] = useState(false);
   const [joiningLiveTrip, setJoiningLiveTrip] = useState(false);
   
-  const [filters, setFilters] = useState({
-    search: '',
-    country: '',
-    region: '',
-    difficulty: '',
-    duration_type: '',
-    activity_type: '',
-    pets_allowed: false,
-    camping_available: false,
-    trail_type: [],
-    interests: [],
-    date_from: null,
-    date_to: null,
-    available_spots: false,
-    favorites: false
+  const [filters, setFilters] = useState(() => {
+    // Read from URL first
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlCountry = urlParams.get('country');
+    
+    // Auto-detect country based on browser language
+    let defaultCountry = '';
+    if (!urlCountry) {
+      const browserLang = navigator.language.split('-')[0];
+      if (browserLang === 'he') defaultCountry = 'israel';
+    } else {
+      defaultCountry = urlCountry;
+    }
+    
+    return {
+      search: '',
+      country: defaultCountry,
+      region: '',
+      difficulty: '',
+      duration_type: '',
+      activity_type: '',
+      pets_allowed: false,
+      camping_available: false,
+      trail_type: [],
+      interests: [],
+      date_from: null,
+      date_to: null,
+      available_spots: false,
+      favorites: false
+    };
   });
 
 
@@ -62,6 +77,54 @@ export default function Home() {
       setLanguage(langParam);
     }
   }, []);
+
+  // Update URL when country filter changes
+  useEffect(() => {
+    if (filters.country) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('country', filters.country);
+      window.history.replaceState({}, '', url);
+    } else {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('country');
+      window.history.replaceState({}, '', url);
+    }
+  }, [filters.country]);
+
+  // Update meta tags when filters change
+  useEffect(() => {
+    if (filters.country) {
+      const countryNames = {
+        israel: { he: 'ישראל', en: 'Israel', ru: 'Израиль', es: 'Israel', fr: 'Israël', de: 'Israel', it: 'Israele' },
+        usa: { he: 'ארצות הברית', en: 'United States', ru: 'США', es: 'Estados Unidos', fr: 'États-Unis', de: 'USA', it: 'Stati Uniti' },
+        italy: { he: 'איטליה', en: 'Italy', ru: 'Италия', es: 'Italia', fr: 'Italie', de: 'Italien', it: 'Italia' },
+        spain: { he: 'ספרד', en: 'Spain', ru: 'Испания', es: 'España', fr: 'Espagne', de: 'Spanien', it: 'Spagna' },
+        france: { he: 'צרפת', en: 'France', ru: 'Франция', es: 'Francia', fr: 'France', de: 'Frankreich', it: 'Francia' },
+        germany: { he: 'גרמניה', en: 'Germany', ru: 'Германия', es: 'Alemania', fr: 'Allemagne', de: 'Deutschland', it: 'Germania' },
+      };
+      
+      const countryName = countryNames[filters.country]?.[language] || filters.country;
+      
+      const newTitle = language === 'he' 
+        ? `טיולים ב${countryName} - Groupy Loopy`
+        : `${countryName} Trips - Groupy Loopy`;
+      
+      const newDescription = language === 'he'
+        ? `גלה טיולים קבוצתיים מרהיבים ב${countryName}. הצטרף לטיולים מאורגנים או צור את הטיול המושלם שלך.`
+        : `Discover amazing group trips in ${countryName}. Join organized trips or create your perfect adventure.`;
+      
+      document.title = newTitle;
+      
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', newDescription);
+      
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) ogTitle.setAttribute('content', newTitle);
+      
+      const ogDesc = document.querySelector('meta[property="og:description"]');
+      if (ogDesc) ogDesc.setAttribute('content', newDescription);
+    }
+  }, [filters.country, language]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -75,14 +138,52 @@ export default function Home() {
     fetchUser();
   }, []);
 
+  // Build database query based on filters
+  const buildDatabaseQuery = () => {
+    const query = {};
+    
+    // Country filter
+    if (filters.country) {
+      query.country = filters.country;
+    }
+    
+    // Region filter
+    if (filters.region && filters.region !== 'all_regions') {
+      query.region = filters.region;
+    }
+    
+    // Difficulty filter
+    if (filters.difficulty && filters.difficulty !== 'all') {
+      query.difficulty = filters.difficulty;
+    }
+    
+    // Duration filter
+    if (filters.duration_type && filters.duration_type !== 'all') {
+      query.duration_type = filters.duration_type;
+    }
+    
+    // Activity type filter
+    if (filters.activity_type && filters.activity_type !== 'all') {
+      query.activity_type = filters.activity_type;
+    }
+    
+    return query;
+  };
+
   const { data: trips = [], isLoading } = useQuery({
-    queryKey: ['trips'],
-    queryFn: () => base44.entities.Trip.list('-created_date'),
+    queryKey: ['trips', filters.country, filters.region, filters.difficulty, filters.duration_type, filters.activity_type],
+    queryFn: async () => {
+      const query = buildDatabaseQuery();
+      if (Object.keys(query).length > 0) {
+        return await base44.entities.Trip.filter(query, '-created_date');
+      }
+      return await base44.entities.Trip.list('-created_date');
+    },
   });
 
   const filteredTrips = useMemo(() => {
     return trips.filter(trip => {
-      // Search
+      // Search (client-side only)
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         const title = String(trip.title || trip.title_he || trip.title_en || '').toLowerCase();
@@ -96,75 +197,21 @@ export default function Home() {
         }
       }
 
-      // Country
-      if (filters.country) {
-        const filterCountry = filters.country.toLowerCase();
-        let tripCountry = trip.country && typeof trip.country === 'string' ? trip.country.toLowerCase() : '';
-        
-        // Smart detection for trips with missing country
-        if (!tripCountry) {
-           if (trip.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(trip.region)) {
-             tripCountry = 'israel';
-           } else {
-             // If we can't infer, assume Israel ONLY if the filter is Israel (legacy support)
-             // BUT exclude if it has a known non-Israel region
-             const knownNonIsraelRegions = [
-               'scotland', 'london', 'wales', // UK
-               'bavaria', 'berlin', // Germany
-               'tuscany', 'sicily', // Italy
-               'alp', 'pyrenees', // France
-               'northeast', 'southeast', 'midwest', 'west' // USA (generic but safer to exclude)
-             ];
-
-             const isKnownNonIsrael = trip.region && typeof trip.region === 'string' ? knownNonIsraelRegions.some(r => trip.region.toLowerCase().includes(r)) : false;
-             if (!isKnownNonIsrael) {
-                tripCountry = 'israel';
-             }
-           }
-        }
-        
-        if (tripCountry !== filterCountry) return false;
-      }
-
-      // Region
-      if (filters.region && filters.region !== 'all_regions') {
-        if (trip.region !== filters.region) return false;
-      }
-
-      // Difficulty
-      if (filters.difficulty && filters.difficulty !== 'all') {
-        if (trip.difficulty !== filters.difficulty) return false;
-      }
-
-      // Duration
-      if (filters.duration_type && filters.duration_type !== 'all') {
-        if (trip.duration_type !== filters.duration_type) return false;
-      }
-
-      // Activity Type
-      if (filters.activity_type && filters.activity_type !== 'all') {
-        if (trip.activity_type !== filters.activity_type) return false;
-      }
-
-      // Available Spots
+      // Available Spots (client-side)
       if (filters.available_spots) {
         if (trip.max_participants && (trip.current_participants || 0) >= trip.max_participants) return false;
       }
 
-      // Favorites
+      // Favorites (client-side)
       if (filters.favorites) {
         // Implement favorite logic if available in trip data or user data
         // For now skipping as logic depends on implementation
       }
       
-      // Trail Types (Tags)
+      // Trail Types (Tags) - client-side
       if (filters.trail_type && filters.trail_type.length > 0) {
-         // Assuming trip has tags or trail_type array
-         // This might need adjustment based on actual data structure
          const tripTags = trip.tags || [];
          const hasTag = filters.trail_type.some(tag => tripTags.includes(tag));
-         // If we want strict matching (all tags), use every. For now using some (any tag).
-         // Or if trip.trail_type is a single value
          if (!hasTag && !filters.trail_type.includes(trip.trail_type)) return false;
       }
 
