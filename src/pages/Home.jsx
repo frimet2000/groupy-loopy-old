@@ -815,6 +815,30 @@ export default function Home() {
             filters={filters} 
             setFilters={setFilters} 
           />
+          {React.useMemo(() => {
+            const AdSenseSlot = ({ slot }) => {
+              useEffect(() => {
+                try {
+                  (window.adsbygoogle = window.adsbygoogle || []).push({});
+                } catch (e) {}
+              }, []);
+              return (
+                <ins
+                  className="adsbygoogle"
+                  style={{ display: 'block' }}
+                  data-ad-client="ca-pub-4551819767344595"
+                  data-ad-slot={slot}
+                  data-ad-format="auto"
+                  data-full-width-responsive="true"
+                />
+              );
+            };
+            return (
+              <div className="my-6">
+                <AdSenseSlot slot="0000000000" />
+              </div>
+            );
+          }, [])}
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6 mb-6">
           <div>
