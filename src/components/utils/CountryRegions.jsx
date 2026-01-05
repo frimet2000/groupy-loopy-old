@@ -1,4 +1,69 @@
-// Country to regions mapping
+// Country to regions mapping with translations
+const countryTranslations = {
+  israel: { he: 'ישראל', en: 'Israel', ru: 'Израиль', es: 'Israel', fr: 'Israël', de: 'Israel', it: 'Israele' },
+  usa: { he: 'ארצות הברית', en: 'United States', ru: 'США', es: 'Estados Unidos', fr: 'États-Unis', de: 'USA', it: 'Stati Uniti' },
+  italy: { he: 'איטליה', en: 'Italy', ru: 'Италия', es: 'Italia', fr: 'Italie', de: 'Italien', it: 'Italia' },
+  spain: { he: 'ספרד', en: 'Spain', ru: 'Испания', es: 'España', fr: 'Espagne', de: 'Spanien', it: 'Spagna' },
+  france: { he: 'צרפת', en: 'France', ru: 'Франция', es: 'Francia', fr: 'France', de: 'Frankreich', it: 'Francia' },
+  germany: { he: 'גרמניה', en: 'Germany', ru: 'Германия', es: 'Alemania', fr: 'Allemagne', de: 'Deutschland', it: 'Germania' },
+  uk: { he: 'בריטניה', en: 'United Kingdom', ru: 'Великобритания', es: 'Reino Unido', fr: 'Royaume-Uni', de: 'Vereinigtes Königreich', it: 'Regno Unito' },
+  japan: { he: 'יפן', en: 'Japan', ru: 'Япония', es: 'Japón', fr: 'Japon', de: 'Japan', it: 'Giappone' },
+  australia: { he: 'אוסטרליה', en: 'Australia', ru: 'Австралия', es: 'Australia', fr: 'Australie', de: 'Australien', it: 'Australia' },
+  canada: { he: 'קנדה', en: 'Canada', ru: 'Канада', es: 'Canadá', fr: 'Canada', de: 'Kanada', it: 'Canada' },
+  switzerland: { he: 'שוויץ', en: 'Switzerland', ru: 'Швейцария', es: 'Suiza', fr: 'Suisse', de: 'Schweiz', it: 'Svizzera' },
+  austria: { he: 'אוסטריה', en: 'Austria', ru: 'Австрия', es: 'Austria', fr: 'Autriche', de: 'Österreich', it: 'Austria' },
+  new_zealand: { he: 'ניו זילנד', en: 'New Zealand', ru: 'Новая Зеландия', es: 'Nueva Zelanda', fr: 'Nouvelle-Zélande', de: 'Neuseeland', it: 'Nuova Zelanda' },
+  norway: { he: 'נורווגיה', en: 'Norway', ru: 'Норвегия', es: 'Noruega', fr: 'Norvège', de: 'Norwegen', it: 'Norvegia' },
+  sweden: { he: 'שוודיה', en: 'Sweden', ru: 'Швеция', es: 'Suecia', fr: 'Suède', de: 'Schweden', it: 'Svezia' },
+  greece: { he: 'יוון', en: 'Greece', ru: 'Греция', es: 'Grecia', fr: 'Grèce', de: 'Griechenland', it: 'Grecia' },
+  portugal: { he: 'פורטוגל', en: 'Portugal', ru: 'Португалия', es: 'Portugal', fr: 'Portugal', de: 'Portugal', it: 'Portogallo' },
+  netherlands: { he: 'הולנד', en: 'Netherlands', ru: 'Нидерланды', es: 'Países Bajos', fr: 'Pays-Bas', de: 'Niederlande', it: 'Paesi Bassi' },
+  belgium: { he: 'בלגיה', en: 'Belgium', ru: 'Бельгия', es: 'Bélgica', fr: 'Belgique', de: 'Belgien', it: 'Belgio' },
+  denmark: { he: 'דנמרק', en: 'Denmark', ru: 'Дания', es: 'Dinamarca', fr: 'Danemark', de: 'Dänemark', it: 'Danimarca' },
+  ireland: { he: 'אירלנד', en: 'Ireland', ru: 'Ирландия', es: 'Irlanda', fr: 'Irlande', de: 'Irland', it: 'Irlanda' },
+  iceland: { he: 'איסלנד', en: 'Iceland', ru: 'Исландия', es: 'Islandia', fr: 'Islande', de: 'Island', it: 'Islanda' },
+  croatia: { he: 'קרואטיה', en: 'Croatia', ru: 'Хорватия', es: 'Croacia', fr: 'Croatie', de: 'Kroatien', it: 'Croazia' },
+  poland: { he: 'פולין', en: 'Poland', ru: 'Польша', es: 'Polonia', fr: 'Pologne', de: 'Polen', it: 'Polonia' },
+  czech_republic: { he: 'צ׳כיה', en: 'Czech Republic', ru: 'Чехия', es: 'República Checa', fr: 'Tchéquie', de: 'Tschechien', it: 'Repubblica Ceca' },
+  thailand: { he: 'תאילנד', en: 'Thailand', ru: 'Таиланд', es: 'Tailandia', fr: 'Thaïlande', de: 'Thailand', it: 'Thailandia' },
+  indonesia: { he: 'אינדונזיה', en: 'Indonesia', ru: 'Индонезия', es: 'Indonesia', fr: 'Indonésie', de: 'Indonesien', it: 'Indonesia' },
+  malaysia: { he: 'מלזיה', en: 'Malaysia', ru: 'Малайзия', es: 'Malasia', fr: 'Malaisie', de: 'Malaysia', it: 'Malesia' },
+  vietnam: { he: 'וייטנאם', en: 'Vietnam', ru: 'Вьетнам', es: 'Vietnam', fr: 'Vietnam', de: 'Vietnam', it: 'Vietnam' },
+  south_korea: { he: 'דרום קוריאה', en: 'South Korea', ru: 'Южная Корея', es: 'Corea del Sur', fr: 'Corée du Sud', de: 'Südkorea', it: 'Corea del Sud' },
+  china: { he: 'סין', en: 'China', ru: 'Китай', es: 'China', fr: 'Chine', de: 'China', it: 'Cina' },
+  india: { he: 'הודו', en: 'India', ru: 'Индия', es: 'India', fr: 'Inde', de: 'Indien', it: 'India' },
+  nepal: { he: 'נפאל', en: 'Nepal', ru: 'Непал', es: 'Nepal', fr: 'Népal', de: 'Nepal', it: 'Nepal' },
+  turkey: { he: 'טורקיה', en: 'Turkey', ru: 'Турция', es: 'Turquía', fr: 'Turquie', de: 'Türkei', it: 'Turchia' },
+  egypt: { he: 'מצרים', en: 'Egypt', ru: 'Египет', es: 'Egipto', fr: 'Égypte', de: 'Ägypten', it: 'Egitto' },
+  morocco: { he: 'מרוקו', en: 'Morocco', ru: 'Марокко', es: 'Marruecos', fr: 'Maroc', de: 'Marokko', it: 'Marocco' },
+  south_africa: { he: 'דרום אפריקה', en: 'South Africa', ru: 'ЮАР', es: 'Sudáfrica', fr: 'Afrique du Sud', de: 'Südafrika', it: 'Sudafrica' },
+  kenya: { he: 'קניה', en: 'Kenya', ru: 'Кения', es: 'Kenia', fr: 'Kenya', de: 'Kenia', it: 'Kenya' },
+  tanzania: { he: 'טנזניה', en: 'Tanzania', ru: 'Танзания', es: 'Tanzania', fr: 'Tanzanie', de: 'Tansania', it: 'Tanzania' },
+  brazil: { he: 'ברזיל', en: 'Brazil', ru: 'Бразилия', es: 'Brasil', fr: 'Brésil', de: 'Brasilien', it: 'Brasile' },
+  argentina: { he: 'ארגנטינה', en: 'Argentina', ru: 'Аргентина', es: 'Argentina', fr: 'Argentine', de: 'Argentinien', it: 'Argentina' },
+  chile: { he: 'צ׳ילה', en: 'Chile', ru: 'Чили', es: 'Chile', fr: 'Chili', de: 'Chile', it: 'Cile' },
+  peru: { he: 'פרו', en: 'Peru', ru: 'Перу', es: 'Perú', fr: 'Pérou', de: 'Peru', it: 'Perù' },
+  mexico: { he: 'מקסיקו', en: 'Mexico', ru: 'Мексика', es: 'México', fr: 'Mexique', de: 'Mexiko', it: 'Messico' },
+  costa_rica: { he: 'קוסטה ריקה', en: 'Costa Rica', ru: 'Коста-Рика', es: 'Costa Rica', fr: 'Costa Rica', de: 'Costa Rica', it: 'Costa Rica' },
+  finland: { he: 'פינלנד', en: 'Finland', ru: 'Финляндия', es: 'Finlandia', fr: 'Finlande', de: 'Finnland', it: 'Finlandia' },
+  romania: { he: 'רומניה', en: 'Romania', ru: 'Румыния', es: 'Rumania', fr: 'Roumanie', de: 'Rumänien', it: 'Romania' },
+  hungary: { he: 'הונגריה', en: 'Hungary', ru: 'Венгрия', es: 'Hungría', fr: 'Hongrie', de: 'Ungarn', it: 'Ungheria' },
+  slovakia: { he: 'סלובקיה', en: 'Slovakia', ru: 'Словакия', es: 'Eslovaquia', fr: 'Slovaquie', de: 'Slowakei', it: 'Slovacchia' },
+  bulgaria: { he: 'בולגריה', en: 'Bulgaria', ru: 'Болгария', es: 'Bulgaria', fr: 'Bulgarie', de: 'Bulgarien', it: 'Bulgaria' },
+  serbia: { he: 'סרביה', en: 'Serbia', ru: 'Сербия', es: 'Serbia', fr: 'Serbie', de: 'Serbien', it: 'Serbia' },
+  slovenia: { he: 'סלובניה', en: 'Slovenia', ru: 'Словения', es: 'Eslovenia', fr: 'Slovénie', de: 'Slowenien', it: 'Slovenia' },
+  montenegro: { he: 'מונטנגרו', en: 'Montenegro', ru: 'Черногория', es: 'Montenegro', fr: 'Monténégro', de: 'Montenegro', it: 'Montenegro' },
+  bosnia_herzegovina: { he: 'בוסניה והרצגובינה', en: 'Bosnia & Herzegovina', ru: 'Босния и Герцеговина', es: 'Bosnia y Herzegovina', fr: 'Bosnie-Herzégovine', de: 'Bosnien und Herzegowina', it: 'Bosnia ed Erzegovina' },
+  albania: { he: 'אלבניה', en: 'Albania', ru: 'Албания', es: 'Albania', fr: 'Albanie', de: 'Albanien', it: 'Albania' },
+  north_macedonia: { he: 'מקדוניה הצפונית', en: 'North Macedonia', ru: 'Северная Македония', es: 'Macedonia del Norte', fr: 'Macédoine du Nord', de: 'Nordmazedonien', it: 'Macedonia del Nord' },
+  luxembourg: { he: 'לוקסמבורג', en: 'Luxembourg', ru: 'Люксембург', es: 'Luxemburgo', fr: 'Luxembourg', de: 'Luxemburg', it: 'Lussemburgo' },
+  malta: { he: 'מלטה', en: 'Malta', ru: 'Мальта', es: 'Malta', fr: 'Malte', de: 'Malta', it: 'Malta' },
+  cyprus: { he: 'קפריסין', en: 'Cyprus', ru: 'Кипр', es: 'Chipre', fr: 'Chypre', de: 'Zypern', it: 'Cipro' },
+  estonia: { he: 'אסטוניה', en: 'Estonia', ru: 'Эстония', es: 'Estonia', fr: 'Estonie', de: 'Estland', it: 'Estonia' },
+  latvia: { he: 'לטביה', en: 'Latvia', ru: 'Латвия', es: 'Letonia', fr: 'Lettonie', de: 'Lettland', it: 'Lettonia' },
+  lithuania: { he: 'ליטא', en: 'Lithuania', ru: 'Литва', es: 'Lituania', fr: 'Lituanie', de: 'Litauen', it: 'Lituania' }
+};
+
 export const countryRegions = {
   israel: {
     regions: ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'],
@@ -258,6 +323,10 @@ export const getCountryCenter = (countryId) => {
   return countryRegions[countryId]?.default_center || [31.5, 34.75];
 };
 
-export const getAllCountries = () => {
-  return Object.keys(countryRegions);
+export const getAllCountries = (language = 'en') => {
+  return Object.keys(countryRegions).map(countryKey => ({
+    value: countryKey,
+    label: countryTranslations[countryKey]?.[language] || countryTranslations[countryKey]?.en || countryKey,
+    translations: countryTranslations[countryKey]
+  }));
 };
