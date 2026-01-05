@@ -2004,10 +2004,10 @@ export default function TripDetails() {
               }
 
               {/* Description */}
-              {description && !isEditing &&
+              {(trip.description || trip.description_he || trip.description_en) && !isEditing &&
               <Card>
                   <CardContent className="p-6">
-                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap" dir={isRTL ? 'rtl' : 'ltr'}>{description}</p>
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap" dir={isRTL ? 'rtl' : 'ltr'}>{trip.description || trip.description_he || trip.description_en}</p>
                   </CardContent>
                 </Card>
               }
