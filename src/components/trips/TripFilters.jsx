@@ -151,16 +151,32 @@ export default function TripFilters({ filters, setFilters }) {
         {/* Advanced Selectors - Always Visible */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Country */}
-          <Select value={filters.country} onValueChange={(v) => handleFilterChange('country', v)}>
+          <Select value={filters.country || ""} onValueChange={(v) => handleFilterChange('country', v)}>
             <SelectTrigger className="bg-white border-2 border-gray-200 h-12 hover:border-emerald-400 transition-all shadow-sm">
-              <div className="flex items-center gap-2">
-                <Globe className="w-4 h-4 text-emerald-600" />
-                <SelectValue placeholder={language === 'he' ? 'מדינה' : language === 'ru' ? 'Страна' : language === 'es' ? 'País' : language === 'fr' ? 'Pays' : language === 'de' ? 'Land' : language === 'it' ? 'Paese' : 'Country'} />
+              <div className="flex items-center gap-2 w-full">
+                <Globe className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <span className={`flex-1 text-start truncate ${filters.country ? 'text-gray-900' : 'text-gray-500'}`}>
+                  {filters.country 
+                    ? getAllCountries().find(c => c.value === filters.country)?.label 
+                    : (language === 'he' ? 'מדינה' : language === 'ru' ? 'Страна' : language === 'es' ? 'País' : language === 'fr' ? 'Pays' : language === 'de' ? 'Land' : language === 'it' ? 'Paese' : 'Country')
+                  }
+                </span>
               </div>
             </SelectTrigger>
             <SelectContent>
+              <div className="p-2 sticky top-0 bg-white z-10 border-b">
+                <Input 
+                  placeholder={language === 'he' ? '🔍 חפש מדינה...' : language === 'ru' ? '🔍 Поиск...' : language === 'es' ? '🔍 Buscar...' : language === 'fr' ? '🔍 Rechercher...' : language === 'de' ? '🔍 Suchen...' : language === 'it' ? '🔍 Cerca...' : '🔍 Search...'} 
+                  className="h-9 text-sm"
+                  value={countrySearch}
+                  onChange={(e) => setCountrySearch(e.target.value)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
               <SelectItem value={null}>{language === 'he' ? 'כל המדינות' : language === 'ru' ? 'Все' : language === 'es' ? 'Todos' : language === 'fr' ? 'Tous' : language === 'de' ? 'Alle' : language === 'it' ? 'Tutti' : 'All'}</SelectItem>
-              {getAllCountries().map(country => (
+              {getAllCountries()
+                .filter(c => c.label && typeof c.label === 'string' && c.label.toLowerCase().includes(countrySearch.toLowerCase()))
+                .map(country => (
                 <SelectItem key={country.value} value={country.value}>
                   {country.label}
                 </SelectItem>
@@ -169,11 +185,18 @@ export default function TripFilters({ filters, setFilters }) {
           </Select>
 
           {/* Difficulty */}
-          <Select value={filters.difficulty} onValueChange={(v) => handleFilterChange('difficulty', v)}>
+          <Select value={filters.difficulty || ""} onValueChange={(v) => handleFilterChange('difficulty', v)}>
             <SelectTrigger className="bg-white border-2 border-gray-200 h-12 hover:border-emerald-400 transition-all shadow-sm">
-              <div className="flex items-center gap-2">
-                <Mountain className="w-4 h-4 text-blue-600" />
-                <SelectValue placeholder={language === 'he' ? 'רמת קושי' : language === 'ru' ? 'Сложность' : language === 'es' ? 'Dificultad' : language === 'fr' ? 'Difficulté' : language === 'de' ? 'Schwierigkeit' : language === 'it' ? 'Difficoltà' : 'Difficulty'} />
+              <div className="flex items-center gap-2 w-full">
+                <Mountain className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                <span className={`flex-1 text-start truncate ${filters.difficulty ? 'text-gray-900' : 'text-gray-500'}`}>
+                  {filters.difficulty === 'easy' ? (language === 'he' ? 'קל' : language === 'ru' ? 'Легко' : language === 'es' ? 'Fácil' : language === 'fr' ? 'Facile' : language === 'de' ? 'Leicht' : language === 'it' ? 'Facile' : 'Easy')
+                  : filters.difficulty === 'moderate' ? (language === 'he' ? 'בינוני' : language === 'ru' ? 'Средне' : language === 'es' ? 'Moderado' : language === 'fr' ? 'Modéré' : language === 'de' ? 'Mäßig' : language === 'it' ? 'Moderato' : 'Moderate')
+                  : filters.difficulty === 'challenging' ? (language === 'he' ? 'מאתגר' : language === 'ru' ? 'Сложно' : language === 'es' ? 'Desafiante' : language === 'fr' ? 'Difficile' : language === 'de' ? 'Anspruchsvoll' : language === 'it' ? 'Impegnativo' : 'Challenging')
+                  : filters.difficulty === 'hard' ? (language === 'he' ? 'קשה' : language === 'ru' ? 'Трудно' : language === 'es' ? 'Difícil' : language === 'fr' ? 'Dur' : language === 'de' ? 'Schwer' : language === 'it' ? 'Difficile' : 'Hard')
+                  : (language === 'he' ? 'רמת קושי' : language === 'ru' ? 'Сложность' : language === 'es' ? 'Dificultad' : language === 'fr' ? 'Difficulté' : language === 'de' ? 'Schwierigkeit' : language === 'it' ? 'Difficoltà' : 'Difficulty')
+                  }
+                </span>
               </div>
             </SelectTrigger>
             <SelectContent>
@@ -186,11 +209,19 @@ export default function TripFilters({ filters, setFilters }) {
           </Select>
 
           {/* Duration */}
-          <Select value={filters.duration_type} onValueChange={(v) => handleFilterChange('duration_type', v)}>
+          <Select value={filters.duration_type || ""} onValueChange={(v) => handleFilterChange('duration_type', v)}>
             <SelectTrigger className="bg-white border-2 border-gray-200 h-12 hover:border-emerald-400 transition-all shadow-sm">
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-purple-600" />
-                <SelectValue placeholder={language === 'he' ? 'משך זמן' : language === 'ru' ? 'Длительность' : language === 'es' ? 'Duración' : language === 'fr' ? 'Durée' : language === 'de' ? 'Dauer' : language === 'it' ? 'Durata' : 'Duration'} />
+              <div className="flex items-center gap-2 w-full">
+                <Clock className="w-4 h-4 text-purple-600 flex-shrink-0" />
+                <span className={`flex-1 text-start truncate ${filters.duration_type ? 'text-gray-900' : 'text-gray-500'}`}>
+                  {filters.duration_type === 'hours' ? (language === 'he' ? 'שעות' : language === 'ru' ? 'Часы' : language === 'es' ? 'Horas' : language === 'fr' ? 'Heures' : language === 'de' ? 'Stunden' : language === 'it' ? 'Ore' : 'Hours')
+                  : filters.duration_type === 'half_day' ? (language === 'he' ? 'חצי יום' : language === 'ru' ? 'Полдня' : language === 'es' ? 'Medio día' : language === 'fr' ? 'Demi-journée' : language === 'de' ? 'Halber Tag' : language === 'it' ? 'Mezza giornata' : 'Half Day')
+                  : filters.duration_type === 'full_day' ? (language === 'he' ? 'יום מלא' : language === 'ru' ? 'Полный день' : language === 'es' ? 'Día completo' : language === 'fr' ? 'Journée complète' : language === 'de' ? 'Ganzer Tag' : language === 'it' ? 'Giornata intera' : 'Full Day')
+                  : filters.duration_type === 'overnight' ? (language === 'he' ? 'לילה' : language === 'ru' ? 'С ночевкой' : language === 'es' ? 'Noche' : language === 'fr' ? 'Nuit' : language === 'de' ? 'Übernachtung' : language === 'it' ? 'Notturno' : 'Overnight')
+                  : filters.duration_type === 'multi_day' ? (language === 'he' ? 'מספר ימים' : language === 'ru' ? 'Несколько дней' : language === 'es' ? 'Varios días' : language === 'fr' ? 'Plusieurs jours' : language === 'de' ? 'Mehrtägig' : language === 'it' ? 'Più giorni' : 'Multi-Day')
+                  : (language === 'he' ? 'משך זמן' : language === 'ru' ? 'Длительность' : language === 'es' ? 'Duración' : language === 'fr' ? 'Durée' : language === 'de' ? 'Dauer' : language === 'it' ? 'Durata' : 'Duration')
+                  }
+                </span>
               </div>
             </SelectTrigger>
             <SelectContent>
@@ -204,11 +235,18 @@ export default function TripFilters({ filters, setFilters }) {
           </Select>
 
           {/* Activity Type */}
-          <Select value={filters.activity_type} onValueChange={(v) => handleFilterChange('activity_type', v)}>
+          <Select value={filters.activity_type || ""} onValueChange={(v) => handleFilterChange('activity_type', v)}>
             <SelectTrigger className="bg-white border-2 border-gray-200 h-12 hover:border-emerald-400 transition-all shadow-sm">
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-orange-600" />
-                <SelectValue placeholder={language === 'he' ? 'סוג פעילות' : language === 'ru' ? 'Тип' : language === 'es' ? 'Tipo' : language === 'fr' ? 'Type' : language === 'de' ? 'Typ' : language === 'it' ? 'Tipo' : 'Activity'} />
+              <div className="flex items-center gap-2 w-full">
+                <Zap className="w-4 h-4 text-orange-600 flex-shrink-0" />
+                <span className={`flex-1 text-start truncate ${filters.activity_type ? 'text-gray-900' : 'text-gray-500'}`}>
+                  {filters.activity_type === 'hiking' ? (language === 'he' ? 'הליכה' : language === 'ru' ? 'Пеший туризм' : language === 'es' ? 'Senderismo' : language === 'fr' ? 'Randonnée' : language === 'de' ? 'Wandern' : language === 'it' ? 'Trekking' : 'Hiking')
+                  : filters.activity_type === 'cycling' ? (language === 'he' ? 'אופניים' : language === 'ru' ? 'Велоспорт' : language === 'es' ? 'Ciclismo' : language === 'fr' ? 'Vélo' : language === 'de' ? 'Radfahren' : language === 'it' ? 'Ciclismo' : 'Cycling')
+                  : filters.activity_type === 'offroad' ? (language === 'he' ? 'שטח' : language === 'ru' ? 'Внедорожник' : language === 'es' ? 'Todoterreno' : language === 'fr' ? 'Tout-terrain' : language === 'de' ? 'Offroad' : language === 'it' ? 'Fuoristrada' : 'Off-road')
+                  : filters.activity_type === 'trek' ? (language === 'he' ? 'טרק' : language === 'ru' ? 'Трек' : language === 'es' ? 'Trek' : language === 'fr' ? 'Trek' : language === 'de' ? 'Trek' : language === 'it' ? 'Trek' : 'Trek')
+                  : (language === 'he' ? 'סוג פעילות' : language === 'ru' ? 'Тип' : language === 'es' ? 'Tipo' : language === 'fr' ? 'Type' : language === 'de' ? 'Typ' : language === 'it' ? 'Tipo' : 'Activity')
+                  }
+                </span>
               </div>
             </SelectTrigger>
             <SelectContent>
