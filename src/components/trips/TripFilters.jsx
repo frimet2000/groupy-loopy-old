@@ -12,6 +12,7 @@ import { motion } from 'framer-motion';
 
 export default function TripFilters({ filters, setFilters }) {
   const { t, isRTL, language } = useLanguage();
+  const [countrySearch, setCountrySearch] = useState('');
   
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
