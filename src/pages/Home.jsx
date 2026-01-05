@@ -720,6 +720,15 @@ export default function Home() {
                   onClick={() => setViewMode('grid')}
                   className={`gap-1 sm:gap-2 h-9 sm:h-10 px-2 sm:px-3 text-xs sm:text-sm min-h-[44px] touch-manipulation ${viewMode === 'grid' ? 'bg-white shadow-sm text-emerald-700' : 'text-gray-600 hover:text-gray-900'}`}
                 >
+                  <BookOpen className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">{language === 'he' ? 'כרטיסיות' : 'Cards'}</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  className={`gap-1 sm:gap-2 h-9 sm:h-10 px-2 sm:px-3 text-xs sm:text-sm min-h-[44px] touch-manipulation ${viewMode === 'list' ? 'bg-white shadow-sm text-emerald-700' : 'text-gray-600 hover:text-gray-900'}`}
+                >
                   <List className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">{language === 'he' ? 'רשימה' : 'List'}</span>
                 </Button>
@@ -776,6 +785,87 @@ export default function Home() {
                 </div>
               ))}
             </div>
+          ) : viewMode === 'list' ? (
+            <div className="space-y-3">
+              {sortedTrips.slice(0, visibleCount).map((trip) => {
+                const title = trip.title || trip.title_he || trip.title_en || '';
+                const description = trip.description || trip.description_he || trip.description_en || '';
+                const tripDate = new Date(trip.date);
+                const isUpcoming = tripDate >= new Date();
+                const spotsLeft = trip.max_participants ? trip.max_participants - (trip.current_participants || 1) : null;
+
+                return (
+                  <Link key={trip.id} to={createPageUrl('TripDetails') + '?id=' + trip.id}>
+                    <motion.div
+                      whileHover={{ scale: 1.01 }}
+                      className="bg-white rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-lg border border-gray-100 hover:border-emerald-200 transition-all"
+                    >
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        {/* Image */}
+                        <div className="w-full sm:w-32 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-gradient-to-br from-emerald-100 to-teal-100">
+                          {trip.image_url ? (
+                            <img 
+                              src={trip.image_url} 
+                              alt={title}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Mountain className="w-12 h-12 text-emerald-400" />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2">
+                            <h3 className="text-lg font-bold text-gray-900 truncate">{title}</h3>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              {trip.activity_type === 'hiking' && <span className="text-2xl">🥾</span>}
+                              {trip.activity_type === 'cycling' && <Bike className="w-5 h-5 text-blue-600" />}
+                              {trip.activity_type === 'offroad' && <Truck className="w-5 h-5 text-orange-600" />}
+                              {trip.activity_type === 'trek' && <Mountain className="w-5 h-5 text-purple-600" />}
+                              {trip.status === 'full' && <Badge className="bg-red-100 text-red-700">{language === 'he' ? 'מלא' : language === 'ru' ? 'Полон' : language === 'es' ? 'Lleno' : language === 'fr' ? 'Complet' : language === 'de' ? 'Voll' : language === 'it' ? 'Pieno' : 'Full'}</Badge>}
+                            </div>
+                          </div>
+
+                          <p className="text-sm text-gray-600 line-clamp-2 mb-3">{description}</p>
+
+                          <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-gray-600">
+                            <div className="flex items-center gap-1.5">
+                              <Calendar className="w-4 h-4 text-emerald-600" />
+                              <span>{format(tripDate, 'dd/MM/yyyy')}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <MapPin className="w-4 h-4 text-blue-600" />
+                              <span className="truncate max-w-[150px]">{trip.location}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <Users className="w-4 h-4 text-purple-600" />
+                              <span>{trip.current_participants || 1} {language === 'he' ? 'משתתפים' : language === 'ru' ? 'участников' : language === 'es' ? 'participantes' : language === 'fr' ? 'participants' : language === 'de' ? 'Teilnehmer' : language === 'it' ? 'partecipanti' : 'participants'}</span>
+                              {spotsLeft !== null && spotsLeft > 0 && (
+                                <span className="text-emerald-600 font-medium">({spotsLeft} {language === 'he' ? 'פנויים' : language === 'ru' ? 'свободно' : language === 'es' ? 'libres' : language === 'fr' ? 'libres' : language === 'de' ? 'frei' : language === 'it' ? 'liberi' : 'left'})</span>
+                              )}
+                            </div>
+                            {trip.difficulty && (
+                              <Badge variant="outline" className="text-xs">
+                                {language === 'he' ? (trip.difficulty === 'easy' ? 'קל' : trip.difficulty === 'moderate' ? 'בינוני' : trip.difficulty === 'challenging' ? 'מאתגר' : trip.difficulty === 'hard' ? 'קשה' : 'אקסטרים') : 
+                                 language === 'ru' ? (trip.difficulty === 'easy' ? 'Легко' : trip.difficulty === 'moderate' ? 'Средне' : trip.difficulty === 'challenging' ? 'Сложно' : trip.difficulty === 'hard' ? 'Трудно' : 'Экстрим') :
+                                 language === 'es' ? (trip.difficulty === 'easy' ? 'Fácil' : trip.difficulty === 'moderate' ? 'Moderado' : trip.difficulty === 'challenging' ? 'Desafiante' : trip.difficulty === 'hard' ? 'Difícil' : 'Extremo') :
+                                 language === 'fr' ? (trip.difficulty === 'easy' ? 'Facile' : trip.difficulty === 'moderate' ? 'Modéré' : trip.difficulty === 'challenging' ? 'Difficile' : trip.difficulty === 'hard' ? 'Très difficile' : 'Extrême') :
+                                 language === 'de' ? (trip.difficulty === 'easy' ? 'Leicht' : trip.difficulty === 'moderate' ? 'Mäßig' : trip.difficulty === 'challenging' ? 'Fordernd' : trip.difficulty === 'hard' ? 'Schwer' : 'Extrem') :
+                                 language === 'it' ? (trip.difficulty === 'easy' ? 'Facile' : trip.difficulty === 'moderate' ? 'Moderato' : trip.difficulty === 'challenging' ? 'Impegnativo' : trip.difficulty === 'hard' ? 'Difficile' : 'Estremo') :
+                                 trip.difficulty}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </Link>
+                );
+              })}
+              {sortedTrips.length === 0 && (
           ) : viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {sortedTrips.slice(0, visibleCount).map((trip) => (
@@ -828,7 +918,7 @@ export default function Home() {
             </div>
           )}
 
-          {sortedTrips.length > visibleCount && viewMode === 'grid' && (
+          {sortedTrips.length > visibleCount && (viewMode === 'grid' || viewMode === 'list') && (
             <div className="mt-12 text-center">
               <Button
                 variant="outline"
