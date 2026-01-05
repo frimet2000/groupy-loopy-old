@@ -181,7 +181,7 @@ export default function TravelJournal() {
             )}
             <Badge className={journal.is_public ? 'bg-emerald-600' : 'bg-gray-600'}>
               {journal.is_public ? <Globe className="w-3 h-3 mr-1" /> : <Lock className="w-3 h-3 mr-1" />}
-              {journal.is_public ? t.public : t.private}
+              {journal.is_public ? (t?.public || 'Public') : (t?.private || 'Private')}
             </Badge>
           </div>
         </div>
@@ -222,14 +222,14 @@ export default function TravelJournal() {
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <BookOpen className="w-20 h-20 text-gray-300 mb-4" />
-      <h3 className="text-xl font-semibold text-gray-700 mb-2">{t.noJournals}</h3>
-      <p className="text-gray-500 mb-6">{t.startWriting}</p>
+      <h3 className="text-xl font-semibold text-gray-700 mb-2">{t?.noJournals || 'No journals yet'}</h3>
+      <p className="text-gray-500 mb-6">{t?.startWriting || 'Start writing'}</p>
       <Button
         onClick={() => navigate(createPageUrl('JournalEditor'))}
         className="bg-emerald-600 hover:bg-emerald-700"
       >
         <Plus className="w-4 h-4 mr-2" />
-        {t.newEntry}
+        {t?.newEntry || 'New Entry'}
       </Button>
     </div>
   );
@@ -241,8 +241,8 @@ export default function TravelJournal() {
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">{t.title}</h1>
-              <p className="text-emerald-100 text-lg">{t.subtitle}</p>
+              <h1 className="text-3xl md:text-4xl font-bold mb-2">{t?.title || 'Travel Journal'}</h1>
+              <p className="text-emerald-100 text-lg">{t?.subtitle || 'Document your adventures'}</p>
             </div>
             {user && (
               <Button
@@ -250,7 +250,7 @@ export default function TravelJournal() {
                 className="bg-white text-emerald-700 hover:bg-emerald-50"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                {t.newEntry}
+                {t?.newEntry || 'New Entry'}
               </Button>
             )}
           </div>
@@ -262,11 +262,11 @@ export default function TravelJournal() {
           <TabsList className="mb-6">
             <TabsTrigger value="my" className="gap-2">
               <Pencil className="w-4 h-4" />
-              {t.myJournals}
+              {t?.myJournals || 'My Journals'}
             </TabsTrigger>
             <TabsTrigger value="public" className="gap-2">
               <Globe className="w-4 h-4" />
-              {t.publicJournals}
+              {t?.publicJournals || 'Public Journals'}
             </TabsTrigger>
           </TabsList>
 
@@ -312,7 +312,7 @@ export default function TravelJournal() {
             ) : (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <Globe className="w-20 h-20 text-gray-300 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-700">{t.noJournals}</h3>
+                <h3 className="text-xl font-semibold text-gray-700">{t?.noJournals || 'No journals yet'}</h3>
               </div>
             )}
           </TabsContent>
