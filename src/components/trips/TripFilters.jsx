@@ -172,7 +172,7 @@ export default function TripFilters({ filters, setFilters, showAdvanced }) {
                             <SelectItem value="israel">{t('israel')}</SelectItem>
                             {getAllCountries()
                                 .filter(c => c.value !== 'israel')
-                                .filter(c => c.label.toLowerCase().includes(countrySearch.toLowerCase()))
+                                .filter(c => c.label && typeof c.label === 'string' && c.label.toLowerCase().includes(countrySearch.toLowerCase()))
                                 .map(country => (
                               <SelectItem key={country.value} value={country.value}>
                                 {country.label}
