@@ -161,7 +161,11 @@ export default function TripDetails() {
       const trips = await base44.entities.Trip.filter({ id: tripId });
       return trips[0];
     },
-    enabled: !!tripId
+    enabled: !!tripId,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    staleTime: Infinity
   });
 
   // Fetch user profiles for all participants to show updated names and family info
@@ -181,7 +185,11 @@ export default function TripDetails() {
       const response = await base44.functions.invoke('getUserProfiles', { emails: allProfileEmails });
       return response.data.profiles || {};
     },
-    enabled: allProfileEmails.length > 0
+    enabled: allProfileEmails.length > 0,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    staleTime: Infinity
   });
 
   // State for active tab
@@ -1163,8 +1171,10 @@ export default function TripDetails() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {getAllCountries().map((c) =>
-                        <SelectItem key={c} value={c}>{t(c)}</SelectItem>
+                          {getAllCountries(language).map((c) =>
+                        <SelectItem key={c.value} value={c.value}>
+                          {typeof c.label === 'string' ? c.label : c.value}
+                        </SelectItem>
                         )}
                         </SelectContent>
                       </Select>

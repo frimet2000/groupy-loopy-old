@@ -150,6 +150,10 @@ export default function JournalEntry() {
     queryKey: ['journal', journalId],
     queryFn: () => base44.entities.TravelJournal.filter({ id: journalId }),
     enabled: !!journalId,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    staleTime: Infinity
   });
 
   const journal = journals?.[0];

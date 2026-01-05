@@ -285,6 +285,10 @@ export default function JournalEditor() {
     queryKey: ['journal', editId],
     queryFn: () => base44.entities.TravelJournal.filter({ id: editId }),
     enabled: !!editId,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    staleTime: Infinity
   });
 
   useEffect(() => {
@@ -298,6 +302,10 @@ export default function JournalEditor() {
     queryKey: ['userTrips', user?.email],
     queryFn: () => base44.entities.Trip.filter({ organizer_email: user?.email }),
     enabled: !!user?.email,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    staleTime: Infinity
   });
 
   const handleCoverUpload = async (e) => {
