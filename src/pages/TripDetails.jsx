@@ -280,7 +280,7 @@ export default function TripDetails() {
         registration_reminders: updatedReminders
       });
 
-      queryClient.invalidateQueries(['trip', tripId]);
+      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       toast.success(
         language === 'he' ?
         'תקבל תזכורת כשההרשמה תיפתח' :
@@ -474,7 +474,7 @@ export default function TripDetails() {
       }).catch((err) => console.log('Notification error:', err));
     },
     onSuccess: (result) => {
-      queryClient.invalidateQueries(['trip', tripId]);
+      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       setJoinMessage('');
       setAccessibilityNeeds([]);
       setSelectedTrekDays([]);
@@ -507,7 +507,7 @@ export default function TripDetails() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['trip', tripId]);
+      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       toast.success(t('leftTrip'));
     }
   });
@@ -593,7 +593,7 @@ export default function TripDetails() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['trip', tripId]);
+      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       toast.success(language === 'he' ? 'הבקשה אושרה' : language === 'ru' ? 'Запрос одобрен' : language === 'es' ? 'Solicitud aprobada' : language === 'fr' ? 'Demande approuvée' : language === 'de' ? 'Anfrage genehmigt' : language === 'it' ? 'Richiesta approvata' : 'Request approved');
 
       // Show next request if exists
@@ -627,7 +627,7 @@ export default function TripDetails() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['trip', tripId]);
+      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       toast.success(language === 'he' ? 'הבקשה נדחתה' : language === 'ru' ? 'Запрос отклонен' : language === 'es' ? 'Solicitud rechazada' : language === 'fr' ? 'Demande rejetée' : language === 'de' ? 'Anfrage abgelehnt' : language === 'it' ? 'Richiesta rifiutata' : 'Request declined');
 
       // Show next request if exists
@@ -664,7 +664,7 @@ export default function TripDetails() {
       toast.success(language === 'he' ? 'נשמר בהצלחה' : language === 'ru' ? 'Успешно сохранено' : language === 'es' ? 'Guardado exitosamente' : language === 'fr' ? 'Enregistré avec succès' : language === 'de' ? 'Erfolgreich gespeichert' : language === 'it' ? 'Salvato con successo' : 'Saved successfully');
     }
 
-    queryClient.invalidateQueries(['trip', tripId]);
+    queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
   };
 
   const handleAddToCalendar = () => {
@@ -734,7 +734,7 @@ export default function TripDetails() {
         return;
       }
       await base44.entities.Trip.update(tripId, editData);
-      queryClient.invalidateQueries(['trip', tripId]);
+      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       setIsEditing(false);
       toast.success(language === 'he' ? 'הטיול עודכן בהצלחה' : language === 'ru' ? 'Поездка успешно обновлена' : language === 'es' ? 'Viaje actualizado exitosamente' : language === 'fr' ? 'Voyage mis à jour avec succès' : language === 'de' ? 'Reise erfolgreich aktualisiert' : language === 'it' ? 'Viaggio aggiornato con successo' : 'Trip updated successfully');
     } catch (error) {
@@ -786,7 +786,7 @@ export default function TripDetails() {
         `Hello ${userName},\n\nYou've been invited as a co-organizer for the trip "${trip.title}".\n\nYou can now edit trip details and manage participants.\n\nBest regards,\nGroupy Loopy Team`
       });
 
-      queryClient.invalidateQueries(['trip', tripId]);
+      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       setShowAddOrganizerDialog(false);
       setNewOrganizerEmail('');
       toast.success(language === 'he' ? 'מארגן נוסף נוסף בהצלחה' : 'Co-organizer added successfully');
@@ -801,7 +801,7 @@ export default function TripDetails() {
     try {
       const updatedOrganizers = trip.additional_organizers.filter((o) => o.email !== email);
       await base44.entities.Trip.update(tripId, { additional_organizers: updatedOrganizers });
-      queryClient.invalidateQueries(['trip', tripId]);
+      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       toast.success(language === 'he' ? 'מארגן הוסר' : 'Organizer removed');
     } catch (error) {
       toast.error(language === 'he' ? 'שגיאה בהסרת מארגן' : 'Error removing organizer');
@@ -827,7 +827,7 @@ export default function TripDetails() {
         current_participants: totalParticipantsCount
       });
 
-      queryClient.invalidateQueries(['trip', tripId]);
+      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       setShowEditParticipantDialog(false);
       toast.success(language === 'he' ? 'הפרטים עודכנו בהצלחה' : 'Details updated successfully');
     } catch (error) {
@@ -843,7 +843,7 @@ export default function TripDetails() {
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       await base44.entities.Trip.update(tripId, { image_url: file_url });
-      await queryClient.invalidateQueries(['trip', tripId]);
+      await queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       await queryClient.refetchQueries(['trip', tripId]);
       toast.success(language === 'he' ? 'התמונה הוחלפה בהצלחה' : language === 'ru' ? 'Изображение успешно обновлено' : language === 'es' ? 'Imagen actualizada exitosamente' : language === 'fr' ? 'Image mise à jour avec succès' : language === 'de' ? 'Bild erfolgreich aktualisiert' : language === 'it' ? 'Immagine aggiornata con successo' : 'Image updated successfully');
     } catch (error) {
@@ -877,7 +877,7 @@ export default function TripDetails() {
         messages: updatedMessages
       });
 
-      queryClient.invalidateQueries(['trip', tripId]);
+      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
 
       // Send notifications to participants (except sender)
       const title = trip.title || trip.title_he || trip.title_en;
@@ -1914,7 +1914,7 @@ export default function TripDetails() {
               <TripComments
                 trip={trip}
                 currentUserEmail={user?.email}
-                onUpdate={() => queryClient.invalidateQueries(['trip', tripId])} />
+                onUpdate={() => queryClient.invalidateQueries({ queryKey: ['trip', tripId] })} />
 
             </TabsContent>
 
@@ -2650,7 +2650,7 @@ export default function TripDetails() {
               <MapSidebar
                 trip={trip}
                 isOrganizer={canEdit}
-                onUpdate={() => queryClient.invalidateQueries(['trip', tripId])} />
+                onUpdate={() => queryClient.invalidateQueries({ queryKey: ['trip', tripId] })} />
 
               <div className="mt-6">
                 <WeatherWidget location={trip.location} date={trip.date} />
@@ -2661,7 +2661,7 @@ export default function TripDetails() {
               <TripEquipment
                 trip={trip}
                 isOrganizer={canEdit}
-                onUpdate={() => queryClient.invalidateQueries(['trip', tripId])} />
+                onUpdate={() => queryClient.invalidateQueries({ queryKey: ['trip', tripId] })} />
 
             </TabsContent>
 
@@ -2670,7 +2670,7 @@ export default function TripDetails() {
                 trip={trip}
                 isOrganizer={canEdit}
                 onUpdate={async () => {
-                  await queryClient.invalidateQueries(['trip', tripId]);
+                  await queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
                   await queryClient.refetchQueries(['trip', tripId]);
                 }} />
 
@@ -2680,7 +2680,7 @@ export default function TripDetails() {
               <BudgetPlanner
                 trip={trip}
                 isOrganizer={canEdit}
-                onUpdate={() => queryClient.invalidateQueries(['trip', tripId])} />
+                onUpdate={() => queryClient.invalidateQueries({ queryKey: ['trip', tripId] })} />
 
             </TabsContent>
 
@@ -2699,7 +2699,7 @@ export default function TripDetails() {
                   <TripGallery
                   trip={trip}
                   currentUserEmail={user?.email}
-                  onUpdate={() => queryClient.invalidateQueries(['trip', tripId])} />
+                  onUpdate={() => queryClient.invalidateQueries({ queryKey: ['trip', tripId] })} />
 
                 </TabsContent>
 
@@ -2707,7 +2707,7 @@ export default function TripDetails() {
                   <TripExperiences
                   trip={trip}
                   currentUserEmail={user?.email}
-                  onUpdate={() => queryClient.invalidateQueries(['trip', tripId])} />
+                  onUpdate={() => queryClient.invalidateQueries({ queryKey: ['trip', tripId] })} />
 
                 </TabsContent>
 
@@ -2715,7 +2715,7 @@ export default function TripDetails() {
                   <LiveLocationMap
                   trip={trip}
                   currentUserEmail={user?.email}
-                  onUpdate={() => queryClient.invalidateQueries(['trip', tripId])} />
+                  onUpdate={() => queryClient.invalidateQueries({ queryKey: ['trip', tripId] })} />
 
                 </TabsContent>
                 <TabsContent value="reminders" className="mt-0">
@@ -2728,14 +2728,14 @@ export default function TripDetails() {
                   <TripContributions
                   trip={trip}
                   currentUserEmail={user?.email}
-                  onUpdate={() => queryClient.invalidateQueries(['trip', tripId])} />
+                  onUpdate={() => queryClient.invalidateQueries({ queryKey: ['trip', tripId] })} />
 
                 </TabsContent>
                 <TabsContent value="invite" className="mt-0">
                   <InviteFriends
                   trip={trip}
                   currentUserEmail={user?.email}
-                  onUpdate={() => queryClient.invalidateQueries(['trip', tripId])} />
+                  onUpdate={() => queryClient.invalidateQueries({ queryKey: ['trip', tripId] })} />
 
                 </TabsContent>
                 </>

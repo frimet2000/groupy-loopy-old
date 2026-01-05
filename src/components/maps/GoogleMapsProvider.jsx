@@ -2,14 +2,13 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useJsApiLoader } from '@react-google-maps/api';
 import { base44 } from '@/api/base44Client';
 
-const GoogleMapsContext = createContext();
+const GoogleMapsContext = createContext(null);
 
 const libraries = ['places'];
 
 function GoogleMapsLoader({ apiKey, mapLanguage, children }) {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: apiKey,
-    libraries,
     language: mapLanguage === 'he' ? 'iw' : mapLanguage,
     region: mapLanguage === 'he' ? 'IL' : undefined,
   });
@@ -36,7 +35,7 @@ export function GoogleMapsProvider({ children }) {
           setLoading(false);
           return;
         }
-        const response = await base44.functions.invoke('getGoogleMapsKey');
+        const response = await base44.functions.invoke('getGoogleMapsKey', {});
         if (response?.data?.apiKey) {
           setApiKey(response.data.apiKey);
         } else if (response?.apiKey) {
