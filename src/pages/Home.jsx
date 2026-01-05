@@ -118,6 +118,24 @@ export default function Home() {
     };
   });
 
+  const AdSenseSlot = ({ slot }) => {
+    useEffect(() => {
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (e) {}
+    }, []);
+    return (
+      <ins
+        className="adsbygoogle"
+        style={{ display: 'block' }}
+        data-ad-client="ca-pub-4551819767344595"
+        data-ad-slot={slot}
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
+    );
+  };
+
 
   // Auto-detect and set language from URL parameter
   useEffect(() => {
@@ -815,30 +833,11 @@ export default function Home() {
             filters={filters} 
             setFilters={setFilters} 
           />
-          {React.useMemo(() => {
-            const AdSenseSlot = ({ slot }) => {
-              useEffect(() => {
-                try {
-                  (window.adsbygoogle = window.adsbygoogle || []).push({});
-                } catch (e) {}
-              }, []);
-              return (
-                <ins
-                  className="adsbygoogle"
-                  style={{ display: 'block' }}
-                  data-ad-client="ca-pub-4551819767344595"
-                  data-ad-slot={slot}
-                  data-ad-format="auto"
-                  data-full-width-responsive="true"
-                />
-              );
-            };
-            return (
-              <div className="my-6">
-                <AdSenseSlot slot="8237409556" />
-              </div>
-            );
-          }, [])}
+          {React.useMemo(() => (
+            <div className="my-6">
+              <AdSenseSlot slot="8237409556" />
+            </div>
+          ), [])}
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6 mb-6">
           <div>
@@ -1002,8 +1001,15 @@ export default function Home() {
             </div>
           ) : viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {sortedTrips.slice(0, visibleCount).map((trip) => (
-                <TripCard key={trip.id} trip={trip} user={user} />
+              {sortedTrips.slice(0, visibleCount).map((trip, index) => (
+                <React.Fragment key={trip.id}>
+                  <TripCard trip={trip} user={user} />
+                  {index === 3 && (
+                    <div className="col-span-full my-6">
+                      <AdSenseSlot slot="8237409556" />
+                    </div>
+                  )}
+                </React.Fragment>
               ))}
               {sortedTrips.length === 0 && (
                 <div className="col-span-full text-center py-20 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-3xl border-2 border-dashed border-emerald-200">
