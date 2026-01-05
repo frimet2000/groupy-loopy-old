@@ -690,56 +690,42 @@ export default function Home() {
       )}
 
       {/* Features Section - SEO H2 */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="hover:shadow-xl transition-shadow border-2 border-emerald-100">
-            <CardContent className="p-6">
-              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
-                <Users className="w-6 h-6 text-emerald-600" />
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="hover:shadow-lg transition-shadow border border-emerald-100">
+            <CardContent className="p-4">
+              <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center mb-3">
+                <Users className="w-5 h-5 text-emerald-600" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">
+              <h2 className="text-base font-bold text-gray-900 mb-1">
                 {language === 'he' ? 'הרשמה מהירה' : language === 'ru' ? 'Быстрая регистрация' : language === 'es' ? 'Registro rápido' : language === 'fr' ? 'Inscription rapide' : language === 'de' ? 'Schnelle Anmeldung' : language === 'it' ? 'Registrazione rapida' : 'Quick Registration'}
               </h2>
-              <p className="text-gray-600 text-sm">
-                {language === 'he' ? 'טפסים דיגיטליים חכמים לרישום משתתפים - אוטומטי, מהיר ופשוט' : language === 'ru' ? 'Умные цифровые формы для регистрации участников - автоматически, быстро и просто' : language === 'es' ? 'Formularios digitales inteligentes para registro de participantes - automático, rápido y simple' : language === 'fr' ? 'Formulaires numériques intelligents pour l\'inscription des participants - automatique, rapide et simple' : language === 'de' ? 'Intelligente digitale Formulare zur Teilnehmerregistrierung - automatisch, schnell und einfach' : language === 'it' ? 'Moduli digitali intelligenti per la registrazione dei partecipanti - automatico, veloce e semplice' : 'Smart digital forms for participant registration - automatic, fast and simple'}
+              <p className="text-gray-600 text-xs leading-relaxed">
+                {language === 'he' ? 'טפסים דיגיטליים לרישום משתתפים' : language === 'ru' ? 'Цифровые формы для регистрации' : language === 'es' ? 'Formularios digitales de registro' : language === 'fr' ? 'Formulaires d\'inscription' : language === 'de' ? 'Digitale Anmeldeformulare' : language === 'it' ? 'Moduli di registrazione' : 'Digital registration forms'}
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-xl transition-shadow border-2 border-blue-100">
-            <CardContent className="p-6">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                <MapPin className="w-6 h-6 text-blue-600" />
+          <Card className="hover:shadow-lg transition-shadow border border-blue-100">
+            <CardContent className="p-4">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-3">
+                <MapPin className="w-5 h-5 text-blue-600" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">
+              <h2 className="text-base font-bold text-gray-900 mb-1">
                 {language === 'he' ? 'מפות ומסלולים' : language === 'ru' ? 'Карты и маршруты' : language === 'es' ? 'Mapas y rutas' : language === 'fr' ? 'Cartes et itinéraires' : language === 'de' ? 'Karten und Routen' : language === 'it' ? 'Mappe e percorsi' : 'Maps & Routes'}
               </h2>
-              <p className="text-gray-600 text-sm">
-                {language === 'he' ? 'תכנון מסלולים, נקודות ציון ושיתוף מיקום בזמן אמת עם המשתתפים' : language === 'ru' ? 'Планирование маршрутов, точки интереса и обмен местоположением в реальном времени с участниками' : language === 'es' ? 'Planificación de rutas, puntos de referencia y ubicación en tiempo real con participantes' : language === 'fr' ? 'Planification d\'itinéraires, points de repère et partage de localisation en temps réel avec les participants' : language === 'de' ? 'Routenplanung, Wegpunkte und Echtzeit-Standortfreigabe mit Teilnehmern' : language === 'it' ? 'Pianificazione percorsi, punti di riferimento e condivisione posizione in tempo reale con i partecipanti' : 'Route planning, waypoints and real-time location sharing with participants'}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-xl transition-shadow border-2 border-purple-100">
-            <CardContent className="p-6">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-                <CreditCard className="w-6 h-6 text-purple-600" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">
-                {language === 'he' ? 'ניהול תשלומים מאובטח' : language === 'ru' ? 'Безопасное управление платежами' : language === 'es' ? 'Gestión segura de pagos' : language === 'fr' ? 'Gestion sécurisée des paiements' : language === 'de' ? 'Sichere Zahlungsverwaltung' : language === 'it' ? 'Gestione pagamenti sicura' : 'Secure Payment Management'}
-              </h2>
-              <p className="text-gray-600 text-sm">
-                {language === 'he' ? 'גביית תשלומים אוטומטית, מעקב סטטוסים ודוחות מפורטים - הכל במקום אחד' : language === 'ru' ? 'Автоматический сбор платежей, отслеживание статусов и подробные отчеты - все в одном месте' : language === 'es' ? 'Cobro automático de pagos, seguimiento de estados e informes detallados - todo en un solo lugar' : language === 'fr' ? 'Collecte automatique des paiements, suivi des statuts et rapports détaillés - le tout en un seul endroit' : language === 'de' ? 'Automatische Zahlungserfassung, Statusverfolgung und detaillierte Berichte - alles an einem Ort' : language === 'it' ? 'Raccolta automatica pagamenti, tracciamento stato e report dettagliati - tutto in un unico posto' : 'Automatic payment collection, status tracking and detailed reports - all in one place'}
+              <p className="text-gray-600 text-xs leading-relaxed">
+                {language === 'he' ? 'תכנון מסלולים ושיתוף מיקום' : language === 'ru' ? 'Планирование и локация' : language === 'es' ? 'Planificación y ubicación' : language === 'fr' ? 'Planification et localisation' : language === 'de' ? 'Planung und Standort' : language === 'it' ? 'Pianificazione e posizione' : 'Route planning & location'}
               </p>
             </CardContent>
           </Card>
         </div>
 
         {/* CTA to Planning Guide */}
-        <div className="mt-8 text-center">
+        <div className="mt-4 text-center">
           <Link to={createPageUrl('TripPlanningGuide')}>
-            <Button variant="outline" className="gap-2 border-2 border-emerald-300 hover:bg-emerald-50 h-12">
-              <BookOpen className="w-5 h-5 text-emerald-600" />
+            <Button variant="outline" className="gap-2 border border-emerald-300 hover:bg-emerald-50 h-10 text-sm">
+              <BookOpen className="w-4 h-4 text-emerald-600" />
               {language === 'he' ? 'מדריך מלא לארגון טיולים' : language === 'ru' ? 'Полное руководство по организации поездок' : language === 'es' ? 'Guía completa para organizar viajes' : language === 'fr' ? 'Guide complet pour organiser des voyages' : language === 'de' ? 'Vollständiger Leitfaden zur Reiseorganisation' : language === 'it' ? 'Guida completa per organizzare viaggi' : 'Complete Trip Organization Guide'}
             </Button>
           </Link>
