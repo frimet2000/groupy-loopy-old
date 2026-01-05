@@ -242,6 +242,26 @@ export default function TripDetails() {
       base44.auth.redirectToLogin(window.location.href);
       return;
     }
+    
+    // Check if trip has already passed
+    const tripDate = new Date(trip.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    tripDate.setHours(0, 0, 0, 0);
+    
+    if (tripDate < today) {
+      toast.error(
+        language === 'he' ? 'הטיול כבר היה - לא ניתן להצטרף' :
+        language === 'ru' ? 'Поездка уже прошла - нельзя присоединиться' :
+        language === 'es' ? 'El viaje ya pasó - no se puede unir' :
+        language === 'fr' ? 'Le voyage est déjà passé - impossible de rejoindre' :
+        language === 'de' ? 'Die Reise ist bereits vorbei - Beitritt nicht möglich' :
+        language === 'it' ? 'Il viaggio è già passato - non è possibile unirsi' :
+        'Trip has already passed - cannot join'
+      );
+      return;
+    }
+    
     // Check if registration is open
     if (trip.registration_start_date) {
       const registrationOpens = new Date(trip.registration_start_date);
@@ -1636,6 +1656,26 @@ export default function TripDetails() {
                         {language === 'he' ? 'הבקשה ממתינה לאישור' : language === 'ru' ? 'Запрос ожидает подтверждения' : language === 'es' ? 'Solicitud pendiente de aprobación' : language === 'fr' ? 'Demande en attente d\'approbation' : language === 'de' ? 'Anfrage wartet auf Genehmigung' : language === 'it' ? 'Richiesta in attesa di approvazione' : 'Request pending approval'}
                       </Badge> :
                 (() => {
+                  // Check if trip has already passed
+                  const tripDate = new Date(trip.date);
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  tripDate.setHours(0, 0, 0, 0);
+                  
+                  if (tripDate < today) {
+                    return (
+                      <Badge variant="outline" className="border-gray-400 text-gray-600 bg-gray-50">
+                        {language === 'he' ? 'הטיול כבר היה' :
+                        language === 'ru' ? 'Поездка прошла' :
+                        language === 'es' ? 'El viaje ya pasó' :
+                        language === 'fr' ? 'Le voyage est passé' :
+                        language === 'de' ? 'Reise ist vorbei' :
+                        language === 'it' ? 'Il viaggio è passato' :
+                        'Trip has passed'}
+                      </Badge>
+                    );
+                  }
+                  
                   // Check if registration has opened
                   const registrationOpens = trip.registration_start_date ? new Date(trip.registration_start_date) : null;
                   const now = new Date();
