@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { 
   Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, 
   Share2, List, Globe, Heart, Radio, Bike, Mountain, 
-  Truck, History, CreditCard, BookOpen 
+  Truck, History, CreditCard, BookOpen, Search 
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
