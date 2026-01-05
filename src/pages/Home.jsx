@@ -14,10 +14,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
-  Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, 
-  Share2, List, Globe, Heart, Radio, Bike, Mountain, 
-  Truck, History, CreditCard, BookOpen, Search 
-} from 'lucide-react';
+        Plus, Compass, Users, MapPin, ArrowRight, ChevronDown, Video, Calendar, 
+        Share2, List, Globe, Heart, Radio, Bike, Mountain, 
+        Truck, History, CreditCard, BookOpen, Search
+      } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from 'framer-motion';
@@ -40,16 +40,66 @@ export default function Home() {
     // Read from URL first
     const urlParams = new URLSearchParams(window.location.search);
     const urlCountry = urlParams.get('country');
-    
+
     // Auto-detect country based on browser language
     let defaultCountry = '';
     if (!urlCountry) {
-      const browserLang = navigator.language.split('-')[0];
-      if (browserLang === 'he') defaultCountry = 'israel';
+      const browserLang = navigator.language || navigator.userLanguage;
+      const langCode = browserLang.split('-')[0];
+      const countryCode = browserLang.split('-')[1];
+
+      // Map language/region to country
+      const countryMapping = {
+        'he': 'israel',
+        'en-GB': 'uk',
+        'en-US': 'usa',
+        'en-AU': 'australia',
+        'en-CA': 'canada',
+        'en-NZ': 'new_zealand',
+        'it': 'italy',
+        'es-ES': 'spain',
+        'es-MX': 'mexico',
+        'es-AR': 'argentina',
+        'fr': 'france',
+        'de': 'germany',
+        'ja': 'japan',
+        'pt-BR': 'brazil',
+        'pt-PT': 'portugal',
+        'nl': 'netherlands',
+        'sv': 'sweden',
+        'no': 'norway',
+        'da': 'denmark',
+        'fi': 'finland',
+        'pl': 'poland',
+        'ru': 'israel',
+        'tr': 'turkey',
+        'el': 'greece',
+        'hu': 'hungary',
+        'cs': 'czech_republic',
+        'ro': 'romania',
+        'bg': 'bulgaria',
+        'hr': 'croatia',
+        'sr': 'serbia',
+        'sl': 'slovenia',
+        'sk': 'slovakia',
+        'et': 'estonia',
+        'lv': 'latvia',
+        'lt': 'lithuania',
+        'th': 'thailand',
+        'vi': 'vietnam',
+        'ko': 'south_korea',
+        'zh': 'china',
+        'hi': 'india',
+        'ar-EG': 'egypt',
+        'ar-MA': 'morocco',
+        'ar-SA': 'israel'
+      };
+
+      defaultCountry = countryMapping[browserLang] || countryMapping[langCode] || '';
     } else {
       defaultCountry = urlCountry;
     }
-    
+
     return {
       search: '',
       country: defaultCountry,
@@ -170,7 +220,7 @@ export default function Home() {
     return query;
   };
 
-  const { data: trips = [], isLoading } = useQuery({
+  const { data: allTrips = [], isLoading } = useQuery({
     queryKey: ['trips', filters.country, filters.region, filters.difficulty, filters.duration_type, filters.activity_type],
     queryFn: async () => {
       const query = buildDatabaseQuery();
@@ -180,6 +230,33 @@ export default function Home() {
       return await base44.entities.Trip.list('-created_date');
     },
   });
+
+  // Apply privacy filters
+  const trips = useMemo(() => {
+    return allTrips.filter(trip => {
+      // Public trips - everyone can see
+      if (!trip.privacy || trip.privacy === 'public') return true;
+
+      // Private trips - only organizer and participants
+      if (trip.privacy === 'private') {
+        if (!user) return false;
+        const isOrganizerOrParticipant = trip.organizer_email === user.email || 
+          trip.participants?.some(p => p.email === user.email);
+        return isOrganizerOrParticipant;
+      }
+
+      // Invite-only - organizer, invited, and participants
+      if (trip.privacy === 'invite_only') {
+        if (!user) return false;
+        const isInvitedOrParticipant = trip.invited_emails?.includes(user.email) ||
+          trip.organizer_email === user.email ||
+          trip.participants?.some(p => p.email === user.email);
+        return isInvitedOrParticipant;
+      }
+
+      return false;
+    });
+  }, [allTrips, user]);
 
   const filteredTrips = useMemo(() => {
     return trips.filter(trip => {
@@ -905,42 +982,92 @@ export default function Home() {
                 <TripCard key={trip.id} trip={trip} user={user} />
               ))}
               {sortedTrips.length === 0 && (
-                <div className="col-span-full text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+                <div className="col-span-full text-center py-20 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-3xl border-2 border-dashed border-emerald-200">
                   <div className="max-w-md mx-auto">
-                    <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <Search className="w-8 h-8 text-gray-400" />
+                    <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                      <Search className="w-10 h-10 text-emerald-600" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      {language === 'he' ? 'לא נמצאו טיולים' : language === 'ru' ? 'Поездки не найдены' : language === 'es' ? 'No se encontraron viajes' : language === 'fr' ? 'Aucun voyage trouvé' : language === 'de' ? 'Keine Reisen gefunden' : language === 'it' ? 'Nessun viaggio trovato' : 'No trips found'}
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                      {filters.country ? (
+                        language === 'he' ? 'אין עדיין טיולים כאן' : 
+                        language === 'ru' ? 'Здесь пока нет поездок' : 
+                        language === 'es' ? 'Aún no hay viajes aquí' : 
+                        language === 'fr' ? 'Pas encore de voyages ici' : 
+                        language === 'de' ? 'Noch keine Reisen hier' : 
+                        language === 'it' ? 'Ancora nessun viaggio qui' : 
+                        'No trips here yet'
+                      ) : (
+                        language === 'he' ? 'לא נמצאו טיולים' : 
+                        language === 'ru' ? 'Поездки не найдены' : 
+                        language === 'es' ? 'No se encontraron viajes' : 
+                        language === 'fr' ? 'Aucun voyage trouvé' : 
+                        language === 'de' ? 'Keine Reisen gefunden' : 
+                        language === 'it' ? 'Nessun viaggio trovato' : 
+                        'No trips found'
+                      )}
                     </h3>
-                    <p className="text-gray-500 mb-6">
-                      {language === 'he' ? 'נסה לשנות את סינון החיפוש או ' : language === 'ru' ? 'Попробуйте изменить фильтры или ' : language === 'es' ? 'Intenta cambiar los filtros o ' : language === 'fr' ? 'Essayez de changer les filtres ou ' : language === 'de' ? 'Versuchen Sie, die Filter zu ändern oder ' : language === 'it' ? 'Prova a cambiare i filtri o ' : 'Try adjusting your filters or '}
-                      <Link to={createPageUrl('CreateTrip')} className="text-emerald-600 font-bold hover:underline">
-                        {language === 'he' ? 'צור טיול חדש' : language === 'ru' ? 'создайте новую поездку' : language === 'es' ? 'crear un nuevo viaje' : language === 'fr' ? 'créer un nouveau voyage' : language === 'de' ? 'eine neue Reise erstellen' : language === 'it' ? 'creare un nuovo viaggio' : 'create a new trip'}
-                      </Link>
+                    <p className="text-gray-600 mb-8 text-lg">
+                      {filters.country ? (
+                        <>
+                          {language === 'he' ? '🌟 היה הראשון ליצור טיול!' : 
+                           language === 'ru' ? '🌟 Будьте первым, кто создаст поездку!' : 
+                           language === 'es' ? '🌟 ¡Sé el primero en crear un viaje!' : 
+                           language === 'fr' ? '🌟 Soyez le premier à créer un voyage !' : 
+                           language === 'de' ? '🌟 Seien Sie der Erste, der eine Reise erstellt!' : 
+                           language === 'it' ? '🌟 Sii il primo a creare un viaggio!' : 
+                           '🌟 Be the first to create a trip!'}
+                        </>
+                      ) : (
+                        <>
+                          {language === 'he' ? 'נסה לשנות את סינון החיפוש או ' : language === 'ru' ? 'Попробуйте изменить фильтры или ' : language === 'es' ? 'Intenta cambiar los filtros o ' : language === 'fr' ? 'Essayez de changer les filtres ou ' : language === 'de' ? 'Versuchen Sie, die Filter zu ändern oder ' : language === 'it' ? 'Prova a cambiare i filtri o ' : 'Try adjusting your filters or '}
+                          <Link to={createPageUrl('CreateTrip')} className="text-emerald-600 font-bold hover:underline">
+                            {language === 'he' ? 'צור טיול חדש' : language === 'ru' ? 'создайте новую поездку' : language === 'es' ? 'crear un nuevo viaje' : language === 'fr' ? 'créer un nouveau voyage' : language === 'de' ? 'eine neue Reise erstellen' : language === 'it' ? 'creare un nuovo viaggio' : 'create a new trip'}
+                          </Link>
+                        </>
+                      )}
                     </p>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setFilters({
-                        search: '',
-                        country: '',
-                        region: '',
-                        difficulty: '',
-                        duration_type: '',
-                        activity_type: '',
-                        pets_allowed: false,
-                        camping_available: false,
-                        trail_type: [],
-                        interests: [],
-                        date_from: null,
-                        date_to: null,
-                        available_spots: false,
-                        favorites: false
-                      })}
-                      className="border-gray-300 text-gray-700"
-                    >
-                      {language === 'he' ? 'נקה סינון' : language === 'ru' ? 'Очистить фильтры' : language === 'es' ? 'Limpiar filtros' : language === 'fr' ? 'Effacer les filtres' : language === 'de' ? 'Filter löschen' : language === 'it' ? 'Cancella filtri' : 'Clear Filters'}
-                    </Button>
+                    <div className="flex flex-col gap-3">
+                      <Link to={createPageUrl('CreateTrip')} className="w-full">
+                        <Button 
+                          size="lg"
+                          className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold shadow-xl hover:shadow-2xl transition-all w-full h-14 text-lg"
+                        >
+                          <Plus className="w-6 h-6 mr-2" />
+                          {language === 'he' ? 'צור את הטיול הראשון' : 
+                           language === 'ru' ? 'Создать первую поездку' : 
+                           language === 'es' ? 'Crear el primer viaje' : 
+                           language === 'fr' ? 'Créer le premier voyage' : 
+                           language === 'de' ? 'Erste Reise erstellen' : 
+                           language === 'it' ? 'Crea il primo viaggio' : 
+                           'Create the First Trip'}
+                        </Button>
+                      </Link>
+                      {!filters.country && (
+                        <Button 
+                          variant="outline" 
+                          size="lg"
+                          onClick={() => setFilters({
+                            search: '',
+                            country: '',
+                            region: '',
+                            difficulty: '',
+                            duration_type: '',
+                            activity_type: '',
+                            pets_allowed: false,
+                            camping_available: false,
+                            trail_type: [],
+                            interests: [],
+                            date_from: null,
+                            date_to: null,
+                            available_spots: false,
+                            favorites: false
+                          })}
+                          className="border-2 border-gray-300 text-gray-700 hover:border-emerald-500 hover:bg-emerald-50 w-full h-12"
+                        >
+                          {language === 'he' ? 'נקה סינון' : language === 'ru' ? 'Очистить фильтры' : language === 'es' ? 'Limpiar filtros' : language === 'fr' ? 'Effacer les filtres' : language === 'de' ? 'Filter löschen' : language === 'it' ? 'Cancella filtri' : 'Clear Filters'}
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
