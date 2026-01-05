@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useLanguage } from '../components/LanguageContext';
@@ -40,6 +40,7 @@ export default function Home() {
     // Read from URL first
     const urlParams = new URLSearchParams(window.location.search);
     const urlCountry = urlParams.get('country');
+    const urlSearch = urlParams.get('search') || urlParams.get('q');
 
     // Auto-detect country based on browser language
     let defaultCountry = '';
@@ -101,7 +102,7 @@ export default function Home() {
     }
 
     return {
-      search: '',
+      search: urlSearch || '',
       country: defaultCountry,
       region: '',
       difficulty: '',
@@ -119,13 +120,32 @@ export default function Home() {
   });
 
   const AdSenseSlot = ({ slot }) => {
+    const ref = useRef(null);
     useEffect(() => {
-      try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-      } catch (e) {}
+      const el = ref.current;
+      if (!el) return;
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              try {
+                (window.adsbygoogle = window.adsbygoogle || []).push({});
+              } catch (e) {}
+              io.unobserve(el);
+            }
+          });
+        });
+        io.observe(el);
+        return () => io.disconnect();
+      } else {
+        try {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (e) {}
+      }
     }, []);
     return (
       <ins
+        ref={ref}
         className="adsbygoogle"
         style={{ display: 'block' }}
         data-ad-client="ca-pub-4551819767344595"
@@ -1004,8 +1024,8 @@ export default function Home() {
               {sortedTrips.slice(0, visibleCount).map((trip, index) => (
                 <React.Fragment key={trip.id}>
                   <TripCard trip={trip} user={user} />
-                  {index === 3 && (
-                    <div className="col-span-full my-6">
+                  {index === 5 && sortedTrips.length >= 8 && (
+                    <div className="col-span-full my-6 hidden md:block">
                       <AdSenseSlot slot="8237409556" />
                     </div>
                   )}
