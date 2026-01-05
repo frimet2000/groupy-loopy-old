@@ -192,8 +192,8 @@ export default function TripCard({ trip, currentUser }) {
   return (
     <>
       <Card className={`group overflow-hidden hover:shadow-xl transition-shadow bg-white border-2 shadow-md touch-manipulation rounded-2xl ${hasJoined ? 'border-blue-400 hover:border-blue-500 ring-2 ring-blue-200' : 'border-gray-200 hover:border-emerald-300'}`}>
-        <Link to={createPageUrl('TripDetails') + `?id=${trip.id}`}>
-          <div className="relative h-48 sm:h-52 md:h-56 overflow-hidden rounded-t-2xl border-b-2 border-gray-100/50">
+      <div className="relative h-48 sm:h-52 md:h-56 overflow-hidden rounded-t-2xl border-b-2 border-gray-100/50">
+        <Link to={createPageUrl('TripDetails') + `?id=${trip.id}`} className="block w-full h-full">
             <img
               src={trip.image_url || `https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=800&q=85`}
               alt={title}
@@ -201,16 +201,17 @@ export default function TripCard({ trip, currentUser }) {
               loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+        </Link>
             
-            <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} flex flex-col gap-2 max-w-[50%]`}>
+            <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} flex flex-col gap-2 max-w-[50%] pointer-events-none`}>
               {hasJoined && (
-                <Badge className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white border-2 border-white font-bold text-sm px-4 py-1.5 shadow-xl flex items-center gap-1.5 w-fit animate-pulse">
+                <Badge variant="secondary" className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white border-2 border-white font-bold text-sm px-4 py-1.5 shadow-xl flex items-center gap-1.5 w-fit animate-pulse">
                   <Users className="w-4 h-4" />
                   {language === 'he' ? 'הצטרפת' : language === 'ru' ? 'Вы участвуете' : language === 'es' ? 'Te uniste' : language === 'fr' ? 'Vous participez' : language === 'de' ? 'Sie nehmen teil' : language === 'it' ? 'Partecipi' : 'Joined'}
                 </Badge>
               )}
               {trip.activity_type && (
-                <Badge className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-2 border-white font-bold text-sm px-4 py-1.5 shadow-xl flex items-center gap-1.5 w-fit">
+                <Badge variant="secondary" className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-2 border-white font-bold text-sm px-4 py-1.5 shadow-xl flex items-center gap-1.5 w-fit">
                   {trip.activity_type === 'hiking' && <Mountain className="w-4 h-4" />}
                   {trip.activity_type === 'cycling' && <Bike className="w-4 h-4" />}
                   {trip.activity_type === 'offroad' && <Truck className="w-4 h-4" />}
@@ -218,7 +219,7 @@ export default function TripCard({ trip, currentUser }) {
                 </Badge>
               )}
               <div className="flex gap-1.5 flex-wrap">
-                <Badge className={`${difficultyColors[trip.difficulty]} border-0 font-semibold text-xs px-2.5 py-1 shadow-sm`}>
+                <Badge variant="secondary" className={`${difficultyColors[trip.difficulty]} border-0 font-semibold text-xs px-2.5 py-1 shadow-sm`}>
                   {t(trip.difficulty)}
                 </Badge>
                 {trip.status !== 'open' && (
@@ -276,7 +277,7 @@ export default function TripCard({ trip, currentUser }) {
               )}
             </div>
           
-            <div className={`absolute bottom-3 ${isRTL ? 'right-3' : 'left-3'} flex gap-2`}>
+            <div className={`absolute bottom-3 ${isRTL ? 'right-3' : 'left-3'} flex gap-2 pointer-events-none`}>
               {trip.pets_allowed && (
                 <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-md">
                   <Dog className="w-5 h-5 text-amber-600" />
@@ -289,7 +290,6 @@ export default function TripCard({ trip, currentUser }) {
               )}
             </div>
           </div>
-        </Link>
         
         <CardContent className="p-4 sm:p-5" dir={isRTL ? 'rtl' : 'ltr'}>
           <Link to={createPageUrl('TripDetails') + `?id=${trip.id}`}>
