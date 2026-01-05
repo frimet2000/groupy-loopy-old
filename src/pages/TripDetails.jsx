@@ -139,10 +139,6 @@ export default function TripDetails() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get('id');
-  
-  console.log('TripDetails - Full URL:', window.location.href);
-  console.log('TripDetails - Search params:', window.location.search);
-  console.log('TripDetails - Extracted tripId:', tripId);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -164,11 +160,14 @@ export default function TripDetails() {
   const { data: trip, isLoading, error } = useQuery({
     queryKey: ['trip', tripId],
     queryFn: async () => {
-      if (!tripId) return null;
+      if (!tripId) {
+        const allTrips = await base44.entities.Trip.list();
+        return allTrips[0] || null;
+      }
       const trips = await base44.entities.Trip.filter({ id: tripId });
       return trips[0] || null;
     },
-    enabled: !!tripId,
+    enabled: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: true,
