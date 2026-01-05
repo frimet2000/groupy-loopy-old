@@ -99,7 +99,7 @@ export default function Home() {
       // Country
       if (filters.country) {
         const filterCountry = filters.country.toLowerCase();
-        let tripCountry = (trip.country || '').toLowerCase();
+        let tripCountry = trip.country && typeof trip.country === 'string' ? trip.country.toLowerCase() : '';
         
         // Smart detection for trips with missing country
         if (!tripCountry) {
@@ -200,7 +200,7 @@ export default function Home() {
 
   // Group trips by country
   const tripsByCountry = sortedTrips.reduce((acc, trip) => {
-    let country = trip.country || '';
+    let country = trip.country && typeof trip.country === 'string' ? trip.country : '';
     if (!country && trip.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(trip.region)) {
       country = 'israel';
     }
