@@ -596,16 +596,21 @@ export default function WaypointsCreator({ waypoints, setWaypoints, startLat, st
       </Card>
 
       <Dialog open={isFullScreen} onOpenChange={setIsFullScreen}>
-        <DialogContent className="max-w-[98vw] w-[98vw] h-[98vh] max-h-[98vh] p-0 z-[200] flex flex-col">
-          <DialogHeader className="px-6 py-4 border-b bg-gradient-to-r from-purple-50 to-violet-50 flex-shrink-0">
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <MapPin className="w-6 h-6 text-purple-700" />
+        <DialogContent className="max-w-[90vw] w-[90vw] h-[85vh] max-h-[85vh] p-0 z-[200] flex flex-col">
+          <DialogHeader className="px-4 py-3 border-b bg-gradient-to-r from-purple-50 to-violet-50 flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <MapPin className="w-5 h-5 text-purple-700" />
               {language === 'he' ? 'עריכת נקודות ציון' : language === 'ru' ? 'Редактор путевых точек' : language === 'es' ? 'Editor de puntos de referencia' : language === 'fr' ? 'Éditeur de points de repère' : language === 'de' ? 'Wegpunkt-Editor' : language === 'it' ? 'Editor punti di riferimento' : 'Waypoint Editor'}
             </DialogTitle>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto p-4">
             {renderMapContent()}
           </div>
+          <DialogFooter className="px-4 py-3 border-t bg-gray-50 flex-shrink-0">
+            <Button type="button" onClick={() => setIsFullScreen(false)} className="bg-emerald-600 hover:bg-emerald-700">
+              {language === 'he' ? 'אישור' : language === 'ru' ? 'Подтвердить' : language === 'es' ? 'Confirmar' : language === 'fr' ? 'Confirmer' : language === 'de' ? 'Bestätigen' : language === 'it' ? 'Conferma' : 'Confirm'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
