@@ -38,7 +38,7 @@ export default function Home() {
   
   const [filters, setFilters] = useState({
     search: '',
-    country: 'israel',
+    country: '',
     region: '',
     difficulty: '',
     duration_type: '',

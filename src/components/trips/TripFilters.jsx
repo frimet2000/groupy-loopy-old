@@ -58,7 +58,6 @@ export default function TripFilters({ filters, setFilters, showAdvanced }) {
   };
 
   const activeFiltersCount = Object.entries(filters).filter(([key, value]) => {
-    if (key === 'country' && value === 'israel') return false; // Default
     if (Array.isArray(value)) return value.length > 0;
     if (typeof value === 'boolean') return value;
     return value && value !== '';
@@ -86,7 +85,7 @@ export default function TripFilters({ filters, setFilters, showAdvanced }) {
               className="gap-2 w-full md:w-auto border-emerald-200 hover:bg-emerald-50 text-emerald-700"
             >
               <SlidersHorizontal className="w-4 h-4" />
-              {language === 'he' ? 'סינון מתקדם' : 'Filters'}
+              {language === 'he' ? 'סינון מתקדם' : language === 'ru' ? 'Фильтры' : language === 'es' ? 'Filtros' : language === 'fr' ? 'Filtres' : language === 'de' ? 'Filter' : language === 'it' ? 'Filtri' : 'Filters'}
               {activeFiltersCount > 0 && (
                 <Badge variant="secondary" className="ml-1 bg-emerald-100 text-emerald-700 hover:bg-emerald-200">
                   {activeFiltersCount}
@@ -110,7 +109,7 @@ export default function TripFilters({ filters, setFilters, showAdvanced }) {
         {/* Active Filters Display */}
         {activeFiltersCount > 0 && !isOpen && (
           <div className="flex flex-wrap gap-2 mt-3">
-             {filters.country && filters.country !== 'israel' && (
+             {filters.country && (
                <Badge variant="outline" className="gap-1 bg-white">
                  {t(filters.country)}
                  <X className="w-3 h-3 cursor-pointer" onClick={() => handleFilterChange('country', '')} />
@@ -150,7 +149,7 @@ export default function TripFilters({ filters, setFilters, showAdvanced }) {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 text-emerald-700 font-medium">
                       <MapPin className="w-4 h-4" />
-                      {language === 'he' ? 'מיקום' : 'Location'}
+                      {language === 'he' ? 'מיקום' : language === 'ru' ? 'Местоположение' : language === 'es' ? 'Ubicación' : language === 'fr' ? 'Lieu' : language === 'de' ? 'Standort' : language === 'it' ? 'Posizione' : 'Location'}
                     </div>
                     
                     <div className="space-y-3">
@@ -163,15 +162,14 @@ export default function TripFilters({ filters, setFilters, showAdvanced }) {
                           <SelectContent>
                             <div className="p-2">
                                 <Input 
-                                  placeholder={language === 'he' ? 'חפש מדינה...' : 'Search country...'} 
+                                  placeholder={language === 'he' ? 'חפש מדינה...' : language === 'ru' ? 'Поиск страны...' : language === 'es' ? 'Buscar país...' : language === 'fr' ? 'Rechercher pays...' : language === 'de' ? 'Land suchen...' : language === 'it' ? 'Cerca paese...' : 'Search country...'} 
                                   className="h-8 text-xs"
                                   value={countrySearch}
                                   onChange={(e) => setCountrySearch(e.target.value)}
                                 />
                             </div>
-                            <SelectItem value="israel">{t('israel')}</SelectItem>
+                            <SelectItem value={null}>{language === 'he' ? 'כל המדינות' : language === 'ru' ? 'Все страны' : language === 'es' ? 'Todos los países' : language === 'fr' ? 'Tous les pays' : language === 'de' ? 'Alle Länder' : language === 'it' ? 'Tutti i paesi' : 'All Countries'}</SelectItem>
                             {getAllCountries()
-                                .filter(c => c.value !== 'israel')
                                 .filter(c => c.label && typeof c.label === 'string' && c.label.toLowerCase().includes(countrySearch.toLowerCase()))
                                 .map(country => (
                               <SelectItem key={country.value} value={country.value}>
@@ -207,7 +205,7 @@ export default function TripFilters({ filters, setFilters, showAdvanced }) {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 text-emerald-700 font-medium">
                       <TrendingUp className="w-4 h-4" />
-                      {language === 'he' ? 'פרטי הטיול' : 'Trip Details'}
+                      {language === 'he' ? 'פרטי הטיול' : language === 'ru' ? 'Детали поездки' : language === 'es' ? 'Detalles del viaje' : language === 'fr' ? 'Détails du voyage' : language === 'de' ? 'Reisedetails' : language === 'it' ? 'Dettagli viaggio' : 'Trip Details'}
                     </div>
 
                     <div className="space-y-3">
@@ -247,7 +245,7 @@ export default function TripFilters({ filters, setFilters, showAdvanced }) {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 text-emerald-700 font-medium">
                       <Sparkles className="w-4 h-4" />
-                      {language === 'he' ? 'סוג והעדפות' : 'Type & Preferences'}
+                      {language === 'he' ? 'סוג והעדפות' : language === 'ru' ? 'Тип и предпочтения' : language === 'es' ? 'Tipo y preferencias' : language === 'fr' ? 'Type et préférences' : language === 'de' ? 'Typ & Einstellungen' : language === 'it' ? 'Tipo e preferenze' : 'Type & Preferences'}
                     </div>
 
                     <div className="space-y-3">
@@ -274,7 +272,7 @@ export default function TripFilters({ filters, setFilters, showAdvanced }) {
                             onCheckedChange={(checked) => handleFilterChange('available_spots', checked)}
                           />
                           <label htmlFor="available_spots" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-gray-600">
-                            {language === 'he' ? 'מקומות פנויים בלבד' : 'Available spots only'}
+                            {language === 'he' ? 'מקומות פנויים בלבד' : language === 'ru' ? 'Только доступные места' : language === 'es' ? 'Solo lugares disponibles' : language === 'fr' ? 'Places disponibles uniquement' : language === 'de' ? 'Nur verfügbare Plätze' : language === 'it' ? 'Solo posti disponibili' : 'Available spots only'}
                           </label>
                         </div>
                         <div className="flex items-center space-x-2 rtl:space-x-reverse">
@@ -284,7 +282,7 @@ export default function TripFilters({ filters, setFilters, showAdvanced }) {
                             onCheckedChange={(checked) => handleFilterChange('favorites', checked)}
                           />
                           <label htmlFor="favorites" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-gray-600">
-                            {language === 'he' ? 'מועדפים בלבד' : 'Favorites only'}
+                            {language === 'he' ? 'מועדפים בלבד' : language === 'ru' ? 'Только избранное' : language === 'es' ? 'Solo favoritos' : language === 'fr' ? 'Favoris uniquement' : language === 'de' ? 'Nur Favoriten' : language === 'it' ? 'Solo preferiti' : 'Favorites only'}
                           </label>
                         </div>
                       </div>
@@ -295,7 +293,7 @@ export default function TripFilters({ filters, setFilters, showAdvanced }) {
                    <div className="space-y-4">
                     <div className="flex items-center gap-2 text-emerald-700 font-medium">
                       <Filter className="w-4 h-4" />
-                      {language === 'he' ? 'תגיות' : 'Tags'}
+                      {language === 'he' ? 'תגיות' : language === 'ru' ? 'Теги' : language === 'es' ? 'Etiquetas' : language === 'fr' ? 'Étiquettes' : language === 'de' ? 'Tags' : language === 'it' ? 'Tag' : 'Tags'}
                     </div>
                     
                     <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto pr-1 custom-scrollbar">
