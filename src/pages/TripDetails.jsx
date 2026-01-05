@@ -2344,20 +2344,9 @@ export default function TripDetails() {
                                 {trip.participants.map((participant, index) => {
                                     const participantProfile = userProfiles[participant.email];
 
-                                    console.log(`\n\n=== RENDERING PARTICIPANT ${index + 1} ===`);
-                                    console.log('Raw participant object:');
-                                    console.dir(participant);
-                                    console.log('\nParticipant.family_members:', participant.family_members);
-                                    console.log('Participant.selected_children:', participant.selected_children);
-                                    console.log('Participant.other_member_name:', participant.other_member_name);
-                                    console.log('\nProfile data:');
-                                    console.dir(participantProfile);
-
                                     // Calculate breakdown
                                     let adultsCount = 1; // The participant themselves
                                     if (participant.family_members?.spouse) adultsCount++;
-
-                                    console.log('Adults Count:', adultsCount);
 
                                     // Count children
                                     let childrenCount = participant.selected_children?.length || 0;
@@ -2366,43 +2355,31 @@ export default function TripDetails() {
                                     participant.children_details :
                                     [];
 
-                                    console.log('Children Count:', childrenCount);
-                                    console.log('Selected Children IDs:', participant.selected_children);
-
                                     if (childrenDetails.length === 0 && childrenCount > 0 && participantProfile?.children_age_ranges) {
-                                      const details = [];
-                                      participant.selected_children.forEach((childId, idx) => {
-                                        const child = participantProfile.children_age_ranges.find((c) => c.id === childId);
-                                        console.log(`Child ${idx + 1}:`, child);
-                                        if (child) {
-                                          details.push({
-                                            age_range: child.age_range,
-                                            gender: child.gender,
-                                            name: child.name
-                                          });
-                                        }
-                                      });
-                                      childrenDetails = details;
+                                     const details = [];
+                                     participant.selected_children.forEach((childId, idx) => {
+                                       const child = participantProfile.children_age_ranges.find((c) => c.id === childId);
+                                       if (child) {
+                                         details.push({
+                                           age_range: child.age_range,
+                                           gender: child.gender,
+                                           name: child.name
+                                         });
+                                       }
+                                     });
+                                     childrenDetails = details;
                                     }
-
-                                    console.log('Children Details:', childrenDetails);
 
                                     let otherCount = 0;
                                     const otherDetails = [];
                                     if (participant.family_members?.other && participant.other_member_name) {
-                                      otherCount++;
-                                      otherDetails.push(participant.other_member_name);
+                                     otherCount++;
+                                     otherDetails.push(participant.other_member_name);
                                     }
 
-                                    console.log('Other Count:', otherCount);
-                                    console.log('Other Details:', otherDetails);
-
                                     const hasPets = participant.family_members?.pets;
-                                    console.log('Has Pets:', hasPets);
 
                                     const totalPeople = adultsCount + childrenCount + otherCount;
-                                    console.log('Total People:', totalPeople);
-                                    console.log('===================');
 
                                     const isOrganizerRow = participant.email === trip.organizer_email;
 
