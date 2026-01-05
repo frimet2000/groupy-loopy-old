@@ -3,7 +3,9 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me().catch(() => null);
+
+    const payload = await req.json();
+    console.log('createMeshulamPayment called with:', JSON.stringify(payload, null, 2));
 
     const {
       amount,
@@ -19,11 +21,14 @@ Deno.serve(async (req) => {
       customerPhone,
       customerIdNumber,
       description
-    } = await req.json();
+    } = payload;
 
     const pageCode = Deno.env.get('MESHULAM_PAGE_CODE');
+    console.log('MESHULAM_PAGE_CODE exists:', !!pageCode);
+    
     if (!pageCode) {
-      return Response.json({ error: 'Meshulam not configured' }, { status: 500 });
+      console.error('MESHULAM_PAGE_CODE not set');
+      return Response.json({ success: false, error: 'Meshulam not configured' }, { status: 500 });
     }
 
     // Create registration record
@@ -74,22 +79,28 @@ Deno.serve(async (req) => {
     });
 
     const meshulamData = await meshulamResponse.json();
+    console.log('Meshulam API response:', JSON.stringify(meshulamData, null, 2));
 
     if (meshulamData.status === '1' && meshulamData.data?.url) {
+      console.log('Payment URL created successfully:', meshulamData.data.url);
       return Response.json({
         success: true,
         paymentUrl: meshulamData.data.url,
         registrationId: registration.id
       });
     } else {
-      console.error('Meshulam error:', meshulamData);
+      console.error('Meshulam API error:', meshulamData);
       return Response.json({ 
-        error: 'Failed to create payment', 
+        success: false,
+        error: meshulamData.err || 'Failed to create payment', 
         details: meshulamData 
-      }, { status: 500 });
+      }, { status: 400 });
     }
   } catch (error) {
-    console.error('Error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('Exception in createMeshulamPayment:', error);
+    return Response.json({ 
+      success: false, 
+      error: error.message 
+    }, { status: 500 });
   }
 });

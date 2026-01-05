@@ -42,7 +42,7 @@ function MeshulamPaymentForm({ amount, tripId, participants, userType, groupInfo
       const lockedAmount = adultsCount * 85;
 
       const response = await base44.functions.invoke('createMeshulamPayment', {
-        amount: lockedAmount, // Use locked amount
+        amount: lockedAmount,
         tripId,
         participants,
         userType,
@@ -54,18 +54,21 @@ function MeshulamPaymentForm({ amount, tripId, participants, userType, groupInfo
         customerEmail: parentEmail,
         customerPhone: parentPhone,
         customerIdNumber: parent1?.id_number,
-        description: `תשלום עבור הרשמה למסע נפגשים - ${participants.length} משתתפים` // Auto-filled description
+        description: `תשלום עבור הרשמה למסע נפגשים - ${participants.length} משתתפים`
       });
 
-      if (response.data.paymentUrl) {
+      console.log('Payment response:', response);
+
+      if (response.data?.success && response.data?.paymentUrl) {
         window.location.href = response.data.paymentUrl;
       } else {
-        toast.error(language === 'he' ? 'שגיאה ביצירת תשלום' : 'Error creating payment');
+        console.error('Payment error:', response.data);
+        toast.error(language === 'he' ? 'שגיאה ביצירת תשלום: ' + (response.data?.error || 'לא ידוע') : 'Payment error: ' + (response.data?.error || 'unknown'));
         setProcessing(false);
       }
     } catch (error) {
-      console.error(error);
-      toast.error(language === 'he' ? 'שגיאה בתשלום' : 'Payment error');
+      console.error('Payment exception:', error);
+      toast.error(language === 'he' ? 'שגיאה בתשלום: ' + error.message : 'Payment error: ' + error.message);
       setProcessing(false);
     }
   };
