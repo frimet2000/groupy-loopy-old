@@ -301,16 +301,90 @@ export default function TripDetails() {
       if (trip.activity_type === 'trek' && selectedTrekDays.length === 0) {
         throw new Error(language === 'he' ? 'נא לבחור לפחות יום אחד' : 'Please select at least one day');
       }
-      const response = await base44.functions.invoke('participantJoinTrip', {
-        tripId,
-        joinMessage,
-        accessibilityNeeds,
-        selectedTrekDays,
-        familyMembers,
-        selectedChildren,
-        otherMemberName
-      });
-      return response.data;
+      try {
+        const response = await base44.functions.invoke('participantJoinTrip', {
+          tripId,
+          joinMessage,
+          accessibilityNeeds,
+          selectedTrekDays,
+          familyMembers,
+          selectedChildren,
+          otherMemberName
+        });
+        return response.data;
+      } catch (_err) {
+        const userName = user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.full_name;
+        const toRange = (a) => {
+          if (a == null || isNaN(a)) return null;
+          if (a < 3) return '0-2';
+          if (a < 7) return '3-6';
+          if (a < 11) return '7-10';
+          if (a < 15) return '11-14';
+          if (a < 19) return '15-18';
+          if (a < 22) return '18-21';
+          return '21+';
+        };
+        let myKids = Array.isArray(user.children_age_ranges) && user.children_age_ranges.length > 0 ? user.children_age_ranges : Array.isArray(user.children_birth_dates) ? user.children_birth_dates.map((c) => {
+          const d = new Date(c.birth_date);
+          if (isNaN(d.getTime())) return { id: c.id, name: c.name, age_range: null, gender: c.gender };
+          const today = new Date();
+          let age = today.getFullYear() - d.getFullYear();
+          const m = today.getMonth() - d.getMonth();
+          if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--;
+          return { id: c.id, name: c.name, age_range: toRange(age), gender: c.gender };
+        }) : [];
+        myKids = (myKids || []).map((k, i) => ({ ...k, id: k?.id || `idx_${i}` }));
+        const selSet = new Set(selectedChildren || []);
+        const childrenDetails = myKids.filter((k) => selSet.has(k.id)).map((k) => ({ id: k.id, name: k.name, age_range: k.age_range, gender: k.gender }));
+        const needsApproval = trip.approval_required === true || (trip.flexible_participants && trip.current_participants >= trip.max_participants);
+        if (!needsApproval) {
+          let totalPeopleJoining = 1;
+          if (familyMembers.spouse) totalPeopleJoining++;
+          if (selectedChildren.length > 0) totalPeopleJoining += selectedChildren.length;
+          if (familyMembers.other && otherMemberName) totalPeopleJoining++;
+          const participantData = {
+            email: user.email,
+            name: userName,
+            joined_at: new Date().toISOString(),
+            accessibility_needs: accessibilityNeeds,
+            waiver_accepted: true,
+            waiver_timestamp: new Date().toISOString(),
+            family_members: familyMembers,
+            selected_children: selectedChildren,
+            other_member_name: otherMemberName,
+            total_people: totalPeopleJoining,
+            children_details: childrenDetails,
+            parent_age_range: user.parent_age_range || user.age_range
+          };
+          const updatedParticipants = [...(trip.participants || []), participantData];
+          const totalParticipantsCount = updatedParticipants.reduce((sum, p) => sum + (p.total_people || 1), 0);
+          const updateData = { participants: updatedParticipants, current_participants: totalParticipantsCount };
+          if (trip.activity_type === 'trek') {
+            const updatedSelectedDays = [...(trip.participants_selected_days || []), { email: user.email, name: userName, days: selectedTrekDays }];
+            updateData.participants_selected_days = updatedSelectedDays;
+          }
+          await base44.entities.Trip.update(tripId, updateData);
+          return { autoJoined: true };
+        } else {
+          const updatedPendingRequests = [...(trip.pending_requests || []), {
+            email: user.email,
+            name: userName,
+            requested_at: new Date().toISOString(),
+            message: joinMessage || '',
+            accessibility_needs: accessibilityNeeds,
+            waiver_accepted: false,
+            waiver_timestamp: null,
+            selected_days: trip.activity_type === 'trek' ? selectedTrekDays : [],
+            family_members: familyMembers,
+            selected_children: selectedChildren,
+            other_member_name: otherMemberName,
+            children_details: childrenDetails,
+            parent_age_range: user.parent_age_range || user.age_range
+          }];
+          await base44.entities.Trip.update(tripId, { pending_requests: updatedPendingRequests });
+          return { autoJoined: false };
+        }
+      }
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
@@ -335,8 +409,19 @@ export default function TripDetails() {
 
   const leaveMutation = useMutation({
     mutationFn: async () => {
-      const response = await base44.functions.invoke('participantLeaveTrip', { tripId });
-      return response.data;
+      try {
+        const response = await base44.functions.invoke('participantLeaveTrip', { tripId });
+        return response.data;
+      } catch (_err) {
+        const updatedParticipants = (trip.participants || []).filter((p) => p.email !== user.email);
+        const totalParticipantsCount = updatedParticipants.reduce((sum, p) => sum + (p.total_people || 1), 0);
+        const updateData = { participants: updatedParticipants, current_participants: totalParticipantsCount };
+        if (Array.isArray(trip.participants_selected_days) && trip.participants_selected_days.length > 0) {
+          updateData.participants_selected_days = trip.participants_selected_days.filter((d) => d.email !== user.email);
+        }
+        await base44.entities.Trip.update(tripId, updateData);
+        return { success: true };
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
