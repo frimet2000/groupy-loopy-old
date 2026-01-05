@@ -991,9 +991,7 @@ export default function Home() {
           ) : viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {sortedTrips.slice(0, visibleCount).map((trip, index) => (
-                <React.Fragment key={trip.id}>
-                  <TripCard trip={trip} user={user} />
-                </React.Fragment>
+                <TripCard key={trip.id} trip={trip} user={user} />
               ))}
               {sortedTrips.length === 0 && (
                 <div className="col-span-full text-center py-20 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-3xl border-2 border-dashed border-emerald-200">
