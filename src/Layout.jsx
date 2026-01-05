@@ -69,6 +69,12 @@ function LayoutContent({ children, currentPageName }) {
   const unreadCount = unreadMessages.length;
 
   useEffect(() => {
+    // Add Google AdSense account verification
+    const adsenseMeta = document.createElement('meta');
+    adsenseMeta.name = 'google-adsense-account';
+    adsenseMeta.content = 'ca-pub-4551819767344595';
+    document.head.appendChild(adsenseMeta);
+
     // Add Facebook domain verification meta tag
     const metaTag = document.createElement('meta');
     metaTag.name = 'facebook-domain-verification';
@@ -120,6 +126,7 @@ function LayoutContent({ children, currentPageName }) {
     }
 
     return () => {
+      document.head.removeChild(adsenseMeta);
       document.head.removeChild(metaTag);
       document.head.removeChild(keywordsMeta);
       document.head.removeChild(authorMeta);
