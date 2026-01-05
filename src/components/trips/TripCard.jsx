@@ -267,7 +267,7 @@ export default function TripCard({ trip, currentUser }) {
                 <Button
                   size="icon"
                   variant="destructive"
-                  className="h-10 w-10 rounded-full bg-red-600 hover:bg-red-700 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-md touch-manipulation min-h-[44px] min-w-[44px]"
+                  className="h-10 w-10 rounded-full bg-red-600 hover:bg-red-700 transition-all shadow-md touch-manipulation min-h-[44px] min-w-[44px]"
                   onClick={(e) => {
                     e.preventDefault();
                     setShowDeleteDialog(true);
