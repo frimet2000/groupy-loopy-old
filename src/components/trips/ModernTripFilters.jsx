@@ -33,11 +33,11 @@ export default function ModernTripFilters({ trips, onFilteredTripsChange }) {
       const tempMap = {};
 
       trips.forEach(trip => {
-        let country = trip.country ? trip.country : '';
+        let country = trip.country || '';
         if (!country && trip.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(trip.region)) {
           country = 'israel';
         }
-        if (country) {
+        if (country && typeof country === 'string') {
           countries.add(country.toLowerCase());
         }
       });
@@ -176,7 +176,10 @@ Format: {"country1": "continent", "country2": "continent"}`,
 
       // Country filter
       if (selectedCountries.length > 0) {
-        let tripCountry = trip.country ? trip.country.toLowerCase() : '';
+        let tripCountry = '';
+        if (trip.country && typeof trip.country === 'string') {
+          tripCountry = trip.country.toLowerCase();
+        }
         if (!tripCountry && trip.region && ['north', 'center', 'south', 'jerusalem', 'negev', 'eilat'].includes(trip.region)) {
           tripCountry = 'israel';
         }
