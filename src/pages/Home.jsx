@@ -85,9 +85,9 @@ export default function Home() {
       // Search
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        const title = (trip.title || trip.title_he || trip.title_en || '').toLowerCase();
-        const description = (trip.description || trip.description_he || trip.description_en || '').toLowerCase();
-        const location = (trip.location_description || '').toLowerCase();
+        const title = String(trip.title || trip.title_he || trip.title_en || '').toLowerCase();
+        const description = String(trip.description || trip.description_he || trip.description_en || '').toLowerCase();
+        const location = String(trip.location_description || '').toLowerCase();
         
         if (!title.includes(searchLower) && 
             !description.includes(searchLower) && 
