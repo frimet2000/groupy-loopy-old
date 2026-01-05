@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Search, RotateCcw, Globe, Mountain, Clock, Zap, X } from 'lucide-react';
-import { getAllCountries, getCountryRegions } from '../utils/CountryRegions';
+import { getAllCountries } from '../utils/CountryRegions';
 import { motion } from 'framer-motion';
 
 export default function TripFilters({ filters, setFilters }) {
