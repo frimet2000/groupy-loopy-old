@@ -160,12 +160,12 @@ export default function TripDetails() {
   const { data: trip, isLoading, error } = useQuery({
     queryKey: ['trip', tripId],
     queryFn: async () => {
-      const trips = await base44.entities.Trip.list();
-      return trips.find(t => t.id === tripId);
+      const trips = await base44.entities.Trip.filter({ id: tripId });
+      return trips[0];
     },
     enabled: !!tripId,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
     refetchOnMount: true,
     staleTime: 0
   });
