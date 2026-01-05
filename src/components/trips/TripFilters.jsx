@@ -109,10 +109,18 @@ export default function TripFilters({ filters, setFilters }) {
                 placeholder={language === 'he' ? 'הקלד מדינה...' : language === 'ru' ? 'Введите страну...' : language === 'es' ? 'Escribe país...' : language === 'fr' ? 'Tapez pays...' : language === 'de' ? 'Land eingeben...' : language === 'it' ? 'Digita paese...' : 'Type country...'}
                 value={countrySearch}
                 onChange={(e) => {
-                  setCountrySearch(e.target.value);
+                  const newValue = e.target.value;
+                  setCountrySearch(newValue);
                   setShowCountrySuggestions(true);
-                  // Clear selection if user is typing
-                  if (filters.country) {
+
+                  // Auto-filter as user types
+                  const matchingCountry = getAllCountries(language).find(c => 
+                    c.label.toLowerCase() === newValue.toLowerCase()
+                  );
+
+                  if (matchingCountry) {
+                    handleFilterChange('country', matchingCountry.value);
+                  } else if (newValue === '') {
                     handleFilterChange('country', '');
                   }
                 }}
