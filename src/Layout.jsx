@@ -68,41 +68,24 @@ function LayoutContent({ children, currentPageName }) {
   const unreadCount = unreadMessages.length;
 
   useEffect(() => {
-    // Block AdSense from loading
+    // Complete AdSense blocker
     const blockAdSense = () => {
-      // Remove all AdSense elements
       document.querySelectorAll('script[src*="adsbygoogle"], script[src*="pagead"], script[src*="googlesyndication"]').forEach(el => el.remove());
       document.querySelectorAll('ins.adsbygoogle').forEach(el => el.remove());
       
-      // Clear adsbygoogle array
-      if (window.adsbygoogle && Array.isArray(window.adsbygoogle)) {
-        window.adsbygoogle.length = 0;
+      // Override adsbygoogle push to do nothing
+      if (!window.adsbygoogle || !window.adsbygoogle._blocked) {
+        window.adsbygoogle = window.adsbygoogle || [];
+        window.adsbygoogle.push = () => {};
+        window.adsbygoogle._blocked = true;
       }
-      delete window.adsbygoogle;
     };
 
-    // Block immediately
     blockAdSense();
     
-    // Override adsbygoogle to prevent it from being used
-    Object.defineProperty(window, 'adsbygoogle', {
-      get: () => [],
-      set: () => {},
-      configurable: false
-    });
+    const observer = new MutationObserver(blockAdSense);
+    observer.observe(document.documentElement, { childList: true, subtree: true });
     
-    // Continuous monitoring
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach(() => blockAdSense());
-    });
-    
-    observer.observe(document.documentElement, {
-      childList: true,
-      subtree: true,
-      attributes: false
-    });
-    
-    // Interval cleanup as backup
     const interval = setInterval(blockAdSense, 500);
 
     // Add Facebook domain verification meta tag
