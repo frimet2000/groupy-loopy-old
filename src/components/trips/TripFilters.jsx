@@ -50,7 +50,7 @@ export default function TripFilters({ filters, setFilters }) {
     if (filters.country) {
       const country = getAllCountries(language).find(c => c.value === filters.country);
       if (country) {
-        setCountrySearch(country.label);
+        setCountrySearch(typeof country.label === 'string' ? country.label : country.value);
       }
     } else {
       setCountrySearch('');
