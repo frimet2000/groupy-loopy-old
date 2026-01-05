@@ -68,25 +68,36 @@ function LayoutContent({ children, currentPageName }) {
   const unreadCount = unreadMessages.length;
 
   useEffect(() => {
-    // Complete AdSense blocker
-    const blockAdSense = () => {
-      document.querySelectorAll('script[src*="adsbygoogle"], script[src*="pagead"], script[src*="googlesyndication"]').forEach(el => el.remove());
-      document.querySelectorAll('ins.adsbygoogle').forEach(el => el.remove());
+    // Silently intercept AdSense to prevent errors
+    try {
+      // Create safe dummy that absorbs all calls
+      const dummyAdsByGoogle = [];
+      dummyAdsByGoogle.push = function() { return 0; };
+      dummyAdsByGoogle.loaded = true;
       
-      // Override adsbygoogle push to do nothing
-      if (!window.adsbygoogle || !window.adsbygoogle._blocked) {
-        window.adsbygoogle = window.adsbygoogle || [];
-        window.adsbygoogle.push = () => {};
-        window.adsbygoogle._blocked = true;
+      // Replace window.adsbygoogle silently
+      try {
+        delete window.adsbygoogle;
+      } catch (e) {
+        // Property is non-configurable, override it differently
       }
-    };
-
-    blockAdSense();
-    
-    const observer = new MutationObserver(blockAdSense);
-    observer.observe(document.documentElement, { childList: true, subtree: true });
-    
-    const interval = setInterval(blockAdSense, 500);
+      
+      window.adsbygoogle = dummyAdsByGoogle;
+      
+      // Remove all AdSense elements
+      const cleanup = () => {
+        document.querySelectorAll('script[src*="adsbygoogle"], script[src*="pagead"], script[src*="googlesyndication"]').forEach(el => {
+          try { el.remove(); } catch (e) {}
+        });
+        document.querySelectorAll('ins.adsbygoogle').forEach(el => {
+          try { el.remove(); } catch (e) {}
+        });
+      };
+      
+      cleanup();
+      const observer = new MutationObserver(cleanup);
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+      const interval = setInterval(cleanup, 500);
 
     // Add Facebook domain verification meta tag
     const metaTag = document.createElement('meta');
@@ -128,13 +139,16 @@ function LayoutContent({ children, currentPageName }) {
       document.head.appendChild(gtagConfig);
     }
 
-    return () => {
-      observer.disconnect();
-      clearInterval(interval);
-      document.head.removeChild(metaTag);
-      document.head.removeChild(keywordsMeta);
-      document.head.removeChild(authorMeta);
-    };
+      return () => {
+        observer.disconnect();
+        clearInterval(interval);
+        document.head.removeChild(metaTag);
+        document.head.removeChild(keywordsMeta);
+        document.head.removeChild(authorMeta);
+      };
+    } catch (e) {
+      console.warn('AdSense blocker setup failed:', e);
+    }
   }, [language, currentPageName]);
 
   // SEO meta tags (dynamic per page + language)
