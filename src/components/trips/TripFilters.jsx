@@ -128,13 +128,13 @@ export default function TripFilters({ filters, setFilters }) {
                     key={country.value}
                     onClick={() => {
                       handleFilterChange('country', country.value);
-                      setCountrySearch(country.label);
+                      setCountrySearch(typeof country.label === 'string' ? country.label : country.value);
                       setShowCountrySuggestions(false);
                     }}
                     className="px-4 py-3 hover:bg-emerald-50 cursor-pointer transition-colors border-b last:border-b-0 text-gray-900 font-medium flex items-center gap-2"
                   >
                     <Globe className="w-4 h-4 text-emerald-600" />
-                    {country.label}
+                    {typeof country.label === 'string' ? country.label : country.value}
                   </div>
                 ))}
               </div>
