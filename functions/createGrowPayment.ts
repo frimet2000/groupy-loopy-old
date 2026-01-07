@@ -49,14 +49,23 @@ Deno.serve(async (req) => {
     const successUrl = `${baseUrl}/NifgashimPortal?id=${tripId}&payment_success=true&registration_id=${registration.id}`;
     const cancelUrl = `${baseUrl}/NifgashimPortal?id=${tripId}&payment_cancel=true`;
 
+    // Clean and validate name (must have at least 2 words)
+    let fullName = customerName.trim();
+    if (!fullName.includes(' ')) {
+      fullName = fullName + ' User'; // Add default second name if missing
+    }
+
+    // Clean phone number (remove non-digits)
+    const cleanPhone = customerPhone.replace(/\D/g, '');
+
     // Prepare form data for Grow API
     const formData = new URLSearchParams();
     formData.append('pageCode', pageCode);
     formData.append('userId', userId);
     formData.append('sum', parseFloat(amount).toFixed(2));
     formData.append('description', description || 'Nifgashim Registration');
-    formData.append('pageField[fullName]', customerName);
-    formData.append('pageField[phone]', customerPhone);
+    formData.append('pageField[fullName]', fullName);
+    formData.append('pageField[phone]', cleanPhone);
     if (customerEmail && customerEmail.includes('@')) {
       formData.append('pageField[email]', customerEmail);
     }
