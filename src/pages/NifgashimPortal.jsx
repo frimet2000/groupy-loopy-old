@@ -18,6 +18,7 @@ import NifgashimMemorialForm from '../components/nifgashim/portal/MemorialForm';
 import NifgashimRegistrationSummary from '../components/nifgashim/portal/RegistrationSummary';
 import ThankYouView from '../components/nifgashim/portal/ThankYouView';
 import AdminDashboard from '../components/nifgashim/portal/AdminDashboard';
+import GrowPaymentForm from '../components/nifgashim/portal/GrowPaymentForm';
 
 function MeshulamPaymentForm({ amount, tripId, participants, userType, groupInfo, selectedDays, memorialData, vehicleInfo, onCancel }) {
   const { language } = useLanguage();
@@ -679,16 +680,25 @@ export default function NifgashimPortal() {
                 <CreditCard className="w-6 h-6" />
                 {trans.payment}
               </h2>
-              <MeshulamPaymentForm
+              <GrowPaymentForm
                 amount={totalAmount}
-                tripId={nifgashimTrip?.id}
-                participants={participants}
-                userType={userType}
-                groupInfo={groupInfo}
-                selectedDays={selectedDays}
-                memorialData={memorialData}
-                vehicleInfo={vehicleInfo}
-                onCancel={() => setShowPayment(false)}
+                customerName={userType === 'group' ? groupInfo.leaderName : participants[0]?.name}
+                customerEmail={userType === 'group' ? groupInfo.leaderEmail : participants[0]?.email}
+                customerPhone={userType === 'group' ? groupInfo.leaderPhone : participants[0]?.phone}
+                registrationData={{
+                  tripId: nifgashimTrip?.id,
+                  participants,
+                  userType,
+                  groupInfo,
+                  selectedDays,
+                  memorialData,
+                  vehicleInfo
+                }}
+                onSuccess={({ registrationId, transactionId }) => {
+                  setShowPayment(false);
+                  setShowThankYou(true);
+                  localStorage.removeItem('nifgashim_registration_state');
+                }}
               />
             </motion.div>
           </motion.div>
