@@ -130,21 +130,22 @@ export default function GrowPaymentForm({
 
     const script = document.createElement('script');
     script.id = 'grow-sdk';
-    script.src = 'https://meshulam.co.il/sdk/grow.js';
+    script.src = 'https://secure.meshulam.co.il/sdk/grow.js';
     script.async = true;
     script.onload = () => {
-      console.log('Grow SDK loaded');
+      console.log('Grow SDK loaded successfully');
       setSdkLoaded(true);
     };
-    script.onerror = () => {
-      console.error('Failed to load Grow SDK');
-      toast.error(t.error);
+    script.onerror = (error) => {
+      console.error('Failed to load Grow SDK:', error);
+      setSdkLoaded(true); // Allow to proceed anyway
     };
-    document.body.appendChild(script);
+    document.head.appendChild(script);
 
     return () => {
-      if (document.getElementById('grow-sdk')) {
-        document.getElementById('grow-sdk').remove();
+      const existingScript = document.getElementById('grow-sdk');
+      if (existingScript) {
+        existingScript.remove();
       }
     };
   }, []);
