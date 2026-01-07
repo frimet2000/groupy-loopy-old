@@ -63,9 +63,15 @@ Deno.serve(async (req) => {
     
     // Validate Israeli mobile phone (05XXXXXXXX)
     if (!cleanPhone.startsWith('05') || cleanPhone.length !== 10) {
-      console.warn('Phone number is not a valid Israeli mobile, attempting to fix or use default');
       if (cleanPhone.length === 9 && cleanPhone.startsWith('5')) {
         cleanPhone = '0' + cleanPhone;
+      } else {
+        console.error('Invalid Israeli phone number:', cleanPhone);
+        return Response.json({ 
+          success: false, 
+          error: 'מספר טלפון לא תקין. יש להזין מספר נייד ישראלי תקין (05XXXXXXXX)',
+          receivedPhone: customerPhone
+        }, { status: 400 });
       }
     }
 

@@ -233,7 +233,14 @@ export default function GrowPaymentForm({
 
     } catch (error) {
       console.error('Payment error:', error);
-      toast.error(error.message || t.error);
+      let errorMessage = error.message || t.error;
+      
+      // Handle Axios error response
+      if (error.response && error.response.data && error.response.data.error) {
+        errorMessage = error.response.data.error;
+      }
+      
+      toast.error(errorMessage);
       setLoading(false);
     }
   };
