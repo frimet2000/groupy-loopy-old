@@ -45,7 +45,10 @@ Deno.serve(async (req) => {
     });
 
     // Create success/cancel URLs
-    const baseUrl = req.headers.get('origin') || 'https://groupyloopy.app';
+    const origin = req.headers.get('origin');
+    const isLocalhost = origin?.includes('localhost') || origin?.includes('127.0.0.1');
+    const baseUrl = isLocalhost ? 'https://groupyloopy.com' : (origin || 'https://groupyloopy.com');
+    
     const successUrl = `${baseUrl}/NifgashimPortal?id=${tripId}&payment_success=true&registration_id=${registration.id}`;
     const cancelUrl = `${baseUrl}/NifgashimPortal?id=${tripId}&payment_cancel=true`;
 
@@ -86,7 +89,7 @@ Deno.serve(async (req) => {
 
     console.log('Sending to Grow API:', formData.toString());
 
-    const growResponse = await fetch('https://sandbox.meshulam.co.il/api/light/server/1.0/createPaymentProcess', {
+    const growResponse = await fetch('https://secure.meshulam.co.il/api/light/server/1.0/createPaymentProcess', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
