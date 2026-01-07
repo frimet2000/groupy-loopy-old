@@ -175,42 +175,44 @@ export default function GrowPaymentForm({
       const { processToken, processId, registrationId } = response.data;
       setProcessToken(processToken);
 
-      // Configure Grow SDK
-      window.configureGrowSdk({
-        processToken,
-        renderTo: 'grow-payment-container',
-        lang: language === 'he' ? 'he' : 'en',
-        onSuccess: async (result) => {
-          console.log('Payment success:', result);
-          
-          try {
-            // Approve transaction
-            await base44.functions.invoke('approveGrowTransaction', {
-              transactionId: result.transactionId,
-              processId
-            });
-
-            toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
-            onSuccess({ registrationId, transactionId: result.transactionId });
-          } catch (error) {
-            console.error('Approve error:', error);
-            toast.error(t.paymentFailed);
-          }
-        },
-        onError: (error) => {
-          console.error('Payment error:', error);
-          toast.error(t.paymentFailed);
-          setLoading(false);
-        },
-        onCancel: () => {
-          console.log('Payment cancelled');
-          setLoading(false);
-        }
-      });
-
-      // Render payment options
+      // Configure and render Grow wallet
       if (window.growPayment) {
-        window.growPayment.renderPaymentOptions();
+        window.growPayment.renderPaymentOptions({
+          processToken,
+          renderTo: 'grow-payment-container',
+          lang: language === 'he' ? 'he' : 'en',
+          onSuccess: async (result) => {
+            console.log('Payment success:', result);
+            
+            try {
+              // Approve transaction
+              await base44.functions.invoke('approveGrowTransaction', {
+                transactionId: result.data?.transactionId || result.transactionId,
+                processId
+              });
+
+              toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
+              onSuccess({ registrationId, transactionId: result.data?.transactionId || result.transactionId });
+            } catch (error) {
+              console.error('Approve error:', error);
+              toast.error(t.paymentFailed);
+              setLoading(false);
+            }
+          },
+          onError: (error) => {
+            console.error('Payment error:', error);
+            toast.error(t.paymentFailed);
+            setLoading(false);
+          },
+          onCancel: () => {
+            console.log('Payment cancelled');
+            setLoading(false);
+          }
+        });
+      } else {
+        console.error('Grow SDK not loaded properly');
+        toast.error(t.error);
+        setLoading(false);
       }
 
     } catch (error) {
