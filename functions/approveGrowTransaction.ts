@@ -9,7 +9,8 @@ Deno.serve(async (req) => {
 
     const { transactionId, processId } = payload;
 
-    const userId = Deno.env.get('GROW_USER_ID');
+    const userId = Deno.env.get('GROW_USER_ID') || '5c04d711acb29250';
+    const pageCode = Deno.env.get('GROW_PAGE_CODE') || '30f1b9975952';
     
     if (!userId) {
       console.error('GROW_USER_ID not set');
@@ -17,16 +18,19 @@ Deno.serve(async (req) => {
     }
 
     // Approve transaction with Grow
-    const approveResponse = await fetch('https://api.meshulam.co.il/api/light/server/1.0/approveTransaction', {
+    const approveResponse = await fetch('https://secure.meshulam.co.il/api/light/server/1.0/approveTransaction', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: JSON.stringify({
+      body: new URLSearchParams({
+        pageCode,
         userId,
         transactionId,
-        processId
-      })
+        processId,
+        transactionTypeId: '1', // Default credit card
+        paymentType: '1' // Regular payment
+      }).toString()
     });
 
     const approveData = await approveResponse.json();

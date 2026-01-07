@@ -22,8 +22,8 @@ Deno.serve(async (req) => {
       description
     } = payload;
 
-    const userId = Deno.env.get('GROW_USER_ID');
-    const pageCode = Deno.env.get('GROW_PAGE_CODE');
+    const userId = Deno.env.get('GROW_USER_ID') || '5c04d711acb29250';
+    const pageCode = Deno.env.get('GROW_PAGE_CODE') || '30f1b9975952';
     
     if (!userId || !pageCode) {
       console.error('GROW_USER_ID or GROW_PAGE_CODE not set');
@@ -59,7 +59,15 @@ Deno.serve(async (req) => {
     }
 
     // Clean phone number (remove non-digits)
-    const cleanPhone = customerPhone.replace(/\D/g, '');
+    let cleanPhone = customerPhone.replace(/\D/g, '');
+    
+    // Validate Israeli mobile phone (05XXXXXXXX)
+    if (!cleanPhone.startsWith('05') || cleanPhone.length !== 10) {
+      console.warn('Phone number is not a valid Israeli mobile, attempting to fix or use default');
+      if (cleanPhone.length === 9 && cleanPhone.startsWith('5')) {
+        cleanPhone = '0' + cleanPhone;
+      }
+    }
 
     // Clean description - remove Hebrew and special characters, only ASCII allowed
     const cleanDescription = 'Nifgashim Trek Registration';
