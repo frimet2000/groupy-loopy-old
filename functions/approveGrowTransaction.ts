@@ -28,9 +28,7 @@ Deno.serve(async (req) => {
         pageCode,
         userId,
         transactionId,
-        processId,
-        transactionTypeId: '1', // Default credit card
-        paymentType: '1' // Regular payment
+        processId
       }).toString()
     });
 

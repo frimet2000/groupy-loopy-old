@@ -132,11 +132,8 @@ const GrowPaymentForm = ({
   useEffect(() => {
     // Load Grow SDK
     const script = document.createElement('script');
-    // script.src = "https://meshulam.co.il/sdk/grow.js"; // Production
-    // Sandbox uses a different URL usually, but user instructions say:
-    // "הטמעת הסקיפט... המצורף במסמך SDK Implementation"
-    // Assuming production for now based on previous errors
-    script.src = "https://meshulam.co.il/sdk/grow.js";
+    // script.src = "https://meshulam.co.il/sdk/grow.js"; // Old URL causing 404/ORB issues
+    script.src = "https://secure.meshulam.co.il/sdk/grow.js"; // Updated to secure domain matching API
     script.async = true;
     script.onload = () => {
       console.log('Grow SDK loaded');
