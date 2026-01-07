@@ -49,35 +49,37 @@ Deno.serve(async (req) => {
     const successUrl = `${baseUrl}/NifgashimPortal?id=${tripId}&payment_success=true&registration_id=${registration.id}`;
     const cancelUrl = `${baseUrl}/NifgashimPortal?id=${tripId}&payment_cancel=true`;
 
-    // Create Grow payment process
-    const requestBody = {
-      pageCode,
-      userId,
-      amount: parseFloat(amount).toFixed(2),
-      description: description || 'Nifgashim Registration',
-      fullName: customerName,
-      phone: customerPhone,
-      email: customerEmail,
-      successUrl,
-      cancelUrl,
-      maxPayments: 1,
-      currency: 'ILS',
-      sendEmail: 1,
-      customFields: JSON.stringify({
-        registration_id: registration.id,
-        trip_id: tripId,
-        participants_count: participants.length
-      })
-    };
+    // Prepare form data for Grow API
+    const formData = new URLSearchParams();
+    formData.append('pageCode', pageCode);
+    formData.append('userId', userId);
+    formData.append('sum', parseFloat(amount).toFixed(2));
+    formData.append('description', description || 'Nifgashim Registration');
+    formData.append('pageField[fullName]', customerName);
+    formData.append('pageField[phone]', customerPhone);
+    if (customerEmail && customerEmail.includes('@')) {
+      formData.append('pageField[email]', customerEmail);
+    }
+    formData.append('successUrl', successUrl);
+    formData.append('cancelUrl', cancelUrl);
+    formData.append('maxPaymentNum', '1');
+    formData.append('cField1', registration.id);
+    formData.append('cField2', tripId);
+    formData.append('cField3', participants.length.toString());
+    
+    // Add payment methods - credit card, bit, google pay
+    formData.append('transactionTypes[0]', '1'); // Credit card
+    formData.append('transactionTypes[1]', '6'); // Bit
+    formData.append('transactionTypes[3]', '13'); // Google Pay
 
-    console.log('Sending to Grow API:', JSON.stringify(requestBody, null, 2));
+    console.log('Sending to Grow API:', formData.toString());
 
     const growResponse = await fetch('https://sandbox.meshulam.co.il/api/light/server/1.0/createPaymentProcess', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: JSON.stringify(requestBody)
+      body: formData.toString()
     });
 
     const growData = await growResponse.json();
