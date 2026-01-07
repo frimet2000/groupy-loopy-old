@@ -123,6 +123,15 @@ export default function GrowPaymentForm({
 
   // Load Grow SDK
   useEffect(() => {
+    // Only load in production
+    const isProduction = window.location.hostname === 'groupyloopy.com' || window.location.hostname === 'groupyloopy.app';
+    
+    if (!isProduction) {
+      console.log('Grow SDK skipped in development/preview');
+      setSdkLoaded(true);
+      return;
+    }
+
     if (document.getElementById('grow-sdk')) {
       setSdkLoaded(true);
       return;
@@ -151,6 +160,12 @@ export default function GrowPaymentForm({
   }, []);
 
   const handlePayment = async () => {
+    const isProduction = window.location.hostname === 'groupyloopy.com' || window.location.hostname === 'groupyloopy.app';
+    if (!isProduction) {
+      toast.info(language === 'he' ? 'תשלומים זמינים רק בסביבת ייצור' : 'Payments are only available in production');
+      return;
+    }
+
     if (!sdkLoaded) {
       toast.error(t.loading);
       return;
