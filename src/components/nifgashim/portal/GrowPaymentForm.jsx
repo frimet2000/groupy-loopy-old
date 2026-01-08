@@ -126,8 +126,68 @@ const GrowPaymentForm = ({
   const t = translations[language] || translations.en;
   
   const [loading, setLoading] = useState(false);
+  const [sdkLoaded, setSdkLoaded] = useState(false);
+  const [processToken, setProcessToken] = useState(null);
+
+  useEffect(() => {
+    if (window.growPayment) {
+      setSdkLoaded(true);
+      return;
+    }
+
+    (function () {
+      const s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.async = true;
+      s.src = 'https://cdn.meshulam.co.il/sdk/gs.min.js';
+      s.onload = () => {
+        if (window.growPayment) {
+          const isProduction = window.location.hostname === 'groupyloopy.com' || window.location.hostname === 'groupyloopy.app';
+          
+          const config = {
+            environment: isProduction ? 'PROD' : 'DEV',
+            version: 1,
+            events: {
+              onSuccess: (response) => {
+                console.log('Payment success:', response);
+                toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
+                onSuccess(response);
+              },
+              onFailure: (response) => {
+                console.error('Payment failure:', response);
+                toast.error(t.paymentFailed);
+                setLoading(false);
+              },
+              onError: (response) => {
+                console.error('Payment error:', response);
+                toast.error(t.paymentFailed);
+                setLoading(false);
+              },
+              onWalletChange: (state) => {
+                console.log('Wallet state:', state);
+              }
+            }
+          };
+          
+          window.growPayment.init(config);
+          setSdkLoaded(true);
+        }
+      };
+      s.onerror = () => {
+        console.error('Failed to load Grow SDK');
+        toast.error(t.error);
+      };
+      const x = document.getElementsByTagName('script')[0];
+      x.parentNode.insertBefore(s, x);
+    })();
+  }, [language, t.error, t.paymentFailed, onSuccess]);
 
   const handlePayment = async () => {
+    if (!sdkLoaded) {
+      toast.error(t.loading);
+      return;
+    }
+
     setLoading(true);
 
     const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
@@ -153,9 +213,11 @@ const GrowPaymentForm = ({
       }
 
       const { processToken } = response.data;
+      setProcessToken(processToken);
       
-      // Redirect to Grow payment page
-      window.location.href = `https://secure.meshulam.co.il/proceed/${processToken}`;
+      setTimeout(() => {
+        window.growPayment.renderPaymentOptions(processToken);
+      }, 500);
 
     } catch (error) {
       console.error('Payment error:', error);
@@ -184,23 +246,32 @@ const GrowPaymentForm = ({
           <div className="text-3xl font-bold text-emerald-700">₪{amount.toFixed(2)}</div>
         </div>
 
-        <Button 
-          onClick={handlePayment}
-          disabled={loading}
-          className="w-full h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-              {t.processing}
-            </>
-          ) : (
-            <>
-              <Smartphone className="w-5 h-5 mr-2" />
-              {t.openWallet}
-            </>
-          )}
-        </Button>
+        {!processToken ? (
+          <Button 
+            onClick={handlePayment}
+            disabled={loading || !sdkLoaded}
+            className="w-full h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                {t.processing}
+              </>
+            ) : !sdkLoaded ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                {t.loading}
+              </>
+            ) : (
+              <>
+                <Smartphone className="w-5 h-5 mr-2" />
+                {t.openWallet}
+              </>
+            )}
+          </Button>
+        ) : (
+          <div id="grow-payment-container" className="w-full min-h-[400px]"></div>
+        )}
 
         <div className="text-center text-sm text-gray-500">
           <div className="mb-2">{t.payWith}</div>
