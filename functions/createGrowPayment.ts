@@ -28,12 +28,18 @@ Deno.serve(async (req) => {
     const userId = Deno.env.get('GROW_USER_ID');
     const pageCode = Deno.env.get('GROW_PAGE_CODE');
     
-    console.log('GROW_USER_ID:', userId ? 'SET' : 'NOT SET');
-    console.log('GROW_PAGE_CODE:', pageCode ? 'SET' : 'NOT SET');
+    console.log('GROW_USER_ID value:', userId);
+    console.log('GROW_PAGE_CODE value:', pageCode);
     
     if (!userId || !pageCode) {
       console.error('GROW credentials missing! userId:', !!userId, 'pageCode:', !!pageCode);
       return Response.json({ success: false, error: 'Grow not configured - missing credentials' }, { status: 500 });
+    }
+    
+    // Validate format
+    if (userId.length < 10 || pageCode.length < 10) {
+      console.error('GROW credentials appear invalid - too short');
+      return Response.json({ success: false, error: 'Grow credentials format invalid' }, { status: 500 });
     }
 
     // Create registration record
