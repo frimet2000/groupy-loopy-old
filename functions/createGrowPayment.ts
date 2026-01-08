@@ -67,6 +67,14 @@ Deno.serve(async (req) => {
     }
 
     // Clean phone number (remove non-digits)
+    if (!customerPhone) {
+      console.error('customerPhone is missing');
+      return Response.json({ 
+        success: false, 
+        error: 'מספר טלפון חסר. אנא הזן מספר טלפון תקין.'
+      }, { status: 400 });
+    }
+    
     let cleanPhone = customerPhone.replace(/\D/g, '');
     console.log('Phone validation - original:', customerPhone, 'cleaned:', cleanPhone);
     

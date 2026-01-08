@@ -140,8 +140,7 @@ const GrowPaymentForm = ({
           const isProduction = window.location.hostname === 'groupyloopy.com' || window.location.hostname === 'groupyloopy.app';
           
           const config = {
-            environment: isProduction ? 'PROD' : 'DEV',
-            version: 1,
+            environment: isProduction ? 'production' : 'sandbox',
             events: {
               onSuccess: (response) => {
                 console.log('Payment success:', response);
@@ -213,8 +212,12 @@ const GrowPaymentForm = ({
         enableGooglePay: isChrome
       });
 
+      console.log('Full response:', response);
+
       if (!response.data.success) {
-        throw new Error(response.data.error || 'Failed to create payment');
+        const errorMsg = response.data.error || 'Failed to create payment';
+        console.error('Payment creation failed:', errorMsg, response.data);
+        throw new Error(errorMsg);
       }
 
       const { processToken } = response.data;
