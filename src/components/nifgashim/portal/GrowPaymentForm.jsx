@@ -130,16 +130,16 @@ const GrowPaymentForm = ({
       return;
     }
 
-    (function () {
-      const s = document.createElement('script');
-      s.type = 'text/javascript';
-      s.async = true;
-      s.src = 'https://cdn.meshulam.co.il/sdk/gs.min.js';
-      s.onload = () => {
-        if (window.growPayment) {
-          const isProduction = window.location.hostname === 'groupyloopy.com' || window.location.hostname === 'groupyloopy.app';
-          
-          const config = {
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.async = true;
+    script.src = 'https://cdn.meshulam.co.il/sdk/gs.min.js';
+    script.onload = () => {
+      if (window.growPayment) {
+        const isProduction = window.location.hostname === 'groupyloopy.com' || window.location.hostname === 'groupyloopy.app';
+        
+        try {
+          window.growPayment.init({
             environment: isProduction ? 'production' : 'sandbox',
             events: {
               onSuccess: (response) => {
@@ -156,24 +156,21 @@ const GrowPaymentForm = ({
                 console.error('Payment error:', response);
                 toast.error(t.paymentFailed);
                 setLoading(false);
-              },
-              onWalletChange: (state) => {
-                console.log('Wallet state:', state);
               }
             }
-          };
-          
-          window.growPayment.init(config);
+          });
           setSdkLoaded(true);
+        } catch (err) {
+          console.error('Grow init error:', err);
+          toast.error(t.error);
         }
-      };
-      s.onerror = () => {
-        console.error('Failed to load Grow SDK');
-        toast.error(t.error);
-      };
-      const x = document.getElementsByTagName('script')[0];
-      x.parentNode.insertBefore(s, x);
-    })();
+      }
+    };
+    script.onerror = () => {
+      console.error('Failed to load Grow SDK');
+      toast.error(t.error);
+    };
+    document.head.appendChild(script);
   }, [language, t.error, t.paymentFailed, onSuccess]);
 
   const handlePayment = async () => {
