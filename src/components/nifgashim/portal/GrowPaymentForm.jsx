@@ -193,15 +193,25 @@ const GrowPaymentForm = ({
     const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
 
     try {
-      const response = await base44.functions.invoke('createGrowPayment', {
+      console.log('Sending payment request with:', {
         amount,
         tripId,
-        participants,
+        participants: participants?.length || 0,
         userType,
-        groupInfo,
-        selectedDays,
-        memorialData,
-        vehicleInfo,
+        customerName,
+        customerEmail,
+        customerPhone
+      });
+
+      const response = await base44.functions.invoke('createGrowPayment', {
+        amount,
+        tripId: tripId || '',
+        participants: participants || [],
+        userType: userType || 'individual',
+        groupInfo: groupInfo || {},
+        selectedDays: selectedDays || [],
+        memorialData: memorialData || {},
+        vehicleInfo: vehicleInfo || {},
         customerName,
         customerEmail,
         customerPhone,
