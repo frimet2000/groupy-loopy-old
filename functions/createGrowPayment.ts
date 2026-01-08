@@ -3,10 +3,11 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
+    console.log('=== createGrowPayment START ===');
     const base44 = createClientFromRequest(req);
 
     const payload = await req.json();
-    console.log('createGrowPayment called with:', JSON.stringify(payload, null, 2));
+    console.log('Payload received:', JSON.stringify(payload, null, 2));
 
     const {
       amount,
@@ -24,15 +25,19 @@ Deno.serve(async (req) => {
       enableGooglePay
     } = payload;
 
-    const userId = Deno.env.get('GROW_USER_ID') || '5c04d711acb29250';
-    const pageCode = Deno.env.get('GROW_PAGE_CODE') || '30f1b9975952';
+    const userId = Deno.env.get('GROW_USER_ID');
+    const pageCode = Deno.env.get('GROW_PAGE_CODE');
+    
+    console.log('GROW_USER_ID:', userId ? 'SET' : 'NOT SET');
+    console.log('GROW_PAGE_CODE:', pageCode ? 'SET' : 'NOT SET');
     
     if (!userId || !pageCode) {
-      console.error('GROW_USER_ID or GROW_PAGE_CODE not set');
-      return Response.json({ success: false, error: 'Grow not configured' }, { status: 500 });
+      console.error('GROW credentials missing! userId:', !!userId, 'pageCode:', !!pageCode);
+      return Response.json({ success: false, error: 'Grow not configured - missing credentials' }, { status: 500 });
     }
 
     // Create registration record
+    console.log('Creating NifgashimRegistration record...');
     const registration = await base44.asServiceRole.entities.NifgashimRegistration.create({
       trip_id: tripId,
       participants,
@@ -45,6 +50,7 @@ Deno.serve(async (req) => {
       status: 'pending_payment',
       customer_email: customerEmail
     });
+    console.log('Registration created with ID:', registration.id);
 
     // Create success/cancel URLs
     const origin = req.headers.get('origin');
@@ -62,11 +68,13 @@ Deno.serve(async (req) => {
 
     // Clean phone number (remove non-digits)
     let cleanPhone = customerPhone.replace(/\D/g, '');
+    console.log('Phone validation - original:', customerPhone, 'cleaned:', cleanPhone);
     
     // Validate Israeli mobile phone (05XXXXXXXX)
     if (!cleanPhone.startsWith('05') || cleanPhone.length !== 10) {
       if (cleanPhone.length === 9 && cleanPhone.startsWith('5')) {
         cleanPhone = '0' + cleanPhone;
+        console.log('Phone corrected to:', cleanPhone);
       } else {
         console.error('Invalid Israeli phone number:', cleanPhone);
         return Response.json({ 
@@ -105,6 +113,9 @@ Deno.serve(async (req) => {
     }
     formData.append('transactionTypes[1]', '6'); // Bit
 
+    console.log('Sending request to Grow API...');
+    console.log('Request body:', formData.toString());
+
     const growResponse = await fetch('https://secure.meshulam.co.il/api/light/server/1.0/createPaymentProcess', {
       method: 'POST',
       headers: {
@@ -113,9 +124,24 @@ Deno.serve(async (req) => {
       body: formData.toString()
     });
 
-    const growData = await growResponse.json();
-    console.log('Grow API response status:', growResponse.status);
-    console.log('Grow API response:', JSON.stringify(growData, null, 2));
+    console.log('Grow API HTTP status:', growResponse.status);
+    const contentType = growResponse.headers.get('content-type');
+    console.log('Response content-type:', contentType);
+
+    let growData;
+    try {
+      const responseText = await growResponse.text();
+      console.log('Raw response:', responseText.substring(0, 500));
+      growData = JSON.parse(responseText);
+      console.log('Parsed Grow response:', JSON.stringify(growData, null, 2));
+    } catch (parseError) {
+      console.error('Failed to parse Grow response:', parseError.message);
+      return Response.json({
+        success: false,
+        error: 'Grow API returned invalid JSON',
+        details: parseError.message
+      }, { status: 500 });
+    }
 
     if (!growResponse.ok) {
       console.error('Grow API HTTP error:', growResponse.status, growData);
@@ -145,10 +171,15 @@ Deno.serve(async (req) => {
       }, { status: 400 });
     }
   } catch (error) {
-    console.error('Exception in createGrowPayment:', error);
+    console.error('=== EXCEPTION in createGrowPayment ===');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Error object:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
     return Response.json({ 
       success: false, 
-      error: error.message 
+      error: error.message || 'Unknown error',
+      errorType: error.name,
+      stack: error.stack
     }, { status: 500 });
   }
 });
