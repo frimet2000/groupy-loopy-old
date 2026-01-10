@@ -123,54 +123,72 @@ const GrowPaymentForm = ({
   const [loading, setLoading] = useState(false);
   const [sdkLoaded, setSdkLoaded] = useState(false);
   const [processToken, setProcessToken] = useState(null);
+  const [sdkError, setSdkError] = useState(null);
 
   useEffect(() => {
-    if (window.growPayment) {
-      setSdkLoaded(true);
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.async = true;
-    script.src = 'https://cdn.meshulam.co.il/sdk/gs.min.js';
-    script.onload = () => {
+    try {
       if (window.growPayment) {
-        const isProduction = window.location.hostname === 'groupyloopy.com' || window.location.hostname === 'groupyloopy.app';
-        
+        setSdkLoaded(true);
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.async = true;
+      script.src = 'https://cdn.meshulam.co.il/sdk/gs.min.js';
+      
+      const timeout = setTimeout(() => {
+        console.error('Grow SDK load timeout');
+        setSdkError(t.error);
+      }, 10000);
+
+      script.onload = () => {
+        clearTimeout(timeout);
         try {
-          window.growPayment.init({
-            environment: isProduction ? 'production' : 'sandbox',
-            events: {
-              onSuccess: (response) => {
-                console.log('Payment success:', response);
-                toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
-                onSuccess(response);
-              },
-              onFailure: (response) => {
-                console.error('Payment failure:', response);
-                toast.error(t.paymentFailed);
-                setLoading(false);
-              },
-              onError: (response) => {
-                console.error('Payment error:', response);
-                toast.error(t.paymentFailed);
-                setLoading(false);
+          if (window.growPayment) {
+            const isProduction = window.location.hostname === 'groupyloopy.com' || window.location.hostname === 'groupyloopy.app';
+            
+            window.growPayment.init({
+              environment: isProduction ? 'production' : 'sandbox',
+              events: {
+                onSuccess: (response) => {
+                  console.log('Payment success:', response);
+                  toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
+                  onSuccess(response);
+                },
+                onFailure: (response) => {
+                  console.error('Payment failure:', response);
+                  toast.error(t.paymentFailed);
+                  setLoading(false);
+                },
+                onError: (response) => {
+                  console.error('Payment error:', response);
+                  toast.error(t.paymentFailed);
+                  setLoading(false);
+                }
               }
-            }
-          });
-          setSdkLoaded(true);
+            });
+            setSdkLoaded(true);
+          } else {
+            setSdkError(t.error);
+          }
         } catch (err) {
           console.error('Grow init error:', err);
-          toast.error(t.error);
+          setSdkError(t.error);
         }
-      }
-    };
-    script.onerror = () => {
-      console.error('Failed to load Grow SDK');
-      toast.error(t.error);
-    };
-    document.head.appendChild(script);
+      };
+
+      script.onerror = (e) => {
+        clearTimeout(timeout);
+        console.error('Failed to load Grow SDK:', e);
+        setSdkError(t.error);
+      };
+
+      document.head.appendChild(script);
+    } catch (err) {
+      console.error('Script creation error:', err);
+      setSdkError(t.error);
+    }
   }, [language, t.error, t.paymentFailed, onSuccess]);
 
   const handlePayment = async () => {
