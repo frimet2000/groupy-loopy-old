@@ -20,7 +20,7 @@ import {
   Users, Heart, MapPin, Car, Activity, ChevronRight, ChevronLeft, 
   CheckCircle2, Loader2, Accessibility, Plus, X, User, Upload, Camera, Globe, FileText
 } from 'lucide-react';
-import { getCountryRegions, getAllCountries } from '../components/utils/CountryRegions';
+import { getAllCountries } from '../components/utils/CountryRegions';
 
 function getTos(language) {
   const sections = {
