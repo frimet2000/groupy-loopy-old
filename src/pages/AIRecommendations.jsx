@@ -35,7 +35,7 @@ export default function AIRecommendations() {
     accommodation: '',
   });
   
-  const countries = getAllCountries(language);
+  const countries = getAllCountries();
   const regions = preferences.country ? getCountryRegions(preferences.country) : [];
   const [recommendations, setRecommendations] = useState(null);
   const [aiSuggestions, setAiSuggestions] = useState(null);
