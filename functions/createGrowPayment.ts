@@ -13,12 +13,35 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Method not allowed' }, { status: 405 });
     }
 
-    const body = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch (parseError) {
+      console.error('Failed to parse request body:', parseError);
+      return Response.json(
+        { error: 'Invalid JSON in request body', details: parseError.message },
+        { status: 400 }
+      );
+    }
+
     const { sum, fullName, phone } = body;
 
     if (!sum || !fullName || !phone) {
       return Response.json(
-        { error: 'Missing required fields: sum, fullName, phone' },
+        {
+          error: 'Missing required fields',
+          received: { sum, fullName, phone },
+          required: ['sum', 'fullName', 'phone']
+        },
+        { status: 400 }
+      );
+    }
+
+    // Validate sum is a number
+    const numSum = typeof sum === 'string' ? parseFloat(sum) : sum;
+    if (isNaN(numSum) || numSum <= 0) {
+      return Response.json(
+        { error: 'sum must be a positive number', received: sum },
         { status: 400 }
       );
     }
@@ -38,16 +61,17 @@ Deno.serve(async (req) => {
     const params = new URLSearchParams();
     params.append('userId', userId);
     params.append('pageCode', pageCode);
-    params.append('sum', sum.toString());
-    params.append('fullName', fullName);
-    params.append('phone', phone);
+    params.append('sum', numSum.toString());
+    params.append('fullName', fullName.trim());
+    params.append('phone', phone.trim());
 
     console.log('Calling Grow API with params:', {
       userId,
       pageCode,
-      sum,
-      fullName,
-      phone
+      sum: numSum,
+      fullName: fullName.trim(),
+      phone: phone.trim(),
+      paramsString: params.toString()
     });
 
     // Call Grow's createPaymentProcess API
@@ -66,10 +90,19 @@ Deno.serve(async (req) => {
     console.log('Grow API response:', responseText);
 
     if (!growResponse.ok) {
-      console.error('Grow API error:', responseText);
+      console.error('Grow API HTTP error:', {
+        status: growResponse.status,
+        statusText: growResponse.statusText,
+        responseText
+      });
       return Response.json(
-        { error: 'Payment service error', details: responseText },
-        { status: growResponse.status }
+        {
+          error: `Meshulam API error (HTTP ${growResponse.status})`,
+          httpStatus: growResponse.status,
+          statusText: growResponse.statusText,
+          details: responseText
+        },
+        { status: 502 }
       );
     }
 
@@ -100,11 +133,13 @@ Deno.serve(async (req) => {
     if (status !== 1 || !processId) {
       return Response.json(
         {
-          error: 'Failed to create payment process',
-          status,
-          details: responseText
+          error: 'Meshulam rejected payment process creation',
+          meshulamStatus: status,
+          meshulamStatusDesc: status === 0 ? 'Error' : status === 1 ? 'Success' : 'Unknown',
+          missingProcessId: !processId,
+          fullResponse: responseText
         },
-        { status: 400 }
+        { status: 402 }
       );
     }
 
@@ -115,9 +150,17 @@ Deno.serve(async (req) => {
       processToken
     });
   } catch (error) {
-    console.error('Payment creation error:', error);
+    console.error('Payment creation exception:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     return Response.json(
-      { error: error.message || 'Payment creation failed' },
+      {
+        error: 'Payment function error',
+        message: error.message,
+        type: error.name
+      },
       { status: 500 }
     );
   }
