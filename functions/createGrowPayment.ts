@@ -66,33 +66,41 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Prepare URLSearchParams for Grow API
-    const params = new URLSearchParams();
-    params.append('userId', userId);
-    params.append('pageCode', pageCode);
-    params.append('sum', numSum.toFixed(2)); // Ensure string with 2 decimals
-    params.append('fullName', fullName.trim());
-    params.append('phone', phone.trim());
+    // Prepare FormData for Grow API
+    const form = new FormData();
+    form.append('userId', userId);
+    form.append('pageCode', pageCode);
+    form.append('sum', numSum.toFixed(2));
+    form.append('fullName', fullName.trim());
+    form.append('phone', phone.trim());
     
-    if (email) params.append('email', email.trim());
-    if (description) params.append('description', description.trim());
+    // Add success and cancel URLs (required for some flows and prevents errors)
+    const baseUrl = req.headers.get('origin') || 'https://groupyloopy.app';
+    const successUrl = `${baseUrl}/nifgashimportal?payment_success=true&registration_id=${registration.id}`;
+    const cancelUrl = `${baseUrl}/nifgashimportal?payment_cancel=true`;
+    
+    form.append('successUrl', successUrl);
+    form.append('cancelUrl', cancelUrl);
+    
+    if (email) form.append('email', email.trim());
+    if (description) form.append('description', description.trim());
     
     // Explicitly using Sandbox URL as requested
     const growUrl = 'https://sandbox.meshulam.co.il/api/light/server/1.0/createPaymentProcess';
 
     console.log('--- Sending Request to Meshulam (Sandbox) ---');
     console.log('URL:', growUrl);
-    console.log('Params:', params.toString());
+    // console.log('Params:', params.toString());
     
     let growResponse;
     try {
       growResponse = await fetch(growUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          // 'Accept': 'application/json' // Try to request JSON
+          // 'Content-Type': 'multipart/form-data', // Fetch handles boundary automatically
+          'Accept': 'application/json'
         },
-        body: params.toString()
+        body: form
       });
     } catch (fetchError) {
       console.error('Fetch error:', fetchError);
@@ -156,7 +164,9 @@ Deno.serve(async (req) => {
       success: true,
       processId,
       processToken,
-      url: responseData.data?.url // In case they return a URL
+      url: responseData.data?.url, // In case they return a URL
+      registrationId: registration.id,
+      debug: responseData // for client side debugging
     });
 
   } catch (error) {

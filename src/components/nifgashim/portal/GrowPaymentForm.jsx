@@ -117,7 +117,9 @@ const GrowPaymentForm = ({
   const [error, setError] = useState(null);
   const [sdkReady, setSdkReady] = useState(false);
   const [processId, setProcessId] = useState(null);
+  const [paymentUrl, setPaymentUrl] = useState(null);
   const [isChrome, setIsChrome] = useState(false);
+  const [showIframe, setShowIframe] = useState(false);
 
   useEffect(() => {
     // Check if browser is Chrome (required for Google Pay)
@@ -202,7 +204,9 @@ const GrowPaymentForm = ({
     };
   }, [language]);
 
-  const handlePayment = async () => {
+  const handlePayment = async (e) => {
+    if (e && e.preventDefault) e.preventDefault(); // Prevent form submission reload
+    
     if (!sdkReady) {
       toast.error(language === 'he' ? 'מערכת התשלום טוענת...' : 'Payment system is loading...');
       return;
@@ -210,6 +214,7 @@ const GrowPaymentForm = ({
 
     setLoading(true);
     setError(null);
+    setShowIframe(false);
 
     try {
       console.log('Initiating payment with:', { amount, customerName, customerPhone });
@@ -225,7 +230,7 @@ const GrowPaymentForm = ({
         phone: customerPhone
       });
       
-      console.log('createGrowPayment raw response:', response);
+      console.log('createGrowPayment raw response:', JSON.stringify(response));
 
       // Handle different SDK response structures
       const data = response?.data || response;
@@ -238,12 +243,25 @@ const GrowPaymentForm = ({
 
       if (!data.success) {
         const errorDetail = data.error || 'Unknown server error';
-        console.error('Server returned failure:', data);
+        console.error('Server returned failure:', JSON.stringify(data));
         throw new Error(errorDetail);
       }
 
+      // Store payment URL if available (for fallback)
+      if (data.url) {
+        console.log('Payment URL received:', data.url);
+        setPaymentUrl(data.url);
+      }
+
       if (!data.processId && !data.processToken) {
-        console.error('Missing processId/processToken in success response:', data);
+        // If no token but we have URL, maybe just switch to iframe?
+        if (data.url) {
+           console.log('No token but URL received, switching to iframe fallback');
+           setShowIframe(true);
+           setLoading(false);
+           return;
+        }
+        console.error('Missing processId/processToken in success response:', JSON.stringify(data));
         throw new Error('Payment server did not return a process ID or Token');
       }
 
@@ -277,13 +295,17 @@ const GrowPaymentForm = ({
             toast.error(errorMsg);
             setLoading(false);
             setProcessId(null);
+            // On failure, offer iframe if available
+            if (paymentUrl) setShowIframe(true);
           },
           onError: (res) => {
-            console.error('Payment error:', JSON.stringify(res));
+            console.error('Payment error event:', JSON.stringify(res));
             const errorMsg = typeof res === 'string' ? res : (res?.message || (language === 'he' ? 'שגיאה בתשלום' : 'Payment error'));
             toast.error(errorMsg);
             setLoading(false);
             setProcessId(null);
+            // On error, offer iframe if available
+            if (paymentUrl) setShowIframe(true);
           },
           onCancel: () => {
             console.log('Payment cancelled by user');
@@ -322,18 +344,31 @@ const GrowPaymentForm = ({
           console.error('Render error:', renderError);
           setLoading(false);
           setProcessId(null);
-          const errorMessage = language === 'he' ? 'שגיאה בהצגת אפשרויות תשלום' : 'Failed to render payment options';
-          setError(errorMessage);
-          toast.error(errorMessage);
+          
+          // Fallback to iframe if render fails
+          if (data.url) {
+             console.log('Render failed, falling back to iframe');
+             setShowIframe(true);
+             toast.error(language === 'he' ? 'הארנק לא נטען, עובר לטופס אשראי' : 'Wallet failed, switching to credit card form');
+          } else {
+             const errorMessage = language === 'he' ? 'שגיאה בהצגת אפשרויות תשלום' : 'Failed to render payment options';
+             setError(errorMessage);
+             toast.error(errorMessage);
+          }
         }
       }, 500);
 
     } catch (error) {
-      console.error('Payment error:', error);
+      console.error('Payment error caught:', error);
+      console.error('Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+      
       const errorMessage = error.message || (language === 'he' ? 'שגיאה בתשלום' : 'Payment error');
       setError(errorMessage);
       toast.error(errorMessage);
       setLoading(false);
+      
+      // If we have a URL from a previous attempt or this one, offer it?
+      // (paymentUrl state might be set)
     }
   };
 
@@ -366,6 +401,34 @@ const GrowPaymentForm = ({
             >
               {t.tryAgain}
             </Button>
+            {paymentUrl && (
+              <Button 
+                onClick={() => {
+                   setError(null);
+                   setShowIframe(true);
+                }}
+                variant="link"
+                className="w-full mt-2 text-blue-600"
+              >
+                {language === 'he' ? 'נסה תשלום רגיל (IFRAME)' : 'Try Standard Payment (IFRAME)'}
+              </Button>
+            )}
+          </div>
+        ) : showIframe && paymentUrl ? (
+          <div className="w-full">
+            <iframe 
+              src={paymentUrl} 
+              className="w-full h-[600px] border-0 rounded-lg shadow-sm"
+              title="Payment Frame"
+              allow="payment"
+            />
+            <Button 
+              onClick={() => setShowIframe(false)} 
+              variant="outline" 
+              className="w-full mt-4"
+            >
+              {language === 'he' ? 'חזור לארנק' : 'Back to Wallet'}
+            </Button>
           </div>
         ) : processId ? (
           <div id="grow-payment-container" className="min-h-[400px] w-full">
@@ -373,6 +436,7 @@ const GrowPaymentForm = ({
           </div>
         ) : (
           <Button 
+            type="button"
             onClick={handlePayment}
             disabled={loading || !sdkReady}
             className="w-full h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold"
