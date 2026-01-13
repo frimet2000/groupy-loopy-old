@@ -219,23 +219,60 @@ const GrowPaymentForm = ({
     setShowIframe(false);
 
     try {
-      console.log('Initiating payment with backend proxy:', { amount, customerName, customerPhone });
+      console.log('Initiating payment with direct frontend fetch (v4.0):', { amount, customerName, customerPhone });
 
       if (!amount || !customerName || !customerPhone) {
         throw new Error('Missing payment details (amount, name, or phone)');
       }
 
-      console.log('Invoking createGrowPayment...');
-      const response = await base44.functions.invoke('createGrowPayment', {
-        sum: amount,
-        fullName: customerName,
-        phone: customerPhone
+      // Prepare URLSearchParams (Form Data) as requested
+      const params = new URLSearchParams();
+      params.append('userId', '5c04d711acb29250');
+      params.append('pageCode', '30f1b9975952');
+      params.append('sum', amount.toString());
+      params.append('description', 'Nifgashim Payment');
+      params.append('pageField[fullName]', customerName);
+      params.append('pageField[phone]', customerPhone);
+      
+      // Add success/cancel URLs to avoid potential API errors even if handled in JS
+      const currentUrl = window.location.href.split('?')[0];
+      params.append('successUrl', `${currentUrl}?payment_success=true`);
+      params.append('cancelUrl', `${currentUrl}?payment_cancel=true`);
+
+      console.log('Fetching processId from Meshulam (Direct)...');
+      
+      // Using direct fetch as requested
+      const response = await fetch('https://sandbox.meshulam.co.il/api/light/server/1.0/createPaymentProcess', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          // Content-Type is set automatically by fetch when body is URLSearchParams
+        },
+        body: params
       });
       
-      console.log('createGrowPayment proxy response:', JSON.stringify(response));
+      const responseData = await response.json();
+      console.log('Meshulam direct response:', JSON.stringify(responseData));
 
-      // Handle different SDK response structures
-      const data = response?.data || response;
+      // Handle response structure (Meshulam usually returns { status, data, err })
+      const data = responseData?.data || responseData;
+
+      // Check for API level errors (status != 1)
+      if (responseData.status && responseData.status !== '1') {
+         const errorMsg = responseData.err?.message || responseData.err || 'Meshulam API Error';
+         console.error('Meshulam API Error:', errorMsg);
+         
+         // If we have a URL despite the error, fallback to iframe
+         if (data?.url) {
+             console.warn('API error but URL exists, using iframe fallback');
+             setPaymentUrl(data.url);
+             setShowIframe(true);
+             setLoading(false);
+             return;
+         }
+         
+         throw new Error(errorMsg);
+      }
 
       if (!data) {
         throw new Error('No data received from payment server');
@@ -249,23 +286,8 @@ const GrowPaymentForm = ({
         setPaymentUrl(data.url);
       }
 
-      // If server explicitly says success=false
-      if (data.success === false) {
-        const errorDetail = data.error || 'Unknown server error';
-        console.error('Server returned failure:', JSON.stringify(data));
-        
-        if (data.url) {
-           console.warn('Server reported failure but provided URL, trying iframe fallback');
-           setShowIframe(true);
-           setLoading(false);
-           return;
-        }
-        
-        throw new Error(errorDetail);
-      }
-
       if (!data.processId) {
-        // If no token but we have URL, maybe just switch to iframe?
+        // If no token but we have URL, switch to iframe
         if (data.url) {
            console.log('No processId but URL received, switching to iframe fallback');
            setShowIframe(true);
@@ -285,8 +307,9 @@ const GrowPaymentForm = ({
         throw new Error('Payment SDK not loaded');
       }
 
+      // Initialize exactly as requested
       window.growPayment.init({
-        environment: 'DEV', // Always use DEV for Sandbox testing
+        environment: 'DEV', 
         version: 1,
         events: {
           onSuccess: (res) => {
@@ -304,7 +327,6 @@ const GrowPaymentForm = ({
             toast.error(errorMsg);
             setLoading(false);
             setProcessId(null);
-            // On failure, offer iframe if available
             if (data.url) setShowIframe(true);
           },
           onError: (res) => {
@@ -313,7 +335,6 @@ const GrowPaymentForm = ({
             toast.error(errorMsg);
             setLoading(false);
             setProcessId(null);
-            // On error, offer iframe if available
             if (data.url) setShowIframe(true);
           },
           onCancel: () => {
@@ -321,38 +342,20 @@ const GrowPaymentForm = ({
             toast.error(language === 'he' ? 'התשלום בוטל' : 'Payment cancelled');
             setLoading(false);
             setProcessId(null);
-          },
-          onWalletChange: (state) => {
-            console.log('Wallet state:', state);
-          },
-          onPaymentStart: () => {
-            console.log('Payment started');
-          },
-          onPaymentCancel: () => {
-            console.log('Payment cancelled');
-            setLoading(false);
-            setProcessId(null);
-          },
-          onTimeout: () => {
-            console.log('Payment timeout');
-            toast.error(language === 'he' ? 'התשלום הסתיים בתיאום' : 'Payment timeout');
-            setLoading(false);
-            setProcessId(null);
           }
         }
       });
 
-      // Render payment options after 500ms to ensure wallet is initialized
+      // Render payment options immediately as requested
       setTimeout(() => {
         try {
           console.log('Rendering payment options for processId:', receivedProcessId);
           window.growPayment.renderPaymentOptions(receivedProcessId);
           
-          // Add a safety timeout - if the widget doesn't appear or user has trouble, 
-          // allow manual switch to iframe after 3 seconds
+          // Add a safety timeout
           setTimeout(() => {
-             if (loading) { // If still "loading" or just to be safe
-                setSdkReady(true); // Ensure UI shows
+             if (loading) { 
+                setSdkReady(true); 
              }
           }, 3000);
 
@@ -362,11 +365,9 @@ const GrowPaymentForm = ({
           setLoading(false);
           setProcessId(null);
           
-          // Fallback to iframe if render fails
           if (data.url) {
              console.log('Render failed, falling back to iframe');
              setShowIframe(true);
-             toast.error(language === 'he' ? 'הארנק לא נטען, עובר לטופס אשראי' : 'Wallet failed, switching to credit card form');
           } else {
              const errorMessage = language === 'he' ? 'שגיאה בהצגת אפשרויות תשלום' : 'Failed to render payment options';
              setError(errorMessage);
