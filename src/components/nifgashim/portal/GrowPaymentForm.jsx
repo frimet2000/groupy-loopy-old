@@ -416,8 +416,20 @@ const GrowPaymentForm = ({
             </Button>
           </div>
         ) : processId ? (
-          <div id="grow-payment-container" className="min-h-[400px] w-full">
+          <div id="grow-payment-container" className="min-h-[400px] w-full relative">
             {/* Payment options will be rendered here by Meshulam SDK */}
+            {paymentUrl && (
+                <div className="absolute top-0 right-0 p-2 z-10">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowIframe(true)}
+                        className="text-xs text-gray-500 hover:text-gray-900 bg-white/80 hover:bg-white border"
+                    >
+                        {language === 'he' ? 'נתקל בבעיה? עבור לתשלום רגיל' : 'Having trouble? Switch to standard payment'}
+                    </Button>
+                </div>
+            )}
           </div>
         ) : (
           <Button 
