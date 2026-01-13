@@ -144,36 +144,9 @@ const GrowPaymentForm = ({
 
       script.onload = () => {
         clearTimeout(timeout);
-        try {
-          if (window.growPayment) {
-            const isProduction = window.location.hostname === 'groupyloopy.com' || window.location.hostname === 'groupyloopy.app';
-            
-            window.growPayment.init({
-              environment: isProduction ? 'production' : 'sandbox',
-              events: {
-                onSuccess: (response) => {
-                  console.log('Payment success:', response);
-                  toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
-                  onSuccess(response);
-                },
-                onFailure: (response) => {
-                  console.error('Payment failure:', response);
-                  toast.error(t.paymentFailed);
-                  setLoading(false);
-                },
-                onError: (response) => {
-                  console.error('Payment error:', response);
-                  toast.error(t.paymentFailed);
-                  setLoading(false);
-                }
-              }
-            });
-            setSdkLoaded(true);
-          } else {
-            setSdkError(t.error);
-          }
-        } catch (err) {
-          console.error('Grow init error:', err);
+        if (window.growPayment) {
+          setSdkLoaded(true);
+        } else {
           setSdkError(t.error);
         }
       };
@@ -235,9 +208,32 @@ const GrowPaymentForm = ({
         throw new Error(errorMsg);
       }
 
-      const { processToken } = response.data;
+      const { processToken, isSandbox } = response.data;
       setProcessToken(processToken);
       
+      // Initialize SDK with the correct environment returned from backend
+      window.growPayment.init({
+        environment: isSandbox ? 'sandbox' : 'production',
+        version: '1.0',
+        events: {
+          onSuccess: (response) => {
+            console.log('Payment success:', response);
+            toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
+            onSuccess(response);
+          },
+          onFailure: (response) => {
+            console.error('Payment failure:', response);
+            toast.error(t.paymentFailed);
+            setLoading(false);
+          },
+          onError: (response) => {
+            console.error('Payment error:', response);
+            toast.error(t.paymentFailed);
+            setLoading(false);
+          }
+        }
+      });
+
       setTimeout(() => {
         window.growPayment.renderPaymentOptions(processToken);
       }, 500);

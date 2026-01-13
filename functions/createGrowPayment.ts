@@ -192,7 +192,8 @@ Deno.serve(async (req) => {
         success: true,
         processToken: growData.data.processToken,
         processId: growData.data.processId,
-        registrationId: registration.id
+        registrationId: registration.id,
+        isSandbox // Return environment to frontend
       });
     } else {
       console.error('Grow API error response:', growData);
