@@ -87,7 +87,8 @@ Deno.serve(async (req) => {
     );
 
     const responseText = await growResponse.text();
-    console.log('Grow API response:', responseText);
+    console.log('Grow API raw response:', responseText);
+    console.log('Grow API response status:', growResponse.status);
 
     if (!growResponse.ok) {
       console.error('Grow API HTTP error:', {
@@ -109,11 +110,13 @@ Deno.serve(async (req) => {
     // Parse XML response from Grow
     let processId = null;
     let processToken = null;
+    let errorDesc = null;
 
-    // Extract processId and processToken from XML response
+    // Extract processId, processToken, and errorDesc from XML response
     const processIdMatch = responseText.match(/<processId>([^<]+)<\/processId>/);
     const tokenMatch = responseText.match(/<processToken>([^<]+)<\/processToken>/);
-    const statusMatch = responseText.match(/<status>(\d+)<\/status>/);
+    const statusMatch = responseText.match(/<status>([^<]+)<\/status>/);
+    const errorDescMatch = responseText.match(/<errorDesc>([^<]+)<\/errorDesc>/);
 
     if (processIdMatch) {
       processId = processIdMatch[1];
@@ -121,23 +124,35 @@ Deno.serve(async (req) => {
     if (tokenMatch) {
       processToken = tokenMatch[1];
     }
+    if (errorDescMatch) {
+      errorDesc = errorDescMatch[1];
+    }
 
-    const status = statusMatch ? parseInt(statusMatch[1]) : null;
+    const status = statusMatch ? statusMatch[1] : null;
 
-    console.log('Parsed Grow response:', {
+    console.log('Parsed Grow XML response:', {
       status,
       processId,
+      errorDesc,
       processToken: processToken ? '***' : 'null'
     });
 
-    if (status !== 1 || !processId) {
+    if (status !== '1' || !processId) {
+      console.error('Payment process creation failed from Meshulam:', {
+        status,
+        errorDesc,
+        processId,
+        fullXMLResponse: responseText
+      });
+      
       return Response.json(
         {
           error: 'Meshulam rejected payment process creation',
           meshulamStatus: status,
-          meshulamStatusDesc: status === 0 ? 'Error' : status === 1 ? 'Success' : 'Unknown',
+          meshulamErrorDesc: errorDesc,
           missingProcessId: !processId,
-          fullResponse: responseText
+          fullXMLResponse: responseText,
+          hint: errorDesc ? `Meshulam error: ${errorDesc}` : 'Check credentials (userId, pageCode) and request parameters'
         },
         { status: 402 }
       );
