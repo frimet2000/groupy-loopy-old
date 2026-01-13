@@ -154,9 +154,14 @@ Deno.serve(async (req) => {
         { 
           error: errorMessage || 'Meshulam API rejected the request',
           meshulamStatus: status,
-          rawResponse: responseText
+          rawResponse: responseText,
+          // If we got a URL despite the error, return it so client can use iframe
+          url: responseData.data?.url || (responseText.match(/<url>([^<]+)<\/url>/) || [])[1],
+          success: false // Explicitly mark as failed but with data
         },
-        { status: 402 } // Payment Required / Error
+        // Return 200 OK even on logic error so client can parse the JSON easily
+        // (Axios throws on 402, making it hard to access the response body)
+        { status: 200 } 
       );
     }
 

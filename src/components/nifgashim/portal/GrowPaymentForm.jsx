@@ -253,13 +253,19 @@ const GrowPaymentForm = ({
       if (!data.success) {
         const errorDetail = data.error || 'Unknown server error';
         console.error('Server returned failure:', JSON.stringify(data));
-        // If we have a URL, don't throw, just use iframe
+        
+        // Handle 402/Meshulam rejection gracefully
+        // If we have a URL (sometimes returned even on error) or if the error is 
+        // related to "general error" (often 001/000), we might want to try iframe
+        // But if it's "Payment Required" (402) it usually means validation failed.
+        
         if (data.url) {
            console.warn('Server reported failure but provided URL, trying iframe fallback');
            setShowIframe(true);
            setLoading(false);
            return;
         }
+        
         throw new Error(errorDetail);
       }
 
