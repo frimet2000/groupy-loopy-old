@@ -187,11 +187,12 @@ Deno.serve(async (req) => {
     }
 
     if (growData.status === '1' && growData.data?.url) {
-      console.log('Payment URL created successfully:', growData.data.url);
+      console.log('Payment created successfully. ProcessId:', growData.data.processId);
       return Response.json({
         success: true,
         paymentUrl: growData.data.url,
         processId: growData.data.processId,
+        processToken: growData.data.processToken,
         registrationId: registration.id
       });
     } else {
