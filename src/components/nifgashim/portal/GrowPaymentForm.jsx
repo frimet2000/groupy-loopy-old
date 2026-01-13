@@ -152,7 +152,7 @@ const GrowPaymentForm = ({
 
   const handlePayment = async () => {
     if (!sdkReady) {
-      toast.error('Payment system is loading...');
+      toast.error(language === 'he' ? 'מערכת התשלום טוענת...' : 'Payment system is loading...');
       return;
     }
 
@@ -160,36 +160,36 @@ const GrowPaymentForm = ({
     setError(null);
 
     try {
-      console.log('Creating payment with:', { amount, customerName, customerPhone });
+      console.log('Initiating payment with:', { amount, customerName, customerPhone });
 
-      const response = await base44.functions.invoke('createGrowPayment', {
-        amount,
-        tripId: tripId || '',
-        participants: participants || [],
-        userType: userType || 'individual',
-        groupInfo: groupInfo || {},
-        selectedDays: selectedDays || [],
-        memorialData: memorialData || {},
-        vehicleInfo: vehicleInfo || {},
-        customerName,
-        customerEmail,
-        customerPhone
+      const response = await fetch('/api/payment/initiate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sum: amount,
+          fullName: customerName,
+          phone: customerPhone
+        })
       });
 
-      console.log('Payment response:', response.data);
+      const data = await response.json();
 
-      if (!response.data.success) {
-        throw new Error(response.data.error || 'Payment creation failed');
+      if (!response.ok || !data.processId) {
+        throw new Error(data.error || 'Failed to initiate payment');
       }
 
-      const { processId: receivedProcessId } = response.data;
+      const { processId: receivedProcessId } = data;
       setProcessId(receivedProcessId);
 
       // Initialize Meshulam SDK
       try {
+        if (!window.growPayment) {
+          throw new Error('Payment SDK not loaded');
+        }
+
         window.growPayment.init({
-          environment: 'sandbox',
-          version: '1.0',
+          environment: 'DEV',
+          version: 1,
           events: {
             onSuccess: (paymentResponse) => {
               console.log('Payment success:', paymentResponse);
@@ -201,7 +201,7 @@ const GrowPaymentForm = ({
             onError: (errorResponse) => {
               console.error('Payment error:', errorResponse);
               const errorMsg = typeof errorResponse === 'string' ? errorResponse : 
-                (errorResponse?.message || t.paymentFailed);
+                (errorResponse?.message || (language === 'he' ? 'שגיאה בתשלום' : 'Payment error'));
               toast.error(errorMsg);
               setLoading(false);
               setProcessId(null);
@@ -218,19 +218,19 @@ const GrowPaymentForm = ({
         // Render payment options
         setTimeout(() => {
           const container = document.getElementById('grow-payment-container');
-          if (container) {
+          if (container && window.growPayment) {
             window.growPayment.renderPaymentOptions(receivedProcessId);
           }
           setLoading(false);
         }, 500);
       } catch (sdkError) {
         console.error('SDK initialization error:', sdkError);
-        throw new Error('Failed to initialize payment system');
+        throw new Error(language === 'he' ? 'שגיאה בטעינת מערכת התשלום' : 'Failed to initialize payment system');
       }
 
     } catch (error) {
       console.error('Payment error:', error);
-      const errorMessage = error.response?.data?.error || error.message || t.paymentFailed;
+      const errorMessage = error.message || (language === 'he' ? 'שגיאה בתשלום' : 'Payment error');
       setError(errorMessage);
       toast.error(errorMessage);
       setLoading(false);
