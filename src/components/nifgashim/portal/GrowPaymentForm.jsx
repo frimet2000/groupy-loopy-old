@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, CreditCard, Smartphone, AlertCircle } from 'lucide-react';
 import { useLanguage } from '@/components/LanguageContext';
-import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
 const translations = {
@@ -219,26 +218,38 @@ const GrowPaymentForm = ({
     setShowIframe(false);
 
     try {
-      console.log('Initiating payment with:', { amount, customerName, customerPhone });
+      console.log('Initiating payment with direct fetch:', { amount, customerName, customerPhone });
 
       if (!amount || !customerName || !customerPhone) {
         throw new Error('Missing payment details (amount, name, or phone)');
       }
 
-      console.log('Invoking createGrowPayment...');
-      const response = await base44.functions.invoke('createGrowPayment', {
-        sum: amount,
-        fullName: customerName,
-        phone: customerPhone
+      // Prepare URLSearchParams (Form Data) as requested
+      const params = new URLSearchParams();
+      params.append('userId', '5c04d711acb29250');
+      params.append('pageCode', '30f1b9975952');
+      params.append('sum', amount.toString());
+      params.append('pageField[fullName]', customerName);
+      params.append('pageField[phone]', customerPhone);
+
+      console.log('Fetching processId from Meshulam...');
+      const response = await fetch('https://sandbox.meshulam.co.il/api/light/server/1.0/createPaymentProcess', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          // Note: URLSearchParams in body automatically sets Content-Type to application/x-www-form-urlencoded
+        },
+        body: params
       });
       
-      console.log('createGrowPayment raw response:', JSON.stringify(response));
+      const responseData = await response.json();
+      console.log('Meshulam direct response:', JSON.stringify(responseData));
 
-      // Handle different SDK response structures
-      const data = response?.data || response;
+      // Handle response structure (Meshulam usually returns { status, data, err })
+      const data = responseData?.data || responseData;
 
-      if (!data) {
-        throw new Error('No data received from payment server');
+      if (!responseData.status || responseData.status === '0') {
+        throw new Error(responseData.err || 'Meshulam API rejected the request');
       }
       
       console.log('Parsed payment data:', data);
@@ -249,42 +260,18 @@ const GrowPaymentForm = ({
         setPaymentUrl(data.url);
       }
 
-      // If server explicitly says success=false
-      if (!data.success) {
-        const errorDetail = data.error || 'Unknown server error';
-        console.error('Server returned failure:', JSON.stringify(data));
-        
-        // Handle 402/Meshulam rejection gracefully
-        // If we have a URL (sometimes returned even on error) or if the error is 
-        // related to "general error" (often 001/000), we might want to try iframe
-        // But if it's "Payment Required" (402) it usually means validation failed.
-        
+      if (!data.processId) {
         if (data.url) {
-           console.warn('Server reported failure but provided URL, trying iframe fallback');
+           console.log('No processId but URL received, switching to iframe fallback');
            setShowIframe(true);
            setLoading(false);
            return;
         }
-        
-        throw new Error(errorDetail);
-      }
-
-      if (!data.processId && !data.processToken) {
-        // If no token but we have URL, maybe just switch to iframe?
-        if (data.url) {
-           console.log('No token but URL received, switching to iframe fallback');
-           setShowIframe(true);
-           setLoading(false);
-           return;
-        }
-        console.error('Missing processId/processToken in success response:', JSON.stringify(data));
-        throw new Error('Payment server did not return a process ID or Token');
+        throw new Error('Meshulam did not return a processId');
       }
 
       const receivedProcessId = data.processId;
-      const receivedProcessToken = data.processToken;
       console.log('Payment processId:', receivedProcessId); 
-      console.log('Payment processToken:', receivedProcessToken ? '***' : 'missing');
       setProcessId(receivedProcessId);
 
       // Initialize SDK first with all callbacks before rendering
@@ -293,7 +280,7 @@ const GrowPaymentForm = ({
       }
 
       window.growPayment.init({
-        environment: 'DEV', // Always use DEV for Sandbox testing
+        environment: 'DEV', // Use DEV as requested
         version: 1,
         events: {
           onSuccess: (res) => {
@@ -311,8 +298,7 @@ const GrowPaymentForm = ({
             toast.error(errorMsg);
             setLoading(false);
             setProcessId(null);
-            // On failure, offer iframe if available
-            if (paymentUrl) setShowIframe(true);
+            if (data.url) setShowIframe(true);
           },
           onError: (res) => {
             console.error('Payment error event:', JSON.stringify(res));
@@ -320,48 +306,28 @@ const GrowPaymentForm = ({
             toast.error(errorMsg);
             setLoading(false);
             setProcessId(null);
-            // On error, offer iframe if available
-            if (paymentUrl) setShowIframe(true);
+            if (data.url) setShowIframe(true);
           },
           onCancel: () => {
             console.log('Payment cancelled by user');
             toast.error(language === 'he' ? 'התשלום בוטל' : 'Payment cancelled');
             setLoading(false);
             setProcessId(null);
-          },
-          onWalletChange: (state) => {
-            console.log('Wallet state:', state);
-          },
-          onPaymentStart: () => {
-            console.log('Payment started');
-          },
-          onPaymentCancel: () => {
-            console.log('Payment cancelled');
-            setLoading(false);
-            setProcessId(null);
-          },
-          onTimeout: () => {
-            console.log('Payment timeout');
-            toast.error(language === 'he' ? 'התשלום הסתיים בתיאום' : 'Payment timeout');
-            setLoading(false);
-            setProcessId(null);
           }
         }
       });
 
-      // Render payment options after 500ms to ensure wallet is initialized
+      // Render payment options
       setTimeout(() => {
         try {
-          const identifier = receivedProcessToken || receivedProcessId;
-          console.log('Rendering payment options for identifier:', identifier === receivedProcessToken ? 'Token' : 'ID');
-          window.growPayment.renderPaymentOptions(identifier);
+          console.log('Rendering payment options for processId:', receivedProcessId);
+          window.growPayment.renderPaymentOptions(receivedProcessId);
           setLoading(false);
         } catch (renderError) {
           console.error('Render error:', renderError);
           setLoading(false);
           setProcessId(null);
           
-          // Fallback to iframe if render fails
           if (data.url) {
              console.log('Render failed, falling back to iframe');
              setShowIframe(true);
