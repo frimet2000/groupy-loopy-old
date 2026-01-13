@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
     
     // Add success and cancel URLs (required for some flows and prevents errors)
     const baseUrl = req.headers.get('origin') || 'https://groupyloopy.app';
-    const successUrl = `${baseUrl}/nifgashimportal?payment_success=true&registration_id=${registration.id}`;
+    const successUrl = `${baseUrl}/nifgashimportal?payment_success=true`;
     const cancelUrl = `${baseUrl}/nifgashimportal?payment_cancel=true`;
     
     form.append('successUrl', successUrl);
@@ -165,7 +165,7 @@ Deno.serve(async (req) => {
       processId,
       processToken,
       url: responseData.data?.url, // In case they return a URL
-      registrationId: registration.id,
+      // registrationId: registration.id, // Registration not created in this flow yet
       debug: responseData // for client side debugging
     });
 

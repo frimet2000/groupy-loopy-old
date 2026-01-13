@@ -207,6 +207,8 @@ const GrowPaymentForm = ({
   const handlePayment = async (e) => {
     if (e && e.preventDefault) e.preventDefault(); // Prevent form submission reload
     
+    console.log('--- handlePayment v3.0 started ---');
+    
     if (!sdkReady) {
       toast.error(language === 'he' ? 'מערכת התשלום טוענת...' : 'Payment system is loading...');
       return;
@@ -241,16 +243,24 @@ const GrowPaymentForm = ({
       
       console.log('Parsed payment data:', data);
 
-      if (!data.success) {
-        const errorDetail = data.error || 'Unknown server error';
-        console.error('Server returned failure:', JSON.stringify(data));
-        throw new Error(errorDetail);
-      }
-
       // Store payment URL if available (for fallback)
       if (data.url) {
         console.log('Payment URL received:', data.url);
         setPaymentUrl(data.url);
+      }
+
+      // If server explicitly says success=false
+      if (!data.success) {
+        const errorDetail = data.error || 'Unknown server error';
+        console.error('Server returned failure:', JSON.stringify(data));
+        // If we have a URL, don't throw, just use iframe
+        if (data.url) {
+           console.warn('Server reported failure but provided URL, trying iframe fallback');
+           setShowIframe(true);
+           setLoading(false);
+           return;
+        }
+        throw new Error(errorDetail);
       }
 
       if (!data.processId && !data.processToken) {
@@ -368,7 +378,10 @@ const GrowPaymentForm = ({
       setLoading(false);
       
       // If we have a URL from a previous attempt or this one, offer it?
-      // (paymentUrl state might be set)
+      if (paymentUrl) {
+         console.log('Error caught but URL available, enabling iframe fallback');
+         setShowIframe(true);
+      }
     }
   };
 

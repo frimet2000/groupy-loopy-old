@@ -19,17 +19,18 @@ Deno.serve(async (req) => {
     }
 
     // Approve transaction with Grow (Sandbox)
+    const form = new FormData();
+    form.append('pageCode', pageCode);
+    form.append('userId', userId);
+    form.append('transactionId', transactionId);
+    form.append('processId', processId);
+
     const approveResponse = await fetch('https://sandbox.meshulam.co.il/api/light/server/1.0/approveTransaction', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Accept': 'application/json'
       },
-      body: new URLSearchParams({
-        pageCode,
-        userId,
-        transactionId,
-        processId
-      }).toString()
+      body: form
     });
 
     const approveData = await approveResponse.json();
