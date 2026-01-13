@@ -71,8 +71,11 @@ Deno.serve(async (req) => {
     form.append('userId', userId);
     form.append('pageCode', pageCode);
     form.append('sum', numSum.toFixed(2));
-    form.append('fullName', fullName.trim());
-    form.append('phone', phone.trim());
+    form.append('description', 'Nifgashim Payment');
+    
+    // Updated parameter names per user instruction (Meshulam Light API custom fields)
+    form.append('pageField[fullName]', fullName.trim());
+    form.append('pageField[phone]', phone.trim());
     
     // Add success and cancel URLs (required for some flows and prevents errors)
     const baseUrl = req.headers.get('origin') || 'https://groupyloopy.app';
@@ -82,8 +85,8 @@ Deno.serve(async (req) => {
     form.append('successUrl', successUrl);
     form.append('cancelUrl', cancelUrl);
     
-    if (email) form.append('email', email.trim());
-    if (description) form.append('description', description.trim());
+    // if (email) form.append('email', email.trim());
+    // if (description) form.append('description', description.trim());
     
     // Explicitly using Sandbox URL as requested
     const growUrl = 'https://sandbox.meshulam.co.il/api/light/server/1.0/createPaymentProcess';

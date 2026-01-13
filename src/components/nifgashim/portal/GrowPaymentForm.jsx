@@ -219,53 +219,29 @@ const GrowPaymentForm = ({
     setShowIframe(false);
 
     try {
-      console.log('Initiating payment with direct frontend fetch (v4.0):', { amount, customerName, customerPhone });
+      console.log('Initiating payment with backend proxy (v5.0):', { amount, customerName, customerPhone });
 
       if (!amount || !customerName || !customerPhone) {
         throw new Error('Missing payment details (amount, name, or phone)');
       }
 
-      // Prepare URLSearchParams (Form Data) as requested
-      const params = new URLSearchParams();
-      params.append('userId', '5c04d711acb29250');
-      params.append('pageCode', '30f1b9975952');
-      params.append('sum', amount.toString());
-      params.append('description', 'Nifgashim Payment');
-      params.append('pageField[fullName]', customerName);
-      params.append('pageField[phone]', customerPhone);
-      
-      // Add success/cancel URLs to avoid potential API errors even if handled in JS
-      const currentUrl = window.location.href.split('?')[0];
-      params.append('successUrl', `${currentUrl}?payment_success=true`);
-      params.append('cancelUrl', `${currentUrl}?payment_cancel=true`);
-
-      console.log('Fetching processId from Meshulam (Direct)...');
-      
-      // Using direct fetch as requested
-      const response = await fetch('https://sandbox.meshulam.co.il/api/light/server/1.0/createPaymentProcess', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          // Content-Type is set automatically by fetch when body is URLSearchParams
-        },
-        body: params
+      // Call backend function (as client-side requests are blocked by CORS)
+      const responseData = await base44.functions.invoke('createGrowPayment', {
+        sum: amount,
+        fullName: customerName,
+        phone: customerPhone,
+        description: 'Nifgashim Payment'
       });
       
-      const responseData = await response.json();
-      console.log('Meshulam direct response:', JSON.stringify(responseData));
+      console.log('Backend response:', JSON.stringify(responseData));
 
-      // Handle response structure (Meshulam usually returns { status, data, err })
-      const data = responseData?.data || responseData;
-
-      // Check for API level errors (status != 1)
-      if (responseData.status && responseData.status !== '1') {
-         const errorMsg = responseData.err?.message || responseData.err || 'Meshulam API Error';
-         console.error('Meshulam API Error:', errorMsg);
+      if (!responseData.success) {
+         const errorMsg = responseData.error || 'Payment initialization failed';
+         console.error('Backend returned error:', errorMsg);
          
-         // If we have a URL despite the error, fallback to iframe
-         if (data?.url) {
-             console.warn('API error but URL exists, using iframe fallback');
-             setPaymentUrl(data.url);
+         if (responseData.url) {
+             console.warn('Backend returned error but URL exists, using iframe fallback');
+             setPaymentUrl(responseData.url);
              setShowIframe(true);
              setLoading(false);
              return;
@@ -274,9 +250,7 @@ const GrowPaymentForm = ({
          throw new Error(errorMsg);
       }
 
-      if (!data) {
-        throw new Error('No data received from payment server');
-      }
+      const data = responseData; // Use responseData directly as it matches our expected structure
       
       console.log('Parsed payment data:', data);
 
