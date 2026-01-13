@@ -25,8 +25,8 @@ Deno.serve(async (req) => {
       enableGooglePay
     } = payload;
 
-    const userId = Deno.env.get('GROW_USER_ID');
-    const pageCode = Deno.env.get('GROW_PAGE_CODE');
+    const userId = Deno.env.get('GROW_USER_ID') || '5c04d711acb29250';
+    const pageCode = Deno.env.get('GROW_PAGE_CODE') || '30f1b9975952';
     
     console.log('GROW_USER_ID value:', userId);
     console.log('GROW_PAGE_CODE value:', pageCode);
@@ -134,7 +134,8 @@ Deno.serve(async (req) => {
     const bodyObject = Object.fromEntries(formData);
     console.log('Request body as object:', JSON.stringify(bodyObject, null, 2));
 
-    const growResponse = await fetch('https://secure.meshulam.co.il/api/light/server/1.0/createPaymentProcess', {
+    // Using Sandbox for development/testing as per user request
+    const growResponse = await fetch('https://sandbox.meshulam.co.il/api/light/server/1.0/createPaymentProcess', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'

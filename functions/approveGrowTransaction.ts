@@ -18,8 +18,8 @@ Deno.serve(async (req) => {
       return Response.json({ success: false, error: 'Grow not configured' }, { status: 500 });
     }
 
-    // Approve transaction with Grow
-    const approveResponse = await fetch('https://secure.meshulam.co.il/api/light/server/1.0/approveTransaction', {
+    // Approve transaction with Grow (Sandbox)
+    const approveResponse = await fetch('https://sandbox.meshulam.co.il/api/light/server/1.0/approveTransaction', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
