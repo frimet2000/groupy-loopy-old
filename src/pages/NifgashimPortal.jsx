@@ -170,14 +170,14 @@ export default function NifgashimPortal() {
     return sourceDays.map((day, index) => ({
       id: day.id || `day-${index + 1}`,
       date: day.date,
-      daily_title: day.daily_title || day.title,
-      difficulty: day.difficulty || 'moderate',
-      daily_distance_km: day.daily_distance_km || day.distance_km || 0,
-      elevation_gain_m: day.elevation_gain_m || day.elevation_gain || 0,
-      day_number: day.day_number || index + 1,
-      description: day.daily_description || day.description || day.content || '',
-      image: day.image || day.secure_url || day.image_url || null,
-      waypoints: day.waypoints || []
+      daily_title: typeof day.daily_title === 'string' ? day.daily_title : (typeof day.title === 'string' ? day.title : ''),
+      difficulty: typeof day.difficulty === 'string' ? day.difficulty : 'moderate',
+      daily_distance_km: Number(day.daily_distance_km || day.distance_km || 0),
+      elevation_gain_m: Number(day.elevation_gain_m || day.elevation_gain || 0),
+      day_number: Number(day.day_number || index + 1),
+      description: typeof day.daily_description === 'string' ? day.daily_description : (typeof day.description === 'string' ? day.description : (typeof day.content === 'string' ? day.content : '')),
+      image: (day.image && typeof day.image === 'object' && day.image.secure_url) ? day.image.secure_url : (typeof day.image === 'string' ? day.image : (typeof day.secure_url === 'string' ? day.secure_url : (typeof day.image_url === 'string' ? day.image_url : null))),
+      waypoints: Array.isArray(day.waypoints) ? day.waypoints : []
     })).filter(day => {
       if (!day.date) return true;
       const d = new Date(day.date);

@@ -219,7 +219,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
     }
 
     // Check if this is a child (age range starts with 0-17)
-    const isChild = currentParticipant.age_range.startsWith('0-') || currentParticipant.age_range.startsWith('10-');
+    const isChild = typeof currentParticipant.age_range === 'string' && (currentParticipant.age_range.startsWith('0-') || currentParticipant.age_range.startsWith('10-'));
     
     // For adults (parents): phone is required. Email is optional for Parent 2.
     if (!isChild) {
@@ -470,7 +470,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
                       <div>
                         <Label>
                           {trans.phone} {(() => {
-                            const isChild = currentParticipant.age_range && (currentParticipant.age_range.startsWith('0-') || currentParticipant.age_range.startsWith('10-'));
+                            const isChild = typeof currentParticipant.age_range === 'string' && (currentParticipant.age_range.startsWith('0-') || currentParticipant.age_range.startsWith('10-'));
                             return isChild ? '' : '*';
                           })()}
                         </Label>
@@ -487,7 +487,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
                       <div>
                         <Label>
                           {trans.email} {(() => {
-                            const isChild = currentParticipant.age_range && (currentParticipant.age_range.startsWith('0-') || currentParticipant.age_range.startsWith('10-'));
+                            const isChild = typeof currentParticipant.age_range === 'string' && (currentParticipant.age_range.startsWith('0-') || currentParticipant.age_range.startsWith('10-'));
                             const isParent2 = participants.length === 1 && spouseExists;
                             return (isChild || isParent2) ? '' : '*';
                           })()}

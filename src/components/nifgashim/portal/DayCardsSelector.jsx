@@ -361,7 +361,7 @@ export default function NifgashimDayCardsSelector({
                       day.difficulty === 'moderate' ? 'bg-yellow-500' :
                       'bg-red-500'
                     )} />
-                    <span>{day.difficulty ? (trans.difficulty[day.difficulty] || day.difficulty) : '-'}</span>
+                    <span>{day.difficulty && typeof day.difficulty === 'string' ? (trans.difficulty[day.difficulty] || day.difficulty) : '-'}</span>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-1">
@@ -446,7 +446,7 @@ export default function NifgashimDayCardsSelector({
                           'bg-red-500'
                         )} />
                         <span className="font-medium">
-                            {trans.difficulty[selectedDayForInfo.difficulty] || selectedDayForInfo.difficulty}
+                            {selectedDayForInfo.difficulty && typeof selectedDayForInfo.difficulty === 'string' ? (trans.difficulty[selectedDayForInfo.difficulty] || selectedDayForInfo.difficulty) : '-'}
                         </span>
                     </div>
                     <div className="w-px h-6 bg-gray-300" />
@@ -567,7 +567,7 @@ export default function NifgashimDayCardsSelector({
                       
                       <div style={{ display: 'flex', gap: '20px', marginBottom: '15px', fontSize: '14px', color: '#555', backgroundColor: '#f9fafb', padding: '10px', borderRadius: '6px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                              <span style={{ fontWeight: 'bold' }}>{trans.difficulty[day.difficulty] || day.difficulty}</span>
+                              <span style={{ fontWeight: 'bold' }}>{day.difficulty && typeof day.difficulty === 'string' ? (trans.difficulty[day.difficulty] || day.difficulty) : '-'}</span>
                           </div>
                           <div style={{ width: '1px', height: '20px', background: '#ddd' }} />
                           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
