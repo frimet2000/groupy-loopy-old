@@ -1,9 +1,9 @@
 // @ts-nocheck
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+// import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const base44 = createClientFromRequest(req);
+    // const base44 = createClientFromRequest(req);
     
     // Allow CORS if needed, or handle by Deno deploy usually
     if (req.method === 'OPTIONS') {
@@ -172,7 +172,11 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error('Unexpected error in createGrowPayment:', error);
     return Response.json(
-      { error: 'Internal Server Error', message: error.message },
+      { 
+        error: 'Internal Server Error', 
+        message: error.message,
+        stack: error.stack
+      },
       { status: 500 }
     );
   }
