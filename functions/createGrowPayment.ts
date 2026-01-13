@@ -134,8 +134,22 @@ Deno.serve(async (req) => {
     const bodyObject = Object.fromEntries(formData);
     console.log('Request body as object:', JSON.stringify(bodyObject, null, 2));
 
-    // Using Sandbox for development/testing as per user request
-    const growResponse = await fetch('https://sandbox.meshulam.co.il/api/light/server/1.0/createPaymentProcess', {
+    // Determine environment based on origin (localhost -> sandbox, others -> production)
+    // Note: If using Production secrets, this must be Production URL even on localhost.
+    // Assuming Production secrets are provided in the secrets manager.
+    const isSandbox = isLocalhost && (userId === '5c04d711acb29250'); // Only use sandbox if using the default test creds
+    const growApiUrl = isSandbox 
+      ? 'https://sandbox.meshulam.co.il/api/light/server/1.0/createPaymentProcess'
+      : 'https://meshulam.co.il/api/light/server/1.0/createPaymentProcess';
+
+    console.log(`Sending request to Grow API (${isSandbox ? 'Sandbox' : 'Production'})...`);
+    console.log('Request body:', formData.toString());
+
+    // Convert URLSearchParams to plain object for logging and debugging
+    const bodyObject = Object.fromEntries(formData);
+    console.log('Request body as object:', JSON.stringify(bodyObject, null, 2));
+
+    const growResponse = await fetch(growApiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
