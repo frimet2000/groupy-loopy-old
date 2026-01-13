@@ -1,11 +1,18 @@
 // @ts-nocheck
-// import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
+  console.log('--- createGrowPayment Invoked ---');
+  
   try {
-    // const base44 = createClientFromRequest(req);
-    
-    // Allow CORS if needed, or handle by Deno deploy usually
+    // Initialize SDK just in case environment requires it, but don't enforce auth
+    try {
+        const base44 = createClientFromRequest(req);
+    } catch (e) {
+        console.warn('SDK initialization warning:', e);
+    }
+
+    // Allow CORS if needed
     if (req.method === 'OPTIONS') {
       return new Response(null, {
         headers: {
@@ -66,44 +73,41 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Prepare FormData for Grow API
-    const form = new FormData();
-    form.append('userId', userId);
-    form.append('pageCode', pageCode);
-    form.append('sum', numSum.toFixed(2));
-    form.append('description', 'Nifgashim Payment');
+    // Prepare FormData for Grow API (using URLSearchParams for better compatibility)
+    const params = new URLSearchParams();
+    params.append('userId', userId);
+    params.append('pageCode', pageCode);
+    params.append('sum', numSum.toFixed(2));
+    params.append('description', 'Nifgashim Payment');
     
     // Updated parameter names per user instruction (Meshulam Light API custom fields)
-    form.append('pageField[fullName]', fullName.trim());
-    form.append('pageField[phone]', phone.trim());
+    params.append('pageField[fullName]', fullName.trim());
+    params.append('pageField[phone]', phone.trim());
     
     // Add success and cancel URLs (required for some flows and prevents errors)
     const baseUrl = req.headers.get('origin') || 'https://groupyloopy.app';
     const successUrl = `${baseUrl}/nifgashimportal?payment_success=true`;
     const cancelUrl = `${baseUrl}/nifgashimportal?payment_cancel=true`;
     
-    form.append('successUrl', successUrl);
-    form.append('cancelUrl', cancelUrl);
-    
-    // if (email) form.append('email', email.trim());
-    // if (description) form.append('description', description.trim());
+    params.append('successUrl', successUrl);
+    params.append('cancelUrl', cancelUrl);
     
     // Explicitly using Sandbox URL as requested
     const growUrl = 'https://sandbox.meshulam.co.il/api/light/server/1.0/createPaymentProcess';
 
     console.log('--- Sending Request to Meshulam (Sandbox) ---');
     console.log('URL:', growUrl);
-    // console.log('Params:', params.toString());
+    console.log('Params:', params.toString());
     
     let growResponse;
     try {
       growResponse = await fetch(growUrl, {
         method: 'POST',
         headers: {
-          // 'Content-Type': 'multipart/form-data', // Fetch handles boundary automatically
+          'Content-Type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json'
         },
-        body: form
+        body: params.toString()
       });
     } catch (fetchError) {
       console.error('Fetch error:', fetchError);
