@@ -120,13 +120,12 @@ Deno.serve(async (req) => {
     formData.append('cField2', tripId);
     formData.append('cField3', participants.length.toString());
     
-    // Add payment methods - credit card, bit
-    // Commenting out explicit transactionTypes to let defaults apply and reduce 400 errors
-    // formData.append('transactionTypes[0]', '1'); 
-    // formData.append('transactionTypes[1]', '6'); 
-    // if (enableGooglePay) {
-    //   formData.append('transactionTypes[6]', '13'); 
-    // }
+    // Add payment methods - credit card, bit, google pay
+    formData.append('transactionTypes[0]', '1'); // Credit card
+    if (enableGooglePay) {
+      formData.append('transactionTypes[6]', '13'); // Google Pay - restricted to Chrome
+    }
+    formData.append('transactionTypes[1]', '6'); // Bit
 
     console.log('Sending request to Grow API...');
     console.log('Request body:', formData.toString());
@@ -187,14 +186,13 @@ Deno.serve(async (req) => {
       }, { status: 400 });
     }
 
-    if (growData.status === '1' && growData.data?.processToken) {
-      console.log('Payment process created successfully:', growData.data.processToken);
+    if (growData.status === '1' && growData.data?.url) {
+      console.log('Payment URL created successfully:', growData.data.url);
       return Response.json({
         success: true,
-        processToken: growData.data.processToken,
+        paymentUrl: growData.data.url,
         processId: growData.data.processId,
-        registrationId: registration.id,
-        isSandbox // Return environment to frontend
+        registrationId: registration.id
       });
     } else {
       console.error('Grow API error response:', growData);
