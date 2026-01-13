@@ -585,7 +585,7 @@ export default function NifgashimDayCardsSelector({
                           )}
                       </div>
                       
-                      {day.description && (
+                      {day.description && typeof day.description === 'string' && (
                         <div 
                           style={{ fontSize: '14px', lineHeight: '1.6', color: '#333' }} 
                           dangerouslySetInnerHTML={{ 

@@ -235,12 +235,12 @@ export default function NifgashimPortal() {
         totalAmount,
         timestamp: Date.now()
       };
-      localStorage.setItem('nifgashim_registration_state', JSON.stringify(state));
+      localStorage.setItem('nifgashim_registration_state_v2', JSON.stringify(state));
     }
   }, [userType, participants, selectedDays, groupInfo, vehicleInfo, memorialData, currentStep, totalAmount]);
 
   useEffect(() => {
-    const savedState = localStorage.getItem('nifgashim_registration_state');
+    const savedState = localStorage.getItem('nifgashim_registration_state_v2');
     if (savedState) {
       try {
         const parsed = JSON.parse(savedState);
@@ -511,7 +511,7 @@ export default function NifgashimPortal() {
 
       toast.success(trans.registrationSuccess);
       
-      localStorage.removeItem('nifgashim_registration_state');
+      localStorage.removeItem('nifgashim_registration_state_v2');
 
       setShowThankYou(true);
       return true;

@@ -14,8 +14,14 @@ import { toast } from 'sonner';
 
 export default function MemorialForm({ formData, setFormData }) {
   const { language, isRTL } = useLanguage();
-  const [wantMemorial, setWantMemorial] = useState(false);
+  const [wantMemorial, setWantMemorial] = useState(!!formData.memorial);
   const [uploadingImage, setUploadingImage] = useState(false);
+
+  React.useEffect(() => {
+    if (formData.memorial && !wantMemorial) {
+      setWantMemorial(true);
+    }
+  }, [formData.memorial]);
 
   const translations = {
     he: {
