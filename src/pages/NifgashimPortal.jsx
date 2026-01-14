@@ -345,11 +345,14 @@ export default function NifgashimPortal() {
       const age = parseInt(p.age_range.split('-')[0]);
       return age >= 10;
     }).length;
-    return adultsCount * 85;
+    const total = adultsCount * 85;
+    console.log('Calculating total amount:', { adultsCount, total, participants });
+    return total;
   };
 
   const handleSubmit = async () => {
     const amount = calculateTotalAmount();
+    console.log('Amount calculated for payment:', amount);
     setTotalAmount(amount);
 
     if (amount > 0) {
@@ -359,8 +362,9 @@ export default function NifgashimPortal() {
         // Save participants as PENDING before redirecting
         await completeRegistration('PENDING');
         
-        // Direct redirect to Meshulam with sum parameter
-        const finalUrl = `https://meshulam.co.il/s/bc8d0eda-efc0-ebd2-43c0-71efbd570304?sum=${amount}`;
+        // Direct redirect to Meshulam with sum parameter (must be integer)
+        const finalUrl = `https://meshulam.co.il/s/bc8d0eda-efc0-ebd2-43c0-71efbd570304?sum=${Math.round(amount)}`;
+        console.log('Redirecting to:', finalUrl);
         window.location.href = finalUrl;
       } catch (error) {
         console.error('Registration failed:', error);
