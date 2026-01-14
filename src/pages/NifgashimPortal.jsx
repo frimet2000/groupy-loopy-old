@@ -268,21 +268,43 @@ export default function NifgashimPortal() {
     const checkPaymentSuccess = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const paymentSuccess = urlParams.get('payment_success');
-      const registrationId = urlParams.get('registration_id');
+      // registration_id might not be present if we used direct link
+      const registrationId = urlParams.get('registration_id'); 
 
-      if (paymentSuccess === 'true' && registrationId && !showThankYou) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+      if (paymentSuccess === 'true' && !showThankYou) {
+        // Wait a bit to ensure UI is ready
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
-        toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
-        
+        // If we have state but no registration ID, it means we returned from direct payment
+        // We need to complete the registration now
+        const savedState = localStorage.getItem('nifgashim_registration_state_v2');
+        if (savedState && !registrationId) {
+            try {
+                toast.info(language === 'he' ? 'מאמת תשלום...' : 'Verifying payment...');
+                // We pass a placeholder transaction ID or extract from URL if available
+                // Meshulam might pass transaction details in query params
+                const processId = urlParams.get('processId') || urlParams.get('process_id') || `DIRECT-${Date.now()}`;
+                await completeRegistration(processId);
+            } catch (err) {
+                console.error('Failed to complete registration after payment:', err);
+                // Toast already shown in completeRegistration
+            }
+        } else if (registrationId) {
+             // Existing logic for when we had a registration ID
+             toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
+             setShowThankYou(true);
+        }
+
+        // Clean up URL
         const url = new URL(window.location);
         url.searchParams.delete('payment_success');
         url.searchParams.delete('registration_id');
+        url.searchParams.delete('sum'); // Clean up Meshulam params if any
+        url.searchParams.delete('processId');
+        url.searchParams.delete('process_id');
         window.history.replaceState({}, '', url);
 
-        localStorage.removeItem('nifgashim_registration_state');
-
-        setShowThankYou(true);
+        localStorage.removeItem('nifgashim_registration_state'); // Old key
       }
     };
 
@@ -435,7 +457,26 @@ export default function NifgashimPortal() {
     setTotalAmount(amount);
 
     if (amount > 0) {
-      setShowPayment(true);
+      toast.info(language === 'he' ? 'מעביר לתשלום...' : 'Redirecting to payment...');
+      
+      // Save state before redirecting so we can recover it on return
+      const state = {
+        userType,
+        participants,
+        selectedDays,
+        groupInfo,
+        vehicleInfo,
+        memorialData,
+        currentStep,
+        totalAmount: amount,
+        timestamp: Date.now()
+      };
+      localStorage.setItem('nifgashim_registration_state_v2', JSON.stringify(state));
+
+      // Direct redirect to Meshulam
+      setTimeout(() => {
+        window.location.href = `https://meshulam.co.il/purchase/30f1b9975952?sum=${amount}`;
+      }, 1000);
       return;
     }
 
