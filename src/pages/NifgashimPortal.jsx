@@ -640,7 +640,7 @@ export default function NifgashimPortal() {
                       src={paymentUrl}
                       className="w-full h-[600px] border-0"
                       title="Payment"
-                      allow="payment"
+                      sandbox="allow-same-origin allow-forms allow-popups allow-scripts"
                     />
                   ) : (
                     <div className="flex items-center justify-center h-96">
