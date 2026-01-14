@@ -68,111 +68,25 @@ const GrowPaymentForm = ({
     setIsChrome(isChromeBrowser);
   }, []);
 
-  // Load Grow SDK
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://meshulam.co.il/sdk/v1/grow.js';
-    script.async = true;
-    script.onload = () => {
-      console.log('Grow SDK script loaded');
-      setSdkLoaded(true);
-      
-      // Initialize configuration function expected by SDK
-      window.configureGrowSdk = function() {
-          console.log('configureGrowSdk called');
-          return {
-              // Add any specific configurations here if needed
-              // Usually left empty or basic settings
-          };
-      };
-
-      // Define global onSuccess callback that SDK might call (if configured that way)
-      // Although we usually pass it or handle via events, the user instruction mentioned:
-      // "After payment we call onSuccess function that you defined in step 2"
-      // So we define it here:
-      window.onSuccess = async function(response) {
-          console.log('Grow SDK onSuccess called:', response);
-          await handleTransactionApproval(response);
-      };
-    };
-    script.onerror = () => {
-        console.error('Failed to load Grow SDK script');
-        setError('Failed to load payment system');
-    };
-    document.body.appendChild(script);
-
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-      delete window.configureGrowSdk;
-      delete window.onSuccess;
-    };
-  }, []);
+  // Load Grow SDK (Removed for Redirect Mode)
+  // useEffect(() => { ... }, []);
 
   const validateForm = () => {
-    // Phone validation: Israeli mobile (05...) and 10 digits
-    const phoneRegex = /^05\d{8}$/;
-    if (!customerPhone || !phoneRegex.test(customerPhone.replace(/\D/g, ''))) {
-      setError(t.invalidPhone);
-      return false;
-    }
-
-    // Name validation: At least 2 words (First Last)
-    if (!customerName || customerName.trim().split(/\s+/).length < 2) {
-      setError(t.invalidName);
-      return false;
-    }
-
+    // Validation removed as user will fill details on Grow page
     return true;
   };
 
   const handleTransactionApproval = async (transactionData) => {
-      try {
-          console.log('Approving transaction...', transactionData);
-          
-          // Parse fields from the response structure provided by the user
-          // Structure: { status: "1", data: { transactionId: "...", processId: "...", ... } }
-          const data = transactionData?.data || transactionData;
-          const transactionId = data?.transactionId;
-          const processId = data?.processId || window.currentProcessId;
-
-          if (!transactionId) {
-              console.error('Missing transactionId in response:', transactionData);
-              // Fallback: still try to proceed or just show success if we can't approve
-          }
-          
-          // Call backend approval
-          const approveResponse = await base44.functions.invoke('approveGrowTransaction', {
-              transactionId: transactionId,
-              processId: processId
-          });
-
-          if (approveResponse.data?.success) {
-              toast.success('Payment completed successfully!');
-              if (onSuccess) onSuccess(approveResponse.data);
-          } else {
-              console.error('Approval failed:', approveResponse);
-              // Even if approval fails, the payment might be successful, so we might still want to proceed
-              // but warn the user or admin.
-              if (onSuccess) onSuccess(transactionData); 
-          }
-
-      } catch (err) {
-          console.error('Error approving transaction:', err);
-          // Still treat as success for the user if payment went through
-          if (onSuccess) onSuccess(transactionData);
-      }
+     // Transaction approval will be handled via server-side callback or success page redirect
+     // But if we are redirected back here with params, we might need it.
+     // For now, in Redirect Mode, the user leaves the site.
   };
 
   const handlePayment = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
     
-    if (!validateForm()) return;
-
     // Check Google Pay restriction
     // If user explicitly wants Google Pay, they must be on Chrome.
-    // Since we don't know what they will choose in the wallet yet, we just warn if not Chrome.
     if (!isChrome) {
         toast.warning(t.chromeRequired);
     }
@@ -186,65 +100,21 @@ const GrowPaymentForm = ({
       // 1. Call Backend to Create Payment Process
       const response = await base44.functions.invoke('createGrowPayment', {
         sum: amount,
-        fullName: customerName,
-        phone: customerPhone,
+        fullName: customerName, // Optional, might be empty
+        phone: customerPhone,   // Optional, might be empty
         description: 'הרשמה לנפגשים בשביל ישראל',
         email: customerEmail
       });
       
       console.log('Create Payment response:', response);
 
-      if (!response.data.success || !response.data.processId) {
+      if (!response.data.success || !response.data.url) {
         throw new Error(response.data.error || 'Failed to create payment process');
       }
 
-      const processId = response.data.processId;
-      window.currentProcessId = processId; // Store for approval
-
-      // 2. Initialize Grow SDK
-      if (!window.growPayment) {
-          throw new Error('Payment system not loaded');
-      }
-
-      console.log('Initializing Grow SDK with processId:', processId);
-      
-      // Initialize with DEV/SANDBOX environment as requested
-      // User said: growPayment.init({ environment: 'DEV', version: 1 });
-      window.growPayment.init({ 
-          environment: 'DEV', // Change to 'PROD' for production
-          version: 1 
-      });
-
-      // 3. Render Payment Options
-      setTimeout(() => {
-          try {
-            window.growPayment.renderPaymentOptions(processId, {
-                // Optional callback overrides if supported by SDK version
-                onSuccess: (res) => {
-                    console.log('Payment Success Callback:', res);
-                    handleTransactionApproval(res);
-                },
-                onError: (err) => {
-                    console.error('Payment Error Callback:', err);
-                    setError(t.paymentFailed);
-                    setLoading(false);
-                },
-                onCancel: () => {
-                    console.log('Payment Cancelled');
-                    setLoading(false);
-                }
-            });
-          } catch (renderError) {
-              console.error('Error rendering payment options:', renderError);
-              // Fallback to Iframe/Redirect if SDK fails
-              if (response.data.url) {
-                  console.log('Falling back to redirect URL');
-                  window.location.href = response.data.url;
-              } else {
-                  throw renderError;
-              }
-          }
-      }, 500);
+      // 2. Redirect to Grow Payment Page
+      console.log('Redirecting to Grow URL:', response.data.url);
+      window.location.href = response.data.url;
 
     } catch (error) {
       console.error('Payment initiation error:', error);

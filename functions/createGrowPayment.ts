@@ -38,9 +38,9 @@ Deno.serve(async (req) => {
     const userId = '5c04d711acb29250';
     const pageCode = '30f1b9975952';
     
-    if (!sum || !fullName || !phone) {
-         console.error('Missing required fields:', { sum, fullName, phone });
-         return Response.json({ success: false, error: 'Missing required fields' }, { status: 400, headers: { 'Access-Control-Allow-Origin': '*' } });
+    if (!sum) {
+         console.error('Missing required fields:', { sum });
+         return Response.json({ success: false, error: 'Missing required sum' }, { status: 400, headers: { 'Access-Control-Allow-Origin': '*' } });
     }
 
     const numSum = Number(sum);
@@ -52,9 +52,10 @@ Deno.serve(async (req) => {
     params.append('sum', numSum.toFixed(2));
     params.append('description', description || 'Nifgashim Payment');
     
-    // Updated parameter names per user instruction (Meshulam Light API custom fields)
-    params.append('pageField[fullName]', fullName.trim());
-    params.append('pageField[phone]', phone.trim());
+    // Optional parameters - only send if provided
+    // User requested that customer fills details on Grow page, so these might be omitted
+    if (fullName) params.append('pageField[fullName]', fullName.trim());
+    if (phone) params.append('pageField[phone]', phone.trim());
     if (email) params.append('pageField[email]', email.trim());
 
     // Add success and cancel URLs
