@@ -146,10 +146,35 @@ export default function NifgashimDayCardsSelector({
 
   const isMaxReached = selectedDays.length >= maxDays;
 
+  // Get the category of a day (determined by its category_id if available, otherwise derive from position)
+  const getDayCategory = (day) => {
+    return day.category_id || (day.day_number <= 8 ? 'negev' : 'north_center');
+  };
+
+  // Count selected days per category
+  const getSelectedCountByCategory = (category) => {
+    return selectedDays.filter(d => getDayCategory(d) === category).length;
+  };
+
+  // Check if max reached for this specific category
+  const isCategoryMaxReached = (day) => {
+    const category = getDayCategory(day);
+    if (category === 'negev') {
+      return getSelectedCountByCategory('negev') >= 8;
+    }
+    // north_center has no limit per category
+    return false;
+  };
+
   const handleDayToggle = (day) => {
     const currentlySelected = isSelected(day.id);
     
-    // If max reached and we are trying to select a new day (not deselecting), return
+    // If max reached for this category and we are trying to select a new day (not deselecting), return
+    if (isCategoryMaxReached(day) && !currentlySelected) {
+      return;
+    }
+
+    // Also check global max
     if (isMaxReached && !currentlySelected) {
       return;
     }
