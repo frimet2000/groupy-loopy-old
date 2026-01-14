@@ -62,59 +62,29 @@ export default function NifgashimPortal() {
   const trekDays = React.useMemo(() => {
     const sourceDays = nifgashimTrip?.days || nifgashimTrip?.trek_days;
     if (!sourceDays) return [];
+    
+    return sourceDays.map((day, index) => ({
+      id: day.id || `day-${index + 1}`,
+      date: day.date,
+      daily_title: typeof day.daily_title === 'string' ? day.daily_title : (typeof day.title === 'string' ? day.title : ''),
+      difficulty: typeof day.difficulty === 'string' ? day.difficulty : 'moderate',
+      daily_distance_km: Number(day.daily_distance_km || day.distance_km || 0),
+      elevation_gain_m: Number(day.elevation_gain_m || day.elevation_gain || 0),
+      day_number: Number(day.day_number || index + 1),
+      category_id: day.category_id,
+      description: typeof day.daily_description === 'string' ? day.daily_description : (typeof day.description === 'string' ? day.description : (typeof day.content === 'string' ? day.content : '')),
+      image: (day.image && typeof day.image === 'object' && day.image.secure_url) ? day.image.secure_url : (typeof day.image === 'string' ? day.image : (typeof day.secure_url === 'string' ? day.secure_url : (typeof day.image_url === 'string' ? day.image_url : null))),
+      waypoints: Array.isArray(day.waypoints) ? day.waypoints : []
+    })).filter(day => {
+      if (!day.date) return true;
+      const d = new Date(day.date);
+      if (d.getDay() === 6) return false;
 
-    const categories = Array.isArray(nifgashimTrip?.trek_categories) ? nifgashimTrip.trek_categories : [];
+      const title = (day.daily_title || '').toLowerCase();
+      if (title.includes('rest') || title.includes('מנוחה')) return false;
 
-    const normalizeDifficulty = (value) => {
-      if (!value || typeof value !== 'string') return 'moderate';
-      const v = value.toLowerCase();
-      if (v.startsWith('ea')) return 'easy';
-      if (v.startsWith('mo') || v.startsWith('me')) return 'moderate';
-      if (v.startsWith('ha') || v.startsWith('di')) return 'hard';
-      return 'moderate';
-    };
-
-    return sourceDays
-      .map((day, index) => {
-        const category = categories.find(c => c.id === day.category_id);
-        const categoryName = typeof category?.name === 'string' ? category.name : null;
-
-        let region = typeof day.region === 'string' ? day.region : '';
-        if (!region && typeof categoryName === 'string') {
-          const lower = categoryName.toLowerCase();
-          if (lower.includes('negev') || categoryName.includes('נגב')) {
-            region = 'negev';
-          } else if (lower.includes('north') || lower.includes('center') || categoryName.includes('צפון')) {
-            region = 'north-center';
-          }
-        }
-
-        return {
-          id: day.id || `day-${index + 1}`,
-          date: day.date,
-          daily_title: typeof day.daily_title === 'string' ? day.daily_title : (typeof day.title === 'string' ? day.title : ''),
-          difficulty: normalizeDifficulty(day.difficulty),
-          daily_distance_km: Number(day.daily_distance_km || day.distance_km || 0),
-          elevation_gain_m: Number(day.elevation_gain_m || day.elevation_gain || 0),
-          day_number: Number(day.day_number || index + 1),
-          category_id: day.category_id,
-          category_name: categoryName,
-          region: region || undefined,
-          description: typeof day.daily_description === 'string' ? day.daily_description : (typeof day.description === 'string' ? day.description : (typeof day.content === 'string' ? day.content : '')),
-          image: (day.image && typeof day.image === 'object' && day.image.secure_url) ? day.image.secure_url : (typeof day.image === 'string' ? day.image : (typeof day.secure_url === 'string' ? day.secure_url : (typeof day.image_url === 'string' ? day.image_url : null))),
-          waypoints: Array.isArray(day.waypoints) ? day.waypoints : []
-        };
-      })
-      .filter(day => {
-        if (!day.date) return true;
-        const d = new Date(day.date);
-        if (d.getDay() === 6) return false;
-
-        const title = (day.daily_title || '').toLowerCase();
-        if (title.includes('rest') || title.includes('מנוחה')) return false;
-
-        return true;
-      });
+      return true;
+    });
   }, [nifgashimTrip]);
 
   const linkedDaysPairs = React.useMemo(() => {
