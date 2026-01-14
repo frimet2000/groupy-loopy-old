@@ -137,12 +137,12 @@ const GrowPaymentForm = ({
       
       console.log('Payment response:', response);
 
-      if (!response.success || !response.url) {
-        throw new Error(response.error || 'Failed to create payment');
+      if (!response.data.success || !response.data.url) {
+        throw new Error(response.data.error || 'Failed to create payment');
       }
 
       // הפניה ישירות לדף התשלום של Meshulam
-      window.location.href = response.url;
+      window.location.href = response.data.url;
 
     } catch (error) {
       console.error('Payment error:', error);
