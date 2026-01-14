@@ -164,48 +164,39 @@ export default function NifgashimPortal() {
     const checkPaymentSuccess = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const paymentSuccess = urlParams.get('payment_success');
-      // registration_id might not be present if we used direct link
       const registrationId = urlParams.get('registration_id'); 
 
       if (paymentSuccess === 'true' && !showThankYou) {
-        // Wait a bit to ensure UI is ready
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // If we have state but no registration ID, it means we returned from direct payment
-        // We need to complete the registration now
         const savedState = localStorage.getItem('nifgashim_registration_state_v2');
         if (savedState && !registrationId) {
             try {
                 toast.info(language === 'he' ? 'מאמת תשלום...' : 'Verifying payment...');
-                // We pass a placeholder transaction ID or extract from URL if available
-                // Meshulam might pass transaction details in query params
                 const processId = urlParams.get('processId') || urlParams.get('process_id') || `DIRECT-${Date.now()}`;
                 await completeRegistration(processId);
             } catch (err) {
                 console.error('Failed to complete registration after payment:', err);
-                // Toast already shown in completeRegistration
             }
         } else if (registrationId) {
-             // Existing logic for when we had a registration ID
              toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
              setShowThankYou(true);
         }
 
-        // Clean up URL
         const url = new URL(window.location);
         url.searchParams.delete('payment_success');
         url.searchParams.delete('registration_id');
-        url.searchParams.delete('sum'); // Clean up Meshulam params if any
+        url.searchParams.delete('sum');
         url.searchParams.delete('processId');
         url.searchParams.delete('process_id');
         window.history.replaceState({}, '', url);
 
-        localStorage.removeItem('nifgashim_registration_state'); // Old key
+        localStorage.removeItem('nifgashim_registration_state');
       }
     };
 
     checkPaymentSuccess();
-  }, [language, showThankYou]);
+  }, [language, showThankYou, completeRegistration]);
 
   const translations = {
     he: {
