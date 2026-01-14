@@ -39,7 +39,8 @@ export default function NifgashimDayCardsSelector({
       viewMap: "צפה במפה",
       downloadPdf: "הורד PDF",
       generating: "מכין קובץ...",
-      selectedDaysTitle: "ימי המסע שנבחרו"
+      selectedDaysTitle: "ימי המסע שנבחרו",
+      negevLimitReached: "ניתן לבחור עד 8 ימי נגב בלבד. שאר ימי הנגב ננעלו."
     },
     en: {
       selectDays: "Select Your Trek Days",
@@ -58,7 +59,8 @@ export default function NifgashimDayCardsSelector({
       viewMap: "View Map",
       downloadPdf: "Download PDF",
       generating: "Generating...",
-      selectedDaysTitle: "Selected Trek Days"
+      selectedDaysTitle: "Selected Trek Days",
+      negevLimitReached: "You can select up to 8 Negev days. Remaining Negev days are locked."
     }
   };
 
@@ -143,33 +145,41 @@ export default function NifgashimDayCardsSelector({
   const isSelected = (dayId) => {
     return selectedDays.some(d => d.id === dayId);
   };
-
-  // Get the category of a day using its category_id
+  
   const getDayCategory = (day) => {
     return day.category_id;
   };
-
-  // Count selected days per category
-  const getSelectedCountByCategory = (category) => {
-    return selectedDays.filter(d => getDayCategory(d) === category).length;
+  
+  const isNegevDay = (day) => {
+    const category = getDayCategory(day);
+    return category && category.toLowerCase().includes('negev');
+  };
+  
+  const getSelectedNegevCount = () => {
+    return selectedDays.filter(d => isNegevDay(d)).length;
+  };
+  
+  const isCategoryMaxReached = (day) => {
+    if (!isNegevDay(day)) return false;
+    return getSelectedNegevCount() >= maxDays;
   };
 
-  // Check if max reached for this specific category (only negev has a max of 8)
-  const isCategoryMaxReached = (day) => {
+  const getCategoryLabel = (day) => {
     const category = getDayCategory(day);
-    if (!category) return false; // No limit if no category
-    
-    // Only apply 8-day limit to negev category
-    if (category.toLowerCase().includes('negev')) {
-      return getSelectedCountByCategory(category) >= maxDays;
+    if (!category) return null;
+    const key = category.toLowerCase();
+    if (key.includes('negev')) {
+      return language === 'he' ? 'נגב' : 'Negev';
     }
-    return false; // No limit for other categories
+    if (key.includes('north') || key.includes('center')) {
+      return language === 'he' ? 'צפון-מרכז' : 'North-Center';
+    }
+    return null;
   };
 
   const handleDayToggle = (day) => {
     const currentlySelected = isSelected(day.id);
     
-    // Check if this specific category has reached its max
     if (isCategoryMaxReached(day) && !currentlySelected) {
       return;
     }
@@ -200,19 +210,14 @@ export default function NifgashimDayCardsSelector({
     const linkedIds = getLinkedIds(day.id);
 
     if (currentlySelected) {
-      // Deselect logic
-      // If we deselect a day, we must deselect all linked days
       if (linkedIds.length > 0) {
         newSelected = newSelected.filter(d => !linkedIds.includes(d.id));
       } else {
         newSelected = newSelected.filter(d => d.id !== day.id);
       }
     } else {
-      // Select logic
-      // Check if we can add the days (considering maxDays)
       const daysToAdd = [];
       
-      // Always add the clicked day
       daysToAdd.push(day);
 
       // Add linked days if not already selected
@@ -224,9 +229,11 @@ export default function NifgashimDayCardsSelector({
           }
         });
       }
-
-      if (newSelected.length + daysToAdd.length > maxDays) {
-        // Cannot select - would exceed limit
+      
+      const currentNegevCount = getSelectedNegevCount();
+      const negevToAddCount = daysToAdd.filter(d => isNegevDay(d)).length;
+      
+      if (currentNegevCount + negevToAddCount > maxDays) {
         return; 
       }
 
@@ -246,6 +253,8 @@ export default function NifgashimDayCardsSelector({
     }).format(date);
   };
 
+  const negevSelectedCount = getSelectedNegevCount();
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -281,6 +290,13 @@ export default function NifgashimDayCardsSelector({
           </div>
         </div>
       </div>
+      
+      {negevSelectedCount >= maxDays && (
+        <div className="flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <Info className="w-4 h-4" />
+          <span>{trans.negevLimitReached}</span>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {trekDays.map((day) => {
@@ -289,6 +305,7 @@ export default function NifgashimDayCardsSelector({
           const isLinked = linkedDaysPairs.some(pair => 
             Array.isArray(pair) ? pair.includes(day.id) : (pair.day_id_1 === day.id || pair.day_id_2 === day.id)
           );
+          const categoryLabel = getCategoryLabel(day);
           
           const imageUrl = typeof day.image === 'string' ? day.image : day.image?.secure_url;
 
@@ -368,7 +385,14 @@ export default function NifgashimDayCardsSelector({
                 className="p-4 flex-1 flex flex-col cursor-pointer"
                 onClick={() => !isDisabled && handleDayToggle(day)}
               >
-                <h3 className="font-bold text-lg mb-2 leading-tight">{day.daily_title}</h3>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <h3 className="font-bold text-lg leading-tight">{day.daily_title}</h3>
+                  {categoryLabel && (
+                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      {categoryLabel}
+                    </span>
+                  )}
+                </div>
                 
                 <div className="mt-auto pt-3 flex items-center justify-between text-sm text-gray-600 border-t border-gray-100">
                   <div className="flex items-center gap-1.5" title={trans.difficulty[day.difficulty]}>
