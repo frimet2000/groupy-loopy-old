@@ -473,55 +473,26 @@ export default function NifgashimPortal() {
       };
       localStorage.setItem('nifgashim_registration_state_v2', JSON.stringify(state));
 
-      // Direct redirect to Meshulam (Sandbox) via createPaymentProcess
-      // We try to create a process first to get a valid URL
-      try {
-        const formData = new FormData();
-        formData.append('pageCode', '30f1b9975952');
-        formData.append('userId', '5c04d711acb29250');
-        formData.append('sum', amount);
-        formData.append('description', 'Nifgashim Trip Registration');
+      // Direct redirect to Meshulam (Production Link) provided by user
+      setTimeout(() => {
+        const baseUrl = 'https://meshulam.co.il/s/bc8d0eda-efc0-ebd2-43c0-71efbd570304';
         
-        // Use first participant or group leader details
-        const fullName = userType === 'group' ? groupInfo.leaderName : (participants[0]?.name || 'Guest');
-        const phone = userType === 'group' ? groupInfo.leaderPhone : (participants[0]?.phone || '0500000000');
+        // Prepare params
+        const params = new URLSearchParams();
+        params.append('sum', amount);
         
-        formData.append('pageField[fullName]', fullName);
-        formData.append('pageField[phone]', phone);
+        // Try to pre-fill info
+        const leaderName = userType === 'group' ? groupInfo.leaderName : (participants[0]?.name || '');
+        const leaderPhone = userType === 'group' ? groupInfo.leaderPhone : (participants[0]?.phone || '');
+        const leaderEmail = userType === 'group' ? groupInfo.leaderEmail : (participants[0]?.email || '');
         
-        // Calculate success/cancel URLs
-        const baseUrl = window.location.origin + window.location.pathname;
-        formData.append('successUrl', `${baseUrl}?payment_success=true`);
-        formData.append('cancelUrl', `${baseUrl}?payment_cancel=true`);
-        
-        // Attempt to create payment process via direct fetch (Sandbox)
-        // Note: This might hit CORS, but user requested frontend-only.
-        const response = await fetch('https://sandbox.meshulam.co.il/api/light/server/1.0/createPaymentProcess', {
-           method: 'POST',
-           body: formData
-        });
-        
-        if (!response.ok) {
-            throw new Error(`Server responded with ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        if (data.status > 0 && data.url) {
-            window.location.href = data.url;
-        } else {
-            console.error('Meshulam error:', data);
-            throw new Error(data.err?.message || 'Unknown error from Meshulam');
-        }
-      } catch (error) {
-        console.error('Direct payment creation failed:', error);
-        toast.error(language === 'he' ? 'שגיאה בהתחברות למשולם, מנסה קישור ישיר...' : 'Payment connection failed, trying direct link...');
-        
-        // Fallback to static link
-        setTimeout(() => {
-           window.location.href = `https://sandbox.meshulam.co.il/purchase/30f1b9975952?sum=${amount}`;
-        }, 1500);
-      }
+        if (leaderName) params.append('c_name', leaderName);
+        if (leaderPhone) params.append('phone', leaderPhone);
+        if (leaderEmail) params.append('email', leaderEmail);
+
+        // Redirect
+        window.location.href = `${baseUrl}?${params.toString()}`;
+      }, 1000);
       return;
     }
 
