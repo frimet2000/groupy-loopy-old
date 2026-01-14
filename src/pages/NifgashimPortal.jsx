@@ -331,13 +331,36 @@ export default function NifgashimPortal() {
   ];
 
   const calculateTotalAmount = () => {
+    // Count adults (age 10+)
     const adultsCount = participants.filter(p => {
-      if (!p.age_range) return true;
-      const age = parseInt(p.age_range.split('-')[0]);
-      return age >= 10;
+      // If no age range specified, count as adult by default
+      if (!p.age_range) {
+        console.log('Participant without age_range, counting as adult:', p);
+        return true;
+      }
+      
+      // Parse age from age_range (e.g., "25-30" or "10-15")
+      const ageStr = p.age_range.split('-')[0].trim();
+      const age = parseInt(ageStr);
+      
+      if (isNaN(age)) {
+        console.log('Invalid age_range format, counting as adult:', p);
+        return true;
+      }
+      
+      const isAdult = age >= 10;
+      console.log(`Participant ${p.name}, age_range: ${p.age_range}, parsed age: ${age}, isAdult: ${isAdult}`);
+      return isAdult;
     }).length;
+    
     const total = adultsCount * 85;
-    console.log('Calculating total amount:', { adultsCount, total, participants });
+    console.log('=== PAYMENT CALCULATION ===');
+    console.log('Total participants:', participants.length);
+    console.log('Adult participants (age 10+):', adultsCount);
+    console.log('Total amount:', total, 'ILS');
+    console.log('Participants data:', participants);
+    console.log('========================');
+    
     return total;
   };
 
