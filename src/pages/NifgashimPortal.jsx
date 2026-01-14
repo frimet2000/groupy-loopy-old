@@ -473,10 +473,25 @@ export default function NifgashimPortal() {
       };
       localStorage.setItem('nifgashim_registration_state_v2', JSON.stringify(state));
 
-      // Direct redirect to Meshulam (Sandbox)
+      // Direct redirect to Meshulam (Production Link)
       setTimeout(() => {
-        // Using Sandbox URL as these are sandbox credentials (userId: 5c04d711acb29250)
-        window.location.href = `https://sandbox.meshulam.co.il/purchase/30f1b9975952?sum=${amount}`;
+        // Appending sum parameter to the provided link
+        const baseUrl = 'https://meshulam.co.il/s/bc8d0eda-efc0-ebd2-43c0-71efbd570304';
+        
+        // Prepare params
+        const params = new URLSearchParams();
+        params.append('sum', amount);
+        
+        // Try to pre-fill info
+        const leaderName = userType === 'group' ? groupInfo.leaderName : participants[0]?.name;
+        const leaderPhone = userType === 'group' ? groupInfo.leaderPhone : participants[0]?.phone;
+        const leaderEmail = userType === 'group' ? groupInfo.leaderEmail : participants[0]?.email;
+        
+        if (leaderName) params.append('c_name', leaderName);
+        if (leaderPhone) params.append('phone', leaderPhone);
+        if (leaderEmail) params.append('email', leaderEmail);
+
+        window.location.href = `${baseUrl}?${params.toString()}`;
       }, 1000);
       return;
     }
