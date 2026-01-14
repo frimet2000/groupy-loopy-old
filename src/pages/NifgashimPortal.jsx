@@ -196,7 +196,7 @@ export default function NifgashimPortal() {
     };
 
     checkPaymentSuccess();
-  }, [language, showThankYou, completeRegistration]);
+  }, [language, showThankYou]);
 
   const translations = {
     he: {
