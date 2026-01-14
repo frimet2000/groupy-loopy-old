@@ -276,11 +276,8 @@ export default function NifgashimDayCardsSelector({
             <Map className="w-4 h-4" />
             {trans.viewMap}
           </Button>
-          <div className={cn(
-            "px-4 py-2 rounded-full text-sm font-bold transition-colors",
-            isMaxReached ? "bg-red-100 text-red-700" : "bg-blue-50 text-blue-700"
-          )}>
-            {selectedDays.length} / {maxDays} {trans.selected}
+          <div className="px-4 py-2 rounded-full text-sm font-bold bg-blue-50 text-blue-700">
+           {selectedDays.length} {trans.selected}
           </div>
         </div>
       </div>
