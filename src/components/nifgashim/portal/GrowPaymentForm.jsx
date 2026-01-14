@@ -2,123 +2,80 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, CreditCard, Smartphone, AlertCircle, ShieldAlert } from 'lucide-react';
+import { Loader2, CreditCard, Smartphone, ShieldAlert, ExternalLink } from 'lucide-react';
 import { useLanguage } from '@/components/LanguageContext';
 import { toast } from 'sonner';
-import { base44 } from '@/api/base44Client';
 
 const translations = {
   he: {
     title: 'תשלום מאובטח',
     amount: 'סכום לתשלום',
-    processing: 'מעבד תשלום...',
-    payNow: 'שלם עכשיו',
-    payWith: 'שלם באמצעות',
+    processing: 'מעביר לתשלום...',
+    payNow: 'מעבר לתשלום',
+    payWith: 'ניתן לשלם באמצעות',
     credit: 'כרטיס אשראי',
     bit: 'ביט',
     googlePay: 'Google Pay',
     error: 'שגיאה',
     paymentFailed: 'התשלום נכשל',
     tryAgain: 'נסה שוב',
-    invalidPhone: 'נא להזין מספר טלפון ישראלי תקין (05... - 10 ספרות)',
-    invalidName: 'נא להזין שם מלא (פרטי ומשפחה)',
-    chromeRequired: 'לתשלום ב-Google Pay יש להשתמש בדפדפן Chrome בלבד',
-    browserWarning: 'דפדפן זה אינו נתמך לתשלום ב-Google Pay',
-    initializing: 'מאתחל מערכת תשלומים...'
+    redirecting: 'מועבר לדף התשלום המאובטח...',
+    secureNote: 'התשלום יתבצע בדף מאובטח של Meshulam'
   },
   en: {
     title: 'Secure Payment',
     amount: 'Amount to Pay',
-    processing: 'Processing payment...',
-    payNow: 'Pay Now',
-    payWith: 'Pay with',
+    processing: 'Redirecting to payment...',
+    payNow: 'Proceed to Payment',
+    payWith: 'Pay securely with',
     credit: 'Credit Card',
     bit: 'Bit',
     googlePay: 'Google Pay',
     error: 'Error',
     paymentFailed: 'Payment failed',
     tryAgain: 'Try Again',
-    invalidPhone: 'Please enter a valid Israeli phone number (05... - 10 digits)',
-    invalidName: 'Please enter full name (First and Last)',
-    chromeRequired: 'For Google Pay, please use Chrome browser only',
-    browserWarning: 'This browser is not supported for Google Pay',
-    initializing: 'Initializing payment system...'
+    redirecting: 'Redirecting to secure payment page...',
+    secureNote: 'Payment will be processed on Meshulam secure page'
   }
 };
 
 const GrowPaymentForm = ({ 
   amount,
-  onSuccess,
+  onSuccess, // Note: onSuccess won't be called directly here as the user leaves the site
   customerName,
   customerEmail,
-  customerPhone,
-  registrationData
+  customerPhone
 }) => {
   const { language } = useLanguage();
   const t = translations[language] || translations.en;
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [sdkLoaded, setSdkLoaded] = useState(false);
-  const [isChrome, setIsChrome] = useState(true);
-
-  // Check browser on mount
-  useEffect(() => {
-    const isChromeBrowser = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-    setIsChrome(isChromeBrowser);
-  }, []);
-
-  // Load Grow SDK (Removed for Redirect Mode)
-  // useEffect(() => { ... }, []);
-
-  const validateForm = () => {
-    // Validation removed as user will fill details on Grow page
-    return true;
-  };
-
-  const handleTransactionApproval = async (transactionData) => {
-     // Transaction approval will be handled via server-side callback or success page redirect
-     // But if we are redirected back here with params, we might need it.
-     // For now, in Redirect Mode, the user leaves the site.
-  };
 
   const handlePayment = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
     
-    // Check Google Pay restriction
-    // If user explicitly wants Google Pay, they must be on Chrome.
-    if (!isChrome) {
-        toast.warning(t.chromeRequired);
-    }
-
     setLoading(true);
     setError(null);
 
     try {
-      if (!amount) throw new Error('Missing payment details');
+      if (!amount) throw new Error('Missing payment amount');
 
-      // 1. Call Backend to Create Payment Process
-      const response = await base44.functions.invoke('createGrowPayment', {
-        sum: amount,
-        fullName: customerName, // Optional, might be empty
-        phone: customerPhone,   // Optional, might be empty
-        description: 'הרשמה לנפגשים בשביל ישראל',
-        email: customerEmail
-      });
+      toast.info(t.redirecting);
       
-      console.log('Create Payment response:', response);
-
-      if (!response.data.success || !response.data.url) {
-        throw new Error(response.data.error || 'Failed to create payment process');
-      }
-
-      // 2. Redirect to Grow Payment Page
-      console.log('Redirecting to Grow URL:', response.data.url);
-      window.location.href = response.data.url;
+      // Construct the Direct URL with the sum parameter
+      // Page Code: 30f1b9975952
+      const baseUrl = 'https://meshulam.co.il/purchase/30f1b9975952';
+      const redirectUrl = `${baseUrl}?sum=${amount}`;
+      
+      console.log('Redirecting to Meshulam:', redirectUrl);
+      
+      // Redirect the user
+      window.location.href = redirectUrl;
 
     } catch (error) {
-      console.error('Payment initiation error:', error);
-      const errorMessage = error.message || (language === 'he' ? 'שגיאה בתשלום' : 'Payment error');
+      console.error('Payment redirection error:', error);
+      const errorMessage = error.message || (language === 'he' ? 'שגיאה בהפניה לתשלום' : 'Payment redirection error');
       setError(errorMessage);
       toast.error(errorMessage);
       setLoading(false);
@@ -139,18 +96,16 @@ const GrowPaymentForm = ({
           <div className="text-3xl font-bold text-emerald-700">₪{amount.toFixed(2)}</div>
         </div>
 
-        {!isChrome && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-2">
-                <ShieldAlert className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                <div className="text-sm text-yellow-700">
-                    {t.chromeRequired}
-                </div>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
+            <ExternalLink className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-blue-700">
+                {t.secureNote}
             </div>
-        )}
+        </div>
 
         {error ? (
           <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 text-center">
-            <AlertCircle className="w-8 h-8 text-red-600 mx-auto mb-2" />
+            <ShieldAlert className="w-8 h-8 text-red-600 mx-auto mb-2" />
             <div className="text-red-700 font-semibold mb-2">{t.error}</div>
             <div className="text-sm text-red-600 mb-4">{error}</div>
             <Button 
@@ -166,7 +121,7 @@ const GrowPaymentForm = ({
             <Button 
               type="button"
               onClick={handlePayment}
-              disabled={loading || !sdkLoaded}
+              disabled={loading}
               className="w-full h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold"
             >
               {loading ? (
@@ -174,23 +129,14 @@ const GrowPaymentForm = ({
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                   {t.processing}
                 </>
-              ) : !sdkLoaded ? (
-                 <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  {t.initializing}
-                 </>
               ) : (
                 <>
-                  <CreditCard className="w-5 h-5 mr-2" />
+                  <ExternalLink className="w-5 h-5 mr-2" />
                   {t.payNow}
                 </>
               )}
             </Button>
             
-            {/* The Grow SDK might render elements here or in a modal. 
-                We ensure there's a container if needed, though usually it opens a modal. */}
-            <div id="grow-payment-container"></div>
-
             <div className="text-center text-sm text-gray-500">
               <div className="mb-2">{t.payWith}</div>
               <div className="flex flex-wrap justify-center gap-3">
