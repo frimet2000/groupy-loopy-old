@@ -634,14 +634,48 @@ export default function NifgashimPortal() {
                     }
                   </p>
                 </CardHeader>
-                <CardContent className="p-0">
+                <CardContent className="p-0 relative">
                   {paymentUrl ? (
-                    <iframe
-                      src={paymentUrl}
-                      className="w-full h-[600px] border-0"
-                      title="Payment"
-                      sandbox="allow-same-origin allow-forms allow-popups allow-scripts"
-                    />
+                    <>
+                      <iframe
+                        ref={(iframe) => {
+                          if (iframe && totalAmount > 0) {
+                            const lockAmount = () => {
+                              try {
+                                const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+                                if (iframeDoc) {
+                                  // Find amount input field and disable it
+                                  const amountInputs = iframeDoc.querySelectorAll('input[type="text"], input[type="number"]');
+                                  amountInputs.forEach(input => {
+                                    if (input.value && parseFloat(input.value) === totalAmount) {
+                                      input.disabled = true;
+                                      input.readOnly = true;
+                                      input.style.pointerEvents = 'none';
+                                      input.style.opacity = '0.7';
+                                    }
+                                  });
+                                }
+                              } catch (e) {
+                                console.log('Cannot access iframe - cross-origin');
+                              }
+                            };
+
+                            // Try to lock on load and after delay
+                            iframe.onload = lockAmount;
+                            setTimeout(lockAmount, 500);
+                            setTimeout(lockAmount, 1000);
+                          }
+                        }}
+                        src={paymentUrl}
+                        className="w-full h-[600px] border-0"
+                        title="Payment"
+                        sandbox="allow-same-origin allow-forms allow-popups allow-scripts allow-top-navigation"
+                      />
+                      {/* Overlay to prevent field modification */}
+                      <div className="absolute inset-0 pointer-events-none">
+                        <div className="absolute top-0 left-0 right-0 h-32 pointer-events-auto opacity-0 hover:opacity-0" title="Amount is locked" />
+                      </div>
+                    </>
                   ) : (
                     <div className="flex items-center justify-center h-96">
                       <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
