@@ -71,6 +71,7 @@ export default function NifgashimPortal() {
       daily_distance_km: Number(day.daily_distance_km || day.distance_km || 0),
       elevation_gain_m: Number(day.elevation_gain_m || day.elevation_gain || 0),
       day_number: Number(day.day_number || index + 1),
+      region: day.region,
       category_id: day.category_id,
       description: typeof day.daily_description === 'string' ? day.daily_description : (typeof day.description === 'string' ? day.description : (typeof day.content === 'string' ? day.content : '')),
       image: (day.image && typeof day.image === 'object' && day.image.secure_url) ? day.image.secure_url : (typeof day.image === 'string' ? day.image : (typeof day.secure_url === 'string' ? day.secure_url : (typeof day.image_url === 'string' ? day.image_url : null))),

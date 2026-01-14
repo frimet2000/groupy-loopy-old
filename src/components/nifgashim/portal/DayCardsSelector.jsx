@@ -260,11 +260,19 @@ export default function NifgashimDayCardsSelector({
     return selectedDays.some(d => d.id === dayId);
   };
 
-  // Check if a day is in the Negev category
   const isNegevDay = (day) => {
+    const region = day.region;
+    if (region && typeof region === 'string') {
+      const lowerRegion = region.toLowerCase();
+      if (lowerRegion.includes('negev') || lowerRegion.includes('נגב')) {
+        return true;
+      }
+    }
+
     const category = day.category_id;
     if (!category) return false;
-    return category.toLowerCase().includes('negev');
+    const categoryStr = String(category).toLowerCase();
+    return categoryStr.includes('negev') || categoryStr.includes('נגב');
   };
 
   // Count selected Negev days
