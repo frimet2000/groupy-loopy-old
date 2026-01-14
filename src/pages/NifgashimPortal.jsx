@@ -379,7 +379,9 @@ export default function NifgashimPortal() {
         const payerName = userType === 'group' ? groupInfo.leaderName : participants[0]?.name;
         const payerPhone = userType === 'group' ? groupInfo.leaderPhone : participants[0]?.phone;
         
-        const { data } = await base44.functions.invoke('createGrowPayment', {
+        console.log('Calling createGrowPayment with amount:', amount);
+        
+        const response = await base44.functions.invoke('createGrowPayment', {
           amount: Math.round(amount),
           customerName: payerName || '',
           customerEmail: payerEmail || '',
@@ -387,10 +389,11 @@ export default function NifgashimPortal() {
           description: language === 'he' ? `הרשמה למסע נפגשים - ${participants.length} משתתפים` : `Nifgashim Registration - ${participants.length} participants`
         });
 
-        console.log('Payment created:', data);
+        console.log('Payment response:', response);
 
-        if (data.url) {
-          window.location.href = data.url;
+        if (response.data?.url) {
+          console.log('Redirecting to payment URL:', response.data.url);
+          window.location.href = response.data.url;
         } else {
           throw new Error('No payment URL received');
         }
