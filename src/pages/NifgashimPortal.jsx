@@ -473,9 +473,10 @@ export default function NifgashimPortal() {
       };
       localStorage.setItem('nifgashim_registration_state_v2', JSON.stringify(state));
 
-      // Direct redirect to Meshulam
+      // Direct redirect to Meshulam (Sandbox)
       setTimeout(() => {
-        window.location.href = `https://meshulam.co.il/purchase/30f1b9975952?sum=${amount}`;
+        // Using Sandbox URL as these are sandbox credentials (userId: 5c04d711acb29250)
+        window.location.href = `https://sandbox.meshulam.co.il/purchase/30f1b9975952?sum=${amount}`;
       }, 1000);
       return;
     }
