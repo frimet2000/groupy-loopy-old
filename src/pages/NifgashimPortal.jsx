@@ -374,22 +374,21 @@ export default function NifgashimPortal() {
     if (amount > 0) {
       try {
         await completeRegistration('PENDING');
-        
-        // Create payment URL with Grow API
-        const response = await base44.functions.invoke('createGrowPayment', {
-          amount: Math.round(amount)
+
+        // Redirect to PayPal payment
+        const response = await base44.functions.invoke('paypalPayment', {
+          amount: Math.round(amount),
+          participantsCount: participants.length,
+          userEmail: participants[0]?.email || ''
         });
 
-        if (response.data?.url) {
-          const paymentUrl = response.data.url;
-          setPaymentUrl(paymentUrl);
-          setCurrentStep(6);
-        } else {
-          throw new Error('No payment URL received');
-        }
+        // paypalPayment returns HTML that auto-submits to PayPal
+        const blob = new Blob([response.data], { type: 'text/html' });
+        const url = window.URL.createObjectURL(blob);
+        window.location.href = url;
       } catch (error) {
         console.error('Payment creation failed:', error);
-        toast.error(language === 'he' ? 'שגיאה ביצירת דף תשלום' : 'Error creating payment page');
+        toast.error(language === 'he' ? 'שגיאה בתהליך התשלום' : 'Error in payment process');
       }
       return;
     }
