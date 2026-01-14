@@ -31,6 +31,7 @@ export default function NifgashimPortal() {
   const [memorialData, setMemorialData] = useState({ memorial: null });
   const [submitting, setSubmitting] = useState(false);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [paymentUrl, setPaymentUrl] = useState(null);
   const [showThankYou, setShowThankYou] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
@@ -634,12 +635,18 @@ export default function NifgashimPortal() {
                   </p>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <iframe
-                    src={`https://meshulam.co.il/s/bc8d0eda-efc0-ebd2-43c0-71efbd570304?sum=${Math.round(totalAmount)}`}
-                    className="w-full h-[600px] border-0"
-                    title="Payment"
-                    allow="payment"
-                  />
+                  {paymentUrl ? (
+                    <iframe
+                      src={paymentUrl}
+                      className="w-full h-[600px] border-0"
+                      title="Payment"
+                      allow="payment"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-96">
+                      <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}
