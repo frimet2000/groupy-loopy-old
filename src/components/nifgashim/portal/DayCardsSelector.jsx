@@ -77,10 +77,9 @@ export default function NifgashimDayCardsSelector({
         if (!element) return;
 
         const canvas = await html2canvas(element, {
-            scale: 2, // Better quality
-            useCORS: true, // For images
-            logging: false,
-            direction: isRTL ? 'rtl' : 'ltr'
+            scale: 2,
+            useCORS: true,
+            logging: false
         });
         
         const imgData = canvas.toDataURL('image/png');
@@ -152,7 +151,15 @@ export default function NifgashimDayCardsSelector({
   
   const isNegevDay = (day) => {
     const category = getDayCategory(day);
-    return category && category.toLowerCase().includes('negev');
+    if (!category) return false;
+
+    const categoryStr = String(category);
+    const lower = categoryStr.toLowerCase();
+
+    if (lower.includes('negev') || lower.includes('south')) return true;
+    if (categoryStr.includes('נגב') || categoryStr.includes('דרום')) return true;
+
+    return false;
   };
   
   const getSelectedNegevCount = () => {
@@ -596,7 +603,10 @@ export default function NifgashimDayCardsSelector({
               {trans.selectedDaysTitle}
           </h1>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {selectedDays.sort((a, b) => new Date(a.date) - new Date(b.date)).map((day, index) => (
+              {selectedDays
+                .slice()
+                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                .map((day, index) => (
                   <div key={day.id} style={{ border: '1px solid #eee', padding: '20px', borderRadius: '8px', pageBreakInside: 'avoid', backgroundColor: '#fff' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>
                           <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold', color: '#111' }}>{day.daily_title}</h3>
