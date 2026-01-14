@@ -1,22 +1,35 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
-
 Deno.serve(async (req) => {
   try {
     const { amount } = await req.json();
     const pageCode = Deno.env.get('GROW_PAGE_CODE');
+    const userId = Deno.env.get('GROW_USER_ID');
 
-    if (!pageCode) {
-      return Response.json({ error: 'Grow page code not configured' }, { status: 500 });
+    if (!pageCode || !userId) {
+      return Response.json({ error: 'Grow credentials not configured' }, { status: 500 });
     }
 
-    // Generate direct Grow payment URL with fixed amount (readonly locks it)
-    const paymentUrl = `https://meshulam.co.il/s/${pageCode}?sum=${Math.round(amount)}&readonly=true`;
+    // Call Grow API to create payment
+    const response = await fetch('https://api.meshulam.co.il/api/GrowPage/CreatePayment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        pageCode,
+        userId,
+        sum: Math.round(amount),
+        currency: 'ILS'
+      })
+    });
 
-    console.log('Payment URL created:', { pageCode, amount, paymentUrl });
+    const data = await response.json();
+    
+    if (!response.ok || !data.url) {
+      console.error('Grow API error:', data);
+      return Response.json({ error: data.errorMessage || 'Failed to create payment' }, { status: 400 });
+    }
 
-    return Response.json({ url: paymentUrl });
+    return Response.json({ url: data.url });
   } catch (error) {
-    console.error('Error creating payment URL:', error.message);
+    console.error('Payment error:', error.message);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
