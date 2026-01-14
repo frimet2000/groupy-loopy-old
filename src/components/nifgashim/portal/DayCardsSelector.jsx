@@ -27,6 +27,9 @@ export default function NifgashimDayCardsSelector({
       selected: "נבחרו",
       days: "ימים",
       maxReached: `ניתן לבחור עד ${maxDays} ימים`,
+      negevMaxReached: `הגעת למקסימום ${maxDays} ימי נגב`,
+      negevDays: "ימי נגב",
+      northCenterDays: "ימי צפון-מרכז",
       difficulty: {
         easy: "קל",
         moderate: "בינוני",
@@ -46,6 +49,9 @@ export default function NifgashimDayCardsSelector({
       selected: "Selected",
       days: "days",
       maxReached: `You can select up to ${maxDays} days`,
+      negevMaxReached: `Maximum ${maxDays} Negev days reached`,
+      negevDays: "Negev days",
+      northCenterDays: "North-Center days",
       difficulty: {
         easy: "Easy",
         moderate: "Moderate",
@@ -59,6 +65,116 @@ export default function NifgashimDayCardsSelector({
       downloadPdf: "Download PDF",
       generating: "Generating...",
       selectedDaysTitle: "Selected Trek Days"
+    },
+    ru: {
+      selectDays: "Выберите дни похода",
+      selected: "Выбрано",
+      days: "дней",
+      maxReached: `Можно выбрать до ${maxDays} дней`,
+      negevMaxReached: `Достигнут максимум ${maxDays} дней в Негеве`,
+      negevDays: "дни Негева",
+      northCenterDays: "дни Север-Центр",
+      difficulty: {
+        easy: "Легко",
+        moderate: "Средне",
+        hard: "Сложно"
+      },
+      km: "км",
+      meters: "м подъема",
+      readMore: "Подробнее",
+      close: "Закрыть",
+      viewMap: "Карта",
+      downloadPdf: "Скачать PDF",
+      generating: "Создание...",
+      selectedDaysTitle: "Выбранные дни похода"
+    },
+    es: {
+      selectDays: "Selecciona los días del trek",
+      selected: "Seleccionados",
+      days: "días",
+      maxReached: `Puedes seleccionar hasta ${maxDays} días`,
+      negevMaxReached: `Máximo ${maxDays} días de Negev alcanzado`,
+      negevDays: "días del Negev",
+      northCenterDays: "días Norte-Centro",
+      difficulty: {
+        easy: "Fácil",
+        moderate: "Moderado",
+        hard: "Difícil"
+      },
+      km: "km",
+      meters: "m subida",
+      readMore: "Leer más",
+      close: "Cerrar",
+      viewMap: "Ver mapa",
+      downloadPdf: "Descargar PDF",
+      generating: "Generando...",
+      selectedDaysTitle: "Días del trek seleccionados"
+    },
+    fr: {
+      selectDays: "Sélectionnez vos jours de trek",
+      selected: "Sélectionnés",
+      days: "jours",
+      maxReached: `Vous pouvez sélectionner jusqu'à ${maxDays} jours`,
+      negevMaxReached: `Maximum ${maxDays} jours du Néguev atteint`,
+      negevDays: "jours du Néguev",
+      northCenterDays: "jours Nord-Centre",
+      difficulty: {
+        easy: "Facile",
+        moderate: "Modéré",
+        hard: "Difficile"
+      },
+      km: "km",
+      meters: "m montée",
+      readMore: "En savoir plus",
+      close: "Fermer",
+      viewMap: "Voir la carte",
+      downloadPdf: "Télécharger PDF",
+      generating: "Génération...",
+      selectedDaysTitle: "Jours de trek sélectionnés"
+    },
+    de: {
+      selectDays: "Wähle deine Trek-Tage",
+      selected: "Ausgewählt",
+      days: "Tage",
+      maxReached: `Du kannst bis zu ${maxDays} Tage auswählen`,
+      negevMaxReached: `Maximum ${maxDays} Negev-Tage erreicht`,
+      negevDays: "Negev-Tage",
+      northCenterDays: "Nord-Zentrum-Tage",
+      difficulty: {
+        easy: "Leicht",
+        moderate: "Mittel",
+        hard: "Schwer"
+      },
+      km: "km",
+      meters: "m Aufstieg",
+      readMore: "Mehr lesen",
+      close: "Schließen",
+      viewMap: "Karte ansehen",
+      downloadPdf: "PDF herunterladen",
+      generating: "Erstellen...",
+      selectedDaysTitle: "Ausgewählte Trek-Tage"
+    },
+    it: {
+      selectDays: "Seleziona i tuoi giorni di trek",
+      selected: "Selezionati",
+      days: "giorni",
+      maxReached: `Puoi selezionare fino a ${maxDays} giorni`,
+      negevMaxReached: `Massimo ${maxDays} giorni del Negev raggiunto`,
+      negevDays: "giorni del Negev",
+      northCenterDays: "giorni Nord-Centro",
+      difficulty: {
+        easy: "Facile",
+        moderate: "Moderato",
+        hard: "Difficile"
+      },
+      km: "km",
+      meters: "m salita",
+      readMore: "Leggi di più",
+      close: "Chiudi",
+      viewMap: "Vedi mappa",
+      downloadPdf: "Scarica PDF",
+      generating: "Generazione...",
+      selectedDaysTitle: "Giorni del trek selezionati"
     }
   };
 
@@ -144,33 +260,41 @@ export default function NifgashimDayCardsSelector({
     return selectedDays.some(d => d.id === dayId);
   };
 
-  // Get the category of a day using its category_id
-  const getDayCategory = (day) => {
-    return day.category_id;
+  // Check if a day is in the Negev category
+  const isNegevDay = (day) => {
+    const category = day.category_id;
+    if (!category) return false;
+    return category.toLowerCase().includes('negev');
   };
 
-  // Count selected days per category
-  const getSelectedCountByCategory = (category) => {
-    return selectedDays.filter(d => getDayCategory(d) === category).length;
-  };
+  // Count selected Negev days
+  const selectedNegevCount = selectedDays.filter(d => isNegevDay(d)).length;
+  
+  // Count selected North-Center days
+  const selectedNorthCenterCount = selectedDays.filter(d => !isNegevDay(d)).length;
 
-  // Check if max reached for this specific category (only negev has a max of 8)
-  const isCategoryMaxReached = (day) => {
-    const category = getDayCategory(day);
-    if (!category) return false; // No limit if no category
+  // Check if Negev max is reached (8 days limit)
+  const isNegevMaxReached = selectedNegevCount >= maxDays;
+
+  // Check if a specific day should be disabled
+  const isDayDisabled = (day) => {
+    // If already selected, never disable
+    if (isSelected(day.id)) return false;
     
-    // Only apply 8-day limit to negev category
-    if (category.toLowerCase().includes('negev')) {
-      return getSelectedCountByCategory(category) >= maxDays;
+    // Only Negev days have a limit
+    if (isNegevDay(day)) {
+      return isNegevMaxReached;
     }
-    return false; // No limit for other categories
+    
+    // North-Center has no limit
+    return false;
   };
 
   const handleDayToggle = (day) => {
     const currentlySelected = isSelected(day.id);
     
-    // Check if this specific category has reached its max
-    if (isCategoryMaxReached(day) && !currentlySelected) {
+    // Check if this day is disabled (Negev max reached for non-selected Negev days)
+    if (isDayDisabled(day)) {
       return;
     }
 
@@ -209,7 +333,6 @@ export default function NifgashimDayCardsSelector({
       }
     } else {
       // Select logic
-      // Check if we can add the days (considering maxDays)
       const daysToAdd = [];
       
       // Always add the clicked day
@@ -225,8 +348,12 @@ export default function NifgashimDayCardsSelector({
         });
       }
 
-      if (newSelected.length + daysToAdd.length > maxDays) {
-        // Cannot select - would exceed limit
+      // Check Negev limit for the days we're trying to add
+      const negevDaysToAdd = daysToAdd.filter(d => isNegevDay(d)).length;
+      const currentNegevCount = newSelected.filter(d => isNegevDay(d)).length;
+      
+      if (currentNegevCount + negevDaysToAdd > maxDays) {
+        // Cannot select - would exceed Negev limit
         return; 
       }
 
@@ -248,44 +375,76 @@ export default function NifgashimDayCardsSelector({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">{trans.selectDays}</h2>
-        <div className="flex items-center gap-3">
-          {selectedDays.length > 0 && (
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <h2 className="text-xl font-semibold">{trans.selectDays}</h2>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            {selectedDays.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDownloadPDF}
+                disabled={isGeneratingPdf}
+                className="gap-2 text-green-600 border-green-200 hover:bg-green-50"
+              >
+                {isGeneratingPdf ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Download className="w-4 h-4" />
+                )}
+                {isGeneratingPdf ? trans.generating : trans.downloadPdf}
+              </Button>
+            )}
             <Button
               variant="outline"
               size="sm"
-              onClick={handleDownloadPDF}
-              disabled={isGeneratingPdf}
-              className="gap-2 text-green-600 border-green-200 hover:bg-green-50"
+              onClick={() => setShowMap(true)}
+              className="gap-2 text-indigo-600 border-indigo-200 hover:bg-indigo-50"
             >
-              {isGeneratingPdf ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Download className="w-4 h-4" />
-              )}
-              {isGeneratingPdf ? trans.generating : trans.downloadPdf}
+              <Map className="w-4 h-4" />
+              {trans.viewMap}
             </Button>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowMap(true)}
-            className="gap-2 text-indigo-600 border-indigo-200 hover:bg-indigo-50"
-          >
-            <Map className="w-4 h-4" />
-            {trans.viewMap}
-          </Button>
-          <div className="px-4 py-2 rounded-full text-sm font-bold bg-blue-50 text-blue-700">
-           {selectedDays.length} {trans.selected}
+            <div className="px-4 py-2 rounded-full text-sm font-bold bg-blue-50 text-blue-700">
+             {selectedDays.length} {trans.selected}
+            </div>
           </div>
         </div>
+        
+        {/* Category counters */}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className={cn(
+            "px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-2",
+            isNegevMaxReached 
+              ? "bg-amber-100 text-amber-800 border border-amber-300" 
+              : "bg-orange-50 text-orange-700"
+          )}>
+            <span>{trans.negevDays}:</span>
+            <span className="font-bold">{selectedNegevCount}/{maxDays}</span>
+          </div>
+          <div className="px-3 py-1.5 rounded-full text-sm font-medium bg-blue-50 text-blue-700 flex items-center gap-2">
+            <span>{trans.northCenterDays}:</span>
+            <span className="font-bold">{selectedNorthCenterCount}</span>
+          </div>
+        </div>
+        
+        {/* Warning message when Negev max is reached */}
+        {isNegevMaxReached && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm flex items-center gap-2"
+          >
+            <Info className="w-4 h-4 flex-shrink-0" />
+            <span>{trans.negevMaxReached}</span>
+          </motion.div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {trekDays.map((day) => {
           const selected = isSelected(day.id);
-          const isDisabled = !selected && isCategoryMaxReached(day);
+          const isDisabled = isDayDisabled(day);
+          const isNegev = isNegevDay(day);
           const isLinked = linkedDaysPairs.some(pair => 
             Array.isArray(pair) ? pair.includes(day.id) : (pair.day_id_1 === day.id || pair.day_id_2 === day.id)
           );
@@ -342,9 +501,14 @@ export default function NifgashimDayCardsSelector({
                   <Info className="w-5 h-5" />
                 </button>
 
+                {/* Category Badge */}
+                <div className={`absolute top-3 ${isRTL ? 'left-12' : 'right-12'} ${isNegev ? 'bg-orange-500/80' : 'bg-blue-500/80'} backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full shadow-sm`}>
+                  {isNegev ? (language === 'he' ? 'נגב' : 'Negev') : (language === 'he' ? 'צפון-מרכז' : 'North')}
+                </div>
+                
                 {/* Linked Badge */}
                 {isLinked && (
-                  <div className={`absolute top-3 ${isRTL ? 'left-12' : 'right-12'} bg-purple-500/80 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full shadow-sm`}>
+                  <div className={`absolute top-10 ${isRTL ? 'left-12' : 'right-12'} bg-purple-500/80 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full shadow-sm`}>
                     {language === 'he' ? 'צמד' : 'Linked'}
                   </div>
                 )}
