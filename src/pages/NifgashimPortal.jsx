@@ -468,10 +468,19 @@ export default function NifgashimPortal() {
         registrationId: pendingRegId
       });
 
+      const user = await base44.auth.me().catch(() => null);
+      const payerEmail = participants[0]?.email || user?.email || '';
+      
+      if (!payerEmail) {
+        toast.error(language === 'he' ? 'אימייל לא זמין' : 'Email not available');
+        setSubmitting(false);
+        return;
+      }
+
       const response = await base44.functions.invoke('paypalPayment', {
         amount: Math.round(totalAmount),
         participantsCount: participants.length,
-        userEmail: participants[0]?.email || '',
+        userEmail: payerEmail,
         registrationId: pendingRegId
       });
 
