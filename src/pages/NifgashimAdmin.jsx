@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
@@ -160,7 +161,6 @@ export default function NifgashimAdmin() {
       spouse: "בן/בת זוג",
       children: "ילדים",
       pets: "חיות מחמד",
-      other: "אחר",
       childDetails: "פרטי ילדים",
       fullName: "שם מלא",
       age: "גיל",
@@ -253,7 +253,6 @@ export default function NifgashimAdmin() {
       spouse: "Spouse",
       children: "Children",
       pets: "Pets",
-      other: "Other",
       childDetails: "Children Details",
       fullName: "Full Name",
       age: "Age",
@@ -341,7 +340,6 @@ export default function NifgashimAdmin() {
       spouse: "Супруг",
       children: "Дети",
       pets: "Питомцы",
-      other: "Другое",
       childDetails: "Детали детей",
       fullName: "Полное имя",
       age: "Возраст",
@@ -434,7 +432,6 @@ export default function NifgashimAdmin() {
       spouse: "Cónyuge",
       children: "Niños",
       pets: "Mascotas",
-      other: "Otro",
       childDetails: "Detalles de niños",
       fullName: "Nombre completo",
       age: "Edad",
@@ -527,7 +524,6 @@ export default function NifgashimAdmin() {
       spouse: "Conjoint",
       children: "Enfants",
       pets: "Animaux",
-      other: "Autre",
       childDetails: "Détails des enfants",
       fullName: "Nom complet",
       age: "Âge",
@@ -620,7 +616,6 @@ export default function NifgashimAdmin() {
       spouse: "Ehepartner",
       children: "Kinder",
       pets: "Haustiere",
-      other: "Andere",
       childDetails: "Kinderdetails",
       fullName: "Vollständiger Name",
       age: "Alter",
