@@ -213,7 +213,7 @@ export default function NifgashimPortal() {
   const translations = {
     he: {
       title: "הרשמה למסע נפגשים בשביל ישראל",
-      subtitle: "תהליך הרשמה פשוט ומהיר",
+      subtitle: "במהלך ההרשמה תתבקשו לאפשר התראות, אנא אפשרו זאת לשם ניהול תקין של המסע מבחינת בטיחות ועדכונים",
       stepUserType: "סוג רישום",
       stepParticipants: "פרטי משתתפים",
       stepHealth: "הצהרת בריאות",
