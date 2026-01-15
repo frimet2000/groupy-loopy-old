@@ -369,7 +369,7 @@ export default function NifgashimDayCardsSelector({
       const negevDaysToAdd = daysToAdd.filter(d => isNegevDay(d)).length;
       const currentNegevCount = newSelected.filter(d => isNegevDay(d)).length;
       
-      if (currentNegevCount + negevDaysToAdd > maxDays) {
+      if (currentNegevCount + negevDaysToAdd > negevMaxDays) {
         // Cannot select - would exceed Negev limit
         return; 
       }
