@@ -37,6 +37,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       leaderName: "ראש הקבוצה",
       leaderEmail: "אימייל",
       leaderPhone: "טלפון",
+      totalParticipants: "מספר המשתתפים הכולל",
       participantName: "שם מלא",
       idNumber: "תעודת זהות (9 ספרות)",
       ageRange: "טווח גילאים (עד 18 לילד)",
