@@ -346,17 +346,19 @@ export default function NifgashimPortal() {
         { id: 1, label: trans.stepUserType },
         { id: 2, label: trans.stepParticipants },
         { id: 3, label: language === 'he' ? 'הצהרות' : 'Declarations' },
-        { id: 4, label: trans.stepDays },
-        { id: 5, label: trans.stepMemorial },
-        { id: 6, label: trans.stepSummary }
+        { id: 4, label: trans.stepHealth },
+        { id: 5, label: trans.stepDays },
+        { id: 6, label: trans.stepMemorial },
+        { id: 7, label: trans.stepSummary }
       ]
     : [
         { id: 1, label: trans.stepUserType },
         { id: 2, label: trans.stepParticipants },
-        { id: 3, label: trans.stepDays },
-        { id: 4, label: trans.stepMemorial },
-        { id: 5, label: trans.stepSummary },
-        { id: 6, label: trans.payment }
+        { id: 3, label: trans.stepHealth },
+        { id: 4, label: trans.stepDays },
+        { id: 5, label: trans.stepMemorial },
+        { id: 6, label: trans.stepSummary },
+        { id: 7, label: trans.payment }
       ];
 
   const calculateTotalAmount = () => {
