@@ -12,13 +12,17 @@ Deno.serve(async (req) => {
 
     const pageCode = Deno.env.get('GROW_PAGE_CODE');
     const userId = Deno.env.get('GROW_USER_ID');
-    
+
     if (!pageCode || !userId) {
       return Response.json({ 
         error: 'Missing Grow credentials',
         details: 'GROW_PAGE_CODE or GROW_USER_ID not configured'
       }, { status: 400 });
     }
+
+    // Clean up values - remove whitespace
+    const cleanPageCode = pageCode.trim();
+    const cleanUserId = userId.trim();
     
     // Use the PaymentSuccess page as success URL
     const baseUrl = req.headers.get('origin') || 'https://groupyloopy.app';
