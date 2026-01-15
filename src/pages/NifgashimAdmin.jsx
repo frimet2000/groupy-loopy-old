@@ -1283,7 +1283,13 @@ export default function NifgashimAdmin() {
         <Card className="border-0 shadow-xl">
           <CardContent className="p-3 sm:p-6" dir={isRTL ? 'rtl' : 'ltr'}>
             <Tabs defaultValue="registrations">
-              <TabsList className="grid w-full grid-cols-4 sm:grid-cols-5 mb-4 sm:mb-6 h-auto">
+              <TabsList
+                className={
+                  isRTL
+                    ? "flex flex-wrap justify-end w-full mb-4 sm:mb-6 h-auto gap-2"
+                    : "grid w-full grid-cols-4 sm:grid-cols-5 mb-4 sm:mb-6 h-auto"
+                }
+              >
                 <TabsTrigger value="registrations" className="gap-1 sm:gap-2 text-xs sm:text-sm py-2 sm:py-3">
                   <Users className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">{trans.registrations}</span>
