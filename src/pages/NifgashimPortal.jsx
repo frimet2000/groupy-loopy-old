@@ -449,15 +449,24 @@ export default function NifgashimPortal() {
 
   const handlePayPalPayment = async () => {
     try {
+      console.log('Starting PayPal payment...');
       setSubmitting(true);
       await completeRegistration('PENDING');
       const pendingRegId = localStorage.getItem('pending_registration_id');
+      console.log('Pending registration ID:', pendingRegId);
 
       if (!pendingRegId) {
         toast.error(language === 'he' ? 'שגיאה בשמירת ההרשמה לפני התשלום' : 'Failed to save registration before payment');
         setSubmitting(false);
         return;
       }
+
+      console.log('Invoking PayPal payment function with:', {
+        amount: Math.round(totalAmount),
+        participantsCount: participants.length,
+        userEmail: participants[0]?.email || '',
+        registrationId: pendingRegId
+      });
 
       const response = await base44.functions.invoke('paypalPayment', {
         amount: Math.round(totalAmount),
@@ -466,9 +475,14 @@ export default function NifgashimPortal() {
         registrationId: pendingRegId
       });
 
-      const blob = new Blob([response.data], { type: 'text/html' });
-      const url = window.URL.createObjectURL(blob);
-      window.location.href = url;
+      console.log('PayPal response:', response);
+
+      if (response.data) {
+        const htmlContent = typeof response.data === 'string' ? response.data : JSON.stringify(response.data);
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = window.URL.createObjectURL(blob);
+        window.location.href = url;
+      }
     } catch (error) {
       console.error('PayPal payment failed:', error);
       toast.error(language === 'he' ? 'שגיאה בתהליך התשלום' : 'Error in payment process');
