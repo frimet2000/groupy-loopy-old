@@ -478,20 +478,19 @@ export default function NifgashimPortal() {
       }
 
       const response = await base44.functions.invoke('paypalPayment', {
-        amount: Math.round(totalAmount),
-        participantsCount: participants.length,
-        userEmail: payerEmail,
-        registrationId: pendingRegId
-      });
+            amount: Math.round(totalAmount),
+            participantsCount: participants.length,
+            userEmail: payerEmail,
+            registrationId: pendingRegId
+          });
 
-      console.log('PayPal response:', response);
+          console.log('PayPal response:', response);
 
-      if (response.data) {
-        const htmlContent = typeof response.data === 'string' ? response.data : JSON.stringify(response.data);
-        const blob = new Blob([htmlContent], { type: 'text/html' });
-        const url = window.URL.createObjectURL(blob);
-        window.location.href = url;
-      }
+          // The function returns a redirect response (302)
+          // The redirect happens automatically, but we can also handle it manually
+          if (response.status === 302 || response.request?.responseURL) {
+            window.location.href = response.request.responseURL;
+          }
     } catch (error) {
       console.error('PayPal payment failed:', error);
       toast.error(language === 'he' ? 'שגיאה בתהליך התשלום' : 'Error in payment process');
