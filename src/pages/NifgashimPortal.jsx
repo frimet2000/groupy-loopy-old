@@ -530,10 +530,14 @@ export default function NifgashimPortal() {
       try {
         const adminEmail = nifgashimTrip?.organizer_email;
         if (adminEmail) {
+          const body = userType === 'group'
+            ? `הרשמה חדשה קבוצה התקבלה.\nמדריך: ${payerName} (${payerEmail})\nתעודת זהות: ${groupInfo.leaderIdNumber}\nכמות משתתפים: ${groupParticipantCount}\nהצהרת בריאות אושרה: כן\nהרשמה חינם`
+            : `הרשמה חדשה התקבלה.\nמשתמש: ${payerName} (${payerEmail})\nמשתתפים: ${participants.length}\nסוג: ${userType}\nסכום: ₪${totalAmount}`;
+          
           await base44.integrations.Core.SendEmail({
             to: adminEmail,
             subject: `הרשמה חדשה: ${payerName}`,
-            body: `הרשמה חדשה התקבלה.\nמשתמש: ${payerName} (${payerEmail})\nמשתתפים: ${participants.length}\nסוג: ${userType}\nסכום: ₪${totalAmount}`
+            body: body
           });
         }
       } catch (adminEmailError) {
