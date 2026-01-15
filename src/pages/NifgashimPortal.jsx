@@ -732,85 +732,10 @@ export default function NifgashimPortal() {
                 groupInfo={groupInfo}
               />
             )}
-
-<<<<<<< HEAD
-        <div className="flex justify-between gap-4 mt-6">
-=======
-            {currentStep === (userType === 'group' ? 8 : 7) && userType !== 'group' && (
-              <Card className="overflow-hidden">
-                <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-                  <CardTitle className="text-center text-2xl">
-                    {language === 'he' ? 'בחר אמצעי תשלום' : language === 'ru' ? 'Выберите способ оплаты' : language === 'es' ? 'Seleccionar método de pago' : language === 'fr' ? 'Choisir le mode de paiement' : language === 'de' ? 'Zahlungsmethode wählen' : language === 'it' ? 'Seleziona metodo di pagamento' : 'Select Payment Method'}
-                  </CardTitle>
-                  <p className="text-center text-blue-100 mt-2">
-                    {language === 'he' 
-                      ? `סכום לתשלום: ₪${totalAmount}`
-                      : `Amount to pay: ₪${totalAmount}`
-                    }
-                  </p>
-                </CardHeader>
-                <CardContent className="p-6">
-                  {paymentUrl && paymentMethod === 'grow' ? (
-                    <GrowPaymentForm authCode={paymentUrl} language={language} />
-                  ) : (
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      {/* Grow/Meshulam - Credit Card */}
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handleGrowPayment}
-                        disabled={submitting}
-                        className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl hover:border-green-400 hover:shadow-lg transition-all text-center"
-                      >
-                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <CreditCard className="w-8 h-8 text-green-600" />
-                        </div>
-                        <h3 className="font-bold text-lg text-gray-900 mb-2">
-                          {language === 'he' ? 'כרטיס אשראי' : language === 'ru' ? 'Кредитная карта' : language === 'es' ? 'Tarjeta de crédito' : language === 'fr' ? 'Carte de crédit' : language === 'de' ? 'Kreditkarte' : language === 'it' ? 'Carta di credito' : 'Credit Card'}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          {language === 'he' ? 'תשלום מאובטח ישירות באתר' : 'Secure payment on site'}
-                        </p>
-                      </motion.button>
-
-                      {/* PayPal */}
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handlePayPalPayment}
-                        disabled={submitting}
-                        className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl hover:border-blue-400 hover:shadow-lg transition-all text-center"
-                      >
-                        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none">
-                            <path d="M7.144 19.532l.358-2.268h-.723c-2.94 0-4.598-1.984-4.225-4.597l.688-4.832C3.596 5.256 5.697 3.5 8.637 3.5h4.654c2.14 0 3.66.983 4.008 2.585.382 1.758-.12 3.43-1.368 4.559-1.1 1.006-2.662 1.48-4.402 1.357h-.723c-.48 0-.884.376-.965.897l-.518 3.279c-.072.457-.414.815-.884.855l-1.295.5z" fill="#253B80"/>
-                            <path d="M19.856 7.203c.376 1.754-.09 3.435-1.268 4.613-1.268 1.268-3.215 1.831-5.484 1.584-.448-.05-.82.287-.898.726l-.66 4.177c-.08.52-.455.897-.976.897H8.5l.16-1.016.356-2.254h-.723c-2.94 0-4.6-1.984-4.227-4.597l.69-4.832C5.108 3.924 7.208 2.168 10.148 2.168h4.654c2.14 0 3.66.983 4.008 2.585l.046.45z" fill="#179BD7"/>
-                          </svg>
-                        </div>
-                        <h3 className="font-bold text-lg text-gray-900 mb-2">PayPal</h3>
-                        <p className="text-sm text-gray-600">
-                          {language === 'he' ? 'העברה לדף PayPal' : 'Redirect to PayPal'}
-                        </p>
-                      </motion.button>
-                    </div>
-                  )}
-                  
-                  {submitting && !paymentUrl && (
-                    <div className="flex items-center justify-center gap-3 mt-6">
-                      <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-                      <span className="text-gray-600">
-                        {language === 'he' ? 'מכין את דף התשלום...' : 'Preparing payment...'}
-                      </span>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-            </motion.div>
-            </AnimatePresence>
+          </motion.div>
+        </AnimatePresence>
 
         <div className="flex justify-between items-center mt-6">
->>>>>>> f6c73c512515df19bc2b4261e794eb2887104284
           <Button
             variant="outline"
             onClick={() => setCurrentStep(prev => Math.max(prev - 1, 1))}
