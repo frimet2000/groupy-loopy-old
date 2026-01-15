@@ -53,12 +53,12 @@ export default function GroupHealthDeclaration({ accepted, onAccept, leaderName,
       agreement: "Je confirme la Déclaration de Santé"
     },
     de: {
-      title: "Gesundheitserklärung und Verantwortung des Gruppenleiters",
-      responsibility: "Ich erkläre hiermit, dass ich vollständig verantwortlich für alle Mitglieder meiner Gruppe bin",
-      health: "Ich bestätige, dass alle Gruppenmitglieder gesund sind und an der Wanderung teilnehmen können",
-      fullResponsibility: "Ich übernehme die volle Verantwortung für alle Gruppenmitglieder jederzeit",
-      emergencies: "Ich werde jeden Notfall oder jedes Gesundheitsproblem sofort melden",
-      agreement: "Ich akzeptiere die obigen Bedingungen und bestätige, dass diese Informationen korrekt sind"
+      title: "Gesundheitserklärung",
+      responsibility: "Ich erkläre hiermit, dass ich bei guter Gesundheit bin und physisch in der Lage bin, an dieser Wanderung teilzunehmen",
+      health: "Ich habe keine medizinischen Zustände, die meine Fähigkeit zur Teilnahme an physischen Aktivitäten beeinträchtigen könnten",
+      fullResponsibility: "Diese Erklärung ist heute wahr und ich bin verantwortlich für falsche oder verborgene Informationen",
+      emergencies: "Ich erkenne an, dass die Teilnahme an dieser Wanderung erhebliche Risiken mit sich bringt",
+      agreement: "Ich bestätige die Gesundheitserklärung"
     },
     it: {
       title: "Dichiarazione di salute e responsabilità del capo gruppo",
