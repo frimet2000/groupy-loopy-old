@@ -724,7 +724,12 @@ export default function NifgashimAdmin() {
       emergencyContact: "Contatto emergenza",
       dietary: "Preferenze dietetiche",
       medical: "Condizioni mediche",
-      selectedCategories: "Categorie selezionate"
+      selectedCategories: "Categorie selezionate",
+      sendReminder: "Invia promemoria",
+      sendReminders: "Invia promemoria",
+      sendingReminders: "Invio...",
+      remindersSent: "Promemoria inviati",
+      selectForReminder: "Seleziona per promemoria"
     }
   };
 
