@@ -163,6 +163,7 @@ export default function NifgashimPortal() {
             setTotalAmount(parsed.totalAmount || 0);
             setGroupParticipantCount(parsed.groupParticipantCount || 0);
             setGroupHealthDeclarationAccepted(parsed.groupHealthDeclarationAccepted || false);
+            setIndividualHealthDeclarationAccepted(parsed.individualHealthDeclarationAccepted || false);
           }
         } else {
           localStorage.removeItem('nifgashim_registration_state');
