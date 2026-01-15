@@ -29,24 +29,25 @@ Deno.serve(async (req) => {
     const successUrl = `${baseUrl}/NifgashimPortal?payment_success=true&registration_id=${registrationId || ''}`;
     const cancelUrl = `${baseUrl}/NifgashimPortal`;
     
-    const form = new FormData();
-    form.append('pageCode', cleanPageCode);
-    form.append('userId', cleanUserId);
-    form.append('sum', amount.toString());
-    form.append('successUrl', successUrl);
-    form.append('cancelUrl', cancelUrl);
-    form.append('description', `הרשמה למסע נפגשים - ${customerName || ''}`);
-    form.append('paymentNum', '1');
-    form.append('maxPaymentNum', '12');
+    // Use URLSearchParams instead of FormData for better compatibility
+    const params = new URLSearchParams();
+    params.append('pageCode', cleanPageCode);
+    params.append('userId', cleanUserId);
+    params.append('sum', amount.toString());
+    params.append('successUrl', successUrl);
+    params.append('cancelUrl', cancelUrl);
+    params.append('description', `הרשמה למסע נפגשים - ${customerName || ''}`);
+    params.append('paymentNum', '1');
+    params.append('maxPaymentNum', '12');
 
     if (customerEmail) {
-      form.append('cField1', customerEmail);
+      params.append('cField1', customerEmail);
     }
     if (customerName) {
-      form.append('cField2', customerName);
+      params.append('cField2', customerName);
     }
     if (registrationId) {
-      form.append('cField3', registrationId);
+      params.append('cField3', registrationId);
     }
 
     // Use Meshulam API (Grow's backend)
@@ -64,10 +65,11 @@ Deno.serve(async (req) => {
     const options = {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
         'accept': 'application/json'
       }
     };
-    options.body = form;
+    options.body = params.toString();
 
     let response;
     try {
