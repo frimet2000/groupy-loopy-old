@@ -183,7 +183,20 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       email: "Email",
       close: "Cerrar",
       confirmDelete: "¿Eliminar este memorial?",
-      deleted: "Eliminado"
+      deleted: "Eliminado",
+      addMemorial: "Agregar memorial",
+      editMemorial: "Editar memorial",
+      fallenNameLabel: "Nombre del caído",
+      dateOfFallLabel: "Fecha de caída",
+      placeOfFallLabel: "Lugar de caída",
+      shortDescLabel: "Descripción breve",
+      storyLabel: "Historia/Memoria",
+      uploadPhoto: "Subir foto",
+      save: "Guardar",
+      cancel: "Cancelar",
+      memorialAdded: "Memorial agregado",
+      memorialUpdated: "Memorial actualizado",
+      assignToDay: "Asignar a día"
     },
     fr: {
       title: "Gestion des mémoriaux",
