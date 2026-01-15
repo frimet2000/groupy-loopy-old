@@ -48,7 +48,14 @@ Deno.serve(async (req) => {
     // Use Meshulam API (Grow's backend)
     const apiUrl = 'https://secure.meshulam.co.il/api/light/server/1.0/createPaymentProcess';
 
-    console.log('Calling Meshulam API with:', { pageCode, userId, amount, successUrl });
+    console.log('Calling Meshulam API with:', { 
+      pageCode, 
+      pageCodeLength: pageCode?.length,
+      userId, 
+      userIdLength: userId?.length,
+      amount, 
+      successUrl 
+    });
 
     const response = await fetch(apiUrl, {
       method: 'POST',
