@@ -752,10 +752,9 @@ export default function NifgashimPortal() {
             )}
 
             {currentStep === 3 && userType !== 'group' && (
-              <GroupHealthDeclaration
+              <HealthDeclaration
                 accepted={individualHealthDeclarationAccepted}
                 onAccept={setIndividualHealthDeclarationAccepted}
-                leaderName={participants[0]?.name || ''}
                 language={language}
               />
             )}

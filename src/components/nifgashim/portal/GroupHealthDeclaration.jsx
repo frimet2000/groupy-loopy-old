@@ -7,87 +7,65 @@ import { useLanguage } from '../../LanguageContext';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function GroupHealthDeclaration({ accepted, onAccept, leaderName, language: passedLanguage }) {
-  const { language: contextLanguage, isRTL } = useLanguage();
-  const language = passedLanguage || contextLanguage;
+export default function GroupHealthDeclaration({ accepted, onAccept, leaderName }) {
+  const { language, isRTL } = useLanguage();
 
   const declarations = {
     he: {
-      title: "הצהרת בריאות",
-      responsibility: "אני מצהיר/ה כי אני בריא/ה וכשיר/ה בפיזית להשתתף בטיול זה",
-      health: "אין לי מצבים רפואיים המשפיעים על יכולתי להשתתף בפעילויות פיזיות",
-      medications: "ציינתי את כל התרופות שאני נוטל/ת בקביעות",
-      conditions: "הודעתי על כל מצבים רפואיים כרוניים, אלרגיות או ההגבלות גופניות",
-      fullResponsibility: "הצהרה זו נכונה להיום ואני אחראי/ת לכל מידע שגוי או מסתר",
-      emergencies: "אני מודע/ת לכך שהשתתפות בטיול זה כרוכה בסיכונים פיזיים משמעותיים",
-      responsibility2: "אני מבין/ה שאם לא עמדתי בהצהרה זו, אני עלול/ה להטיל סכנה על עצמי ועל אחרים",
-      agreement: "אני מאשר/ת את הצהרת הבריאות"
+      title: "הצהרת בריאות ואחריות מדריך קבוצה",
+      responsibility: "אני מצהיר/ה כי אני אחראי/ת בשלמות על כל משתתפי הקבוצה שלי",
+      health: "אני מאשר/ת שכל משתתפי הקבוצה בריאים ויכולים להשתתף בטיול בעקבות בטוח",
+      fullResponsibility: "אני לוקח/ת אחריות מלאה על כל משתתפי הקבוצה בכל הזמן",
+      emergencies: "אני אדווח על כל מקרה חירום או בעיה בריאותית מיידית",
+      agreement: "אני מסכים/ה לתנאים לעיל ומאשר/ת שנתונים אלו נכונים"
     },
     en: {
-      title: "Health Declaration",
-      responsibility: "I hereby declare that I am in good health and physically fit to participate in this trek",
-      health: "I do not have any medical conditions that could affect my ability to participate in physical activities",
-      medications: "I have disclosed all medications I take regularly",
-      conditions: "I have informed about all chronic medical conditions, allergies, or physical limitations",
-      fullResponsibility: "This declaration is true today and I am responsible for any false or concealed information",
-      emergencies: "I acknowledge that participation in this trek involves significant inherent risks",
-      responsibility2: "I understand that if I have not been truthful in this declaration, I may put myself and others at risk",
-      agreement: "I confirm the Health Declaration"
+      title: "Group Leader Health Declaration & Responsibility",
+      responsibility: "I hereby declare that I am fully responsible for all members of my group",
+      health: "I confirm that all group members are healthy and able to participate in the trek",
+      fullResponsibility: "I take full responsibility for all group members at all times",
+      emergencies: "I will report any emergency or health issue immediately",
+      agreement: "I agree to the above terms and confirm that this information is accurate"
     },
     ru: {
-      title: "Медицинское заявление",
-      responsibility: "Я заявляю, что я в хорошем здоровье и физически готов к участию в этом походе",
-      health: "У меня нет никаких медицинских состояний, которые могут повлиять на мою способность участвовать в физических упражнениях",
-      medications: "Я раскрыл все лекарства, которые я принимаю регулярно",
-      conditions: "Я сообщил обо всех хронических заболеваниях, аллергиях или физических ограничениях",
-      fullResponsibility: "Это заявление верно сегодня, и я несу ответственность за любую ложную или скрытую информацию",
-      emergencies: "Я признаю, что участие в этом походе влечет за собой значительные присущие риски",
-      responsibility2: "Я понимаю, что если я не был честен в этом заявлении, я могу подвергнуть опасности себя и других",
-      agreement: "Я подтверждаю медицинское заявление"
+      title: "Заявление о здоровье и ответственности руководителя группы",
+      responsibility: "Я заявляю, что несу полную ответственность за всех членов своей группы",
+      health: "Я подтверждаю, что все члены группы здоровы и могут участвовать в походе",
+      fullResponsibility: "Я несу полную ответственность за всех членов группы во все время",
+      emergencies: "Я немедленно сообщу о любой чрезвычайной ситуации или проблеме со здоровьем",
+      agreement: "Я согласен с указанными выше условиями и подтверждаю, что эта информация точна"
     },
     es: {
-      title: "Declaración de Salud",
-      responsibility: "Por este medio declaro que estoy en buen estado de salud y en condiciones físicas para participar en este trekking",
-      health: "No tengo ninguna condición médica que pueda afectar mi capacidad de participar en actividades físicas",
-      medications: "He divulgado todos los medicamentos que tomo regularmente",
-      conditions: "He informado sobre todas las condiciones médicas crónicas, alergias o limitaciones físicas",
-      fullResponsibility: "Esta declaración es verdadera hoy y soy responsable de cualquier información falsa u oculta",
-      emergencies: "Reconozco que la participación en este trekking implica riesgos inherentes significativos",
-      responsibility2: "Entiendo que si no he sido honesto en esta declaración, puedo ponerme en peligro a mí mismo y a otros",
-      agreement: "Confirmo la Declaración de Salud"
+      title: "Declaración de Salud y Responsabilidad del Líder del Grupo",
+      responsibility: "Por este medio declaro que soy totalmente responsable de todos los miembros de mi grupo",
+      health: "Confirmo que todos los miembros del grupo están sanos y pueden participar en la caminata",
+      fullResponsibility: "Asumo la responsabilidad total de todos los miembros del grupo en todo momento",
+      emergencies: "Reportaré inmediatamente cualquier emergencia o problema de salud",
+      agreement: "Estoy de acuerdo con los términos anteriores y confirmo que esta información es precisa"
     },
     fr: {
-      title: "Déclaration de Santé",
-      responsibility: "Je déclare par la présente que je suis en bonne santé et physiquement apte à participer à cette randonnée",
-      health: "Je n'ai pas de conditions médicales qui pourraient affecter ma capacité à participer à des activités physiques",
-      medications: "J'ai divulgué tous les médicaments que je prends régulièrement",
-      conditions: "J'ai informé de toutes les conditions médicales chroniques, allergies ou limitations physiques",
-      fullResponsibility: "Cette déclaration est véridique aujourd'hui et je suis responsable de toute information fausse ou dissimulée",
-      emergencies: "Je reconnais que la participation à cette randonnée comporte des risques inhérents importants",
-      responsibility2: "Je comprends que si je n'ai pas été honnête dans cette déclaration, je peux me mettre en danger moi-même et les autres",
-      agreement: "Je confirme la Déclaration de Santé"
+      title: "Déclaration de santé et responsabilité du chef de groupe",
+      responsibility: "Je déclare par la présente que je suis entièrement responsable de tous les membres de mon groupe",
+      health: "Je confirme que tous les membres du groupe sont en bonne santé et capables de participer à la randonnée",
+      fullResponsibility: "J'assume l'entière responsabilité de tous les membres du groupe à tout moment",
+      emergencies: "Je signalerai immédiatement toute situation d'urgence ou problème de santé",
+      agreement: "J'accepte les conditions ci-dessus et confirme que ces informations sont exactes"
     },
     de: {
-      title: "Gesundheitserklärung",
-      responsibility: "Ich erkläre hiermit, dass ich bei guter Gesundheit bin und physisch in der Lage bin, an dieser Wanderung teilzunehmen",
-      health: "Ich habe keine medizinischen Zustände, die meine Fähigkeit zur Teilnahme an physischen Aktivitäten beeinträchtigen könnten",
-      medications: "Ich habe alle Medikamente offengelegt, die ich regelmäßig einnehme",
-      conditions: "Ich habe über alle chronischen Erkrankungen, Allergien oder körperlichen Einschränkungen informiert",
-      fullResponsibility: "Diese Erklärung ist heute wahr und ich bin verantwortlich für falsche oder verborgene Informationen",
-      emergencies: "Ich erkenne an, dass die Teilnahme an dieser Wanderung erhebliche Risiken mit sich bringt",
-      responsibility2: "Ich verstehe, dass ich, wenn ich in dieser Erklärung nicht ehrlich war, mich selbst und andere gefährden könnte",
-      agreement: "Ich bestätige die Gesundheitserklärung"
+      title: "Gesundheitserklärung und Verantwortung des Gruppenleiters",
+      responsibility: "Ich erkläre hiermit, dass ich vollständig verantwortlich für alle Mitglieder meiner Gruppe bin",
+      health: "Ich bestätige, dass alle Gruppenmitglieder gesund sind und an der Wanderung teilnehmen können",
+      fullResponsibility: "Ich übernehme die volle Verantwortung für alle Gruppenmitglieder jederzeit",
+      emergencies: "Ich werde jeden Notfall oder jedes Gesundheitsproblem sofort melden",
+      agreement: "Ich akzeptiere die obigen Bedingungen und bestätige, dass diese Informationen korrekt sind"
     },
     it: {
-      title: "Dichiarazione di Salute",
-      responsibility: "Dichiaro per mezzo di questo che sono in buona salute e in condizioni fisiche per partecipare a questo trekking",
-      health: "Non ho condizioni mediche che potrebbero influire sulla mia capacità di partecipare ad attività fisiche",
-      medications: "Ho divulgato tutti i farmaci che assumo regolarmente",
-      conditions: "Ho informato di tutte le condizioni mediche croniche, allergie o limitazioni fisiche",
-      fullResponsibility: "Questa dichiarazione è vera oggi e sono responsabile di qualsiasi informazione falsa o nascosta",
-      emergencies: "Riconosco che la partecipazione a questo trekking comporta rischi inerenti significativi",
-      responsibility2: "Comprendo che se non sono stato onesto in questa dichiarazione, potrei mettere a rischio me stesso e gli altri",
-      agreement: "Confermo la Dichiarazione di Salute"
+      title: "Dichiarazione di salute e responsabilità del capo gruppo",
+      responsibility: "Dichiaro con la presente che sono pienamente responsabile di tutti i membri del mio gruppo",
+      health: "Confermo che tutti i membri del gruppo sono in buona salute e possono partecipare all'escursione",
+      fullResponsibility: "Mi assumo la piena responsabilità di tutti i membri del gruppo in ogni momento",
+      emergencies: "Segnaleró immediatamente qualsiasi emergenza o problema di salute",
+      agreement: "Accetto i termini di cui sopra e confermo che queste informazioni sono accurate"
     }
   };
 
@@ -105,52 +83,32 @@ export default function GroupHealthDeclaration({ accepted, onAccept, leaderName,
             {trans.title}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6 space-y-4">
+        <CardContent className="p-6 space-y-6">
           <div className="p-4 bg-white border-l-4 border-orange-500 rounded">
+            <p className="font-semibold text-gray-900">{leaderName}</p>
             <p className="text-sm text-gray-600 mt-1">{trans.responsibility}</p>
           </div>
 
-          <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 bg-white rounded border border-gray-200">
+          <div className="space-y-4">
+            <div className="flex items-start gap-3 p-4 bg-white rounded border border-gray-200">
               <div className="pt-1">
                 <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
               </div>
-              <p className="text-sm text-gray-700">{trans.health}</p>
+              <p className="text-gray-700">{trans.health}</p>
             </div>
 
-            <div className="flex items-start gap-3 p-3 bg-white rounded border border-gray-200">
+            <div className="flex items-start gap-3 p-4 bg-white rounded border border-gray-200">
               <div className="pt-1">
                 <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
               </div>
-              <p className="text-sm text-gray-700">{trans.medications}</p>
+              <p className="text-gray-700">{trans.fullResponsibility}</p>
             </div>
 
-            <div className="flex items-start gap-3 p-3 bg-white rounded border border-gray-200">
+            <div className="flex items-start gap-3 p-4 bg-white rounded border border-gray-200">
               <div className="pt-1">
                 <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
               </div>
-              <p className="text-sm text-gray-700">{trans.conditions}</p>
-            </div>
-
-            <div className="flex items-start gap-3 p-3 bg-white rounded border border-gray-200">
-              <div className="pt-1">
-                <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
-              </div>
-              <p className="text-sm text-gray-700">{trans.fullResponsibility}</p>
-            </div>
-
-            <div className="flex items-start gap-3 p-3 bg-white rounded border border-gray-200">
-              <div className="pt-1">
-                <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
-              </div>
-              <p className="text-sm text-gray-700">{trans.emergencies}</p>
-            </div>
-
-            <div className="flex items-start gap-3 p-3 bg-white rounded border border-gray-200">
-              <div className="pt-1">
-                <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
-              </div>
-              <p className="text-sm text-gray-700">{trans.responsibility2}</p>
+              <p className="text-gray-700">{trans.emergencies}</p>
             </div>
           </div>
 
