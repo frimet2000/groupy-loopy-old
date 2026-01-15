@@ -332,25 +332,37 @@ export default function NifgashimPortal() {
 
   const trans = translations[language] || translations.en;
 
-  const steps = [
-    { id: 1, label: trans.stepUserType },
-    { id: 2, label: trans.stepParticipants },
-    { id: 3, label: trans.stepDays },
-    { id: 4, label: trans.stepMemorial },
-    { id: 5, label: trans.stepSummary },
-    { id: 6, label: trans.payment }
-  ];
+  const steps = userType === 'group' 
+    ? [
+        { id: 1, label: trans.stepUserType },
+        { id: 2, label: trans.stepParticipants },
+        { id: 3, label: language === 'he' ? 'הצהרות' : 'Declarations' },
+        { id: 4, label: trans.stepDays },
+        { id: 5, label: trans.stepMemorial },
+        { id: 6, label: trans.stepSummary }
+      ]
+    : [
+        { id: 1, label: trans.stepUserType },
+        { id: 2, label: trans.stepParticipants },
+        { id: 3, label: trans.stepDays },
+        { id: 4, label: trans.stepMemorial },
+        { id: 5, label: trans.stepSummary },
+        { id: 6, label: trans.payment }
+      ];
 
   const calculateTotalAmount = () => {
-    // Count adults (age 10+)
+    // Groups are free - no payment required
+    if (userType === 'group') {
+      return 0;
+    }
+
+    // Count adults (age 10+) for individuals
     const adultsCount = participants.filter(p => {
-      // If no age range specified, count as adult by default
       if (!p.age_range) {
         console.log('Participant without age_range, counting as adult:', p);
         return true;
       }
       
-      // Parse age from age_range (e.g., "25-30" or "10-15")
       const ageStr = p.age_range.split('-')[0].trim();
       const age = parseInt(ageStr);
       
@@ -646,7 +658,21 @@ export default function NifgashimPortal() {
               />
             )}
 
-            {currentStep === 3 && (
+            {currentStep === 3 && userType === 'group' && (
+              <div className="space-y-6">
+                <GroupParticipantCount
+                  totalCount={groupParticipantCount}
+                  onCountChange={setGroupParticipantCount}
+                />
+                <GroupHealthDeclaration
+                  accepted={groupHealthDeclarationAccepted}
+                  onAccept={setGroupHealthDeclarationAccepted}
+                  leaderName={groupInfo.leaderName}
+                />
+              </div>
+            )}
+
+            {currentStep === 3 && userType !== 'group' && (
               <NifgashimDayCardsSelector
                 trekDays={trekDays}
                 linkedDaysPairs={linkedDaysPairs}
