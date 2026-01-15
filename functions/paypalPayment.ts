@@ -70,6 +70,8 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error('PayPal payment error:', error.message);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('Error stack:', error.stack);
+    console.error('Full error:', error);
+    return Response.json({ error: error.message || 'Unknown error', details: String(error) }, { status: 500 });
   }
 });
