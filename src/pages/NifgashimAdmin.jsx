@@ -1273,148 +1273,185 @@ export default function NifgashimAdmin() {
                 ) : (
                   <div className="space-y-3">
                     {filteredRegistrations.map((reg, idx) => {
-                      // Get main participant info
-                      const mainParticipant = reg.participants?.[0] || {};
-                      const participantName = mainParticipant.name || reg.customer_name || reg.user_email;
+                      // Get all participants info
+                      const allParticipants = reg.participants || [];
+                      const mainParticipant = allParticipants[0] || {};
+                      const participantName = mainParticipant.name || reg.customer_name || reg.customer_email || reg.user_email;
                       const participantId = mainParticipant.id_number || reg.id_number;
                       const participantPhone = mainParticipant.phone || reg.emergency_contact_phone;
                       
-                      const totalPeople = reg.participants?.length || (1 + 
+                      // Calculate family breakdown
+                      const adultsCount = allParticipants.filter(p => {
+                        if (!p.age_range) return true;
+                        const age = parseInt(p.age_range.split('-')[0]);
+                        return isNaN(age) || age >= 10;
+                      }).length;
+                      const childrenCount = allParticipants.filter(p => {
+                        if (!p.age_range) return false;
+                        const age = parseInt(p.age_range.split('-')[0]);
+                        return !isNaN(age) && age < 10;
+                      }).length;
+                      
+                      const totalPeople = allParticipants.length || (1 + 
                         (reg.family_members?.spouse ? 1 : 0) +
                         (reg.children_details?.length || 0) +
                         (reg.family_members?.other ? 1 : 0));
                       
                       const isExpanded = expandedRow === reg.id;
+                      const isPaid = reg.payment_status === 'completed' || reg.status === 'completed';
+                      const amountPaid = reg.amount_paid || reg.amount || reg.total_amount || 0;
 
                       return (
                         <motion.div
                           key={reg.id}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: idx * 0.05 }}
+                          transition={{ delay: idx * 0.02 }}
                         >
-                          <Card className={`border shadow-md hover:shadow-lg transition-all ${
-                            reg.is_organized_group && reg.group_approval_status === 'pending' 
+                          <Card className={`border-2 shadow-md hover:shadow-lg transition-all ${
+                            isPaid 
+                              ? 'border-green-300 bg-green-50/30' 
+                              : reg.payment_status === 'pending'
+                              ? 'border-yellow-300 bg-yellow-50/30'
+                              : reg.is_organized_group && reg.group_approval_status === 'pending' 
                               ? 'border-red-300 bg-red-50/30' 
-                              : ''
+                              : 'border-gray-200'
                           }`}>
                             <CardContent className="p-3 sm:p-4" dir={isRTL ? 'rtl' : 'ltr'}>
-                              {/* Main Row */}
-                              <div className="flex items-center justify-between gap-2 sm:gap-4">
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-                                    <h3 className="font-semibold text-sm sm:text-base text-gray-900 truncate">
-                                      {participantName}
-                                    </h3>
-                                    <div className="flex flex-wrap gap-1 sm:gap-2">
-                                      <Badge className={getPaymentStatusColor(reg.payment_status)}>
-                                        {trans[reg.payment_status] || reg.payment_status}
+                              {/* Main Row - Always Visible Info */}
+                              <div className="space-y-3">
+                                {/* Header with name and badges */}
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                                      <h3 className="font-bold text-base sm:text-lg text-gray-900">
+                                        {participantName}
+                                      </h3>
+                                      <Badge className={`${isPaid ? 'bg-green-500 text-white' : getPaymentStatusColor(reg.payment_status)}`}>
+                                        {isPaid ? (
+                                          <><CheckCircle className="w-3 h-3 mr-1" />{language === 'he' ? 'שולם' : 'Paid'}</>
+                                        ) : (
+                                          <><Clock className="w-3 h-3 mr-1" />{trans[reg.payment_status] || reg.payment_status}</>
+                                        )}
                                       </Badge>
-                                      {reg.is_organized_group && (
-                                        <>
-                                          <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-300">
-                                            <UsersRound className="w-3 h-3 mr-1" />
-                                            {reg.group_name || trans.organizedGroups}
-                                          </Badge>
-                                          {reg.group_approval_status === 'pending' && (
-                                            <Badge className="bg-red-500 text-white animate-pulse">
-                                              {language === 'he' ? 'ממתין לאישור' : 'Needs Approval'}
-                                            </Badge>
-                                          )}
-                                          {reg.group_approval_status === 'approved' && (
-                                            <Badge className="bg-green-500 text-white">
-                                              {language === 'he' ? 'אושר' : 'Approved'}
-                                            </Badge>
-                                          )}
-                                        </>
-                                      )}
-                                      {(reg.vehicle_number || reg.vehicleInfo?.number) && (
-                                        <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300">
-                                          <MapPin className="w-3 h-3 mr-1" />
-                                          {reg.vehicle_number || reg.vehicleInfo?.number}
-                                        </Badge>
-                                      )}
                                     </div>
+                                    {reg.customer_email && (
+                                      <p className="text-xs text-gray-500" dir="ltr">{reg.customer_email}</p>
+                                    )}
                                   </div>
-
-                                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs sm:text-sm text-gray-600">
-                                    <div className="flex items-center gap-1">
-                                      <User className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                                      <span className="truncate">{participantId || '-'}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                      <Phone className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                                      <span className="truncate" dir="ltr">{participantPhone || '-'}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                                      {(reg.selected_days || []).length} {language === 'he' ? 'ימים' : 'days'}
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                      <Users className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                                      {totalPeople} {language === 'he' ? 'אנשים' : 'people'}
-                                    </div>
+                                  
+                                  <div className="flex items-center gap-1">
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => setExpandedRow(isExpanded ? null : reg.id)}
+                                      className="h-8 w-8 p-0"
+                                    >
+                                      {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                    </Button>
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button size="sm" variant="outline" className="h-8 w-8 p-0">
+                                          <MoreVertical className="w-4 h-4" />
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="end" className="w-48">
+                                        <DropdownMenuItem onClick={() => setMessageDialog(reg)}>
+                                          <MessageSquare className="w-4 h-4 mr-2" />
+                                          {trans.sendMessage}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => {
+                                          const phone = participantPhone || reg.emergency_contact_phone;
+                                          if (phone) {
+                                            window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}`, '_blank');
+                                          } else {
+                                            toast.error(language === 'he' ? 'אין מספר טלפון' : 'No phone number');
+                                          }
+                                        }}>
+                                          <Phone className="w-4 h-4 mr-2" />
+                                          {trans.sendWhatsApp}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => {
+                                          setMessageDialog(reg);
+                                          setMessageContent('');
+                                        }}>
+                                          <Mail className="w-4 h-4 mr-2" />
+                                          {trans.sendEmail}
+                                        </DropdownMenuItem>
+                                        {!isPaid && (
+                                          <DropdownMenuItem onClick={() => handleMarkAsPaid(reg.id)}>
+                                            <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
+                                            {trans.markAsPaid}
+                                          </DropdownMenuItem>
+                                        )}
+                                        {reg.is_organized_group && reg.group_approval_status === 'pending' && (
+                                          <>
+                                            <DropdownMenuItem onClick={() => handleApproveGroup(reg.id)}>
+                                              <Check className="w-4 h-4 mr-2 text-green-600" />
+                                              {trans.approve}
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleRejectGroup(reg.id)}>
+                                              <X className="w-4 h-4 mr-2 text-red-600" />
+                                              {trans.reject}
+                                            </DropdownMenuItem>
+                                          </>
+                                        )}
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
                                   </div>
                                 </div>
 
-                                <div className="flex items-center gap-1 sm:gap-2">
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => setExpandedRow(isExpanded ? null : reg.id)}
-                                    className="h-8 w-8 sm:h-9 sm:w-9 p-0"
-                                  >
-                                    {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                                  </Button>
+                                {/* Quick Stats Grid - Always Visible */}
+                                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+                                  {/* Payment Amount */}
+                                  <div className={`rounded-lg p-2 text-center ${isPaid ? 'bg-green-100 border border-green-300' : 'bg-yellow-100 border border-yellow-300'}`}>
+                                    <p className="text-xs text-gray-600">{language === 'he' ? 'סכום' : 'Amount'}</p>
+                                    <p className={`font-bold text-sm ${isPaid ? 'text-green-700' : 'text-yellow-700'}`}>₪{amountPaid}</p>
+                                  </div>
+                                  
+                                  {/* Total Participants */}
+                                  <div className="bg-blue-100 border border-blue-300 rounded-lg p-2 text-center">
+                                    <p className="text-xs text-gray-600">{language === 'he' ? 'משתתפים' : 'People'}</p>
+                                    <p className="font-bold text-sm text-blue-700">{totalPeople}</p>
+                                  </div>
+                                  
+                                  {/* Adults Count */}
+                                  <div className="bg-indigo-100 border border-indigo-300 rounded-lg p-2 text-center">
+                                    <p className="text-xs text-gray-600">{language === 'he' ? 'מבוגרים' : 'Adults'}</p>
+                                    <p className="font-bold text-sm text-indigo-700">{adultsCount}</p>
+                                  </div>
+                                  
+                                  {/* Children Count */}
+                                  <div className="bg-pink-100 border border-pink-300 rounded-lg p-2 text-center">
+                                    <p className="text-xs text-gray-600">{language === 'he' ? 'ילדים' : 'Children'}</p>
+                                    <p className="font-bold text-sm text-pink-700">{childrenCount}</p>
+                                  </div>
+                                  
+                                  {/* Selected Days */}
+                                  <div className="bg-purple-100 border border-purple-300 rounded-lg p-2 text-center">
+                                    <p className="text-xs text-gray-600">{language === 'he' ? 'ימים' : 'Days'}</p>
+                                    <p className="font-bold text-sm text-purple-700">{(reg.selectedDays || reg.selected_days || []).length}</p>
+                                  </div>
+                                  
+                                  {/* Registration Date */}
+                                  <div className="bg-gray-100 border border-gray-300 rounded-lg p-2 text-center">
+                                    <p className="text-xs text-gray-600">{language === 'he' ? 'תאריך' : 'Date'}</p>
+                                    <p className="font-bold text-xs text-gray-700">
+                                      {reg.created_date ? format(new Date(reg.created_date), 'dd/MM/yy') : '-'}
+                                    </p>
+                                  </div>
+                                </div>
 
-                                  <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <Button size="sm" variant="outline" className="h-8 w-8 sm:h-9 sm:w-9 p-0">
-                                        <MoreVertical className="w-4 h-4" />
-                                      </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-48">
-                                      <DropdownMenuItem onClick={() => setMessageDialog(reg)}>
-                                        <MessageSquare className="w-4 h-4 mr-2" />
-                                        {trans.sendMessage}
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem onClick={() => {
-                                        if (reg.emergency_contact_phone) {
-                                          window.open(`https://wa.me/${reg.emergency_contact_phone.replace(/[^0-9]/g, '')}`, '_blank');
-                                        } else {
-                                          toast.error(language === 'he' ? 'אין מספר טלפון' : 'No phone number');
-                                        }
-                                      }}>
-                                        <Phone className="w-4 h-4 mr-2" />
-                                        {trans.sendWhatsApp}
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem onClick={() => {
-                                        setMessageDialog(reg);
-                                        setMessageContent('');
-                                      }}>
-                                        <Mail className="w-4 h-4 mr-2" />
-                                        {trans.sendEmail}
-                                      </DropdownMenuItem>
-                                      {reg.payment_status !== 'completed' && (
-                                        <DropdownMenuItem onClick={() => handleMarkAsPaid(reg.id)}>
-                                          <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
-                                          {trans.markAsPaid}
-                                        </DropdownMenuItem>
-                                      )}
-                                      {reg.is_organized_group && reg.group_approval_status === 'pending' && (
-                                        <>
-                                          <DropdownMenuItem onClick={() => handleApproveGroup(reg.id)}>
-                                            <Check className="w-4 h-4 mr-2 text-green-600" />
-                                            {trans.approve}
-                                          </DropdownMenuItem>
-                                          <DropdownMenuItem onClick={() => handleRejectGroup(reg.id)}>
-                                            <X className="w-4 h-4 mr-2 text-red-600" />
-                                            {trans.reject}
-                                          </DropdownMenuItem>
-                                        </>
-                                      )}
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
+                                {/* Selected Days Preview */}
+                                <div className="flex flex-wrap gap-1">
+                                  {(reg.selectedDays || reg.selected_days || []).slice(0, 8).map((day, i) => (
+                                    <Badge key={i} variant="outline" className="bg-purple-50 text-purple-700 text-xs py-0">
+                                      {language === 'he' ? `יום ${typeof day === 'object' ? day.day_number : day}` : `Day ${typeof day === 'object' ? day.day_number : day}`}
+                                    </Badge>
+                                  ))}
+                                  {(reg.selectedDays || reg.selected_days || []).length > 8 && (
+                                    <Badge variant="outline" className="text-xs py-0">+{(reg.selectedDays || reg.selected_days || []).length - 8}</Badge>
+                                  )}
                                 </div>
                               </div>
 
@@ -1425,59 +1462,110 @@ export default function NifgashimAdmin() {
                                     initial={{ opacity: 0, height: 0 }}
                                     animate={{ opacity: 1, height: 'auto' }}
                                     exit={{ opacity: 0, height: 0 }}
-                                    className="mt-4 pt-4 border-t space-y-3"
+                                    className="mt-4 pt-4 border-t space-y-4"
                                   >
-                                    {/* Payment & Registration Info */}
+                                    {/* All Participants Details */}
+                                    <div>
+                                      <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                        <Users className="w-4 h-4" />
+                                        {language === 'he' ? `כל המשתתפים (${allParticipants.length})` : `All Participants (${allParticipants.length})`}
+                                      </h4>
+                                      <div className="grid gap-2">
+                                        {allParticipants.map((p, i) => {
+                                          const pAge = p.age_range ? parseInt(p.age_range.split('-')[0]) : null;
+                                          const isChild = pAge !== null && pAge < 10;
+                                          return (
+                                            <div key={i} className={`rounded-lg p-3 border ${isChild ? 'bg-pink-50 border-pink-200' : 'bg-blue-50 border-blue-200'}`}>
+                                              <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${isChild ? 'bg-pink-500' : 'bg-blue-500'}`}>
+                                                    {i + 1}
+                                                  </div>
+                                                  <div>
+                                                    <p className="font-semibold text-sm">{p.name || p.email || `${language === 'he' ? 'משתתף' : 'Participant'} ${i + 1}`}</p>
+                                                    <div className="flex flex-wrap gap-2 text-xs text-gray-600">
+                                                      {p.id_number && <span>ת.ז: {p.id_number}</span>}
+                                                      {p.phone && <span dir="ltr">📞 {p.phone}</span>}
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div className="text-right">
+                                                  {p.age_range && (
+                                                    <Badge className={isChild ? 'bg-pink-500' : 'bg-blue-500'}>
+                                                      {p.age_range} {language === 'he' ? 'שנים' : 'y/o'}
+                                                    </Badge>
+                                                  )}
+                                                  {p.age && !p.age_range && (
+                                                    <Badge className={p.age < 10 ? 'bg-pink-500' : 'bg-blue-500'}>
+                                                      {p.age} {language === 'he' ? 'שנים' : 'y/o'}
+                                                    </Badge>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+
+                                    {/* Payment Details */}
                                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                      <div className={`rounded-lg p-3 border-2 ${isPaid ? 'bg-green-50 border-green-300' : 'bg-yellow-50 border-yellow-300'}`}>
+                                        <p className="text-xs font-semibold text-gray-700 mb-1">
+                                          {language === 'he' ? 'סטטוס תשלום' : 'Payment Status'}
+                                        </p>
+                                        <p className={`text-lg font-bold ${isPaid ? 'text-green-700' : 'text-yellow-700'}`}>
+                                          {isPaid ? (language === 'he' ? '✓ שולם' : '✓ Paid') : (language === 'he' ? '⏳ ממתין' : '⏳ Pending')}
+                                        </p>
+                                      </div>
                                       <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-3 border border-green-200">
                                         <p className="text-xs font-semibold text-green-900 mb-1">
                                           {language === 'he' ? 'סכום כולל' : 'Total Amount'}
                                         </p>
-                                        <p className="text-lg font-bold text-green-700">₪{reg.total_amount || reg.amount || 0}</p>
+                                        <p className="text-lg font-bold text-green-700">₪{amountPaid}</p>
                                       </div>
-                                      {reg.amount_paid !== undefined && (
-                                        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-3 border border-blue-200">
-                                          <p className="text-xs font-semibold text-blue-900 mb-1">
-                                            {language === 'he' ? 'שולם' : 'Paid'}
-                                          </p>
-                                          <p className="text-lg font-bold text-blue-700">₪{reg.amount_paid || 0}</p>
-                                        </div>
-                                      )}
                                       {reg.transaction_id && (
-                                        <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-lg p-3 border border-purple-200">
+                                        <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-lg p-3 border border-purple-200 col-span-2">
                                           <p className="text-xs font-semibold text-purple-900 mb-1">
-                                            {language === 'he' ? 'מס\' עסקה' : 'Transaction ID'}
+                                            {language === 'he' ? 'מזהה עסקה' : 'Transaction ID'}
                                           </p>
-                                          <p className="text-xs text-purple-700 font-mono truncate">{reg.transaction_id}</p>
-                                        </div>
-                                      )}
-                                      {reg.created_date && (
-                                        <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-lg p-3 border border-gray-200">
-                                          <p className="text-xs font-semibold text-gray-900 mb-1">
-                                            {language === 'he' ? 'תאריך רישום' : 'Registered'}
-                                          </p>
-                                          <p className="text-xs text-gray-700">{format(new Date(reg.created_date), 'dd/MM/yy HH:mm')}</p>
+                                          <p className="text-xs text-purple-700 font-mono break-all">{reg.transaction_id}</p>
                                         </div>
                                       )}
                                     </div>
 
+                                    {/* Selected Days Full List */}
+                                    <div>
+                                      <p className="text-sm font-bold text-gray-700 mb-2">
+                                        {language === 'he' ? 'ימי טיול נבחרים:' : 'Selected Trek Days:'}
+                                      </p>
+                                      <div className="flex flex-wrap gap-2">
+                                        {(reg.selectedDays || reg.selected_days || []).map((day, i) => {
+                                          const dayNum = typeof day === 'object' ? day.day_number : day;
+                                          const dayTitle = typeof day === 'object' ? day.daily_title : null;
+                                          return (
+                                            <Badge key={i} className="bg-purple-600 text-white px-3 py-1">
+                                              {language === 'he' ? `יום ${dayNum}` : `Day ${dayNum}`}
+                                              {dayTitle && ` - ${dayTitle}`}
+                                            </Badge>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+
                                     {/* Vehicle Info */}
-                                    {(reg.vehicle_number || reg.vehicleInfo || reg.vehicle_info) && (
+                                    {(reg.vehicle_number || reg.vehicleInfo?.number || reg.vehicleInfo?.hasVehicle) && (
                                       <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-lg p-3 border-2 border-indigo-200">
                                         <p className="text-xs font-semibold text-indigo-900 mb-2 flex items-center gap-1">
                                           <MapPin className="w-4 h-4" />
                                           {language === 'he' ? 'פרטי רכב' : 'Vehicle Info'}
                                         </p>
-                                        <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm text-indigo-700">
-                                          {(reg.vehicle_number || reg.vehicleInfo?.number) && (
-                                            <div>
-                                              <span className="font-semibold">{language === 'he' ? 'מספר רכב:' : 'License Plate:'}</span> {reg.vehicle_number || reg.vehicleInfo?.number}
-                                            </div>
+                                        <div className="text-sm text-indigo-700">
+                                          {reg.vehicleInfo?.hasVehicle && (
+                                            <p>✓ {language === 'he' ? 'מגיע עם רכב' : 'Coming with vehicle'}</p>
                                           )}
-                                          {(reg.vehicleInfo?.hasVehicle !== undefined || reg.vehicle_info?.hasVehicle !== undefined) && (
-                                            <div>
-                                              <span className="font-semibold">{language === 'he' ? 'יש רכב:' : 'Has Vehicle:'}</span> {(reg.vehicleInfo?.hasVehicle || reg.vehicle_info?.hasVehicle) ? '✓' : '✗'}
-                                            </div>
+                                          {(reg.vehicle_number || reg.vehicleInfo?.number) && (
+                                            <p className="font-mono font-bold">{reg.vehicle_number || reg.vehicleInfo?.number}</p>
                                           )}
                                         </div>
                                       </div>
@@ -1488,125 +1576,21 @@ export default function NifgashimAdmin() {
                                       <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-lg p-3 border-2 border-orange-200">
                                         <p className="text-xs font-semibold text-orange-900 mb-2 flex items-center gap-1">
                                           <UsersRound className="w-4 h-4" />
-                                          {language === 'he' ? 'פרטי קבוצה' : 'Group Info'}
+                                          {language === 'he' ? 'פרטי קבוצה מאורגנת' : 'Organized Group Info'}
                                         </p>
-                                        <div className="space-y-1 text-xs sm:text-sm text-orange-700">
-                                          {reg.group_name && (
-                                            <div><span className="font-semibold">{language === 'he' ? 'שם:' : 'Name:'}</span> {reg.group_name}</div>
-                                          )}
-                                          {reg.group_type && (
-                                            <div><span className="font-semibold">{language === 'he' ? 'סוג:' : 'Type:'}</span> {trans[reg.group_type] || reg.group_type}</div>
-                                          )}
-                                          {reg.group_approval_status && (
-                                            <div><span className="font-semibold">{language === 'he' ? 'סטטוס:' : 'Status:'}</span> {trans[reg.group_approval_status] || reg.group_approval_status}</div>
-                                          )}
+                                        <div className="space-y-1 text-sm text-orange-700">
+                                          {reg.group_name && <p><span className="font-semibold">{language === 'he' ? 'שם:' : 'Name:'}</span> {reg.group_name}</p>}
+                                          {reg.group_type && <p><span className="font-semibold">{language === 'he' ? 'סוג:' : 'Type:'}</span> {trans[reg.group_type] || reg.group_type}</p>}
+                                          {reg.groupInfo?.leaderName && <p><span className="font-semibold">{language === 'he' ? 'מוביל:' : 'Leader:'}</span> {reg.groupInfo.leaderName}</p>}
+                                          {reg.groupInfo?.leaderPhone && <p dir="ltr"><span className="font-semibold">{language === 'he' ? 'טלפון:' : 'Phone:'}</span> {reg.groupInfo.leaderPhone}</p>}
                                         </div>
                                       </div>
                                     )}
 
-                                    {/* Selected Days */}
-                                    <div>
-                                      <p className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">{trans.selectedDays}:</p>
-                                      <div className="flex flex-wrap gap-1 sm:gap-2">
-                                        {(reg.selected_days || []).map(day => (
-                                          <Badge key={day} variant="outline" className="bg-purple-50 text-purple-700 text-xs">
-                                            {language === 'he' ? `יום ${day}` : `Day ${day}`}
-                                          </Badge>
-                                        ))}
-                                      </div>
-                                    </div>
-
-                                    {/* Categories */}
-                                    {reg.selected_categories && reg.selected_categories.length > 0 && (
-                                      <div>
-                                        <p className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">{trans.selectedCategories}:</p>
-                                        <div className="flex flex-wrap gap-1 sm:gap-2">
-                                          {reg.selected_categories.map((catId, i) => {
-                                            const category = activeTrip?.trek_categories?.find(c => c.id === catId);
-                                            return (
-                                              <Badge key={i} variant="outline" className="text-xs" style={{ 
-                                                backgroundColor: category?.color ? `${category.color}20` : undefined,
-                                                borderColor: category?.color || undefined,
-                                                color: category?.color || undefined
-                                              }}>
-                                                {category?.name || catId}
-                                              </Badge>
-                                            );
-                                          })}
-                                        </div>
-                                      </div>
-                                    )}
-
-                                    {/* Participants List */}
-                                    {reg.participants && reg.participants.length > 0 && (
-                                      <div>
-                                        <p className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">
-                                          {language === 'he' ? 'רשימת משתתפים:' : 'Participants:'}
-                                        </p>
-                                        <div className="space-y-2">
-                                          {reg.participants.map((p, i) => (
-                                            <div key={i} className="bg-gray-50 rounded-lg p-2 sm:p-3 text-xs sm:text-sm">
-                                              <div className="font-semibold text-gray-900">{p.name || p.email}</div>
-                                              <div className="grid grid-cols-2 gap-1 text-gray-600 mt-1">
-                                                {p.id_number && <div><span className="font-semibold">ת.ז:</span> {p.id_number}</div>}
-                                                {p.phone && <div><span className="font-semibold">{language === 'he' ? 'טלפון:' : 'Phone:'}</span> {p.phone}</div>}
-                                                {p.age && <div><span className="font-semibold">{language === 'he' ? 'גיל:' : 'Age:'}</span> {p.age}</div>}
-                                              </div>
-                                            </div>
-                                          ))}
-                                        </div>
-                                      </div>
-                                    )}
-
-                                    {/* Family Members */}
-                                    {(reg.family_members || reg.children_details?.length > 0) && (
-                                      <div>
-                                        <p className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">{trans.familyMembers}:</p>
-                                        <div className="bg-gray-50 rounded-lg p-2 sm:p-3 space-y-1 text-xs sm:text-sm">
-                                          {reg.family_members?.me && <div>✓ {trans.me}</div>}
-                                          {reg.family_members?.spouse && <div>✓ {trans.spouse}</div>}
-                                          {reg.family_members?.pets && <div>✓ {trans.pets}</div>}
-                                          {reg.family_members?.other && reg.other_member_name && <div>✓ {trans.other}: {reg.other_member_name}</div>}
-                                          {reg.children_details?.length > 0 && (
-                                            <div className="mt-2 pt-2 border-t">
-                                              <p className="font-semibold mb-1">{trans.childDetails}:</p>
-                                              {reg.children_details.map((child, i) => (
-                                                <div key={i} className="ml-2">
-                                                  • {child.full_name} 
-                                                  {child.age && ` (${child.age} ${language === 'he' ? 'שנים' : 'years'})`}
-                                                  {child.id_number && ` - ת.ז: ${child.id_number}`}
-                                                  {child.age_range && ` - ${child.age_range}`}
-                                                </div>
-                                              ))}
-                                            </div>
-                                          )}
-                                        </div>
-                                      </div>
-                                    )}
-
-                                    {/* Emergency & Medical */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                      {reg.emergency_contact_name && (
-                                        <div className="bg-blue-50 rounded-lg p-2 sm:p-3 border border-blue-200">
-                                          <p className="text-xs font-semibold text-blue-900 mb-1">{trans.emergencyContact}:</p>
-                                          <p className="text-xs sm:text-sm text-blue-700">{reg.emergency_contact_name}</p>
-                                          {reg.emergency_contact_phone && (
-                                            <p className="text-xs text-blue-600" dir="ltr">{reg.emergency_contact_phone}</p>
-                                          )}
-                                        </div>
-                                      )}
-                                      {reg.dietary_restrictions && (
-                                        <div className="bg-green-50 rounded-lg p-2 sm:p-3 border border-green-200">
-                                          <p className="text-xs font-semibold text-green-900 mb-1">{trans.dietary}:</p>
-                                          <p className="text-xs sm:text-sm text-green-700">{reg.dietary_restrictions}</p>
-                                        </div>
-                                      )}
-                                      {reg.medical_conditions && (
-                                        <div className="bg-red-50 rounded-lg p-2 sm:p-3 border border-red-200">
-                                          <p className="text-xs font-semibold text-red-900 mb-1">{trans.medical}:</p>
-                                          <p className="text-xs sm:text-sm text-red-700">{reg.medical_conditions}</p>
-                                        </div>
-                                      )}
+                                    {/* Registration Timestamp */}
+                                    <div className="text-xs text-gray-500 pt-2 border-t flex justify-between">
+                                      <span>{language === 'he' ? 'נרשם בתאריך:' : 'Registered:'} {reg.created_date ? format(new Date(reg.created_date), 'dd/MM/yyyy HH:mm') : '-'}</span>
+                                      {reg.completed_at && <span>{language === 'he' ? 'תשלום בתאריך:' : 'Paid:'} {format(new Date(reg.completed_at), 'dd/MM/yyyy HH:mm')}</span>}
                                     </div>
                                   </motion.div>
                                 )}
