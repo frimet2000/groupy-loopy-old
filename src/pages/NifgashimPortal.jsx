@@ -809,7 +809,7 @@ export default function NifgashimPortal() {
 
           {userType === 'group' ? (
             <>
-              {currentStep < 7 ? (
+              {currentStep < 7 && currentStep !== 7 ? (
                 <Button
                   onClick={() => setCurrentStep(prev => prev + 1)}
                   disabled={
