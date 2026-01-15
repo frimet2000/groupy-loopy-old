@@ -35,8 +35,6 @@ import {
   Heart,
   CheckCircle,
   Clock,
-  XCircle,
-  Filter,
   BarChart3,
   Send,
   Mail,
@@ -44,10 +42,8 @@ import {
   Phone,
   QrCode,
   MapPin,
-  User,
   UsersRound,
   TrendingUp,
-  FileText,
   Check,
   X,
   MoreVertical,
@@ -1379,10 +1375,12 @@ export default function NifgashimAdmin() {
                         return !isNaN(age) && age < 10;
                       }).length;
                       
-                      const totalPeople = allParticipants.length || (1 + 
-                        (reg.family_members?.spouse ? 1 : 0) +
-                        (reg.children_details?.length || 0) +
-                        (reg.family_members?.other ? 1 : 0));
+                      const totalPeople = reg.is_organized_group && reg.groupInfo?.totalParticipants
+                        ? reg.groupInfo.totalParticipants
+                        : (allParticipants.length || (1 + 
+                            (reg.family_members?.spouse ? 1 : 0) +
+                            (reg.children_details?.length || 0) +
+                            (reg.family_members?.other ? 1 : 0)));
                       
                       const isExpanded = expandedRow === reg.id;
                       const isPaid = reg.payment_status === 'completed' || reg.status === 'completed';
@@ -1637,12 +1635,35 @@ export default function NifgashimAdmin() {
                                       </p>
                                       <div className="flex flex-wrap gap-2">
                                         {(reg.selectedDays || reg.selected_days || []).map((day, i) => {
-                                          const dayNum = typeof day === 'object' ? day.day_number : day;
-                                          const dayTitle = typeof day === 'object' ? day.daily_title : null;
+                                          let dayNum = null;
+                                          let dayTitle = null;
+                                          let dayDate = null;
+
+                                          if (typeof day === 'object') {
+                                            dayNum = day.day_number;
+                                            dayTitle = day.daily_title;
+                                            dayDate = day.date;
+                                          } else if (activeTrip && Array.isArray(activeTrip.trek_days)) {
+                                            const match = activeTrip.trek_days.find(d => d.day_number === day || d.date === day);
+                                            if (match) {
+                                              dayNum = match.day_number;
+                                              dayTitle = match.daily_title || match.title;
+                                              dayDate = match.date;
+                                            } else {
+                                              dayNum = day;
+                                            }
+                                          } else {
+                                            dayNum = day;
+                                          }
+
+                                          const label = language === 'he' ? `יום ${dayNum}` : `Day ${dayNum}`;
+                                          const dateLabel = dayDate ? ` (${new Date(dayDate).toLocaleDateString('he-IL')})` : '';
+
                                           return (
                                             <Badge key={i} className="bg-purple-600 text-white px-3 py-1">
-                                              {language === 'he' ? `יום ${dayNum}` : `Day ${dayNum}`}
+                                              {label}
                                               {dayTitle && ` - ${dayTitle}`}
+                                              {dateLabel}
                                             </Badge>
                                           );
                                         })}

@@ -4,12 +4,11 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '../components/LanguageContext';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { Users, UserCheck, UsersRound, ArrowRight, ArrowLeft, Check, Loader2, CreditCard } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Loader2, CreditCard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
 import NifgashimUserTypeSelector from '../components/nifgashim/portal/UserTypeSelector';
 import NifgashimParticipantForm from '../components/nifgashim/portal/ParticipantForm';
@@ -18,7 +17,6 @@ import NifgashimMemorialForm from '../components/nifgashim/portal/MemorialForm';
 import NifgashimRegistrationSummary from '../components/nifgashim/portal/RegistrationSummary';
 import ThankYouView from '../components/nifgashim/portal/ThankYouView';
 import AdminDashboard from '../components/nifgashim/portal/AdminDashboard';
-import GrowPaymentForm from '../components/nifgashim/portal/GrowPaymentForm';
 import GroupHealthDeclaration from '../components/nifgashim/portal/GroupHealthDeclaration';
 import GroupParticipantCount from '../components/nifgashim/portal/GroupParticipantCount';
 import HealthDeclaration from '../components/nifgashim/portal/HealthDeclaration';
@@ -472,10 +470,20 @@ export default function NifgashimPortal() {
       const user = await base44.auth.me().catch(() => null);
       const payerEmail = userType === 'group' ? groupInfo.leaderEmail : (participants[0]?.email || user?.email || '');
       const payerName = userType === 'group' ? groupInfo.leaderName : (participants[0]?.name || '');
+      const year = new Date().getFullYear();
+
+      const selectedDayNumbers = selectedDays.map(d => d.day_number);
+      const isOrganizedGroup = userType === 'group';
+      const baseAmount = userType === 'group' ? 0 : totalAmount;
+      const paymentStatus = baseAmount > 0
+        ? (transactionId === 'PENDING' ? 'pending' : 'completed')
+        : 'exempt';
       
       // Create registration in NifgashimRegistration entity
       const registrationData = {
         trip_id: nifgashimTrip.id,
+        user_email: payerEmail || null,
+        year,
         participants: userType === 'group' 
           ? [{ 
               name: groupInfo.leaderName,
@@ -491,20 +499,31 @@ export default function NifgashimPortal() {
               email: p.email || payerEmail,
               age_range: p.age_range
             })),
-        userType: userType,
-        groupInfo: userType === 'group' ? { ...groupInfo, totalParticipants: groupParticipantCount, healthDeclarationAccepted: groupHealthDeclarationAccepted } : null,
-        vehicleInfo: vehicleInfo,
+        userType,
+        groupInfo: isOrganizedGroup
+          ? { ...groupInfo, totalParticipants: groupParticipantCount, healthDeclarationAccepted: groupHealthDeclarationAccepted }
+          : null,
+        vehicleInfo,
         memorialData: memorialData.memorial?.fallen_name ? memorialData : null,
         selectedDays: selectedDays.map(d => ({
           day_number: d.day_number,
           daily_title: d.daily_title,
           date: d.date
         })),
-        amount: userType === 'group' ? 0 : totalAmount,
+        selected_days: selectedDayNumbers,
+        amount: baseAmount,
+        total_amount: baseAmount,
+        amount_paid: paymentStatus === 'completed' ? baseAmount : 0,
         status: transactionId === 'PENDING' ? 'pending_payment' : 'completed',
+        registration_status: 'submitted',
+        payment_status: paymentStatus,
         transaction_id: transactionId === 'PENDING' ? null : transactionId,
         customer_email: payerEmail,
-        customer_name: payerName
+        customer_name: payerName,
+        emergency_contact_phone: isOrganizedGroup ? groupInfo.leaderPhone : (participants[0]?.phone || null),
+        is_organized_group: isOrganizedGroup,
+        group_name: isOrganizedGroup ? groupInfo.name || payerName : null,
+        group_approval_status: isOrganizedGroup ? 'pending' : null
       };
 
       const createdRegistration = await base44.entities.NifgashimRegistration.create(registrationData);
