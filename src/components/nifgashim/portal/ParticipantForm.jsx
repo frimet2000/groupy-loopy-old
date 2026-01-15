@@ -489,11 +489,16 @@ export default function ParticipantForm({ userType, participants, setParticipant
                         <Input
                           value={currentParticipant.phone}
                           onChange={(e) => {
-                            const val = e.target.value.replace(/\D/g, '');
+                            let val = e.target.value.replace(/\D/g, '');
+                            // Ensure it starts with 05
+                            if (val && !val.startsWith('05')) {
+                              val = '05' + val.slice(0, 8);
+                            }
                             setCurrentParticipant({ ...currentParticipant, phone: val });
                           }}
                           maxLength={10}
                           placeholder="0501234567"
+                          dir="ltr"
                         />
                       </div>
                       <div>
@@ -509,6 +514,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
                           value={currentParticipant.email}
                           onChange={(e) => setCurrentParticipant({ ...currentParticipant, email: e.target.value })}
                           placeholder={language === 'he' ? 'example@email.com' : 'example@email.com'}
+                          dir="ltr"
                         />
                       </div>
                     </div>
