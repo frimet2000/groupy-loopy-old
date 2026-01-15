@@ -366,34 +366,69 @@ export default function NifgashimPortal() {
     return total;
   };
 
+  const [paymentUrl, setPaymentUrl] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState(null); // 'grow' or 'paypal'
+
   const handleSubmit = async () => {
     const amount = calculateTotalAmount();
     console.log('Amount calculated for payment:', amount);
     setTotalAmount(amount);
 
     if (amount > 0) {
-      try {
-        await completeRegistration('PENDING');
-
-        // Redirect to PayPal payment
-        const response = await base44.functions.invoke('paypalPayment', {
-          amount: Math.round(amount),
-          participantsCount: participants.length,
-          userEmail: participants[0]?.email || ''
-        });
-
-        // paypalPayment returns HTML that auto-submits to PayPal
-        const blob = new Blob([response.data], { type: 'text/html' });
-        const url = window.URL.createObjectURL(blob);
-        window.location.href = url;
-      } catch (error) {
-        console.error('Payment creation failed:', error);
-        toast.error(language === 'he' ? 'שגיאה בתהליך התשלום' : 'Error in payment process');
-      }
+      // Show payment method selection
+      setCurrentStep(6);
       return;
     }
 
     await completeRegistration(null);
+  };
+
+  const handleGrowPayment = async () => {
+    try {
+      setSubmitting(true);
+      const regResult = await completeRegistration('PENDING');
+      const pendingRegId = localStorage.getItem('pending_registration_id');
+      
+      const response = await base44.functions.invoke('createGrowPaymentEmbed', {
+        amount: totalAmount,
+        customerEmail: participants[0]?.email || '',
+        customerName: participants[0]?.name || '',
+        registrationId: pendingRegId
+      });
+
+      if (response.data?.success && response.data?.paymentUrl) {
+        setPaymentUrl(response.data.paymentUrl);
+        setPaymentMethod('grow');
+      } else {
+        toast.error(language === 'he' ? 'שגיאה ביצירת התשלום' : 'Error creating payment');
+        setSubmitting(false);
+      }
+    } catch (error) {
+      console.error('Grow payment failed:', error);
+      toast.error(language === 'he' ? 'שגיאה בתהליך התשלום' : 'Error in payment process');
+      setSubmitting(false);
+    }
+  };
+
+  const handlePayPalPayment = async () => {
+    try {
+      setSubmitting(true);
+      await completeRegistration('PENDING');
+
+      const response = await base44.functions.invoke('paypalPayment', {
+        amount: Math.round(totalAmount),
+        participantsCount: participants.length,
+        userEmail: participants[0]?.email || ''
+      });
+
+      const blob = new Blob([response.data], { type: 'text/html' });
+      const url = window.URL.createObjectURL(blob);
+      window.location.href = url;
+    } catch (error) {
+      console.error('PayPal payment failed:', error);
+      toast.error(language === 'he' ? 'שגיאה בתהליך התשלום' : 'Error in payment process');
+      setSubmitting(false);
+    }
   };
 
   const completeRegistration = async (transactionId) => {
