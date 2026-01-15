@@ -38,28 +38,28 @@ Deno.serve(async (req) => {
     const successUrl = `${baseUrl}/NifgashimPortal?payment_success=true&registration_id=${registrationId || ''}`;
     const cancelUrl = `${baseUrl}/NifgashimPortal`;
     
-    // Use URLSearchParams instead of FormData for better compatibility
-    const params = new URLSearchParams();
-    params.append('pageCode', cleanPageCode);
-    params.append('userId', cleanUserId);
-    params.append('sum', amount.toString());
-    params.append('successUrl', successUrl);
-    params.append('cancelUrl', cancelUrl);
-    params.append('description', `הרשמה למסע נפגשים - ${customerName || ''}`);
-    params.append('paymentNum', '1');
-    params.append('maxPaymentNum', '12');
+    // Use FormData as per Meshulam documentation
+    const form = new FormData();
+    form.append('pageCode', cleanPageCode);
+    form.append('userId', cleanUserId);
+    form.append('sum', amount.toString());
+    form.append('successUrl', successUrl);
+    form.append('cancelUrl', cancelUrl);
+    form.append('description', `הרשמה למסע נפגשים - ${customerName || ''}`);
+    form.append('paymentNum', '1');
+    form.append('maxPaymentNum', '12');
 
     if (customerEmail) {
-      params.append('cField1', customerEmail);
+      form.append('cField1', customerEmail);
     }
     if (customerName) {
-      params.append('cField2', customerName);
+      form.append('cField2', customerName);
     }
     if (registrationId) {
-      params.append('cField3', registrationId);
+      form.append('cField3', registrationId);
     }
 
-    // Use Meshulam API (Grow's backend)
+    // Use Meshulam API (production URL)
     const apiUrl = 'https://secure.meshulam.co.il/api/light/server/1.0/createPaymentProcess';
 
     console.log('=== MESHULAM API CALL DEBUG ===');
@@ -67,18 +67,15 @@ Deno.serve(async (req) => {
     console.log('userId:', cleanUserId, `(length: ${cleanUserId?.length})`);
     console.log('amount:', amount);
     console.log('successUrl:', successUrl);
+    console.log('=== END DEBUG ===');
 
     const options = {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
         'accept': 'application/json'
       }
     };
-    options.body = params.toString();
-    
-    console.log('Body being sent:', options.body);
-    console.log('=== END DEBUG ===');
+    options.body = form;
 
     let response;
     try {
