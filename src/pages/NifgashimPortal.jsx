@@ -71,8 +71,6 @@ export default function NifgashimPortal() {
       daily_distance_km: Number(day.daily_distance_km || day.distance_km || 0),
       elevation_gain_m: Number(day.elevation_gain_m || day.elevation_gain || 0),
       day_number: Number(day.day_number || index + 1),
-      region: day.region,
-      category_id: day.category_id,
       description: typeof day.daily_description === 'string' ? day.daily_description : (typeof day.description === 'string' ? day.description : (typeof day.content === 'string' ? day.content : '')),
       image: (day.image && typeof day.image === 'object' && day.image.secure_url) ? day.image.secure_url : (typeof day.image === 'string' ? day.image : (typeof day.secure_url === 'string' ? day.secure_url : (typeof day.image_url === 'string' ? day.image_url : null))),
       waypoints: Array.isArray(day.waypoints) ? day.waypoints : []
@@ -166,34 +164,43 @@ export default function NifgashimPortal() {
     const checkPaymentSuccess = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const paymentSuccess = urlParams.get('payment_success');
+      // registration_id might not be present if we used direct link
       const registrationId = urlParams.get('registration_id'); 
 
       if (paymentSuccess === 'true' && !showThankYou) {
+        // Wait a bit to ensure UI is ready
         await new Promise(resolve => setTimeout(resolve, 1000));
         
+        // If we have state but no registration ID, it means we returned from direct payment
+        // We need to complete the registration now
         const savedState = localStorage.getItem('nifgashim_registration_state_v2');
         if (savedState && !registrationId) {
             try {
                 toast.info(language === 'he' ? 'מאמת תשלום...' : 'Verifying payment...');
+                // We pass a placeholder transaction ID or extract from URL if available
+                // Meshulam might pass transaction details in query params
                 const processId = urlParams.get('processId') || urlParams.get('process_id') || `DIRECT-${Date.now()}`;
                 await completeRegistration(processId);
             } catch (err) {
                 console.error('Failed to complete registration after payment:', err);
+                // Toast already shown in completeRegistration
             }
         } else if (registrationId) {
+             // Existing logic for when we had a registration ID
              toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
              setShowThankYou(true);
         }
 
+        // Clean up URL
         const url = new URL(window.location);
         url.searchParams.delete('payment_success');
         url.searchParams.delete('registration_id');
-        url.searchParams.delete('sum');
+        url.searchParams.delete('sum'); // Clean up Meshulam params if any
         url.searchParams.delete('processId');
         url.searchParams.delete('process_id');
         window.history.replaceState({}, '', url);
 
-        localStorage.removeItem('nifgashim_registration_state');
+        localStorage.removeItem('nifgashim_registration_state'); // Old key
       }
     };
 
@@ -329,68 +336,59 @@ export default function NifgashimPortal() {
     { id: 2, label: trans.stepParticipants },
     { id: 3, label: trans.stepDays },
     { id: 4, label: trans.stepMemorial },
-    { id: 5, label: trans.stepSummary },
-    { id: 6, label: trans.payment }
+    { id: 5, label: trans.stepSummary }
   ];
 
   const calculateTotalAmount = () => {
-    // Count adults (age 10+)
     const adultsCount = participants.filter(p => {
-      // If no age range specified, count as adult by default
-      if (!p.age_range) {
-        console.log('Participant without age_range, counting as adult:', p);
-        return true;
-      }
-      
-      // Parse age from age_range (e.g., "25-30" or "10-15")
-      const ageStr = p.age_range.split('-')[0].trim();
-      const age = parseInt(ageStr);
-      
-      if (isNaN(age)) {
-        console.log('Invalid age_range format, counting as adult:', p);
-        return true;
-      }
-      
-      const isAdult = age >= 10;
-      console.log(`Participant ${p.name}, age_range: ${p.age_range}, parsed age: ${age}, isAdult: ${isAdult}`);
-      return isAdult;
+      if (!p.age_range) return true;
+      const age = parseInt(p.age_range.split('-')[0]);
+      return age >= 10;
     }).length;
-    
-    const total = adultsCount * 85;
-    console.log('=== PAYMENT CALCULATION ===');
-    console.log('Total participants:', participants.length);
-    console.log('Adult participants (age 10+):', adultsCount);
-    console.log('Total amount:', total, 'ILS');
-    console.log('Participants data:', participants);
-    console.log('========================');
-    
-    return total;
+    return adultsCount * 85;
   };
 
   const handleSubmit = async () => {
     const amount = calculateTotalAmount();
-    console.log('Amount calculated for payment:', amount);
     setTotalAmount(amount);
 
     if (amount > 0) {
-      try {
-        await completeRegistration('PENDING');
+      toast.info(language === 'he' ? 'מעביר לתשלום...' : 'Redirecting to payment...');
+      
+      // Save state before redirecting so we can recover it on return
+      const state = {
+        userType,
+        participants,
+        selectedDays,
+        groupInfo,
+        vehicleInfo,
+        memorialData,
+        currentStep,
+        totalAmount: amount,
+        timestamp: Date.now()
+      };
+      localStorage.setItem('nifgashim_registration_state_v2', JSON.stringify(state));
 
-        // Redirect to PayPal payment
-        const response = await base44.functions.invoke('paypalPayment', {
-          amount: Math.round(amount),
-          participantsCount: participants.length,
-          userEmail: participants[0]?.email || ''
-        });
+      // Direct redirect to Meshulam (Production Link) provided by user
+      setTimeout(() => {
+        const baseUrl = 'https://meshulam.co.il/s/bc8d0eda-efc0-ebd2-43c0-71efbd570304';
+        
+        // Prepare params
+        const params = new URLSearchParams();
+        params.append('sum', amount);
+        
+        // Try to pre-fill info
+        const leaderName = userType === 'group' ? groupInfo.leaderName : (participants[0]?.name || '');
+        const leaderPhone = userType === 'group' ? groupInfo.leaderPhone : (participants[0]?.phone || '');
+        const leaderEmail = userType === 'group' ? groupInfo.leaderEmail : (participants[0]?.email || '');
+        
+        if (leaderName) params.append('c_name', leaderName);
+        if (leaderPhone) params.append('phone', leaderPhone);
+        if (leaderEmail) params.append('email', leaderEmail);
 
-        // paypalPayment returns HTML that auto-submits to PayPal
-        const blob = new Blob([response.data], { type: 'text/html' });
-        const url = window.URL.createObjectURL(blob);
-        window.location.href = url;
-      } catch (error) {
-        console.error('Payment creation failed:', error);
-        toast.error(language === 'he' ? 'שגיאה בתהליך התשלום' : 'Error in payment process');
-      }
+        // Redirect
+        window.location.href = `${baseUrl}?${params.toString()}`;
+      }, 1000);
       return;
     }
 
@@ -416,9 +414,9 @@ export default function NifgashimPortal() {
         group_name: userType === 'group' ? groupInfo.name : null,
         vehicle_number: vehicleInfo.hasVehicle ? vehicleInfo.number : null,
         has_vehicle: vehicleInfo.hasVehicle,
-        payment_status: transactionId === 'PENDING' ? 'pending' : (transactionId ? 'completed' : 'exempt'),
-        payment_amount: transactionId === 'PENDING' ? 0 : (transactionId ? totalAmount : 0),
-        payment_transaction_id: transactionId === 'PENDING' ? null : transactionId
+        payment_status: transactionId ? 'completed' : 'exempt',
+        payment_amount: 0,
+        payment_transaction_id: transactionId
       }));
 
       const currentParticipants = nifgashimTrip?.participants || [];
@@ -432,11 +430,6 @@ export default function NifgashimPortal() {
           ...memorialData.memorial,
           status: 'pending'
         });
-      }
-
-      // If this is just a pending registration before payment, stop here
-      if (transactionId === 'PENDING') {
-        return true;
       }
 
       const payerEmail = userType === 'group' ? groupInfo.leaderEmail : (participants[0]?.email || '');
@@ -620,48 +613,20 @@ export default function NifgashimPortal() {
                 groupInfo={groupInfo}
               />
             )}
+          </motion.div>
+        </AnimatePresence>
 
-            {currentStep === 6 && (
-              <Card className="overflow-hidden">
-                <CardHeader>
-                  <CardTitle className="text-center text-2xl">
-                    {language === 'he' ? 'התשלום מתבצע...' : 'Processing Payment...'}
-                  </CardTitle>
-                  <p className="text-center text-gray-600 mt-2">
-                    {language === 'he' 
-                      ? `סכום לתשלום: ₪${totalAmount}`
-                      : `Amount to pay: ₪${totalAmount}`
-                    }
-                  </p>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center justify-center gap-4">
-                    <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
-                    <p className="text-center text-gray-600">
-                      {language === 'he' 
-                        ? 'מועבר לדף התשלום של PayPal...'
-                        : 'Redirecting to PayPal...'
-                      }
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            </motion.div>
-            </AnimatePresence>
-
-        <div className="flex justify-between items-center mt-6">
           <Button
             variant="outline"
             onClick={() => setCurrentStep(prev => Math.max(prev - 1, 1))}
-            disabled={currentStep === 1 || currentStep === 6 || submitting}
+            disabled={currentStep === 1 || submitting}
             className="px-6"
           >
             <ArrowLeft className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
             {trans.back}
           </Button>
 
-          {currentStep < 5 ? (
+          {currentStep < steps.length ? (
             <Button
               onClick={() => setCurrentStep(prev => prev + 1)}
               disabled={
@@ -674,7 +639,7 @@ export default function NifgashimPortal() {
               {trans.next}
               <ArrowRight className={`w-4 h-4 ${isRTL ? 'mr-2' : 'ml-2'}`} />
             </Button>
-          ) : currentStep === 5 ? (
+          ) : (
             <Button
               onClick={handleSubmit}
               disabled={submitting}
@@ -701,7 +666,7 @@ export default function NifgashimPortal() {
                 </>
               )}
             </Button>
-          ) : null}
+          )}
         </div>
       </div>
     </div>
