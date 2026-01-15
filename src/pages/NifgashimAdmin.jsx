@@ -1199,12 +1199,12 @@ export default function NifgashimAdmin() {
                 {/* Filters and Search */}
                 <div className="flex flex-col gap-3 sm:gap-4">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+                    <Search className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                     <Input
                       placeholder={trans.search}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base"
+                      className={`h-10 sm:h-12 text-sm sm:text-base ${isRTL ? 'pr-9 sm:pr-10' : 'pl-9 sm:pl-10'}`}
                     />
                   </div>
 
