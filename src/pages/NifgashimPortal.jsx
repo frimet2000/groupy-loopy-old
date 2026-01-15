@@ -400,31 +400,39 @@ export default function NifgashimPortal() {
     setSubmitting(true);
     try {
       const user = await base44.auth.me().catch(() => null);
+      const payerEmail = userType === 'group' ? groupInfo.leaderEmail : (participants[0]?.email || user?.email || '');
+      const payerName = userType === 'group' ? groupInfo.leaderName : (participants[0]?.name || '');
       
-      const participantsData = participants.map(p => ({
-        email: p.email || (user?.email || `temp-${Date.now()}@nifgashim.temp`),
-        name: p.name,
-        id_number: p.id_number,
-        phone: p.phone,
-        joined_at: new Date().toISOString(),
-        selected_days: selectedDays.map(d => d.day_number),
-        waiver_accepted: true,
-        waiver_timestamp: new Date().toISOString(),
-        is_organized_group: userType === 'group',
-        group_type: userType === 'group' ? 'other' : null,
-        group_name: userType === 'group' ? groupInfo.name : null,
-        vehicle_number: vehicleInfo.hasVehicle ? vehicleInfo.number : null,
-        has_vehicle: vehicleInfo.hasVehicle,
-        payment_status: transactionId === 'PENDING' ? 'pending' : (transactionId ? 'completed' : 'exempt'),
-        payment_amount: transactionId === 'PENDING' ? 0 : (transactionId ? totalAmount : 0),
-        payment_transaction_id: transactionId === 'PENDING' ? null : transactionId
-      }));
+      // Create registration in NifgashimRegistration entity
+      const registrationData = {
+        trip_id: nifgashimTrip.id,
+        participants: participants.map(p => ({
+          name: p.name,
+          id_number: p.id_number,
+          phone: p.phone,
+          email: p.email || payerEmail,
+          age_range: p.age_range
+        })),
+        userType: userType,
+        groupInfo: userType === 'group' ? groupInfo : null,
+        vehicleInfo: vehicleInfo,
+        memorialData: memorialData.memorial?.fallen_name ? memorialData : null,
+        selectedDays: selectedDays.map(d => ({
+          day_number: d.day_number,
+          daily_title: d.daily_title,
+          date: d.date
+        })),
+        amount: totalAmount,
+        status: transactionId === 'PENDING' ? 'pending_payment' : (transactionId ? 'completed' : 'completed'),
+        transaction_id: transactionId === 'PENDING' ? null : transactionId,
+        customer_email: payerEmail,
+        customer_name: payerName
+      };
 
-      const currentParticipants = nifgashimTrip?.participants || [];
-      await base44.entities.Trip.update(nifgashimTrip.id, {
-        participants: [...currentParticipants, ...participantsData]
-      });
+      const createdRegistration = await base44.entities.NifgashimRegistration.create(registrationData);
+      console.log('Created NifgashimRegistration:', createdRegistration);
 
+      // Also create Memorial if submitted
       if (memorialData.memorial?.fallen_name) {
         await base44.entities.Memorial.create({
           trip_id: nifgashimTrip.id,
@@ -435,11 +443,10 @@ export default function NifgashimPortal() {
 
       // If this is just a pending registration before payment, stop here
       if (transactionId === 'PENDING') {
+        // Store the registration ID for later update after payment
+        localStorage.setItem('pending_registration_id', createdRegistration.id);
         return true;
       }
-
-      const payerEmail = userType === 'group' ? groupInfo.leaderEmail : (participants[0]?.email || '');
-      const payerName = userType === 'group' ? groupInfo.leaderName : (participants[0]?.name || '');
 
       if (payerEmail) {
         try {
@@ -451,26 +458,27 @@ export default function NifgashimPortal() {
               : `Hello ${payerName},\n\nThank you for registering for Nifgashim Bishvil Israel!\n\nYour registration details have been received.\nParticipants: ${participants.length}\n\nSee you on the trek!\nNifgashim Team`
           });
         } catch (emailError) {
-          console.error('Failed to send confirmation email for exempt registration:', emailError);
+          console.error('Failed to send confirmation email:', emailError);
         }
       }
 
       try {
         const adminEmail = nifgashimTrip?.organizer_email;
         if (adminEmail) {
-             await base44.integrations.Core.SendEmail({
-              to: adminEmail,
-              subject: `New Exempt Registration: ${payerName}`,
-              body: `New exempt registration received.\nUser: ${payerName} (${payerEmail})\nParticipants: ${participants.length}\nType: ${userType}`
-            });
+          await base44.integrations.Core.SendEmail({
+            to: adminEmail,
+            subject: `הרשמה חדשה: ${payerName}`,
+            body: `הרשמה חדשה התקבלה.\nמשתמש: ${payerName} (${payerEmail})\nמשתתפים: ${participants.length}\nסוג: ${userType}\nסכום: ₪${totalAmount}`
+          });
         }
       } catch (adminEmailError) {
-        console.error('Failed to send admin email for exempt registration:', adminEmailError);
+        console.error('Failed to send admin email:', adminEmailError);
       }
 
       toast.success(trans.registrationSuccess);
       
       localStorage.removeItem('nifgashim_registration_state_v2');
+      localStorage.removeItem('pending_registration_id');
 
       setShowThankYou(true);
       return true;
