@@ -753,7 +753,16 @@ export default function NifgashimPortal() {
                   onClick={() => setCurrentStep(prev => prev + 1)}
                   disabled={
                     (currentStep === 1 && !userType) ||
-                    (currentStep === 2 && participants.length === 0) ||
+                    (currentStep === 2 && (
+                      !groupInfo.name ||
+                      !groupInfo.leaderName ||
+                      !groupInfo.leaderEmail ||
+                      !groupInfo.leaderPhone ||
+                      !groupInfo.leaderIdNumber ||
+                      String(groupInfo.leaderIdNumber).length !== 9 ||
+                      !groupInfo.totalParticipants ||
+                      Number(groupInfo.totalParticipants) <= 0
+                    )) ||
                     (currentStep === 3 && (groupParticipantCount === 0 || !groupHealthDeclarationAccepted)) ||
                     (currentStep === 4 && !groupHealthDeclarationAccepted) ||
                     (currentStep === 5 && selectedDays.length === 0)
