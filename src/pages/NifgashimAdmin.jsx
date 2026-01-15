@@ -1119,16 +1119,32 @@ export default function NifgashimAdmin() {
               </div>
             )}
             
-            {/* Pending Payments Alert */}
+            {/* Pending Payments Alert with Send Reminders Button */}
             {registrations.filter(r => r.payment_status === 'pending').length > 0 && (
               <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                <div className="flex items-center gap-2 text-yellow-800">
-                  <Clock className="w-4 h-4" />
-                  <span className="text-sm font-medium">
-                    {language === 'he' 
-                      ? `${registrations.filter(r => r.payment_status === 'pending').length} תשלומים ממתינים`
-                      : `${registrations.filter(r => r.payment_status === 'pending').length} payments pending`}
-                  </span>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 text-yellow-800">
+                    <AlertCircle className="w-4 h-4" />
+                    <span className="text-sm font-medium">
+                      {language === 'he' 
+                        ? `${registrations.filter(r => r.payment_status === 'pending').length} תשלומים ממתינים`
+                        : `${registrations.filter(r => r.payment_status === 'pending').length} payments pending`}
+                    </span>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleSendReminders(registrations.filter(r => r.payment_status === 'pending').map(r => r.id))}
+                    disabled={sendingReminders}
+                    className="gap-2 border-yellow-400 text-yellow-800 hover:bg-yellow-100"
+                  >
+                    {sendingReminders ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Bell className="w-3 h-3" />
+                    )}
+                    {sendingReminders ? trans.sendingReminders : trans.sendReminders}
+                  </Button>
                 </div>
               </div>
             )}
