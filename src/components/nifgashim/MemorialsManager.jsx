@@ -303,7 +303,20 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       email: "Email",
       close: "Chiudi",
       confirmDelete: "Eliminare questo memoriale?",
-      deleted: "Eliminato"
+      deleted: "Eliminato",
+      addMemorial: "Aggiungi memoriale",
+      editMemorial: "Modifica memoriale",
+      fallenNameLabel: "Nome del caduto",
+      dateOfFallLabel: "Data della caduta",
+      placeOfFallLabel: "Luogo della caduta",
+      shortDescLabel: "Descrizione breve",
+      storyLabel: "Storia/Memoria",
+      uploadPhoto: "Carica foto",
+      save: "Salva",
+      cancel: "Annulla",
+      memorialAdded: "Memoriale aggiunto",
+      memorialUpdated: "Memoriale aggiornato",
+      assignToDay: "Assegna al giorno"
     }
   };
 
