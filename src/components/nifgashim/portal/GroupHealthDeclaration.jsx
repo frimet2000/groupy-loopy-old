@@ -86,7 +86,6 @@ export default function GroupHealthDeclaration({ accepted, onAccept, leaderName,
         </CardHeader>
         <CardContent className="p-6 space-y-6">
           <div className="p-4 bg-white border-l-4 border-orange-500 rounded">
-            <p className="font-semibold text-gray-900">{leaderName}</p>
             <p className="text-sm text-gray-600 mt-1">{trans.responsibility}</p>
           </div>
 
