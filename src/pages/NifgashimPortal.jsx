@@ -388,13 +388,6 @@ export default function NifgashimPortal() {
       setSubmitting(true);
       await completeRegistration('PENDING');
       const pendingRegId = localStorage.getItem('pending_registration_id');
-      
-      console.log('Calling createGrowPaymentEmbed with:', {
-        amount: totalAmount,
-        customerEmail: participants[0]?.email || '',
-        customerName: participants[0]?.name || '',
-        registrationId: pendingRegId
-      });
 
       const response = await base44.functions.invoke('createGrowPaymentEmbed', {
         amount: totalAmount,
@@ -403,22 +396,10 @@ export default function NifgashimPortal() {
         registrationId: pendingRegId
       });
 
-      console.log('Grow response:', response.data);
-
-      if (response.data?.success === true && response.data?.paymentUrl) {
-        // Redirect to payment URL directly
-        window.location.href = response.data.paymentUrl;
-      } else if (response.data?.success === true) {
-        console.log('Payment process created:', response.data);
-        toast.success(language === 'he' ? 'מעביר לדף התשלום...' : 'Redirecting to payment...');
-        // Some payment systems might just need authCode
-        if (response.data?.authCode) {
-          // Could use this for iframe-based payment if needed
-          setPaymentUrl(response.data.authCode);
-          setPaymentMethod('grow');
-        }
+      if (response.data?.success === true && response.data?.authCode) {
+        setPaymentUrl(response.data.authCode);
+        setPaymentMethod('grow');
       } else {
-        console.error('Grow payment error:', response.data);
         const errorMsg = response.data?.error || (language === 'he' ? 'שגיאה ביצירת התשלום' : 'Error creating payment');
         toast.error(errorMsg);
         setSubmitting(false);
