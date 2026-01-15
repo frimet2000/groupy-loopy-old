@@ -63,7 +63,20 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       email: "אימייל",
       close: "סגור",
       confirmDelete: "האם למחוק הנצחה זו?",
-      deleted: "הוסר בהצלחה"
+      deleted: "הוסר בהצלחה",
+      addMemorial: "הוסף הנצחה",
+      editMemorial: "ערוך הנצחה",
+      fallenNameLabel: "שם החלל/ה",
+      dateOfFallLabel: "תאריך נפילה",
+      placeOfFallLabel: "מקום נפילה",
+      shortDescLabel: "תיאור קצר",
+      storyLabel: "סיפור/זיכרון",
+      uploadPhoto: "העלה תמונה",
+      save: "שמור",
+      cancel: "ביטול",
+      memorialAdded: "ההנצחה נוספה בהצלחה",
+      memorialUpdated: "ההנצחה עודכנה בהצלחה",
+      assignToDay: "שייך ליום"
     },
     en: {
       title: "Memorial Management",
