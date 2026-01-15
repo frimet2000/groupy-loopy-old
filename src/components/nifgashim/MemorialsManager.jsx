@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { Heart, Check, X, Sparkles, Loader2, GripVertical, Calendar, Trash2, Info, Plus, Upload, Edit2 } from 'lucide-react';
+import { Heart, Check, X, Sparkles, Loader2, GripVertical, Calendar, Trash2, Info, Plus, Upload, Edit2, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
