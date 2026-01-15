@@ -144,7 +144,7 @@ export default function NifgashimPortal() {
       };
       localStorage.setItem('nifgashim_registration_state_v2', JSON.stringify(state));
     }
-  }, [userType, participants, selectedDays, groupInfo, vehicleInfo, memorialData, currentStep, totalAmount, groupParticipantCount, groupHealthDeclarationAccepted]);
+  }, [userType, participants, selectedDays, groupInfo, vehicleInfo, memorialData, currentStep, totalAmount, groupParticipantCount, groupHealthDeclarationAccepted, individualHealthDeclarationAccepted]);
 
   useEffect(() => {
     const savedState = localStorage.getItem('nifgashim_registration_state_v2');
