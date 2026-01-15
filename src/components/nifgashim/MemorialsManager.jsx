@@ -223,7 +223,20 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       email: "Email",
       close: "Fermer",
       confirmDelete: "Supprimer ce mémorial?",
-      deleted: "Supprimé"
+      deleted: "Supprimé",
+      addMemorial: "Ajouter mémorial",
+      editMemorial: "Modifier mémorial",
+      fallenNameLabel: "Nom du tombé",
+      dateOfFallLabel: "Date de chute",
+      placeOfFallLabel: "Lieu de chute",
+      shortDescLabel: "Description courte",
+      storyLabel: "Histoire/Mémoire",
+      uploadPhoto: "Télécharger photo",
+      save: "Sauvegarder",
+      cancel: "Annuler",
+      memorialAdded: "Mémorial ajouté",
+      memorialUpdated: "Mémorial mis à jour",
+      assignToDay: "Assigner au jour"
     },
     de: {
       title: "Gedenkstättenverwaltung",
