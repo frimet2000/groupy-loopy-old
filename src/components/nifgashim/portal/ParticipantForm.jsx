@@ -377,7 +377,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
         )}
 
         <div className="space-y-4">
-          {userType !== 'group' ? (
+          {userType !== 'group' && (
             <>
               {participants.length === 0 && userType !== 'individual' && (
                 <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
