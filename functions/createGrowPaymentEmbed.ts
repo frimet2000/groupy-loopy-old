@@ -69,9 +69,19 @@ Deno.serve(async (req) => {
     };
     options.body = form;
 
-    const response = await fetch(apiUrl, options);
+    let response;
+    try {
+      response = await fetch(apiUrl, options);
+    } catch (fetchError) {
+      console.error('Fetch error:', fetchError);
+      return Response.json({ 
+        error: 'Failed to connect to payment provider',
+        details: fetchError.message 
+      }, { status: 500 });
+    }
 
     const responseText = await response.text();
+    console.log('Meshulam API response status:', response.status);
     console.log('Meshulam API raw response:', responseText);
     
     let data;
