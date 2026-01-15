@@ -405,9 +405,18 @@ export default function NifgashimPortal() {
 
       console.log('Grow response:', response.data);
 
-      if (response.data?.success && response.data?.paymentUrl) {
-        // Redirect to payment URL instead of iframe (more reliable)
+      if (response.data?.success === true && response.data?.paymentUrl) {
+        // Redirect to payment URL directly
         window.location.href = response.data.paymentUrl;
+      } else if (response.data?.success === true) {
+        console.log('Payment process created:', response.data);
+        toast.success(language === 'he' ? 'מעביר לדף התשלום...' : 'Redirecting to payment...');
+        // Some payment systems might just need authCode
+        if (response.data?.authCode) {
+          // Could use this for iframe-based payment if needed
+          setPaymentUrl(response.data.authCode);
+          setPaymentMethod('grow');
+        }
       } else {
         console.error('Grow payment error:', response.data);
         const errorMsg = response.data?.error || (language === 'he' ? 'שגיאה ביצירת התשלום' : 'Error creating payment');
