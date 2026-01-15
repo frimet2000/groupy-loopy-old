@@ -216,6 +216,7 @@ export default function NifgashimPortal() {
       subtitle: "תהליך הרשמה פשוט ומהיר",
       stepUserType: "סוג רישום",
       stepParticipants: "פרטי משתתפים",
+      stepHealth: "הצהרת בריאות",
       stepDays: "בחירת ימים",
       stepMemorial: "הנצחה",
       stepSummary: "סיכום",
