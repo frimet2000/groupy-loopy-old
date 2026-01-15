@@ -194,10 +194,11 @@ export default function RegistrationSummary({ userType, participants, selectedDa
             <Calendar className="w-5 h-5 text-indigo-600" />
             <h3 className="font-semibold">{trans.selectedDays}</h3>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {selectedDays.map(day => (
-              <Badge key={day.day_number} className="bg-indigo-600 text-white text-sm py-2 justify-center">
-                {dayLabel} {day.day_number}
+              <Badge key={day.day_number} className="bg-indigo-600 text-white text-sm py-2 px-3 justify-start flex flex-col items-start">
+                <div className="font-semibold">{day.daily_title}</div>
+                <div className="text-xs opacity-90">{day.date && new Date(day.date).toLocaleDateString(language === 'he' ? 'he-IL' : language === 'ru' ? 'ru-RU' : language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : language === 'de' ? 'de-DE' : language === 'it' ? 'it-IT' : 'en-US', { month: 'short', day: 'numeric' })}</div>
               </Badge>
             ))}
           </div>
