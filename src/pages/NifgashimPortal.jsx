@@ -839,8 +839,8 @@ export default function NifgashimPortal() {
               ) : currentStep === 6 ? (
                 <Button
                   onClick={handleSubmit}
-                  disabled={submitting || selectedDays.length === 0}
-                  className="px-6 bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                  disabled={submitting}
+                  className="px-6 bg-green-600 hover:bg-green-700"
                 >
                   {submitting ? (
                     <>
