@@ -826,6 +826,7 @@ export default function NifgashimPortal() {
                     (currentStep === 1 && !userType) ||
                     (currentStep === 2 && participants.length === 0) ||
                     (currentStep === 3 && (groupParticipantCount === 0 || !groupHealthDeclarationAccepted)) ||
+                    (currentStep === 4 && !groupHealthDeclarationAccepted) ||
                     (currentStep === 5 && selectedDays.length === 0)
                   }
                   className="px-6 bg-blue-600 hover:bg-blue-700"
@@ -861,7 +862,8 @@ export default function NifgashimPortal() {
                   disabled={
                     (currentStep === 1 && !userType) ||
                     (currentStep === 2 && participants.length === 0) ||
-                    (currentStep === 3 && !individualHealthDeclarationAccepted)
+                    (currentStep === 3 && !individualHealthDeclarationAccepted) ||
+                    (currentStep === 4 && selectedDays.length === 0)
                   }
                   className="px-6 bg-blue-600 hover:bg-blue-700"
                 >
