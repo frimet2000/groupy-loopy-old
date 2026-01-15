@@ -696,6 +696,14 @@ export default function NifgashimPortal() {
             )}
 
             {currentStep === 3 && userType !== 'group' && (
+              <HealthDeclaration
+                accepted={individualHealthDeclarationAccepted}
+                onAccept={setIndividualHealthDeclarationAccepted}
+                language={language}
+              />
+            )}
+
+            {currentStep === (userType === 'group' ? 5 : 4) && (
               <NifgashimDayCardsSelector
                 trekDays={trekDays}
                 linkedDaysPairs={linkedDaysPairs}
