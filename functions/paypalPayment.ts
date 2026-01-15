@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
       cmd: '_xclick',
       business: 'nifgashim.israel@gmail.com',
       item_name: `Nifgashim Trek - ${participantsCount} Participant${participantsCount > 1 ? 's' : ''}`,
-      amount: (amount / 100).toFixed(2),
+      amount: amount.toFixed(2),
       currency_code: 'ILS',
       quantity: participantsCount,
       custom: registrationId || email,
