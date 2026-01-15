@@ -40,12 +40,18 @@ Deno.serve(async (req) => {
 
     // Construct PayPal payment URL with all parameters
     const params = new URLSearchParams({
-      cmd: '_s-xclick',
-      hosted_button_id: BUTTON_ID,
+      cmd: '_xclick',
+      business: 'nifgashim.israel@gmail.com',
+      item_name: `Nifgashim Trek - ${participantsCount} Participant${participantsCount > 1 ? 's' : ''}`,
+      amount: (amount / 100).toFixed(2),
+      currency_code: 'ILS',
+      quantity: participantsCount,
       custom: registrationId || email,
       return: returnUrl,
       cancel_return: cancelUrl,
-      notify_url: 'https://groupyloopy.app/api/apps/693c3ab4048a1e3a31fffd66/functions/paypalIPN'
+      notify_url: 'https://groupyloopy.app/api/apps/693c3ab4048a1e3a31fffd66/functions/paypalIPN',
+      no_shipping: '2',
+      rm: '2'
     });
 
     const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?${params.toString()}`;
