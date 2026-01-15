@@ -985,6 +985,39 @@ export default function NifgashimAdmin() {
     toast.success(language === 'he' ? 'הקבוצה נדחתה' : 'Group rejected');
   };
 
+  // Send payment reminders
+  const handleSendReminders = async (regIds = []) => {
+    setSendingReminders(true);
+    try {
+      const idsToSend = regIds.length > 0 ? regIds : selectedForReminder;
+      const response = await base44.functions.invoke('sendPaymentReminders', {
+        registrationIds: idsToSend
+      });
+      
+      if (response.data?.success) {
+        toast.success(`${trans.remindersSent} (${response.data.sent}/${response.data.total})`);
+        setSelectedForReminder([]);
+      } else {
+        toast.error(response.data?.error || 'Error sending reminders');
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+    setSendingReminders(false);
+  };
+
+  const handleSendSingleReminder = async (registrationId) => {
+    await handleSendReminders([registrationId]);
+  };
+
+  const toggleSelectForReminder = (regId) => {
+    setSelectedForReminder(prev => 
+      prev.includes(regId) 
+        ? prev.filter(id => id !== regId)
+        : [...prev, regId]
+    );
+  };
+
   const getPaymentStatusColor = (status) => {
     switch(status) {
       case 'completed': return 'bg-green-100 text-green-800 border-green-300';
