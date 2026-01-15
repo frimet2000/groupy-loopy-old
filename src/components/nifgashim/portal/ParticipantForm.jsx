@@ -37,6 +37,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       leaderName: "ראש הקבוצה",
       leaderEmail: "אימייל",
       leaderPhone: "טלפון",
+      totalParticipants: "מספר המשתתפים הכולל",
       participantName: "שם מלא",
       idNumber: "תעודת זהות (9 ספרות)",
       ageRange: "טווח גילאים (עד 18 לילד)",
@@ -68,6 +69,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       leaderName: "Group Head",
       leaderEmail: "Email",
       leaderPhone: "Phone",
+      totalParticipants: "Total Number of Participants",
       participantName: "Full Name",
       idNumber: "ID Number (9 digits)",
       ageRange: "Age Range",
@@ -99,6 +101,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       leaderName: "Имя руководителя",
       leaderEmail: "Email",
       leaderPhone: "Телефон",
+      totalParticipants: "Общее количество участников",
       participantName: "Полное имя",
       idNumber: "ID номер",
       ageRange: "Возрастная группа",
@@ -122,6 +125,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       leaderName: "Nombre del líder",
       leaderEmail: "Email",
       leaderPhone: "Teléfono",
+      totalParticipants: "Número total de participantes",
       participantName: "Nombre completo",
       idNumber: "Número de ID",
       ageRange: "Rango de edad",
@@ -145,6 +149,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       leaderName: "Nom du chef",
       leaderEmail: "Email",
       leaderPhone: "Téléphone",
+      totalParticipants: "Nombre total de participants",
       participantName: "Nom complet",
       idNumber: "Numéro d'ID",
       ageRange: "Tranche d'âge",
@@ -164,6 +169,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       leaderName: "Name des Leiters",
       leaderEmail: "Email",
       leaderPhone: "Telefon",
+      totalParticipants: "Gesamtzahl der Teilnehmer",
       participantName: "Vollständiger Name",
       idNumber: "ID-Nummer",
       ageRange: "Altersbereich",
@@ -183,6 +189,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       leaderName: "Nome del leader",
       leaderEmail: "Email",
       leaderPhone: "Telefono",
+      totalParticipants: "Numero totale di partecipanti",
       participantName: "Nome completo",
       idNumber: "Numero ID",
       ageRange: "Fascia d'età",
@@ -276,21 +283,9 @@ export default function ParticipantForm({ userType, participants, setParticipant
   };
 
   const handleAddGroup = () => {
-    // Validate ID number (must be exactly 9 digits)
-    if (!/^\d{9}$/.test(currentParticipant.id_number)) {
-      toast.error(trans.invalidId);
-      return;
-    }
-
-    // Check for duplicate ID number
-    const duplicateId = participants.find(p => p.id_number === currentParticipant.id_number);
-    if (duplicateId) {
-      toast.error(trans.duplicateId);
-      return;
-    }
-
-    setParticipants([...participants, { id_number: currentParticipant.id_number, id: Date.now() }]);
-    setCurrentParticipant({ ...currentParticipant, id_number: '' });
+    // For groups, we don't add individual participants via this method
+    // Groups use a single total participant count
+    return;
   };
 
   const isParent = participants.length === 0 || (participants.length === 1 && spouseExists);
@@ -333,11 +328,38 @@ export default function ParticipantForm({ userType, participants, setParticipant
                 />
               </div>
             </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <Label>{trans.leaderPhone} *</Label>
+                <Input
+                  value={groupInfo.leaderPhone}
+                  onChange={(e) => setGroupInfo({ ...groupInfo, leaderPhone: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>{trans.idNumber} * ({language === 'he' ? 'של המדריך' : 'Leader'})</Label>
+                <Input
+                  value={groupInfo.leaderIdNumber || ''}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    setGroupInfo({ ...groupInfo, leaderIdNumber: val });
+                  }}
+                  maxLength={9}
+                  placeholder="123456789"
+                />
+              </div>
+            </div>
             <div>
-              <Label>{trans.leaderPhone} *</Label>
+              <Label>{trans.totalParticipants} *</Label>
               <Input
-                value={groupInfo.leaderPhone}
-                onChange={(e) => setGroupInfo({ ...groupInfo, leaderPhone: e.target.value })}
+                type="number"
+                min="1"
+                value={groupInfo.totalParticipants || ''}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value) || '';
+                  setGroupInfo({ ...groupInfo, totalParticipants: val });
+                }}
+                placeholder={language === 'he' ? 'לדוגמה: 25' : 'e.g., 25'}
               />
             </div>
           </div>
@@ -375,29 +397,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
         )}
 
         <div className="space-y-4">
-          {userType === 'group' ? (
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{trans.addId}</h3>
-              <div className="flex gap-4 items-end">
-                <div className="flex-1">
-                  <Label>{trans.idNumber}</Label>
-                  <Input
-                    value={currentParticipant.id_number}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/\D/g, '');
-                      setCurrentParticipant({ ...currentParticipant, id_number: val });
-                    }}
-                    maxLength={9}
-                    placeholder="123456789"
-                  />
-                </div>
-                <Button onClick={handleAddGroup} className="bg-blue-600 hover:bg-blue-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  {trans.add}
-                </Button>
-              </div>
-            </div>
-          ) : (
+          {userType !== 'group' && (
             <>
               {participants.length === 0 && userType !== 'individual' && (
                 <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border-2 border-blue-200">

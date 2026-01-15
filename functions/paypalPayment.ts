@@ -31,6 +31,11 @@ Deno.serve(async (req) => {
       currency_code: 'ILS'
     });
 
+    // Get the app URL for return
+    const appUrl = 'https://groupyloopy.app';
+    const returnUrl = `${appUrl}/NifgashimPortal?payment=success`;
+    const cancelUrl = `${appUrl}/NifgashimPortal?payment=cancelled`;
+
     // Return the form as HTML that auto-submits
     const html = `
 <!DOCTYPE html>
@@ -48,6 +53,9 @@ Deno.serve(async (req) => {
     <input type="hidden" name="on0" value="כמות אנשים">
     <input type="hidden" name="os0" value="${participantsCount}">
     <input type="hidden" name="currency_code" value="ILS">
+    <input type="hidden" name="return" value="${returnUrl}">
+    <input type="hidden" name="cancel_return" value="${cancelUrl}">
+    <input type="hidden" name="rm" value="2">
     <button type="submit"></button>
   </form>
   <script>

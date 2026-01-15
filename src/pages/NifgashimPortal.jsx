@@ -18,6 +18,10 @@ import NifgashimMemorialForm from '../components/nifgashim/portal/MemorialForm';
 import NifgashimRegistrationSummary from '../components/nifgashim/portal/RegistrationSummary';
 import ThankYouView from '../components/nifgashim/portal/ThankYouView';
 import AdminDashboard from '../components/nifgashim/portal/AdminDashboard';
+import GrowPaymentForm from '../components/nifgashim/portal/GrowPaymentForm';
+import GroupHealthDeclaration from '../components/nifgashim/portal/GroupHealthDeclaration';
+import GroupParticipantCount from '../components/nifgashim/portal/GroupParticipantCount';
+import HealthDeclaration from '../components/nifgashim/portal/HealthDeclaration';
 
 export default function NifgashimPortal() {
   const { language, isRTL } = useLanguage();
@@ -34,6 +38,9 @@ export default function NifgashimPortal() {
   const [showThankYou, setShowThankYou] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+  const [groupParticipantCount, setGroupParticipantCount] = useState(0);
+  const [groupHealthDeclarationAccepted, setGroupHealthDeclarationAccepted] = useState(false);
+  const [individualHealthDeclarationAccepted, setIndividualHealthDeclarationAccepted] = useState(false);
 
   const { data: nifgashimTrip, isLoading, refetch } = useQuery({
     queryKey: ['nifgashimPortalTrip'],
@@ -71,6 +78,7 @@ export default function NifgashimPortal() {
       daily_distance_km: Number(day.daily_distance_km || day.distance_km || 0),
       elevation_gain_m: Number(day.elevation_gain_m || day.elevation_gain || 0),
       day_number: Number(day.day_number || index + 1),
+      category_id: day.category_id,
       description: typeof day.daily_description === 'string' ? day.daily_description : (typeof day.description === 'string' ? day.description : (typeof day.content === 'string' ? day.content : '')),
       image: (day.image && typeof day.image === 'object' && day.image.secure_url) ? day.image.secure_url : (typeof day.image === 'string' ? day.image : (typeof day.secure_url === 'string' ? day.secure_url : (typeof day.image_url === 'string' ? day.image_url : null))),
       waypoints: Array.isArray(day.waypoints) ? day.waypoints : []
@@ -129,11 +137,14 @@ export default function NifgashimPortal() {
         memorialData,
         currentStep,
         totalAmount,
+        groupParticipantCount,
+        groupHealthDeclarationAccepted,
+        individualHealthDeclarationAccepted,
         timestamp: Date.now()
       };
       localStorage.setItem('nifgashim_registration_state_v2', JSON.stringify(state));
     }
-  }, [userType, participants, selectedDays, groupInfo, vehicleInfo, memorialData, currentStep, totalAmount]);
+  }, [userType, participants, selectedDays, groupInfo, vehicleInfo, memorialData, currentStep, totalAmount, groupParticipantCount, groupHealthDeclarationAccepted, individualHealthDeclarationAccepted]);
 
   useEffect(() => {
     const savedState = localStorage.getItem('nifgashim_registration_state_v2');
@@ -145,11 +156,14 @@ export default function NifgashimPortal() {
             setUserType(parsed.userType);
             setParticipants(parsed.participants || []);
             setSelectedDays(parsed.selectedDays || []);
-            setGroupInfo(parsed.groupInfo || { name: '', leaderName: '', leaderEmail: '', leaderPhone: '' });
+            setGroupInfo(parsed.groupInfo || { name: '', leaderName: '', leaderEmail: '', leaderPhone: '', leaderIdNumber: '' });
             setVehicleInfo(parsed.vehicleInfo || { hasVehicle: false, number: '' });
             setMemorialData(parsed.memorialData || { memorial: null });
             setCurrentStep(parsed.currentStep || 1);
             setTotalAmount(parsed.totalAmount || 0);
+            setGroupParticipantCount(parsed.groupParticipantCount || 0);
+            setGroupHealthDeclarationAccepted(parsed.groupHealthDeclarationAccepted || false);
+            setIndividualHealthDeclarationAccepted(parsed.individualHealthDeclarationAccepted || false);
           }
         } else {
           localStorage.removeItem('nifgashim_registration_state');
@@ -164,43 +178,34 @@ export default function NifgashimPortal() {
     const checkPaymentSuccess = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const paymentSuccess = urlParams.get('payment_success');
-      // registration_id might not be present if we used direct link
       const registrationId = urlParams.get('registration_id'); 
 
       if (paymentSuccess === 'true' && !showThankYou) {
-        // Wait a bit to ensure UI is ready
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // If we have state but no registration ID, it means we returned from direct payment
-        // We need to complete the registration now
         const savedState = localStorage.getItem('nifgashim_registration_state_v2');
         if (savedState && !registrationId) {
             try {
                 toast.info(language === 'he' ? 'מאמת תשלום...' : 'Verifying payment...');
-                // We pass a placeholder transaction ID or extract from URL if available
-                // Meshulam might pass transaction details in query params
                 const processId = urlParams.get('processId') || urlParams.get('process_id') || `DIRECT-${Date.now()}`;
                 await completeRegistration(processId);
             } catch (err) {
                 console.error('Failed to complete registration after payment:', err);
-                // Toast already shown in completeRegistration
             }
         } else if (registrationId) {
-             // Existing logic for when we had a registration ID
              toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
              setShowThankYou(true);
         }
 
-        // Clean up URL
         const url = new URL(window.location);
         url.searchParams.delete('payment_success');
         url.searchParams.delete('registration_id');
-        url.searchParams.delete('sum'); // Clean up Meshulam params if any
+        url.searchParams.delete('sum');
         url.searchParams.delete('processId');
         url.searchParams.delete('process_id');
         window.history.replaceState({}, '', url);
 
-        localStorage.removeItem('nifgashim_registration_state'); // Old key
+        localStorage.removeItem('nifgashim_registration_state');
       }
     };
 
@@ -213,6 +218,7 @@ export default function NifgashimPortal() {
       subtitle: "תהליך הרשמה פשוט ומהיר",
       stepUserType: "סוג רישום",
       stepParticipants: "פרטי משתתפים",
+      stepHealth: "הצהרת בריאות",
       stepDays: "בחירת ימים",
       stepMemorial: "הנצחה",
       stepSummary: "סיכום",
@@ -230,6 +236,7 @@ export default function NifgashimPortal() {
       subtitle: "Simple and fast registration process",
       stepUserType: "Registration Type",
       stepParticipants: "Participant Details",
+      stepHealth: "Health Declaration",
       stepDays: "Select Days",
       stepMemorial: "Memorial",
       stepSummary: "Summary",
@@ -247,6 +254,7 @@ export default function NifgashimPortal() {
       subtitle: "Простой и быстрый процесс регистрации",
       stepUserType: "Тип регистрации",
       stepParticipants: "Данные участников",
+      stepHealth: "Медицинское заявление",
       stepDays: "Выбор дней",
       stepMemorial: "Мемориал",
       stepSummary: "Резюме",
@@ -264,6 +272,7 @@ export default function NifgashimPortal() {
       subtitle: "Proceso de registro simple y rápido",
       stepUserType: "Tipo de registro",
       stepParticipants: "Detalles de participantes",
+      stepHealth: "Declaración de Salud",
       stepDays: "Seleccionar días",
       stepMemorial: "Memorial",
       stepSummary: "Resumen",
@@ -281,6 +290,7 @@ export default function NifgashimPortal() {
       subtitle: "Processus d'inscription simple et rapide",
       stepUserType: "Type d'inscription",
       stepParticipants: "Détails des participants",
+      stepHealth: "Déclaration de Santé",
       stepDays: "Sélectionner les jours",
       stepMemorial: "Mémorial",
       stepSummary: "Résumé",
@@ -298,6 +308,7 @@ export default function NifgashimPortal() {
       subtitle: "Einfacher und schneller Registrierungsprozess",
       stepUserType: "Registrierungstyp",
       stepParticipants: "Teilnehmerdetails",
+      stepHealth: "Gesundheitserklärung",
       stepDays: "Tage auswählen",
       stepMemorial: "Gedenkstätte",
       stepSummary: "Zusammenfassung",
@@ -315,6 +326,7 @@ export default function NifgashimPortal() {
       subtitle: "Processo di registrazione semplice e veloce",
       stepUserType: "Tipo di registrazione",
       stepParticipants: "Dettagli partecipanti",
+      stepHealth: "Dichiarazione di Salute",
       stepDays: "Seleziona giorni",
       stepMemorial: "Memoriale",
       stepSummary: "Riepilogo",
@@ -331,99 +343,174 @@ export default function NifgashimPortal() {
 
   const trans = translations[language] || translations.en;
 
-  const steps = [
-    { id: 1, label: trans.stepUserType },
-    { id: 2, label: trans.stepParticipants },
-    { id: 3, label: trans.stepDays },
-    { id: 4, label: trans.stepMemorial },
-    { id: 5, label: trans.stepSummary }
-  ];
+  const steps = userType === 'group' 
+    ? [
+        { id: 1, label: trans.stepUserType },
+        { id: 2, label: trans.stepParticipants },
+        { id: 3, label: language === 'he' ? 'הצהרות' : 'Declarations' },
+        { id: 4, label: trans.stepHealth },
+        { id: 5, label: trans.stepDays },
+        { id: 6, label: trans.stepMemorial },
+        { id: 7, label: trans.stepSummary }
+      ]
+    : [
+        { id: 1, label: trans.stepUserType },
+        { id: 2, label: trans.stepParticipants },
+        { id: 3, label: trans.stepHealth },
+        { id: 4, label: trans.stepDays },
+        { id: 5, label: trans.stepMemorial },
+        { id: 6, label: trans.stepSummary },
+        { id: 7, label: trans.payment }
+      ];
 
   const calculateTotalAmount = () => {
+    // Groups are free - no payment required
+    if (userType === 'group') {
+      return 0;
+    }
+
+    // Count adults (age 10+) for individuals
     const adultsCount = participants.filter(p => {
-      if (!p.age_range) return true;
-      const age = parseInt(p.age_range.split('-')[0]);
-      return age >= 10;
+      if (!p.age_range) {
+        console.log('Participant without age_range, counting as adult:', p);
+        return true;
+      }
+      
+      const ageStr = p.age_range.split('-')[0].trim();
+      const age = parseInt(ageStr);
+      
+      if (isNaN(age)) {
+        console.log('Invalid age_range format, counting as adult:', p);
+        return true;
+      }
+      
+      const isAdult = age >= 10;
+      console.log(`Participant ${p.name}, age_range: ${p.age_range}, parsed age: ${age}, isAdult: ${isAdult}`);
+      return isAdult;
     }).length;
-    return adultsCount * 85;
+    
+    const total = adultsCount * 85;
+    console.log('=== PAYMENT CALCULATION ===');
+    console.log('Total participants:', participants.length);
+    console.log('Adult participants (age 10+):', adultsCount);
+    console.log('Total amount:', total, 'ILS');
+    console.log('Participants data:', participants);
+    console.log('========================');
+    
+    return total;
   };
+
+  const [paymentUrl, setPaymentUrl] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState(null); // 'grow' or 'paypal'
 
   const handleSubmit = async () => {
     const amount = calculateTotalAmount();
+    console.log('Amount calculated for payment:', amount);
     setTotalAmount(amount);
 
     if (amount > 0) {
-      toast.info(language === 'he' ? 'מעביר לתשלום...' : 'Redirecting to payment...');
-      
-      // Save state before redirecting so we can recover it on return
-      const state = {
-        userType,
-        participants,
-        selectedDays,
-        groupInfo,
-        vehicleInfo,
-        memorialData,
-        currentStep,
-        totalAmount: amount,
-        timestamp: Date.now()
-      };
-      localStorage.setItem('nifgashim_registration_state_v2', JSON.stringify(state));
-
-      // Direct redirect to Meshulam (Production Link) provided by user
-      setTimeout(() => {
-        const baseUrl = 'https://meshulam.co.il/s/bc8d0eda-efc0-ebd2-43c0-71efbd570304';
-        
-        // Prepare params
-        const params = new URLSearchParams();
-        params.append('sum', amount);
-        
-        // Try to pre-fill info
-        const leaderName = userType === 'group' ? groupInfo.leaderName : (participants[0]?.name || '');
-        const leaderPhone = userType === 'group' ? groupInfo.leaderPhone : (participants[0]?.phone || '');
-        const leaderEmail = userType === 'group' ? groupInfo.leaderEmail : (participants[0]?.email || '');
-        
-        if (leaderName) params.append('c_name', leaderName);
-        if (leaderPhone) params.append('phone', leaderPhone);
-        if (leaderEmail) params.append('email', leaderEmail);
-
-        // Redirect
-        window.location.href = `${baseUrl}?${params.toString()}`;
-      }, 1000);
+      // Show payment method selection
+      setCurrentStep(6);
       return;
     }
 
     await completeRegistration(null);
   };
 
+  const handleGrowPayment = async () => {
+    try {
+      setSubmitting(true);
+      await completeRegistration('PENDING');
+      const pendingRegId = localStorage.getItem('pending_registration_id');
+
+      const response = await base44.functions.invoke('createGrowPaymentEmbed', {
+        amount: totalAmount,
+        customerEmail: participants[0]?.email || '',
+        customerName: participants[0]?.name || '',
+        registrationId: pendingRegId
+      });
+
+      if (response.data?.success === true && response.data?.authCode) {
+        setPaymentUrl(response.data.authCode);
+        setPaymentMethod('grow');
+      } else {
+        const errorMsg = response.data?.error || (language === 'he' ? 'שגיאה ביצירת התשלום' : 'Error creating payment');
+        toast.error(errorMsg);
+        setSubmitting(false);
+      }
+    } catch (error) {
+      console.error('Grow payment failed:', error);
+      toast.error(language === 'he' ? 'שגיאה בתהליך התשלום' : 'Error in payment process');
+      setSubmitting(false);
+    }
+  };
+
+  const handlePayPalPayment = async () => {
+    try {
+      setSubmitting(true);
+      await completeRegistration('PENDING');
+
+      const response = await base44.functions.invoke('paypalPayment', {
+        amount: Math.round(totalAmount),
+        participantsCount: participants.length,
+        userEmail: participants[0]?.email || ''
+      });
+
+      const blob = new Blob([response.data], { type: 'text/html' });
+      const url = window.URL.createObjectURL(blob);
+      window.location.href = url;
+    } catch (error) {
+      console.error('PayPal payment failed:', error);
+      toast.error(language === 'he' ? 'שגיאה בתהליך התשלום' : 'Error in payment process');
+      setSubmitting(false);
+    }
+  };
+
   const completeRegistration = async (transactionId) => {
     setSubmitting(true);
     try {
       const user = await base44.auth.me().catch(() => null);
+      const payerEmail = userType === 'group' ? groupInfo.leaderEmail : (participants[0]?.email || user?.email || '');
+      const payerName = userType === 'group' ? groupInfo.leaderName : (participants[0]?.name || '');
       
-      const participantsData = participants.map(p => ({
-        email: p.email || (user?.email || `temp-${Date.now()}@nifgashim.temp`),
-        name: p.name,
-        id_number: p.id_number,
-        phone: p.phone,
-        joined_at: new Date().toISOString(),
-        selected_days: selectedDays.map(d => d.day_number),
-        waiver_accepted: true,
-        waiver_timestamp: new Date().toISOString(),
-        is_organized_group: userType === 'group',
-        group_type: userType === 'group' ? 'other' : null,
-        group_name: userType === 'group' ? groupInfo.name : null,
-        vehicle_number: vehicleInfo.hasVehicle ? vehicleInfo.number : null,
-        has_vehicle: vehicleInfo.hasVehicle,
-        payment_status: transactionId ? 'completed' : 'exempt',
-        payment_amount: 0,
-        payment_transaction_id: transactionId
-      }));
+      // Create registration in NifgashimRegistration entity
+      const registrationData = {
+        trip_id: nifgashimTrip.id,
+        participants: userType === 'group' 
+          ? [{ 
+              name: groupInfo.leaderName,
+              id_number: groupInfo.leaderIdNumber,
+              phone: groupInfo.leaderPhone,
+              email: groupInfo.leaderEmail,
+              age_range: '36-50'
+            }]
+          : participants.map(p => ({
+              name: p.name,
+              id_number: p.id_number,
+              phone: p.phone,
+              email: p.email || payerEmail,
+              age_range: p.age_range
+            })),
+        userType: userType,
+        groupInfo: userType === 'group' ? { ...groupInfo, totalParticipants: groupParticipantCount, healthDeclarationAccepted: groupHealthDeclarationAccepted } : null,
+        vehicleInfo: vehicleInfo,
+        memorialData: memorialData.memorial?.fallen_name ? memorialData : null,
+        selectedDays: selectedDays.map(d => ({
+          day_number: d.day_number,
+          daily_title: d.daily_title,
+          date: d.date
+        })),
+        amount: userType === 'group' ? 0 : totalAmount,
+        status: transactionId === 'PENDING' ? 'pending_payment' : 'completed',
+        transaction_id: transactionId === 'PENDING' ? null : transactionId,
+        customer_email: payerEmail,
+        customer_name: payerName
+      };
 
-      const currentParticipants = nifgashimTrip?.participants || [];
-      await base44.entities.Trip.update(nifgashimTrip.id, {
-        participants: [...currentParticipants, ...participantsData]
-      });
+      const createdRegistration = await base44.entities.NifgashimRegistration.create(registrationData);
+      console.log('Created NifgashimRegistration:', createdRegistration);
 
+      // Also create Memorial if submitted
       if (memorialData.memorial?.fallen_name) {
         await base44.entities.Memorial.create({
           trip_id: nifgashimTrip.id,
@@ -432,8 +519,12 @@ export default function NifgashimPortal() {
         });
       }
 
-      const payerEmail = userType === 'group' ? groupInfo.leaderEmail : (participants[0]?.email || '');
-      const payerName = userType === 'group' ? groupInfo.leaderName : (participants[0]?.name || '');
+      // If this is just a pending registration before payment, stop here
+      if (transactionId === 'PENDING') {
+        // Store the registration ID for later update after payment
+        localStorage.setItem('pending_registration_id', createdRegistration.id);
+        return true;
+      }
 
       if (payerEmail) {
         try {
@@ -445,26 +536,31 @@ export default function NifgashimPortal() {
               : `Hello ${payerName},\n\nThank you for registering for Nifgashim Bishvil Israel!\n\nYour registration details have been received.\nParticipants: ${participants.length}\n\nSee you on the trek!\nNifgashim Team`
           });
         } catch (emailError) {
-          console.error('Failed to send confirmation email for exempt registration:', emailError);
+          console.error('Failed to send confirmation email:', emailError);
         }
       }
 
       try {
         const adminEmail = nifgashimTrip?.organizer_email;
         if (adminEmail) {
-             await base44.integrations.Core.SendEmail({
-              to: adminEmail,
-              subject: `New Exempt Registration: ${payerName}`,
-              body: `New exempt registration received.\nUser: ${payerName} (${payerEmail})\nParticipants: ${participants.length}\nType: ${userType}`
-            });
+          const body = userType === 'group'
+            ? `הרשמה חדשה קבוצה התקבלה.\nמדריך: ${payerName} (${payerEmail})\nתעודת זהות: ${groupInfo.leaderIdNumber}\nכמות משתתפים: ${groupParticipantCount}\nהצהרת בריאות אושרה: כן\nהרשמה חינם`
+            : `הרשמה חדשה התקבלה.\nמשתמש: ${payerName} (${payerEmail})\nמשתתפים: ${participants.length}\nסוג: ${userType}\nסכום: ₪${totalAmount}`;
+          
+          await base44.integrations.Core.SendEmail({
+            to: adminEmail,
+            subject: `הרשמה חדשה: ${payerName}`,
+            body: body
+          });
         }
       } catch (adminEmailError) {
-        console.error('Failed to send admin email for exempt registration:', adminEmailError);
+        console.error('Failed to send admin email:', adminEmailError);
       }
 
       toast.success(trans.registrationSuccess);
       
       localStorage.removeItem('nifgashim_registration_state_v2');
+      localStorage.removeItem('pending_registration_id');
 
       setShowThankYou(true);
       return true;
@@ -587,24 +683,47 @@ export default function NifgashimPortal() {
               />
             )}
 
-            {currentStep === 3 && (
+            {currentStep === 3 && userType === 'group' && (
+              <div className="space-y-6">
+                <GroupParticipantCount
+                  totalCount={groupParticipantCount}
+                  onCountChange={setGroupParticipantCount}
+                />
+                <GroupHealthDeclaration
+                  accepted={groupHealthDeclarationAccepted}
+                  onAccept={setGroupHealthDeclarationAccepted}
+                  leaderName={groupInfo.leaderName}
+                />
+              </div>
+            )}
+
+            {currentStep === 3 && userType !== 'group' && (
+              <HealthDeclaration
+                accepted={individualHealthDeclarationAccepted}
+                onAccept={setIndividualHealthDeclarationAccepted}
+                language={language}
+              />
+            )}
+
+            {currentStep === (userType === 'group' ? 5 : 4) && (
               <NifgashimDayCardsSelector
                 trekDays={trekDays}
                 linkedDaysPairs={linkedDaysPairs}
                 selectedDays={selectedDays}
                 onDaysChange={setSelectedDays}
                 maxDays={nifgashimTrip?.payment_settings?.overall_max_selectable_days || 8}
+                trekCategories={nifgashimTrip?.trek_categories || []}
               />
             )}
 
-            {currentStep === 4 && (
+            {currentStep === (userType === 'group' ? 6 : 5) && (
               <NifgashimMemorialForm
                 formData={memorialData}
                 setFormData={setMemorialData}
               />
             )}
 
-            {currentStep === 5 && (
+            {currentStep === (userType === 'group' ? 7 : 6) && (
               <NifgashimRegistrationSummary
                 userType={userType}
                 participants={participants}
@@ -613,50 +732,122 @@ export default function NifgashimPortal() {
                 groupInfo={groupInfo}
               />
             )}
-          </motion.div>
-        </AnimatePresence>
 
+<<<<<<< HEAD
         <div className="flex justify-between gap-4 mt-6">
+=======
+            {currentStep === (userType === 'group' ? 8 : 7) && userType !== 'group' && (
+              <Card className="overflow-hidden">
+                <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+                  <CardTitle className="text-center text-2xl">
+                    {language === 'he' ? 'בחר אמצעי תשלום' : language === 'ru' ? 'Выберите способ оплаты' : language === 'es' ? 'Seleccionar método de pago' : language === 'fr' ? 'Choisir le mode de paiement' : language === 'de' ? 'Zahlungsmethode wählen' : language === 'it' ? 'Seleziona metodo di pagamento' : 'Select Payment Method'}
+                  </CardTitle>
+                  <p className="text-center text-blue-100 mt-2">
+                    {language === 'he' 
+                      ? `סכום לתשלום: ₪${totalAmount}`
+                      : `Amount to pay: ₪${totalAmount}`
+                    }
+                  </p>
+                </CardHeader>
+                <CardContent className="p-6">
+                  {paymentUrl && paymentMethod === 'grow' ? (
+                    <GrowPaymentForm authCode={paymentUrl} language={language} />
+                  ) : (
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      {/* Grow/Meshulam - Credit Card */}
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleGrowPayment}
+                        disabled={submitting}
+                        className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl hover:border-green-400 hover:shadow-lg transition-all text-center"
+                      >
+                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <CreditCard className="w-8 h-8 text-green-600" />
+                        </div>
+                        <h3 className="font-bold text-lg text-gray-900 mb-2">
+                          {language === 'he' ? 'כרטיס אשראי' : language === 'ru' ? 'Кредитная карта' : language === 'es' ? 'Tarjeta de crédito' : language === 'fr' ? 'Carte de crédit' : language === 'de' ? 'Kreditkarte' : language === 'it' ? 'Carta di credito' : 'Credit Card'}
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          {language === 'he' ? 'תשלום מאובטח ישירות באתר' : 'Secure payment on site'}
+                        </p>
+                      </motion.button>
+
+                      {/* PayPal */}
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handlePayPalPayment}
+                        disabled={submitting}
+                        className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl hover:border-blue-400 hover:shadow-lg transition-all text-center"
+                      >
+                        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none">
+                            <path d="M7.144 19.532l.358-2.268h-.723c-2.94 0-4.598-1.984-4.225-4.597l.688-4.832C3.596 5.256 5.697 3.5 8.637 3.5h4.654c2.14 0 3.66.983 4.008 2.585.382 1.758-.12 3.43-1.368 4.559-1.1 1.006-2.662 1.48-4.402 1.357h-.723c-.48 0-.884.376-.965.897l-.518 3.279c-.072.457-.414.815-.884.855l-1.295.5z" fill="#253B80"/>
+                            <path d="M19.856 7.203c.376 1.754-.09 3.435-1.268 4.613-1.268 1.268-3.215 1.831-5.484 1.584-.448-.05-.82.287-.898.726l-.66 4.177c-.08.52-.455.897-.976.897H8.5l.16-1.016.356-2.254h-.723c-2.94 0-4.6-1.984-4.227-4.597l.69-4.832C5.108 3.924 7.208 2.168 10.148 2.168h4.654c2.14 0 3.66.983 4.008 2.585l.046.45z" fill="#179BD7"/>
+                          </svg>
+                        </div>
+                        <h3 className="font-bold text-lg text-gray-900 mb-2">PayPal</h3>
+                        <p className="text-sm text-gray-600">
+                          {language === 'he' ? 'העברה לדף PayPal' : 'Redirect to PayPal'}
+                        </p>
+                      </motion.button>
+                    </div>
+                  )}
+                  
+                  {submitting && !paymentUrl && (
+                    <div className="flex items-center justify-center gap-3 mt-6">
+                      <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                      <span className="text-gray-600">
+                        {language === 'he' ? 'מכין את דף התשלום...' : 'Preparing payment...'}
+                      </span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+            </motion.div>
+            </AnimatePresence>
+
+        <div className="flex justify-between items-center mt-6">
+>>>>>>> f6c73c512515df19bc2b4261e794eb2887104284
           <Button
             variant="outline"
             onClick={() => setCurrentStep(prev => Math.max(prev - 1, 1))}
-            disabled={currentStep === 1 || submitting}
+            disabled={currentStep === 1 || (userType !== 'group' && currentStep === 7) || (userType === 'group' && currentStep === 8) || submitting}
             className="px-6"
           >
             <ArrowLeft className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
             {trans.back}
           </Button>
 
-          {currentStep < steps.length ? (
-            <Button
-              onClick={() => setCurrentStep(prev => prev + 1)}
-              disabled={
-                (currentStep === 1 && !userType) ||
-                (currentStep === 2 && participants.length === 0) ||
-                (currentStep === 3 && selectedDays.length === 0)
-              }
-              className="px-6 bg-blue-600 hover:bg-blue-700"
-            >
-              {trans.next}
-              <ArrowRight className={`w-4 h-4 ${isRTL ? 'mr-2' : 'ml-2'}`} />
-            </Button>
-          ) : (
-            <Button
-              onClick={handleSubmit}
-              disabled={submitting}
-              className="px-6 bg-green-600 hover:bg-green-700"
-            >
-              {submitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  {trans.submitting}
-                </>
-              ) : (
-                <>
-                  {calculateTotalAmount() > 0 ? (
+          {userType === 'group' ? (
+            <>
+              {currentStep < 7 ? (
+                <Button
+                  onClick={() => setCurrentStep(prev => prev + 1)}
+                  disabled={
+                    (currentStep === 1 && !userType) ||
+                    (currentStep === 2 && participants.length === 0) ||
+                    (currentStep === 3 && (groupParticipantCount === 0 || !groupHealthDeclarationAccepted)) ||
+                    (currentStep === 4 && !groupHealthDeclarationAccepted) ||
+                    (currentStep === 5 && selectedDays.length === 0)
+                  }
+                  className="px-6 bg-blue-600 hover:bg-blue-700"
+                >
+                  {trans.next}
+                  <ArrowRight className={`w-4 h-4 ${isRTL ? 'mr-2' : 'ml-2'}`} />
+                </Button>
+              ) : currentStep === 7 ? (
+                <Button
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                  className="px-6 bg-green-600 hover:bg-green-700"
+                >
+                  {submitting ? (
                     <>
-                      <CreditCard className="w-4 h-4 mr-2" />
-                      {trans.proceedToPayment}
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      {trans.submitting}
                     </>
                   ) : (
                     <>
@@ -664,9 +855,54 @@ export default function NifgashimPortal() {
                       {trans.submit}
                     </>
                   )}
-                </>
-              )}
-            </Button>
+                </Button>
+              ) : null}
+            </>
+          ) : (
+            <>
+              {currentStep < 6 ? (
+                <Button
+                  onClick={() => setCurrentStep(prev => prev + 1)}
+                  disabled={
+                    (currentStep === 1 && !userType) ||
+                    (currentStep === 2 && participants.length === 0) ||
+                    (currentStep === 3 && !individualHealthDeclarationAccepted) ||
+                    (currentStep === 4 && selectedDays.length === 0)
+                  }
+                  className="px-6 bg-blue-600 hover:bg-blue-700"
+                >
+                  {trans.next}
+                  <ArrowRight className={`w-4 h-4 ${isRTL ? 'mr-2' : 'ml-2'}`} />
+                </Button>
+              ) : currentStep === 6 ? (
+                <Button
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                  className="px-6 bg-green-600 hover:bg-green-700"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      {trans.submitting}
+                    </>
+                  ) : (
+                    <>
+                      {calculateTotalAmount() > 0 ? (
+                        <>
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          {trans.proceedToPayment}
+                        </>
+                      ) : (
+                        <>
+                          <Check className="w-4 h-4 mr-2" />
+                          {trans.submit}
+                        </>
+                      )}
+                    </>
+                  )}
+                </Button>
+              ) : null}
+            </>
           )}
         </div>
       </div>

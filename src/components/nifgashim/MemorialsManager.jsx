@@ -1,22 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLanguage } from '../LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { Heart, Check, X, Sparkles, Loader2, GripVertical, Calendar, Trash2, Info } from 'lucide-react';
+import { Heart, Check, X, Sparkles, Loader2, GripVertical, Calendar, Trash2, Info, Plus, Upload, Edit2, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
+import MemorialDedications from '@/components/nifgashim/MemorialDedications';
 
 export default function MemorialsManager({ tripId, showTrekDays = false }) {
   const { language, isRTL } = useLanguage();
   const queryClient = useQueryClient();
   const [aiDistributing, setAiDistributing] = useState(false);
   const [selectedMemorial, setSelectedMemorial] = useState(null);
+  const [addMemorialDialog, setAddMemorialDialog] = useState(false);
+  const [editingMemorial, setEditingMemorial] = useState(null);
+  const [user, setUser] = useState(null);
+  const [newMemorial, setNewMemorial] = useState({
+    fallen_name: '',
+    date_of_fall: '',
+    place_of_fall: '',
+    short_description: '',
+    story: '',
+    image_url: ''
+  });
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  useEffect(() => {
+    base44.auth.me().then(setUser).catch(() => {});
+  }, []);
 
   const translations = {
     he: {
@@ -44,7 +63,20 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       email: "אימייל",
       close: "סגור",
       confirmDelete: "האם למחוק הנצחה זו?",
-      deleted: "הוסר בהצלחה"
+      deleted: "הוסר בהצלחה",
+      addMemorial: "הוסף הנצחה",
+      editMemorial: "ערוך הנצחה",
+      fallenNameLabel: "שם החלל/ה",
+      dateOfFallLabel: "תאריך נפילה",
+      placeOfFallLabel: "מקום נפילה",
+      shortDescLabel: "תיאור קצר",
+      storyLabel: "סיפור/זיכרון",
+      uploadPhoto: "העלה תמונה",
+      save: "שמור",
+      cancel: "ביטול",
+      memorialAdded: "ההנצחה נוספה בהצלחה",
+      memorialUpdated: "ההנצחה עודכנה בהצלחה",
+      assignToDay: "שייך ליום"
     },
     en: {
       title: "Memorial Management",
@@ -71,7 +103,20 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       email: "Email",
       close: "Close",
       confirmDelete: "Delete this memorial?",
-      deleted: "Deleted successfully"
+      deleted: "Deleted successfully",
+      addMemorial: "Add Memorial",
+      editMemorial: "Edit Memorial",
+      fallenNameLabel: "Name of Fallen",
+      dateOfFallLabel: "Date of Fall",
+      placeOfFallLabel: "Place of Fall",
+      shortDescLabel: "Short Description",
+      storyLabel: "Story/Memory",
+      uploadPhoto: "Upload Photo",
+      save: "Save",
+      cancel: "Cancel",
+      memorialAdded: "Memorial added successfully",
+      memorialUpdated: "Memorial updated successfully",
+      assignToDay: "Assign to Day"
     },
     ru: {
       title: "Управление мемориалами",
@@ -98,7 +143,20 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       email: "Email",
       close: "Закрыть",
       confirmDelete: "Удалить этот мемориал?",
-      deleted: "Удалено"
+      deleted: "Удалено",
+      addMemorial: "Добавить мемориал",
+      editMemorial: "Редактировать",
+      fallenNameLabel: "Имя павшего",
+      dateOfFallLabel: "Дата падения",
+      placeOfFallLabel: "Место падения",
+      shortDescLabel: "Краткое описание",
+      storyLabel: "История/Память",
+      uploadPhoto: "Загрузить фото",
+      save: "Сохранить",
+      cancel: "Отмена",
+      memorialAdded: "Мемориал добавлен",
+      memorialUpdated: "Мемориал обновлен",
+      assignToDay: "Назначить день"
     },
     es: {
       title: "Gestión de memoriales",
@@ -125,7 +183,20 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       email: "Email",
       close: "Cerrar",
       confirmDelete: "¿Eliminar este memorial?",
-      deleted: "Eliminado"
+      deleted: "Eliminado",
+      addMemorial: "Agregar memorial",
+      editMemorial: "Editar memorial",
+      fallenNameLabel: "Nombre del caído",
+      dateOfFallLabel: "Fecha de caída",
+      placeOfFallLabel: "Lugar de caída",
+      shortDescLabel: "Descripción breve",
+      storyLabel: "Historia/Memoria",
+      uploadPhoto: "Subir foto",
+      save: "Guardar",
+      cancel: "Cancelar",
+      memorialAdded: "Memorial agregado",
+      memorialUpdated: "Memorial actualizado",
+      assignToDay: "Asignar a día"
     },
     fr: {
       title: "Gestion des mémoriaux",
@@ -152,7 +223,20 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       email: "Email",
       close: "Fermer",
       confirmDelete: "Supprimer ce mémorial?",
-      deleted: "Supprimé"
+      deleted: "Supprimé",
+      addMemorial: "Ajouter mémorial",
+      editMemorial: "Modifier mémorial",
+      fallenNameLabel: "Nom du tombé",
+      dateOfFallLabel: "Date de chute",
+      placeOfFallLabel: "Lieu de chute",
+      shortDescLabel: "Description courte",
+      storyLabel: "Histoire/Mémoire",
+      uploadPhoto: "Télécharger photo",
+      save: "Sauvegarder",
+      cancel: "Annuler",
+      memorialAdded: "Mémorial ajouté",
+      memorialUpdated: "Mémorial mis à jour",
+      assignToDay: "Assigner au jour"
     },
     de: {
       title: "Gedenkstättenverwaltung",
@@ -179,7 +263,20 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       email: "Email",
       close: "Schließen",
       confirmDelete: "Dieses Memorial löschen?",
-      deleted: "Gelöscht"
+      deleted: "Gelöscht",
+      addMemorial: "Memorial hinzufügen",
+      editMemorial: "Memorial bearbeiten",
+      fallenNameLabel: "Name des Gefallenen",
+      dateOfFallLabel: "Todesdatum",
+      placeOfFallLabel: "Todesort",
+      shortDescLabel: "Kurze Beschreibung",
+      storyLabel: "Geschichte/Erinnerung",
+      uploadPhoto: "Foto hochladen",
+      save: "Speichern",
+      cancel: "Abbrechen",
+      memorialAdded: "Memorial hinzugefügt",
+      memorialUpdated: "Memorial aktualisiert",
+      assignToDay: "Tag zuweisen"
     },
     it: {
       title: "Gestione memoriali",
@@ -206,7 +303,20 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       email: "Email",
       close: "Chiudi",
       confirmDelete: "Eliminare questo memoriale?",
-      deleted: "Eliminato"
+      deleted: "Eliminato",
+      addMemorial: "Aggiungi memoriale",
+      editMemorial: "Modifica memoriale",
+      fallenNameLabel: "Nome del caduto",
+      dateOfFallLabel: "Data della caduta",
+      placeOfFallLabel: "Luogo della caduta",
+      shortDescLabel: "Descrizione breve",
+      storyLabel: "Storia/Memoria",
+      uploadPhoto: "Carica foto",
+      save: "Salva",
+      cancel: "Annulla",
+      memorialAdded: "Memoriale aggiunto",
+      memorialUpdated: "Memoriale aggiornato",
+      assignToDay: "Assegna al giorno"
     }
   };
 
@@ -245,6 +355,67 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       toast.success(trans.deleted);
     }
   });
+
+  const createMemorialMutation = useMutation({
+    mutationFn: (data) => base44.entities.Memorial.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['memorials', tripId]);
+      toast.success(trans.memorialAdded);
+      setAddMemorialDialog(false);
+      setNewMemorial({
+        fallen_name: '',
+        date_of_fall: '',
+        place_of_fall: '',
+        short_description: '',
+        story: '',
+        image_url: ''
+      });
+    }
+  });
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      if (editingMemorial) {
+        setEditingMemorial({ ...editingMemorial, image_url: file_url });
+      } else {
+        setNewMemorial({ ...newMemorial, image_url: file_url });
+      }
+    } catch (error) {
+      toast.error(language === 'he' ? 'שגיאה בהעלאת תמונה' : 'Error uploading image');
+    }
+    setUploadingImage(false);
+  };
+
+  const handleSaveMemorial = async () => {
+    if (editingMemorial) {
+      await updateMemorialMutation.mutateAsync({
+        id: editingMemorial.id,
+        data: {
+          fallen_name: editingMemorial.fallen_name,
+          date_of_fall: editingMemorial.date_of_fall,
+          place_of_fall: editingMemorial.place_of_fall,
+          short_description: editingMemorial.short_description,
+          story: editingMemorial.story,
+          image_url: editingMemorial.image_url
+        }
+      });
+      toast.success(trans.memorialUpdated);
+      setEditingMemorial(null);
+    } else {
+      await createMemorialMutation.mutateAsync({
+        ...newMemorial,
+        trip_id: tripId,
+        status: 'approved',
+        requester_name: user?.full_name || 'Admin',
+        requester_email: user?.email || 'admin@system.com'
+      });
+    }
+  };
 
   const handleApprove = (memorial) => {
     updateMemorialMutation.mutate({
@@ -433,30 +604,40 @@ Return a JSON object mapping memorial indices (0-based) to day numbers. Example:
 
   return (
     <div className="space-y-6" dir="rtl">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
           <Heart className="w-6 h-6 text-red-500" />
           {trans.title}
         </h2>
-        {approvedMemorials.length > 0 && (
+        <div className="flex flex-wrap gap-2">
           <Button
-            onClick={handleAiDistribute}
-            disabled={aiDistributing}
-            className="bg-gradient-to-r from-purple-600 to-pink-600"
+            onClick={() => setAddMemorialDialog(true)}
+            className="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
           >
-            {aiDistributing ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                {trans.distributing}
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-4 h-4 mr-2" />
-                {trans.aiDistribute}
-              </>
-            )}
+            <Plus className="w-4 h-4 mr-2" />
+            {trans.addMemorial}
           </Button>
-        )}
+          {approvedMemorials.length > 0 && (
+            <Button
+              onClick={handleAiDistribute}
+              disabled={aiDistributing}
+              variant="outline"
+              className="border-purple-300 text-purple-700 hover:bg-purple-50"
+            >
+              {aiDistributing ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {trans.distributing}
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  {trans.aiDistribute}
+                </>
+              )}
+            </Button>
+          )}
+        </div>
       </div>
 
       {memorials.length === 0 ? (
@@ -747,13 +928,37 @@ Return a JSON object mapping memorial indices (0-based) to day numbers. Example:
                     </motion.div>
                   )}
 
-                  {/* Close Button */}
-                  <motion.div 
-                    className="flex justify-center pt-4"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                  {/* Dedications Section */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
                   >
+                    <MemorialDedications 
+                      memorial={selectedMemorial} 
+                      user={user} 
+                      tripId={tripId} 
+                    />
+                  </motion.div>
+
+                  {/* Close Button */}
+                  <motion.div 
+                    className="flex justify-center gap-3 pt-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    <Button
+                      onClick={() => {
+                        setEditingMemorial(selectedMemorial);
+                        setSelectedMemorial(null);
+                      }}
+                      variant="outline"
+                      className="gap-2"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                      {trans.editMemorial}
+                    </Button>
                     <Button
                       onClick={() => setSelectedMemorial(null)}
                       className="bg-gradient-to-r from-gray-600 to-gray-800 hover:from-gray-700 hover:to-gray-900 px-8 sm:px-12 py-3 text-base shadow-lg hover:shadow-xl transition-all"
@@ -767,6 +972,136 @@ Return a JSON object mapping memorial indices (0-based) to day numbers. Example:
           </Dialog>
         )}
       </AnimatePresence>
+
+      {/* Add/Edit Memorial Dialog */}
+      <Dialog open={addMemorialDialog || !!editingMemorial} onOpenChange={(open) => {
+        if (!open) {
+          setAddMemorialDialog(false);
+          setEditingMemorial(null);
+        }
+      }}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto" dir={isRTL ? 'rtl' : 'ltr'}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Heart className="w-5 h-5 text-red-500" />
+              {editingMemorial ? trans.editMemorial : trans.addMemorial}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* Image Upload */}
+            <div className="flex flex-col items-center gap-3">
+              {(editingMemorial?.image_url || newMemorial.image_url) && (
+                <img
+                  src={editingMemorial?.image_url || newMemorial.image_url}
+                  alt="Memorial"
+                  className="w-32 h-32 object-cover rounded-xl border-2 border-red-200"
+                />
+              )}
+              <label className="cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                />
+                <Button type="button" variant="outline" className="gap-2" asChild>
+                  <span>
+                    {uploadingImage ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Upload className="w-4 h-4" />
+                    )}
+                    {trans.uploadPhoto}
+                  </span>
+                </Button>
+              </label>
+            </div>
+
+            {/* Fallen Name */}
+            <div>
+              <label className="text-sm font-medium text-gray-700">{trans.fallenNameLabel} *</label>
+              <Input
+                value={editingMemorial?.fallen_name || newMemorial.fallen_name}
+                onChange={(e) => editingMemorial 
+                  ? setEditingMemorial({ ...editingMemorial, fallen_name: e.target.value })
+                  : setNewMemorial({ ...newMemorial, fallen_name: e.target.value })}
+                className="mt-1"
+              />
+            </div>
+
+            {/* Date of Fall */}
+            <div>
+              <label className="text-sm font-medium text-gray-700">{trans.dateOfFallLabel}</label>
+              <Input
+                type="date"
+                value={editingMemorial?.date_of_fall || newMemorial.date_of_fall}
+                onChange={(e) => editingMemorial 
+                  ? setEditingMemorial({ ...editingMemorial, date_of_fall: e.target.value })
+                  : setNewMemorial({ ...newMemorial, date_of_fall: e.target.value })}
+                className="mt-1"
+              />
+            </div>
+
+            {/* Place of Fall */}
+            <div>
+              <label className="text-sm font-medium text-gray-700">{trans.placeOfFallLabel}</label>
+              <Input
+                value={editingMemorial?.place_of_fall || newMemorial.place_of_fall}
+                onChange={(e) => editingMemorial 
+                  ? setEditingMemorial({ ...editingMemorial, place_of_fall: e.target.value })
+                  : setNewMemorial({ ...newMemorial, place_of_fall: e.target.value })}
+                className="mt-1"
+              />
+            </div>
+
+            {/* Short Description */}
+            <div>
+              <label className="text-sm font-medium text-gray-700">{trans.shortDescLabel}</label>
+              <Input
+                value={editingMemorial?.short_description || newMemorial.short_description}
+                onChange={(e) => editingMemorial 
+                  ? setEditingMemorial({ ...editingMemorial, short_description: e.target.value })
+                  : setNewMemorial({ ...newMemorial, short_description: e.target.value })}
+                className="mt-1"
+                placeholder={language === 'he' ? 'תיאור קצר (אופציונלי)' : 'Short description (optional)'}
+              />
+            </div>
+
+            {/* Story */}
+            <div>
+              <label className="text-sm font-medium text-gray-700">{trans.storyLabel}</label>
+              <Textarea
+                value={editingMemorial?.story || newMemorial.story}
+                onChange={(e) => editingMemorial 
+                  ? setEditingMemorial({ ...editingMemorial, story: e.target.value })
+                  : setNewMemorial({ ...newMemorial, story: e.target.value })}
+                className="mt-1 min-h-[100px]"
+                placeholder={language === 'he' ? 'ספר/י על החלל/ה...' : 'Tell about the fallen...'}
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setAddMemorialDialog(false);
+                setEditingMemorial(null);
+              }}
+            >
+              {trans.cancel}
+            </Button>
+            <Button
+              onClick={handleSaveMemorial}
+              disabled={!(editingMemorial?.fallen_name || newMemorial.fallen_name)}
+              className="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+            >
+              {trans.save}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
