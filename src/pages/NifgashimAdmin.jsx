@@ -52,7 +52,9 @@ import {
   X,
   MoreVertical,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Bell,
+  AlertCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
