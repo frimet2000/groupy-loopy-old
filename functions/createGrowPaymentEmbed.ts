@@ -59,8 +59,8 @@ Deno.serve(async (req) => {
       form.append('cField3', registrationId);
     }
 
-    // Use Meshulam API (production URL)
-    const apiUrl = 'https://secure.meshulam.co.il/api/light/server/1.0/createPaymentProcess';
+    // Use Meshulam API (sandbox URL for testing)
+    const apiUrl = 'https://sandbox.meshulam.co.il/api/light/server/1.0/createPaymentProcess';
 
     console.log('=== MESHULAM API CALL DEBUG ===');
     console.log('pageCode:', cleanPageCode, `(length: ${cleanPageCode?.length})`);
