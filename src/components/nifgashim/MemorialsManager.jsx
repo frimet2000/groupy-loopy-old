@@ -20,6 +20,22 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
   const queryClient = useQueryClient();
   const [aiDistributing, setAiDistributing] = useState(false);
   const [selectedMemorial, setSelectedMemorial] = useState(null);
+  const [addMemorialDialog, setAddMemorialDialog] = useState(false);
+  const [editingMemorial, setEditingMemorial] = useState(null);
+  const [user, setUser] = useState(null);
+  const [newMemorial, setNewMemorial] = useState({
+    fallen_name: '',
+    date_of_fall: '',
+    place_of_fall: '',
+    short_description: '',
+    story: '',
+    image_url: ''
+  });
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  useEffect(() => {
+    base44.auth.me().then(setUser).catch(() => {});
+  }, []);
 
   const translations = {
     he: {
