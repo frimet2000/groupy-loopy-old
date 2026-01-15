@@ -143,7 +143,20 @@ export default function MemorialsManager({ tripId, showTrekDays = false }) {
       email: "Email",
       close: "Закрыть",
       confirmDelete: "Удалить этот мемориал?",
-      deleted: "Удалено"
+      deleted: "Удалено",
+      addMemorial: "Добавить мемориал",
+      editMemorial: "Редактировать",
+      fallenNameLabel: "Имя павшего",
+      dateOfFallLabel: "Дата падения",
+      placeOfFallLabel: "Место падения",
+      shortDescLabel: "Краткое описание",
+      storyLabel: "История/Память",
+      uploadPhoto: "Загрузить фото",
+      save: "Сохранить",
+      cancel: "Отмена",
+      memorialAdded: "Мемориал добавлен",
+      memorialUpdated: "Мемориал обновлен",
+      assignToDay: "Назначить день"
     },
     es: {
       title: "Gestión de memoriales",
