@@ -195,12 +195,15 @@ export default function RegistrationSummary({ userType, participants, selectedDa
             <h3 className="font-semibold">{trans.selectedDays}</h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {selectedDays.map(day => (
-              <Badge key={day.day_number} className="bg-indigo-600 text-white text-sm py-2 px-3 justify-start flex flex-col items-start">
-                <div className="font-semibold">{day.daily_title}</div>
-                <div className="text-xs opacity-90">{day.date && new Date(day.date).toLocaleDateString(language === 'he' ? 'he-IL' : language === 'ru' ? 'ru-RU' : language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : language === 'de' ? 'de-DE' : language === 'it' ? 'it-IT' : 'en-US', { month: 'short', day: 'numeric' })}</div>
-              </Badge>
-            ))}
+            {selectedDays.map(day => {
+              const dateStr = day.date ? new Date(day.date).toLocaleDateString(language === 'he' ? 'he-IL' : language === 'ru' ? 'ru-RU' : language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : language === 'de' ? 'de-DE' : language === 'it' ? 'it-IT' : 'en-US', { month: 'short', day: 'numeric' }) : '';
+              return (
+                <div key={day.day_number} className="bg-white rounded-lg p-3 border border-indigo-200">
+                  <div className="font-semibold text-indigo-700">{day.daily_title}</div>
+                  <div className="text-xs text-gray-600 mt-1">{dateStr}</div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
