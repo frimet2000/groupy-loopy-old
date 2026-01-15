@@ -763,6 +763,36 @@ export default function NifgashimPortal() {
                 groupInfo={groupInfo}
               />
             )}
+
+            {currentStep === 7 && userType !== 'group' && (
+              <Card>
+                <CardContent className="p-6">
+                  <h2 className="text-2xl font-bold mb-6">
+                    {language === 'he' ? 'בחר שיטת תשלום' : language === 'ru' ? 'Выберите способ оплаты' : language === 'es' ? 'Selecciona método de pago' : language === 'fr' ? 'Choisir la méthode de paiement' : language === 'de' ? 'Zahlungsart wählen' : language === 'it' ? 'Scegli metodo di pagamento' : 'Choose Payment Method'}
+                  </h2>
+                  <div className="space-y-4">
+                    <button
+                      onClick={handleGrowPayment}
+                      disabled={submitting}
+                      className="w-full p-4 border-2 border-blue-500 rounded-lg hover:bg-blue-50 transition disabled:opacity-50"
+                    >
+                      <div className="font-semibold text-blue-600">
+                        {language === 'he' ? 'כרטיס אשראי / Grow' : 'Credit Card / Grow'}
+                      </div>
+                    </button>
+                    <button
+                      onClick={handlePayPalPayment}
+                      disabled={submitting}
+                      className="w-full p-4 border-2 border-yellow-500 rounded-lg hover:bg-yellow-50 transition disabled:opacity-50"
+                    >
+                      <div className="font-semibold text-yellow-600">
+                        {language === 'he' ? 'PayPal' : 'PayPal'}
+                      </div>
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </motion.div>
         </AnimatePresence>
 
