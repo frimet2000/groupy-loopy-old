@@ -21,12 +21,12 @@ export default function GroupHealthDeclaration({ accepted, onAccept, leaderName,
       agreement: "אני מאשר/ת את הצהרת הבריאות"
     },
     en: {
-      title: "Group Leader Health Declaration & Responsibility",
-      responsibility: "I hereby declare that I am fully responsible for all members of my group",
-      health: "I confirm that all group members are healthy and able to participate in the trek",
-      fullResponsibility: "I take full responsibility for all group members at all times",
-      emergencies: "I will report any emergency or health issue immediately",
-      agreement: "I agree to the above terms and confirm that this information is accurate"
+      title: "Health Declaration",
+      responsibility: "I hereby declare that I am in good health and physically fit to participate in this trek",
+      health: "I do not have any medical conditions that could affect my ability to participate in physical activities",
+      fullResponsibility: "This declaration is true today and I am responsible for any false or concealed information",
+      emergencies: "I acknowledge that participation in this trek involves significant inherent risks",
+      agreement: "I confirm the Health Declaration"
     },
     ru: {
       title: "Заявление о здоровье и ответственности руководителя группы",
