@@ -234,6 +234,7 @@ export default function NifgashimPortal() {
       subtitle: "Simple and fast registration process",
       stepUserType: "Registration Type",
       stepParticipants: "Participant Details",
+      stepHealth: "Health Declaration",
       stepDays: "Select Days",
       stepMemorial: "Memorial",
       stepSummary: "Summary",
