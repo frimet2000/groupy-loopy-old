@@ -22,6 +22,7 @@ import MyLists from './pages/MyLists';
 import MyNifgashim from './pages/MyNifgashim';
 import MyTrips from './pages/MyTrips';
 import NifgashimAdmin from './pages/NifgashimAdmin';
+import NifgashimPortal from './pages/NifgashimPortal';
 import NifgashimRegistration from './pages/NifgashimRegistration';
 import Notifications from './pages/Notifications';
 import Onboarding from './pages/Onboarding';
@@ -38,7 +39,6 @@ import TripPlanningGuide from './pages/TripPlanningGuide';
 import TripSummary from './pages/TripSummary';
 import VisualEditor from './pages/VisualEditor';
 import Weather from './pages/Weather';
-import NifgashimPortal from './pages/NifgashimPortal';
 import __Layout from './Layout.jsx';
 
 
@@ -67,6 +67,7 @@ export const PAGES = {
     "MyNifgashim": MyNifgashim,
     "MyTrips": MyTrips,
     "NifgashimAdmin": NifgashimAdmin,
+    "NifgashimPortal": NifgashimPortal,
     "NifgashimRegistration": NifgashimRegistration,
     "Notifications": Notifications,
     "Onboarding": Onboarding,
@@ -83,7 +84,6 @@ export const PAGES = {
     "TripSummary": TripSummary,
     "VisualEditor": VisualEditor,
     "Weather": Weather,
-    "NifgashimPortal": NifgashimPortal,
 }
 
 export const pagesConfig = {
