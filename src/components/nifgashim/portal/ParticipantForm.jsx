@@ -242,15 +242,27 @@ export default function ParticipantForm({ userType, participants, setParticipant
         return;
       }
       
-      // Validate phone number (must be exactly 10 digits for adults)
-      if (!/^\d{10}$/.test(currentParticipant.phone)) {
-        toast.error(trans.invalidPhone);
+      // Validate phone number (must start with 05 and be exactly 10 digits)
+      if (!/^05\d{8}$/.test(currentParticipant.phone)) {
+        toast.error(language === 'he' ? 'טלפון חייב להתחיל ב-05 ולהיות 10 ספרות' : 'Phone must start with 05 and be 10 digits');
+        return;
+      }
+
+      // Validate email (must contain @)
+      if (currentParticipant.email && !currentParticipant.email.includes('@')) {
+        toast.error(language === 'he' ? 'אימייל לא חוקי - חייב להכיל @' : 'Invalid email - must contain @');
         return;
       }
     } else {
-      // For children: validate phone if provided (optional but must be 10 digits if entered)
-      if (currentParticipant.phone && !/^\d{10}$/.test(currentParticipant.phone)) {
-        toast.error(trans.invalidPhone);
+      // For children: validate phone if provided (optional but must start with 05 and be 10 digits)
+      if (currentParticipant.phone && !/^05\d{8}$/.test(currentParticipant.phone)) {
+        toast.error(language === 'he' ? 'טלפון חייב להתחיל ב-05 ולהיות 10 ספרות' : 'Phone must start with 05 and be 10 digits');
+        return;
+      }
+
+      // Validate email if provided
+      if (currentParticipant.email && !currentParticipant.email.includes('@')) {
+        toast.error(language === 'he' ? 'אימייל לא חוקי - חייב להכיל @' : 'Invalid email - must contain @');
         return;
       }
     }
