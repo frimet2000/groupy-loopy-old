@@ -449,55 +449,94 @@ export default function NifgashimPortal() {
 
   const handlePayPalPayment = async () => {
     try {
-      console.log('Starting PayPal payment...');
       setSubmitting(true);
       await completeRegistration('PENDING');
       const pendingRegId = localStorage.getItem('pending_registration_id');
-      console.log('Pending registration ID:', pendingRegId);
 
       if (!pendingRegId) {
-        toast.error(language === 'he' ? 'שגיאה בשמירת ההרשמה לפני התשלום' : 'Failed to save registration before payment');
+        toast.error(language === 'he' ? 'שגיאה בשמירת ההרשמה' : 'Failed to save registration');
         setSubmitting(false);
         return;
       }
-
-      console.log('Invoking PayPal payment function with:', {
-        amount: Math.round(totalAmount),
-        participantsCount: participants.length,
-        userEmail: participants[0]?.email || '',
-        registrationId: pendingRegId
-      });
 
       const user = await base44.auth.me().catch(() => null);
       const payerEmail = participants[0]?.email || user?.email || '';
+
+      // Load PayPal SDK dynamically
+      const loadPayPalSDK = () => {
+        return new Promise((resolve, reject) => {
+          if (window.paypal) {
+            resolve(window.paypal);
+            return;
+          }
+
+          const CLIENT_ID = await base44.functions.invoke('getPayPalClientId').then(r => r.data?.clientId);
+          if (!CLIENT_ID) {
+            reject(new Error('PayPal not configured'));
+            return;
+          }
+
+          const script = document.createElement('script');
+          script.src = `https://www.paypal.com/sdk/js?client-id=${CLIENT_ID}&currency=ILS&locale=${language}_IL`;
+          script.onload = () => resolve(window.paypal);
+          script.onerror = () => reject(new Error('Failed to load PayPal SDK'));
+          document.head.appendChild(script);
+        });
+      };
+
+      const paypal = await loadPayPalSDK();
+
+      // Show PayPal button container
+      setPaymentMethod('paypal');
       
-      if (!payerEmail) {
-        toast.error(language === 'he' ? 'אימייל לא זמין' : 'Email not available');
-        setSubmitting(false);
-        return;
-      }
+      // Wait for DOM to update
+      await new Promise(resolve => setTimeout(resolve, 100));
 
-      const response = await base44.functions.invoke('paypalPayment', {
-        amount: Math.round(totalAmount),
-        participantsCount: participants.length,
-        userEmail: payerEmail,
-        registrationId: pendingRegId
-      });
+      paypal.Buttons({
+        createOrder: async () => {
+          const response = await base44.functions.invoke('createPayPalOrder', {
+            amount: totalAmount,
+            participantsCount: participants.length,
+            userEmail: payerEmail,
+            registrationId: pendingRegId
+          });
 
-      console.log('PayPal response:', response);
+          if (!response.data?.orderId) {
+            throw new Error('Failed to create order');
+          }
 
-      if (response.data?.success === true && response.data?.paypalUrl) {
-        // Redirect to PayPal (NOT iframe)
-        setTimeout(() => {
-          window.location.href = response.data.paypalUrl;
-        }, 100);
-      } else {
-        toast.error(language === 'he' ? 'שגיאה בתהליך התשלום' : 'Error in payment process');
-        setSubmitting(false);
-      }
+          return response.data.orderId;
+        },
+        onApprove: async (data) => {
+          const response = await base44.functions.invoke('capturePayPalOrder', {
+            orderId: data.orderID,
+            registrationId: pendingRegId
+          });
+
+          if (response.data?.success) {
+            toast.success(language === 'he' ? 'התשלום בוצע בהצלחה!' : 'Payment successful!');
+            setShowThankYou(true);
+            localStorage.removeItem('nifgashim_registration_state_v2');
+            localStorage.removeItem('pending_registration_id');
+          } else {
+            toast.error(language === 'he' ? 'שגיאה בביצוע התשלום' : 'Payment failed');
+          }
+          setSubmitting(false);
+        },
+        onCancel: () => {
+          toast.info(language === 'he' ? 'התשלום בוטל' : 'Payment cancelled');
+          setSubmitting(false);
+        },
+        onError: (err) => {
+          console.error('PayPal error:', err);
+          toast.error(language === 'he' ? 'שגיאה בתהליך התשלום' : 'Payment error');
+          setSubmitting(false);
+        }
+      }).render('#paypal-button-container');
+
     } catch (error) {
       console.error('PayPal payment failed:', error);
-      toast.error(language === 'he' ? 'שגיאה בתהליך התשלום' : 'Error in payment process');
+      toast.error(language === 'he' ? 'שגיאה בטעינת PayPal' : 'Failed to load PayPal');
       setSubmitting(false);
     }
   };
@@ -793,29 +832,43 @@ export default function NifgashimPortal() {
             {currentStep === 7 && userType !== 'group' && (
               <Card>
                 <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold mb-6">
+                  <h2 className="text-2xl font-bold mb-6 text-center">
                     {language === 'he' ? 'בחר שיטת תשלום' : language === 'ru' ? 'Выберите способ оплаты' : language === 'es' ? 'Selecciona método de pago' : language === 'fr' ? 'Choisir la méthode de paiement' : language === 'de' ? 'Zahlungsart wählen' : language === 'it' ? 'Scegli metodo di pagamento' : 'Choose Payment Method'}
                   </h2>
-                  <div className="space-y-4">
-                    <button
-                      onClick={handleGrowPayment}
-                      disabled={submitting}
-                      className="w-full p-4 border-2 border-blue-500 rounded-lg hover:bg-blue-50 transition disabled:opacity-50"
-                    >
-                      <div className="font-semibold text-blue-600">
-                        {language === 'he' ? 'כרטיס אשראי / Grow' : 'Credit Card / Grow'}
-                      </div>
-                    </button>
-                    <button
-                      onClick={handlePayPalPayment}
-                      disabled={submitting}
-                      className="w-full p-4 border-2 border-yellow-500 rounded-lg hover:bg-yellow-50 transition disabled:opacity-50"
-                    >
-                      <div className="font-semibold text-yellow-600">
-                        {language === 'he' ? 'PayPal' : 'PayPal'}
-                      </div>
-                    </button>
-                  </div>
+                  
+                  {!paymentMethod && (
+                    <div className="space-y-4">
+                      <button
+                        onClick={handleGrowPayment}
+                        disabled={submitting}
+                        className="w-full p-4 border-2 border-blue-500 rounded-lg hover:bg-blue-50 transition disabled:opacity-50"
+                      >
+                        <div className="font-semibold text-blue-600">
+                          {language === 'he' ? 'כרטיס אשראי / Grow' : 'Credit Card / Grow'}
+                        </div>
+                      </button>
+                      <button
+                        onClick={handlePayPalPayment}
+                        disabled={submitting}
+                        className="w-full p-4 border-2 border-yellow-500 rounded-lg hover:bg-yellow-50 transition disabled:opacity-50"
+                      >
+                        <div className="font-semibold text-yellow-600 flex items-center justify-center gap-2">
+                          <span>{language === 'he' ? 'PayPal' : 'PayPal'}</span>
+                        </div>
+                      </button>
+                    </div>
+                  )}
+
+                  {paymentMethod === 'paypal' && (
+                    <div className="space-y-4">
+                      <div id="paypal-button-container" className="min-h-[150px]"></div>
+                      {submitting && (
+                        <div className="flex justify-center">
+                          <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}
