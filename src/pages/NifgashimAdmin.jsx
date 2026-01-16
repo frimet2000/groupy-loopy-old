@@ -904,8 +904,8 @@ export default function NifgashimAdmin() {
     });
   });
 
-  // Download CSV
-  const downloadCSV = () => {
+  // Download Excel with full payment data
+  const downloadExcel = () => {
     const headers = [
       trans.name,
       trans.idNumber,
@@ -915,23 +915,83 @@ export default function NifgashimAdmin() {
       trans.totalDays,
       trans.paymentStatus,
       trans.amount,
+      language === 'he' ? 'מזהה תשלום' : 'Transaction ID',
+      language === 'he' ? 'שיטת תשלום' : 'Payment Method',
+      language === 'he' ? 'תאריך תשלום' : 'Payment Date',
       trans.registeredAt,
-      trans.groupType
+      trans.groupType,
+      language === 'he' ? 'מספר משתתפים' : 'Total Participants',
+      language === 'he' ? 'מבוגרים' : 'Adults',
+      language === 'he' ? 'ילדים' : 'Children'
     ].join(',');
 
     const rows = filteredRegistrations.map(reg => {
-      const userName = reg.user_email; // We'll fetch full names later if needed
+      const allParticipants = reg.participants || [];
+      const adultsCount = allParticipants.filter(p => {
+        if (!p.age_range) return true;
+        const age = parseInt(p.age_range.split('-')[0]);
+        return isNaN(age) || age >= 10;
+      }).length;
+      const childrenCount = allParticipants.filter(p => {
+        if (!p.age_range) return false;
+        const age = parseInt(p.age_range.split('-')[0]);
+        return !isNaN(age) && age < 10;
+      }).length;
+      
+      const mainParticipant = allParticipants[0] || {};
+      const userName = mainParticipant.name || reg.customer_name || reg.customer_email || reg.user_email;
+      const totalPeople = reg.is_organized_group && reg.groupInfo?.totalParticipants
+        ? reg.groupInfo.totalParticipants
+        : (allParticipants.length || (1 + (reg.family_members?.spouse ? 1 : 0) + (reg.children_details?.length || 0) + (reg.family_members?.other ? 1 : 0)));
+      
       return [
         userName,
-        reg.id_number || '',
-        reg.emergency_contact_phone || '',
-        reg.user_email || '',
-        (reg.selected_days || []).join(';'),
-        (reg.selected_days || []).length,
-        reg.payment_status || 'pending',
-        reg.total_amount || 0,
-        reg.created_date ? format(new Date(reg.created_date), 'yyyy-MM-dd') : '',
-        reg.is_organized_group ? (reg.group_name || trans.organizedGroups) : (reg.children_details?.length > 0 ? trans.families : trans.individuals)
+        mainParticipant.id_number || reg.id_number || '',
+        mainParticipant.phone || reg.emergency_contact_phone || '',
+        reg.customer_email || reg.user_email || '',
+        (reg.selectedDays || reg.selected_days || []).map(d => typeof d === 'object' ? d.day_number : d).join(';'),
+        (reg.selectedDays || reg.selected_days || []).length,
+        reg.payment_status === 'completed' ? trans.completed : (trans[reg.payment_status] || reg.payment_status),
+        reg.amount_paid || reg.amount || reg.total_amount || 0,
+        reg.transaction_id || '',
+        reg.payment_method || (reg.transaction_id ? 'Online' : ''),
+        reg.completed_at ? format(new Date(reg.completed_at), 'dd/MM/yyyy HH:mm') : '',
+        reg.created_date ? format(new Date(reg.created_date), 'dd/MM/yyyy HH:mm') : '',
+        reg.is_organized_group ? (reg.group_name || trans.organizedGroups) : (reg.children_details?.length > 0 ? trans.families : trans.individuals),
+        totalPeople,
+        adultsCount,
+        childrenCount
+      ].map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',');
+    });
+
+    const csv = [headers, ...rows].join('\n');
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `nifgashim_full_report_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+  };
+
+  // Download CSV (simplified)
+  const downloadCSV = () => {
+    const headers = [
+      trans.name,
+      trans.email,
+      trans.paymentStatus,
+      trans.amount
+    ].join(',');
+
+    const rows = filteredRegistrations.map(reg => {
+      const allParticipants = reg.participants || [];
+      const mainParticipant = allParticipants[0] || {};
+      const userName = mainParticipant.name || reg.customer_name || reg.customer_email || reg.user_email;
+      
+      return [
+        userName,
+        reg.customer_email || reg.user_email || '',
+        trans[reg.payment_status] || reg.payment_status,
+        reg.amount_paid || reg.amount || reg.total_amount || 0
       ].map(cell => `"${cell}"`).join(',');
     });
 
@@ -940,7 +1000,7 @@ export default function NifgashimAdmin() {
     const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `nifgashim_registrations_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `nifgashim_quick_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
   };
 
@@ -1365,12 +1425,20 @@ export default function NifgashimAdmin() {
                     </Select>
 
                     <Button 
+                      onClick={downloadExcel}
+                      variant="default"
+                      className="gap-2 h-9 sm:h-10 text-xs sm:text-sm w-full sm:w-auto bg-green-600 hover:bg-green-700"
+                    >
+                      <Download className="w-3 h-3 sm:w-4 sm:h-4" />
+                      {trans.downloadExcel}
+                    </Button>
+                    <Button 
                       onClick={downloadCSV}
                       variant="outline"
                       className="gap-2 h-9 sm:h-10 text-xs sm:text-sm w-full sm:w-auto"
                     >
                       <Download className="w-3 h-3 sm:w-4 sm:h-4" />
-                      {trans.downloadCSV}
+                      {language === 'he' ? 'CSV מהיר' : 'Quick CSV'}
                     </Button>
                   </div>
                 </div>
@@ -1647,29 +1715,51 @@ export default function NifgashimAdmin() {
                                     </div>
 
                                     {/* Payment Details */}
-                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                      <div className={`rounded-lg p-3 border-2 ${isPaid ? 'bg-green-50 border-green-300' : 'bg-yellow-50 border-yellow-300'}`}>
-                                        <p className="text-xs font-semibold text-gray-700 mb-1">
-                                          {language === 'he' ? 'סטטוס תשלום' : 'Payment Status'}
-                                        </p>
-                                        <p className={`text-lg font-bold ${isPaid ? 'text-green-700' : 'text-yellow-700'}`}>
-                                          {isPaid ? (language === 'he' ? '✓ שולם' : '✓ Paid') : (language === 'he' ? '⏳ ממתין' : '⏳ Pending')}
-                                        </p>
-                                      </div>
-                                      <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-3 border border-green-200">
-                                        <p className="text-xs font-semibold text-green-900 mb-1">
-                                          {language === 'he' ? 'סכום כולל' : 'Total Amount'}
-                                        </p>
-                                        <p className="text-lg font-bold text-green-700">₪{amountPaid}</p>
-                                      </div>
-                                      {reg.transaction_id && (
-                                        <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-lg p-3 border border-purple-200 col-span-2">
-                                          <p className="text-xs font-semibold text-purple-900 mb-1">
-                                            {language === 'he' ? 'מזהה עסקה' : 'Transaction ID'}
-                                          </p>
-                                          <p className="text-xs text-purple-700 font-mono break-all">{reg.transaction_id}</p>
-                                        </div>
-                                      )}
+                                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border-2 border-blue-200">
+                                     <h4 className="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
+                                       <DollarSign className="w-4 h-4" />
+                                       {language === 'he' ? 'פרטי תשלום מלאים' : 'Complete Payment Details'}
+                                     </h4>
+                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                       <div className={`rounded-lg p-3 border-2 ${isPaid ? 'bg-green-50 border-green-300' : 'bg-yellow-50 border-yellow-300'}`}>
+                                         <p className="text-xs font-semibold text-gray-700 mb-1">
+                                           {language === 'he' ? 'סטטוס' : 'Status'}
+                                         </p>
+                                         <p className={`text-base font-bold ${isPaid ? 'text-green-700' : 'text-yellow-700'}`}>
+                                           {isPaid ? (language === 'he' ? '✓ שולם' : '✓ Paid') : (trans[reg.payment_status] || reg.payment_status)}
+                                         </p>
+                                       </div>
+                                       <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-3 border-2 border-green-200">
+                                         <p className="text-xs font-semibold text-green-900 mb-1">
+                                           {language === 'he' ? 'סכום' : 'Amount'}
+                                         </p>
+                                         <p className="text-base font-bold text-green-700">₪{amountPaid}</p>
+                                       </div>
+                                       {reg.payment_method && (
+                                         <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-lg p-3 border border-indigo-200">
+                                           <p className="text-xs font-semibold text-indigo-900 mb-1">
+                                             {language === 'he' ? 'שיטה' : 'Method'}
+                                           </p>
+                                           <p className="text-sm font-bold text-indigo-700">{reg.payment_method}</p>
+                                         </div>
+                                       )}
+                                       {reg.transaction_id && (
+                                         <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-lg p-3 border border-purple-200 col-span-2 sm:col-span-3">
+                                           <p className="text-xs font-semibold text-purple-900 mb-1">
+                                             {language === 'he' ? 'מזהה עסקה' : 'Transaction ID'}
+                                           </p>
+                                           <p className="text-xs text-purple-700 font-mono break-all">{reg.transaction_id}</p>
+                                         </div>
+                                       )}
+                                       {reg.completed_at && (
+                                         <div className="bg-gradient-to-br from-cyan-50 to-sky-50 rounded-lg p-3 border border-cyan-200 col-span-2">
+                                           <p className="text-xs font-semibold text-cyan-900 mb-1">
+                                             {language === 'he' ? 'תאריך תשלום' : 'Payment Date'}
+                                           </p>
+                                           <p className="text-sm font-bold text-cyan-700">{format(new Date(reg.completed_at), 'dd/MM/yyyy HH:mm')}</p>
+                                         </div>
+                                       )}
+                                     </div>
                                     </div>
 
                                     {/* Selected Days Full List */}
