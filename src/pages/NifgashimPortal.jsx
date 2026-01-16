@@ -487,7 +487,10 @@ export default function NifgashimPortal() {
       console.log('PayPal response:', response);
 
       if (response.data?.success === true && response.data?.paypalUrl) {
-        window.location.href = response.data.paypalUrl;
+        // Redirect to PayPal (NOT iframe)
+        setTimeout(() => {
+          window.location.href = response.data.paypalUrl;
+        }, 100);
       } else {
         toast.error(language === 'he' ? 'שגיאה בתהליך התשלום' : 'Error in payment process');
         setSubmitting(false);
