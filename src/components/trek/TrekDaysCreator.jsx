@@ -198,7 +198,12 @@ export default function TrekDaysCreator({ trekDays, setTrekDays, dayPairs = [], 
             </div>
           ) : (
             <div className="space-y-3">
-              {trekDays.sort((a, b) => a.day_number - b.day_number).map((day) => (
+              {trekDays.sort((a, b) => {
+                const dateA = getDayDate(a);
+                const dateB = getDayDate(b);
+                if (dateA && dateB) return dateA - dateB;
+                return a.day_number - b.day_number;
+              }).map((day) => (
                 <motion.div
                   key={day.id}
                   initial={{ opacity: 0, x: -20 }}
