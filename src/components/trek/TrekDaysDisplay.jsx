@@ -20,7 +20,12 @@ export default function TrekDaysDisplay({ trip, selectedDay: externalSelectedDay
     return null;
   }
 
-  const sortedDays = [...trip.trek_days].sort((a, b) => a.day_number - b.day_number);
+  const sortedDays = [...trip.trek_days].sort((a, b) => {
+    const dateA = a.date ? new Date(a.date) : (trip.date ? new Date(new Date(trip.date).setDate(new Date(trip.date).getDate() + (a.day_number - 1))) : null);
+    const dateB = b.date ? new Date(b.date) : (trip.date ? new Date(new Date(trip.date).setDate(new Date(trip.date).getDate() + (b.day_number - 1))) : null);
+    if (dateA && dateB) return dateA - dateB;
+    return a.day_number - b.day_number;
+  });
   const currentDay = sortedDays[selectedDay];
 
   return (
