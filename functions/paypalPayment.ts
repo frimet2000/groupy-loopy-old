@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
       item_name: `Nifgashim Trek - ${participantsCount} Participant${participantsCount > 1 ? 's' : ''}`,
       amount: amount.toFixed(2),
       currency_code: 'ILS',
-      quantity: participantsCount,
+      quantity: '1',
       custom: registrationId || email,
       return: returnUrl,
       cancel_return: cancelUrl,
