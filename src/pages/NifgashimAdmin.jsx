@@ -1288,7 +1288,7 @@ export default function NifgashimAdmin() {
                   </div>
                   <div>
                     <div className="text-2xl sm:text-3xl font-bold text-green-900">{stats.paid}</div>
-                    <div className="text-xs sm:text-sm text-green-700 font-medium">{trans.totalPaid}</div>
+                    <div className="text-xs sm:text-sm text-green-700 font-medium flex items-center gap-1">{trans.totalPaid}<span className="text-green-900 font-bold">1</span></div>
                   </div>
                 </div>
               </CardContent>
