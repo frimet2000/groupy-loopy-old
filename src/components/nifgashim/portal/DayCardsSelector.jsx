@@ -635,13 +635,17 @@ export default function NifgashimDayCardsSelector({
 
                 {/* Hero Image */}
                 <div className="relative h-64 w-full">
-                  {(selectedDayForInfo.image_url || (typeof selectedDayForInfo.image === 'string' ? selectedDayForInfo.image : selectedDayForInfo.image?.secure_url)) ? (
+                  {selectedDayForInfo.image_url ? (
                     <img 
-                      src={selectedDayForInfo.image_url || (typeof selectedDayForInfo.image === 'string' ? selectedDayForInfo.image : selectedDayForInfo.image?.secure_url)} 
+                      src={selectedDayForInfo.image_url} 
                       alt={selectedDayForInfo.daily_title} 
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
                     />
-                  ) : (
+                  ) : null}
+                  {!selectedDayForInfo.image_url && (
                     <div className="w-full h-full bg-gray-100 flex items-center justify-center">
                        <Mountain className="w-20 h-20 text-gray-300" />
                     </div>
