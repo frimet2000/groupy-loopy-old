@@ -69,7 +69,7 @@ export default function NifgashimPortal() {
   const trekDays = React.useMemo(() => {
     const sourceDays = nifgashimTrip?.trek_days || nifgashimTrip?.days;
     if (!sourceDays || sourceDays.length === 0) {
-      console.warn('No trek days found in trip data');
+
       return [];
     }
     
