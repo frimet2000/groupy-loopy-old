@@ -51,8 +51,12 @@ import {
   ChevronDown,
   ChevronUp,
   Bell,
-  AlertCircle
+  AlertCircle,
+  UserPlus,
+  Table
 } from 'lucide-react';
+import ParticipantsByDayTable from '../components/nifgashim/portal/ParticipantsByDayTable';
+import AdminManualRegistration from '../components/nifgashim/portal/AdminManualRegistration';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
