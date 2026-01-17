@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { ArrowRight, ArrowLeft, Check, Loader2, CreditCard } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Loader2, CreditCard, Shield, LogIn } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import NifgashimUserTypeSelector from '../components/nifgashim/portal/UserTypeSelector';
@@ -553,7 +553,7 @@ export default function NifgashimPortal() {
       const isOrganizedGroup = userType === 'group';
       const baseAmount = userType === 'group' ? 0 : totalAmount;
       const paymentStatus = baseAmount > 0
-        ? (transactionId === 'PENDING' ? 'pending' : 'completed')
+        ? (transactionId === 'PENDING' ? 'pending' : (transactionId === 'ADMIN_EXEMPT' ? 'exempt' : 'completed'))
         : 'exempt';
       
       // Create registration in NifgashimRegistration entity
@@ -761,10 +761,52 @@ export default function NifgashimPortal() {
             transition={{ duration: 0.3 }}
           >
             {currentStep === 1 && (
-              <NifgashimUserTypeSelector
-                selectedType={userType}
-                onSelect={setUserType}
-              />
+              <div className="space-y-4">
+                <NifgashimUserTypeSelector
+                  selectedType={userType}
+                  onSelect={setUserType}
+                />
+                
+                {/* Admin Login Button */}
+                {!isAdmin && (
+                  <div className="flex justify-center pt-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const currentUrl = window.location.href;
+                        base44.auth.redirectToLogin(currentUrl);
+                      }}
+                      className="gap-2 text-gray-600 hover:text-blue-600 border-gray-300"
+                    >
+                      <LogIn className="w-4 h-4" />
+                      {language === 'he' ? 'התחברות מנהלים' : 
+                       language === 'ru' ? 'Вход для админов' : 
+                       language === 'es' ? 'Acceso administradores' : 
+                       language === 'fr' ? 'Connexion admin' : 
+                       language === 'de' ? 'Admin-Login' : 
+                       language === 'it' ? 'Login admin' : 
+                       'Admin Login'}
+                    </Button>
+                  </div>
+                )}
+                
+                {/* Show admin badge if logged in as admin */}
+                {isAdmin && (
+                  <div className="flex justify-center pt-4">
+                    <div className="flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-full text-green-700 text-sm">
+                      <Shield className="w-4 h-4" />
+                      {language === 'he' ? 'מחובר כמנהל - ניתן לדלג על תשלום' : 
+                       language === 'ru' ? 'Вход как админ - Можно пропустить оплату' :
+                       language === 'es' ? 'Conectado como admin - Puede saltar el pago' :
+                       language === 'fr' ? 'Connecté en tant qu\'admin - Peut passer le paiement' :
+                       language === 'de' ? 'Als Admin angemeldet - Kann Zahlung überspringen' :
+                       language === 'it' ? 'Connesso come admin - Puoi saltare il pagamento' :
+                       'Logged in as Admin - Can skip payment'}
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
 
             {currentStep === 2 && (
@@ -841,6 +883,61 @@ export default function NifgashimPortal() {
                       {language === 'he' ? `סכום לתשלום: ₪${totalAmount}` : `Amount: ₪${totalAmount}`}
                     </p>
                   </div>
+
+                  {/* Admin Skip Payment Option */}
+                  {isAdmin && (
+                    <div className="mb-6 p-4 bg-green-50 border-2 border-green-200 rounded-xl">
+                      <div className="flex items-center gap-2 text-green-700 mb-3">
+                        <Shield className="w-5 h-5" />
+                        <span className="font-semibold">
+                          {language === 'he' ? 'מנהל - ניתן לדלג על תשלום' : 
+                           language === 'ru' ? 'Администратор - Пропустить оплату' :
+                           language === 'es' ? 'Admin - Saltar pago' :
+                           language === 'fr' ? 'Admin - Passer le paiement' :
+                           language === 'de' ? 'Admin - Zahlung überspringen' :
+                           language === 'it' ? 'Admin - Salta pagamento' :
+                           'Admin - Skip Payment'}
+                        </span>
+                      </div>
+                      <Button
+                        onClick={async () => {
+                          setSubmitting(true);
+                          try {
+                            await completeRegistration('ADMIN_EXEMPT');
+                          } catch (error) {
+                            console.error('Admin registration failed:', error);
+                          }
+                          setSubmitting(false);
+                        }}
+                        disabled={submitting}
+                        className="w-full bg-green-600 hover:bg-green-700"
+                      >
+                        {submitting ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                            {language === 'he' ? 'שולח...' : 
+                             language === 'ru' ? 'Отправка...' :
+                             language === 'es' ? 'Enviando...' :
+                             language === 'fr' ? 'Envoi...' :
+                             language === 'de' ? 'Wird gesendet...' :
+                             language === 'it' ? 'Invio...' :
+                             'Submitting...'}
+                          </>
+                        ) : (
+                          <>
+                            <Check className="w-4 h-4 mr-2" />
+                            {language === 'he' ? 'השלם הרשמה ללא תשלום' :
+                             language === 'ru' ? 'Завершить регистрацию без оплаты' :
+                             language === 'es' ? 'Completar registro sin pago' :
+                             language === 'fr' ? 'Terminer l\'inscription sans paiement' :
+                             language === 'de' ? 'Registrierung ohne Zahlung abschließen' :
+                             language === 'it' ? 'Completa registrazione senza pagamento' :
+                             'Complete Registration Without Payment'}
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
 
                   {!paymentMethod && (
                     <div className="space-y-4">
