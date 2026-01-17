@@ -194,11 +194,12 @@ export default function TrekDaysDisplay({ trip, selectedDay: externalSelectedDay
 
               {/* Day Header */}
               <div>
-                {day.image_url &&
+                {day.image_url && !failedImages.has(day.id) &&
               <img
                 src={day.image_url}
                 alt={day.daily_title}
-                className="w-full h-64 object-cover rounded-xl mb-4 shadow-lg" />
+                className="w-full h-64 object-cover rounded-xl mb-4 shadow-lg"
+                onError={() => setFailedImages(prev => new Set([...prev, day.id]))} />
 
               }
                 <h3 className="text-2xl font-bold text-indigo-900 mb-2" dir={isRTL ? 'rtl' : 'ltr'}>
