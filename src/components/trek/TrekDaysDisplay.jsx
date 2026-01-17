@@ -102,7 +102,7 @@ export default function TrekDaysDisplay({ trip, selectedDay: externalSelectedDay
               return (
                 <div key={day.id || index} style={{display: 'contents'}}>
                   {isNewWeek && <div className="w-full h-0" />}
-                  <TabsTrigger
+                  <TabsTrigger key={day.id || index}
                     value={index.toString()}
                     className={`relative overflow-hidden flex flex-col items-center justify-center py-2 min-h-[100px] min-w-[110px] transition-all ${
                     day.image_url ?
