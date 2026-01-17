@@ -100,9 +100,9 @@ export default function TrekDaysDisplay({ trip, selectedDay: externalSelectedDay
               const category = trip.trek_categories?.find(cat => cat.id === day.category_id);
 
               return (
-                <React.Fragment key={day.id || index}>
-                  {isNewWeek && <div className="w-full h-0" />}
-                  <TabsTrigger
+                <>
+                  {isNewWeek && <div key={`week-${index}`} className="w-full h-0" />}
+                  <TabsTrigger key={day.id || index}
                     value={index.toString()}
                     className={`relative overflow-hidden flex flex-col items-center justify-center py-2 min-h-[100px] min-w-[110px] transition-all ${
                     day.image_url ?
