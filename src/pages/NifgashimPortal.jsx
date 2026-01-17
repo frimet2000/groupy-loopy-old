@@ -67,8 +67,13 @@ export default function NifgashimPortal() {
   });
 
   const trekDays = React.useMemo(() => {
-    const sourceDays = nifgashimTrip?.days || nifgashimTrip?.trek_days;
-    if (!sourceDays) return [];
+    const sourceDays = nifgashimTrip?.trek_days || nifgashimTrip?.days;
+    if (!sourceDays || sourceDays.length === 0) {
+      console.warn('No trek days found in trip data');
+      return [];
+    }
+    
+    console.log('Trek days data:', sourceDays);
     
     return sourceDays.map((day, index) => ({
       id: day.id || `day-${index + 1}`,
