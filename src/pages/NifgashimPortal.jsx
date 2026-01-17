@@ -72,6 +72,13 @@ export default function NifgashimPortal() {
       return [];
     }
 
+    // Debug: log the structure to find where images are
+    console.log('=== Trek Days Structure Debug ===');
+    console.log('First day object:', sourceDays[0]);
+    console.log('Trip photos:', nifgashimTrip?.photos);
+    console.log('Trip image_url:', nifgashimTrip?.image_url);
+    console.log('==================================');
+
     // Get images from daily_itinerary if available
     const dailyItineraryImages = {};
     if (Array.isArray(nifgashimTrip?.daily_itinerary)) {
@@ -82,6 +89,16 @@ export default function NifgashimPortal() {
           if (firstImageUrl) {
             dailyItineraryImages[itinerary.day] = firstImageUrl;
           }
+        }
+      });
+    }
+
+    // Get images from photos array by matching day number
+    const photosByDay = {};
+    if (Array.isArray(nifgashimTrip?.photos)) {
+      nifgashimTrip.photos.forEach(photo => {
+        if (photo.day_number && photo.url) {
+          photosByDay[photo.day_number] = photo.url;
         }
       });
     }
@@ -98,7 +115,7 @@ export default function NifgashimPortal() {
         day_number: dayNum,
         category_id: day.category_id,
         description: typeof day.daily_description === 'string' ? day.daily_description : (typeof day.description === 'string' ? day.description : (typeof day.content === 'string' ? day.content : '')),
-        image_url: day.image_url || day.image || dailyItineraryImages[dayNum] || nifgashimTrip?.image_url || null,
+        image_url: day.image_url || day.image || dailyItineraryImages[dayNum] || photosByDay[dayNum] || nifgashimTrip?.image_url || null,
         waypoints: Array.isArray(day.waypoints) ? day.waypoints : []
       };
     }).filter(day => {
