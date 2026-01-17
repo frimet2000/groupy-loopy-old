@@ -437,9 +437,9 @@ export default function HealthDeclaration({ accepted, onAccept, language = 'en' 
       transition={{ duration: 0.3 }}
     >
       <Card className="overflow-hidden max-h-[70vh] flex flex-col">
-        <CardHeader className="bg-gradient-to-r from-red-600 to-orange-600 text-white shrink-0">
-          <CardTitle className="text-2xl md:text-3xl">{t.title}</CardTitle>
-          <p className="text-red-50 mt-2 text-sm">{t.subtitle}</p>
+        <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white shrink-0">
+          <CardTitle className="text-xl md:text-2xl">{t.title}</CardTitle>
+          <p className="text-blue-50 mt-1 text-sm">{t.subtitle}</p>
         </CardHeader>
         <CardContent className="p-4 sm:p-6 space-y-4 overflow-y-auto">
           {/* Section 1 */}
