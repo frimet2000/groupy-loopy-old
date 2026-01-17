@@ -337,8 +337,8 @@ export default function ParticipantsByDayTable({ registrations, trekDays, langua
               <tbody className="divide-y divide-gray-100">
                 {filteredParticipants.map((p, idx) => (
                   <tr key={idx} className={`hover:bg-gray-50 ${p.isChild ? 'bg-pink-50/30' : ''}`}>
-                    <td className={`px-3 py-3 text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>{idx + 1}</td>
-                    <td className={`px-3 py-3 ${isRTL ? 'text-right' : 'text-left'}`}>
+                    <td className="px-3 py-3 text-gray-500 text-start">{idx + 1}</td>
+                    <td className="px-3 py-3 text-start">
                       <div className="font-medium">{p.name}</div>
                       {p.isGroup && (
                         <Badge variant="outline" className="text-xs mt-1 bg-orange-50 text-orange-700 border-orange-300">
@@ -351,9 +351,9 @@ export default function ParticipantsByDayTable({ registrations, trekDays, langua
                         </Badge>
                       )}
                     </td>
-                    <td className={`px-3 py-3 hidden sm:table-cell ${isRTL ? 'text-right' : 'text-left'}`} dir="ltr">{p.phone}</td>
-                    <td className={`px-3 py-3 hidden md:table-cell ${isRTL ? 'text-right' : 'text-left'}`} dir="ltr">{p.email}</td>
-                    <td className={`px-3 py-3 ${isRTL ? 'text-right' : 'text-left'}`}>
+                    <td className="px-3 py-3 hidden sm:table-cell text-start" dir="ltr">{p.phone}</td>
+                    <td className="px-3 py-3 hidden md:table-cell text-start" dir="ltr">{p.email}</td>
+                    <td className="px-3 py-3 text-start">
                       {p.isPaid ? (
                         <Badge className="bg-green-500 text-white gap-1">
                           <CheckCircle className="w-3 h-3" />
