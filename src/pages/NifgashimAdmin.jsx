@@ -875,7 +875,13 @@ export default function NifgashimAdmin() {
   const stats = {
     total: uniqueRegistrations.length,
     paid: uniqueRegistrations.filter(r => r.payment_status === 'completed').length,
-    pending: uniqueRegistrations.filter(r => r.payment_status === 'pending' || (!r.payment_status && r.amount > 0)).length,
+    pending: uniqueRegistrations.filter(r => {
+      // Not paid if payment_status is not 'completed' AND not 'exempt' AND has amount > 0
+      const isPaid = r.payment_status === 'completed';
+      const isExempt = r.payment_status === 'exempt';
+      const hasAmount = (r.amount || r.total_amount || 0) > 0;
+      return !isPaid && !isExempt && hasAmount;
+    }).length,
     revenue: uniqueRegistrations.reduce((sum, r) => sum + (r.amount_paid || 0), 0),
     needsApproval: uniqueRegistrations.filter(r => r.is_organized_group && r.group_approval_status === 'pending').length
   };
