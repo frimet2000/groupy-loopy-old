@@ -880,9 +880,9 @@ export default function NifgashimAdmin() {
     needsApproval: uniqueRegistrations.filter(r => r.is_organized_group && r.group_approval_status === 'pending').length
   };
 
-  // Registrations by day
+  // Registrations by day - use unique registrations
   const registrationsByDay = {};
-  registrations.forEach(reg => {
+  uniqueRegistrations.forEach(reg => {
     (reg.selected_days || []).forEach(day => {
       if (!registrationsByDay[day]) registrationsByDay[day] = 0;
       registrationsByDay[day]++;
