@@ -86,17 +86,8 @@ export default function NifgashimPortal() {
       category_id: day.category_id,
       description: typeof day.daily_description === 'string' ? day.daily_description : (typeof day.description === 'string' ? day.description : (typeof day.content === 'string' ? day.content : '')),
       image_url: day.image_url || day.image || null,
-      // Debug
-    })), (() => {
-      console.log('Processed trek days:', sourceDays.map(d => ({
-        title: d.daily_title,
-        image_url: d.image_url,
-        image: d.image
-      })));
-      return true;
-    })()
       waypoints: Array.isArray(day.waypoints) ? day.waypoints : []
-    })).filter(day => {
+      })).filter(day => {
       if (!day.date) return true;
       const d = new Date(day.date);
       if (d.getDay() === 6) return false;
