@@ -326,7 +326,7 @@ export default function TrekDaysVisualGrid({ registrations, trekDays, language, 
       
       <CardContent className="p-4 sm:p-6">
         {/* Days Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4" dir={isRTL ? 'rtl' : 'ltr'}>
           {sortedDays.map((day, idx) => {
             const dayData = participantsByDay[day.day_number] || { total: 0, adults: 0, children: 0, paid: 0, pending: 0 };
             const hasParticipants = dayData.total > 0;
@@ -347,6 +347,7 @@ export default function TrekDaysVisualGrid({ registrations, trekDays, language, 
                   bg-gradient-to-br ${getDayColor(day.day_number)}
                   transition-all duration-300 hover:shadow-lg
                   ${hasParticipants ? 'hover:border-purple-500' : ''}
+                  ${isRTL ? 'text-right' : ''}
                 `}>
                   {/* Day Header */}
                   <div className="flex items-center justify-between mb-2">
@@ -356,7 +357,7 @@ export default function TrekDaysVisualGrid({ registrations, trekDays, language, 
                         {trans.day} {day.day_number}
                       </span>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-purple-400" />
+                    <ChevronRight className={`w-4 h-4 text-purple-400 ${isRTL ? 'rotate-180' : ''}`} />
                   </div>
                   
                   {/* Date */}
