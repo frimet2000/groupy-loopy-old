@@ -121,7 +121,7 @@ export default function TrekDaysDisplay({ trip, selectedDay: externalSelectedDay
                       })
                     }}>
 
-                    {day.image_url &&
+                    {day.image_url && !failedImages.has(day.id) &&
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
                     }
                     
