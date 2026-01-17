@@ -1930,7 +1930,16 @@ export default function NifgashimAdmin() {
               </TabsContent>
 
               {/* By Day Tab */}
-              <TabsContent value="byDay" className="space-y-4">
+              <TabsContent value="byDay" className="space-y-6">
+                {/* Visual Grid */}
+                <TrekDaysVisualGrid
+                  registrations={uniqueRegistrations}
+                  trekDays={activeTrip?.trek_days || []}
+                  language={language}
+                  isRTL={isRTL}
+                />
+                
+                {/* Detailed Table */}
                 <ParticipantsByDayTable
                   registrations={uniqueRegistrations}
                   trekDays={activeTrip?.trek_days || []}
