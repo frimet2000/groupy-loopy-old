@@ -100,7 +100,7 @@ export default function TrekDaysDisplay({ trip, selectedDay: externalSelectedDay
               const category = trip.trek_categories?.find(cat => cat.id === day.category_id);
 
               return (
-                <React.Fragment key={day.id || index}>
+                <div key={day.id || index} style={{display: 'contents'}}>
                   {isNewWeek && <div className="w-full h-0" />}
                   <TabsTrigger
                     value={index.toString()}
