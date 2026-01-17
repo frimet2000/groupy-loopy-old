@@ -307,6 +307,18 @@ export default function NifgashimDayCardsSelector({
   console.log('Trek Days with categories:', trekDays.map(d => ({ id: d.id, title: d.daily_title, category_id: d.category_id, isNegev: isNegevDay(d) })));
   console.log('========================');
 
+  // Ensure consistent ordering of days in grid (by day number, then date)
+  const daysForGrid = React.useMemo(() => {
+    return [...trekDays].sort((a, b) => {
+      const an = Number(a.day_number || 0);
+      const bn = Number(b.day_number || 0);
+      if (an !== bn) return an - bn;
+      const ad = a.date ? new Date(a.date).getTime() : 0;
+      const bd = b.date ? new Date(b.date).getTime() : 0;
+      return ad - bd;
+    });
+  }, [trekDays]);
+
   const handleDayToggle = (day) => {
     const currentlySelected = isSelected(day.id);
     
@@ -458,7 +470,7 @@ export default function NifgashimDayCardsSelector({
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1.5">
-         {trekDays.map((day) => {
+         {daysForGrid.map((day) => {
            const selected = isSelected(day.id);
            const isDisabled = isDayDisabled(day);
            const isNegev = isNegevDay(day);
@@ -571,7 +583,7 @@ export default function NifgashimDayCardsSelector({
                    </div>
                    <div className="flex items-center gap-0.5">
                      <MapPin className="w-2 h-2" />
-                     <span className="text-xs">{day.daily_distance_km}km</span>
+                     <span className="text-xs">{day.daily_distance_km}</span>
                    </div>
                    {day.elevation_gain_m > 0 && (
                      <div className="flex items-center gap-0.5">
@@ -656,7 +668,7 @@ export default function NifgashimDayCardsSelector({
                     <div className="w-px h-6 bg-gray-300" />
                     <div className="flex items-center gap-2">
                         <MapPin className="w-5 h-5 text-gray-500" />
-                        <span className="font-medium">{selectedDayForInfo.daily_distance_km} {trans.km}</span>
+                        <span className="font-medium">{selectedDayForInfo.daily_distance_km}</span>
                     </div>
                     <div className="w-px h-6 bg-gray-300" />
                     <div className="flex items-center gap-2">
@@ -776,7 +788,7 @@ export default function NifgashimDayCardsSelector({
                           <div style={{ width: '1px', height: '20px', background: '#ddd' }} />
                           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                               <MapPin style={{ width: '16px', height: '16px' }} />
-                              <span>{day.daily_distance_km} {trans.km}</span>
+                              <span>{day.daily_distance_km}</span>
                           </div>
                           {day.elevation_gain_m > 0 && (
                             <>
