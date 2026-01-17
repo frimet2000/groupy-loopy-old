@@ -23,8 +23,8 @@ const translations = {
 
 אני מקבל/ת על עצמי את האחריות האישית לבריאותי ולרווחתי במהלך המסע.`,
     
-    section3: 'משחרור מאחריות',
-    section3Text: `אני מבין/ה כי מארגני המסע עשו את המיטב כדי להבטיח חוויה בטוחה ומהנה. עם זאת, אני משחרר/ת את המארגנים והפלטפורמה Groupy Loopy מאחריות בגין אירועים בלתי צפויים או תאונות.`,
+    section3: 'קבלת אחריות',
+    section3Text: `אני מקבל/ת על עצמי את האחריות המלאה להשתתפות במסע ומבין/ה כי זו החלטה אישית שלי.`,
     
     section4: '',
     section4Text: '',
@@ -67,7 +67,7 @@ g) All information provided by me is true and accurate, and I am responsible for
 I understand that these risks are potentially fatal, including death.`,
     
     section3: 'Voluntary Assumption of Risk',
-    section3Text: `I voluntarily, knowingly, and with full understanding and appreciation of the dangers involved, assume all risks of participation in this trek. I acknowledge that these risks cannot be entirely eliminated even with the best medical care and most experienced guides. I choose to participate with full knowledge and acceptance of all these risks.`,
+    section3Text: `I voluntarily, knowingly, and with full understanding, assume responsibility for participation in this trek. I acknowledge this is my personal decision.`,
     
     section4: 'Release of Liability and Indemnification',
     section4Text: `In consideration of being permitted to participate in this trek, I hereby release, discharge, and hold harmless:
@@ -130,8 +130,8 @@ They are under no obligation to inspect, investigate, or report on your medical 
 
 Я понимаю, что эти риски потенциально смертельны, включая смерть.`,
     
-    section3: 'Добровольное принятие риска',
-    section3Text: `Я добровольно, осознанно и полностью понимая опасность, принимаю все риски участия в этом походе. Я признаю, что эти риски не могут быть полностью устранены даже при наилучшем медицинском обслуживании и наиболее опытных гидах. Я выбираю участвовать с полным осознанием и принятием всех этих рисков.`,
+    section3: 'Принятие ответственности',
+    section3Text: `Я добровольно и осознанно беру на себя полную ответственность за участие в этом походе. Я понимаю, что это мое личное решение.`,
     
     section4: 'Отказ от ответственности и возмещение убытков',
     section4Text: `В качестве условия для участия в этом походе я настоящим освобождаю, снимаю с себя и принимаю на себя ответственность перед:
@@ -194,8 +194,8 @@ g) Toda la información proporcionada por mí es verdadera y precisa, y soy resp
 
 Entiendo que estos riesgos son potencialmente fatales, incluyendo la muerte.`,
     
-    section3: 'Aceptación Voluntaria de Riesgo',
-    section3Text: `Voluntaria, consciente y con comprensión total de los peligros involucrados, asumo todos los riesgos de participación en este trekking. Reconozco que estos riesgos no pueden eliminarse completamente incluso con la mejor atención médica y los guías más experimentados. Elijo participar con conocimiento completo y aceptación de todos estos riesgos.`,
+    section3: 'Aceptación de Responsabilidad',
+    section3Text: `Voluntaria y conscientemente asumo la responsabilidad completa por mi participación en este trekking. Entiendo que esta es mi decisión personal.`,
     
     section4: 'Renuncia de Responsabilidad e Indemnización',
     section4Text: `Como condición para participar en este trekking, por este medio renuncio, libero y exonero de responsabilidad a:
@@ -258,8 +258,8 @@ g) Toutes les informations fournies par moi sont vraies et exactes, et je suis r
 
 Je comprends que ces risques sont potentiellement mortels, y compris la mort.`,
     
-    section3: 'Acceptation Volontaire des Risques',
-    section3Text: `Je volontairement, consciemment et en comprenant pleinement les dangers impliqués, accepte tous les risques de participation à cette randonnée. Je reconnais que ces risques ne peuvent pas être entièrement éliminés même avec les meilleurs soins médicaux et les guides les plus expérimentés. Je choisis de participer avec une connaissance complète et une acceptation de tous ces risques.`,
+    section3: 'Acceptation de Responsabilité',
+    section3Text: `Je volontairement et consciemment assume l'entière responsabilité de ma participation à cette randonnée. Je comprends que c'est ma décision personnelle.`,
     
     section4: 'Renonciation de Responsabilité et Indemnisation',
     section4Text: `En tant que condition pour participer à cette randonnée, je renonce par la présente, libère et exonère de responsabilité:
@@ -322,8 +322,8 @@ g) Alle von mir bereitgestellten Informationen sind wahr und genau, und ich bin 
 
 Ich verstehe, dass diese Risiken potenziell tödlich sind, einschließlich des Todes.`,
     
-    section3: 'Freiwillige Risikoübernahme',
-    section3Text: `Ich übernahme freiwillig, bewusst und mit vollständigem Verständnis der damit verbundenen Gefahren alle Risiken der Teilnahme an dieser Wanderung. Ich erkenne an, dass diese Risiken auch mit der besten medizinischen Versorgung und erfahrensten Führern nicht vollständig eliminiert werden können. Ich entscheide mich zur Teilnahme mit vollständigem Wissen und Verständnis aller dieser Risiken.`,
+    section3: 'Übernahme von Verantwortung',
+    section3Text: `Ich übernehme freiwillig und bewusst die volle Verantwortung für meine Teilnahme an dieser Wanderung. Ich verstehe, dass dies meine persönliche Entscheidung ist.`,
     
     section4: 'Haftungsausschluss und Schadloshaltung',
     section4Text: `Als Bedingung für die Teilnahme an dieser Wanderung entlasse, befreie und halte schadlos:
@@ -386,8 +386,8 @@ g) Tutte le informazioni fornite da me sono vere e accurate, e sono responsabile
 
 Comprendo che questi rischi sono potenzialmente mortali, inclusa la morte.`,
     
-    section3: 'Assunzione Volontaria dei Rischi',
-    section3Text: `Volontariamente, consapevolmente e comprendendo pienamente i pericoli coinvolti, assumo tutti i rischi di partecipazione a questo trekking. Riconosco che questi rischi non possono essere completamente eliminati anche con la migliore assistenza medica e le guide più esperte. Scelgo di partecipare con piena consapevolezza e accettazione di tutti questi rischi.`,
+    section3: 'Assunzione di Responsabilità',
+    section3Text: `Volontariamente e consapevolmente assumo la piena responsabilità per la mia partecipazione a questo trekking. Comprendo che questa è la mia decisione personale.`,
     
     section4: 'Esonero da Responsabilità e Indennizzo',
     section4Text: `Come condizione per partecipare a questo trekking, rilascio, sciolgo e esonero da responsabilità:
