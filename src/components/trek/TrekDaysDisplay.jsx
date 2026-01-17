@@ -138,18 +138,18 @@ export default function TrekDaysDisplay({ trip, selectedDay: externalSelectedDay
                       </div>
                     )}
 
-                    <span className={`font-bold text-base z-10 relative ${day.image_url ? 'text-white drop-shadow-lg' : ''}`}>
+                    <span className={`font-bold text-base z-10 relative ${day.image_url && !failedImages.has(day.id) ? 'text-white drop-shadow-lg' : ''}`}>
                       {language === 'he' ? `יום ${day.day_number}` : `Day ${day.day_number}`}
                     </span>
-                    <span className={`text-xs font-semibold z-10 relative mt-0.5 ${day.image_url ? 'text-white drop-shadow-md' : 'text-gray-800'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                    <span className={`text-xs font-semibold z-10 relative mt-0.5 ${day.image_url && !failedImages.has(day.id) ? 'text-white drop-shadow-md' : 'text-gray-800'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                       {day.daily_title}
                     </span>
                     {dayDate && (
                       <>
-                        <span className={`text-xs z-10 relative ${day.image_url ? 'text-white/90 drop-shadow' : 'text-gray-600'}`}>
+                        <span className={`text-xs z-10 relative ${day.image_url && !failedImages.has(day.id) ? 'text-white/90 drop-shadow' : 'text-gray-600'}`}>
                           {dayDate.toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US', { weekday: 'short' })}
                         </span>
-                        <span className={`text-xs z-10 relative ${day.image_url ? 'text-white/90 drop-shadow' : 'text-gray-600'}`}>
+                        <span className={`text-xs z-10 relative ${day.image_url && !failedImages.has(day.id) ? 'text-white/90 drop-shadow' : 'text-gray-600'}`}>
                           {dayDate.toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US', {
                             day: 'numeric',
                             month: 'numeric'
