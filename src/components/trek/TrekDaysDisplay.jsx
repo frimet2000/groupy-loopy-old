@@ -110,15 +110,11 @@ export default function TrekDaysDisplay({ trip, selectedDay: externalSelectedDay
                     'data-[state=active]:bg-indigo-100'}`
                     }
                     dir={isRTL ? 'rtl' : 'ltr'}
-                    style={{
-                      ...(day.image_url && day.image_url.length > 5 ? {
-                        backgroundImage: `url(${day.image_url})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                      } : {
-                        background: 'linear-gradient(135deg, #818cf8 0%, #a78bfa 100%)'
-                      })
-                    }}>
+                    style={day.image_url ? {
+                      backgroundImage: `url(${day.image_url})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    } : undefined}>
 
                     {day.image_url && !failedImages.has(day.id) &&
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
