@@ -500,21 +500,25 @@ export default function NifgashimDayCardsSelector({
                )}
              >
                {/* Image Section */}
-               <div 
-                 className="relative h-24 w-full bg-gray-200 cursor-pointer group"
-                 onClick={() => !isDisabled && handleDayToggle(day)}
-               >
-                 {imageUrl ? (
-                   <img 
-                     src={imageUrl} 
-                     alt={day.daily_title} 
-                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                   />
-                 ) : (
-                   <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
-                     <Mountain className="w-6 h-6 opacity-20" />
-                   </div>
-                 )}
+                  <div 
+                    className="relative h-24 w-full bg-gradient-to-br from-gray-300 to-gray-400 cursor-pointer group overflow-hidden"
+                    onClick={() => !isDisabled && handleDayToggle(day)}
+                  >
+                    {imageUrl && typeof imageUrl === 'string' && imageUrl.length > 0 ? (
+                      <img 
+                        src={imageUrl} 
+                        alt={day.daily_title} 
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          console.log('Image failed to load:', imageUrl);
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200 text-blue-400">
+                        <Mountain className="w-8 h-8 opacity-40" />
+                      </div>
+                    )}
 
                  {/* Overlay Gradient */}
                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
