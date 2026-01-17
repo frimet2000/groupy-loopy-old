@@ -537,7 +537,7 @@ export default function TrekDaysVisualGrid({ registrations, trekDays, language, 
                 <p>{trans.noParticipants}</p>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-2" dir={isRTL ? 'rtl' : 'ltr'}>
                 {filteredParticipants.map((p, idx) => (
                   <motion.div
                     key={idx}
@@ -545,13 +545,13 @@ export default function TrekDaysVisualGrid({ registrations, trekDays, language, 
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.02 }}
                     className={`
-                      rounded-lg p-3 border-2 transition-all
+                      rounded-lg p-3 border-2 transition-all text-start
                       ${p.isChild 
                         ? 'bg-pink-50 border-pink-200' 
                         : 'bg-white border-gray-200'}
                       ${p.isPaid 
-                        ? 'border-l-4 border-l-green-500' 
-                        : 'border-l-4 border-l-yellow-500'}
+                        ? (isRTL ? 'border-r-4 border-r-green-500' : 'border-l-4 border-l-green-500')
+                        : (isRTL ? 'border-r-4 border-r-yellow-500' : 'border-l-4 border-l-yellow-500')}
                     `}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
