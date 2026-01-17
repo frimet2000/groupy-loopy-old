@@ -323,22 +323,22 @@ export default function ParticipantsByDayTable({ registrations, trekDays, langua
             <p>{trans.noParticipants}</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto" dir={isRTL ? 'rtl' : 'ltr'}>
+            <table className="w-full text-sm border-collapse">
               <thead className="bg-gray-100 border-b-2 border-gray-200">
                 <tr>
-                  <th className="px-3 py-2 text-right font-semibold">#</th>
-                  <th className="px-3 py-2 text-right font-semibold">{trans.name}</th>
-                  <th className="px-3 py-2 text-right font-semibold hidden sm:table-cell">{trans.phone}</th>
-                  <th className="px-3 py-2 text-right font-semibold hidden md:table-cell">{trans.email}</th>
-                  <th className="px-3 py-2 text-right font-semibold">{trans.paymentStatus}</th>
+                  <th className={`px-3 py-3 font-semibold border-b ${isRTL ? 'text-right' : 'text-left'}`}>#</th>
+                  <th className={`px-3 py-3 font-semibold border-b ${isRTL ? 'text-right' : 'text-left'}`}>{trans.name}</th>
+                  <th className={`px-3 py-3 font-semibold border-b hidden sm:table-cell ${isRTL ? 'text-right' : 'text-left'}`}>{trans.phone}</th>
+                  <th className={`px-3 py-3 font-semibold border-b hidden md:table-cell ${isRTL ? 'text-right' : 'text-left'}`}>{trans.email}</th>
+                  <th className={`px-3 py-3 font-semibold border-b ${isRTL ? 'text-right' : 'text-left'}`}>{trans.paymentStatus}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {filteredParticipants.map((p, idx) => (
                   <tr key={idx} className={`hover:bg-gray-50 ${p.isChild ? 'bg-pink-50/30' : ''}`}>
-                    <td className="px-3 py-2 text-gray-500">{idx + 1}</td>
-                    <td className="px-3 py-2">
+                    <td className={`px-3 py-3 text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>{idx + 1}</td>
+                    <td className={`px-3 py-3 ${isRTL ? 'text-right' : 'text-left'}`}>
                       <div className="font-medium">{p.name}</div>
                       {p.isGroup && (
                         <Badge variant="outline" className="text-xs mt-1 bg-orange-50 text-orange-700 border-orange-300">
@@ -351,9 +351,9 @@ export default function ParticipantsByDayTable({ registrations, trekDays, langua
                         </Badge>
                       )}
                     </td>
-                    <td className="px-3 py-2 hidden sm:table-cell" dir="ltr">{p.phone}</td>
-                    <td className="px-3 py-2 hidden md:table-cell" dir="ltr">{p.email}</td>
-                    <td className="px-3 py-2">
+                    <td className={`px-3 py-3 hidden sm:table-cell ${isRTL ? 'text-right' : 'text-left'}`} dir="ltr">{p.phone}</td>
+                    <td className={`px-3 py-3 hidden md:table-cell ${isRTL ? 'text-right' : 'text-left'}`} dir="ltr">{p.email}</td>
+                    <td className={`px-3 py-3 ${isRTL ? 'text-right' : 'text-left'}`}>
                       {p.isPaid ? (
                         <Badge className="bg-green-500 text-white gap-1">
                           <CheckCircle className="w-3 h-3" />
