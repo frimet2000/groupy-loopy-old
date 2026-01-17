@@ -69,25 +69,39 @@ export default function NifgashimPortal() {
   const trekDays = React.useMemo(() => {
     const sourceDays = nifgashimTrip?.trek_days || nifgashimTrip?.days;
     if (!sourceDays || sourceDays.length === 0) {
-
       return [];
     }
-    
 
-    
-    return sourceDays.map((day, index) => ({
-      id: day.id || `day-${index + 1}`,
-      date: day.date,
-      daily_title: typeof day.daily_title === 'string' ? day.daily_title : (typeof day.title === 'string' ? day.title : ''),
-      difficulty: typeof day.difficulty === 'string' ? day.difficulty : 'moderate',
-      daily_distance_km: Number(day.daily_distance_km || day.distance_km || 0),
-      elevation_gain_m: Number(day.elevation_gain_m || day.elevation_gain || 0),
-      day_number: Number(day.day_number || index + 1),
-      category_id: day.category_id,
-      description: typeof day.daily_description === 'string' ? day.daily_description : (typeof day.description === 'string' ? day.description : (typeof day.content === 'string' ? day.content : '')),
-      image_url: day.image_url || day.image || null,
-      waypoints: Array.isArray(day.waypoints) ? day.waypoints : []
-      })).filter(day => {
+    // Get images from daily_itinerary if available
+    const dailyItineraryImages = {};
+    if (Array.isArray(nifgashimTrip?.daily_itinerary)) {
+      nifgashimTrip.daily_itinerary.forEach(itinerary => {
+        if (itinerary.day && itinerary.activities && Array.isArray(itinerary.activities)) {
+          const firstImageUrl = itinerary.activities
+            .find(activity => activity?.image_url)?.image_url;
+          if (firstImageUrl) {
+            dailyItineraryImages[itinerary.day] = firstImageUrl;
+          }
+        }
+      });
+    }
+
+    return sourceDays.map((day, index) => {
+      const dayNum = Number(day.day_number || index + 1);
+      return {
+        id: day.id || `day-${dayNum}`,
+        date: day.date,
+        daily_title: typeof day.daily_title === 'string' ? day.daily_title : (typeof day.title === 'string' ? day.title : ''),
+        difficulty: typeof day.difficulty === 'string' ? day.difficulty : 'moderate',
+        daily_distance_km: Number(day.daily_distance_km || day.distance_km || 0),
+        elevation_gain_m: Number(day.elevation_gain_m || day.elevation_gain || 0),
+        day_number: dayNum,
+        category_id: day.category_id,
+        description: typeof day.daily_description === 'string' ? day.daily_description : (typeof day.description === 'string' ? day.description : (typeof day.content === 'string' ? day.content : '')),
+        image_url: day.image_url || day.image || dailyItineraryImages[dayNum] || nifgashimTrip?.image_url || null,
+        waypoints: Array.isArray(day.waypoints) ? day.waypoints : []
+      };
+    }).filter(day => {
       if (!day.date) return true;
       const d = new Date(day.date);
       if (d.getDay() === 6) return false;
