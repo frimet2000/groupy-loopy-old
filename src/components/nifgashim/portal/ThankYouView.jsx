@@ -334,37 +334,17 @@ export default function ThankYouView({
               {trans.loginMessage}
             </p>
             
-            {isLoggedIn ? (
-              <div className="w-full">
-                <div className="bg-green-100 border-2 border-green-300 rounded-xl p-6 mb-4">
-                  <div className="text-5xl font-bold text-green-600 mb-2">
-                    {countdown}
-                  </div>
-                  <p className="text-green-700 font-semibold">
-                    {trans.redirecting} {countdown} {trans.seconds}
-                  </p>
-                </div>
-                <Button
-                  onClick={() => navigate(`${createPageUrl('TripDetails')}?id=${tripId}`)}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white h-14"
-                >
-                  <ArrowRight className="w-5 h-5 mr-2" />
-                  {trans.viewTrip}
-                </Button>
-              </div>
-            ) : (
-              <Button
-                onClick={() => {
-                  const tripUrl = `${window.location.origin}${createPageUrl('TripDetails')}?id=${tripId}`;
-                  base44.auth.redirectToLogin(tripUrl);
-                }}
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white h-14"
-                size="lg"
-              >
-                <LogIn className="w-5 h-5 mr-2" />
-                {trans.loginToTrack}
-              </Button>
-            )}
+            <Button
+              onClick={() => {
+                const tripUrl = `${window.location.origin}${createPageUrl('TripDetails')}?id=${tripId}`;
+                base44.auth.redirectToLogin(tripUrl);
+              }}
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white h-14"
+              size="lg"
+            >
+              <LogIn className="w-5 h-5 mr-2" />
+              {trans.loginToTrack}
+            </Button>
           </div>
         </CardContent>
       </Card>
