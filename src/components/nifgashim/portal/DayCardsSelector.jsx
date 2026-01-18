@@ -592,7 +592,7 @@ export default function NifgashimDayCardsSelector({
                     ) : null}
 
                  {/* Overlay Gradient */}
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-40 md:from-black/60 md:opacity-60 pointer-events-none" />
 
                  {/* Day Number and Date - Bottom Right */}
                  <div className={`absolute bottom-1 ${isRTL ? 'left-2' : 'right-2'} flex flex-col items-end gap-0.5`}>
@@ -625,7 +625,7 @@ export default function NifgashimDayCardsSelector({
                  {/* Linked Days Indicator */}
                  {isLinked && linkedColor && (
                    <motion.div 
-                     className={`absolute bottom-1 ${isRTL ? 'right-1' : 'left-1'} ${linkedColor.bg} backdrop-blur-sm text-white p-1 rounded-full shadow-lg`}
+                     className={`absolute bottom-1 ${isRTL ? 'left-1' : 'right-1'} ${linkedColor.bg} backdrop-blur-sm text-white p-1 rounded-full shadow-lg pointer-events-none z-[5]`}
                      animate={{ 
                        scale: [1, 1.1, 1],
                      }}
