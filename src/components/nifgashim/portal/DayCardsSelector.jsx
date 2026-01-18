@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, MapPin, Mountain, CheckCircle2, Info, X, Map, Download, Loader2 } from 'lucide-react';
+import { Calendar, MapPin, Mountain, CheckCircle2, Info, X, Map, Download, Loader2, Link2 } from 'lucide-react';
 import { useLanguage } from '../../LanguageContext';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ export default function NifgashimDayCardsSelector({
   const { language, isRTL } = useLanguage();
   const [selectedDayForInfo, setSelectedDayForInfo] = useState(null);
   const [showMap, setShowMap] = useState(false);
+  const [showLinkedDaysDialog, setShowLinkedDaysDialog] = useState(null);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const pdfRef = useRef(null);
 
@@ -43,7 +44,11 @@ export default function NifgashimDayCardsSelector({
       viewMap: "צפה במפה",
       downloadPdf: "הורד PDF",
       generating: "מכין קובץ...",
-      selectedDaysTitle: "ימי המסע שנבחרו"
+      selectedDaysTitle: "ימי המסע שנבחרו",
+      linkedDaysTitle: "ימים מקושרים",
+      linkedDaysMessage: "ימים אלו מהווים מסלול רציף ומחייבים השתתפות ברצף. לא ניתן להירשם ליום השני ללא השתתפות ביום הראשון, ולא ניתן לבחור רק אחד מהם.",
+      linkedDaysConfirm: "הבנתי, בחר את שני הימים",
+      linkedDaysCancel: "ביטול"
     },
     en: {
       selectDays: "Select Your Trek Days",
@@ -65,7 +70,11 @@ export default function NifgashimDayCardsSelector({
       viewMap: "View Map",
       downloadPdf: "Download PDF",
       generating: "Generating...",
-      selectedDaysTitle: "Selected Trek Days"
+      selectedDaysTitle: "Selected Trek Days",
+      linkedDaysTitle: "Linked Days",
+      linkedDaysMessage: "These days form a continuous route and require sequential participation. You cannot register for the second day without participating in the first, and you cannot select only one of them.",
+      linkedDaysConfirm: "I understand, select both days",
+      linkedDaysCancel: "Cancel"
     },
     ru: {
       selectDays: "Выберите дни похода",
@@ -87,7 +96,11 @@ export default function NifgashimDayCardsSelector({
       viewMap: "Карта",
       downloadPdf: "Скачать PDF",
       generating: "Создание...",
-      selectedDaysTitle: "Выбранные дни похода"
+      selectedDaysTitle: "Выбранные дни похода",
+      linkedDaysTitle: "Связанные дни",
+      linkedDaysMessage: "Эти дни образуют непрерывный маршрут и требуют последовательного участия. Вы не можете зарегистрироваться на второй день без участия в первом, и нельзя выбрать только один из них.",
+      linkedDaysConfirm: "Понятно, выбрать оба дня",
+      linkedDaysCancel: "Отмена"
     },
     es: {
       selectDays: "Selecciona los días del trek",
@@ -109,7 +122,11 @@ export default function NifgashimDayCardsSelector({
       viewMap: "Ver mapa",
       downloadPdf: "Descargar PDF",
       generating: "Generando...",
-      selectedDaysTitle: "Días del trek seleccionados"
+      selectedDaysTitle: "Días del trek seleccionados",
+      linkedDaysTitle: "Días vinculados",
+      linkedDaysMessage: "Estos días forman una ruta continua y requieren participación secuencial. No puede registrarse para el segundo día sin participar en el primero, y no puede seleccionar solo uno de ellos.",
+      linkedDaysConfirm: "Entendido, seleccionar ambos días",
+      linkedDaysCancel: "Cancelar"
     },
     fr: {
       selectDays: "Sélectionnez vos jours de trek",
@@ -131,7 +148,11 @@ export default function NifgashimDayCardsSelector({
       viewMap: "Voir la carte",
       downloadPdf: "Télécharger PDF",
       generating: "Génération...",
-      selectedDaysTitle: "Jours de trek sélectionnés"
+      selectedDaysTitle: "Jours de trek sélectionnés",
+      linkedDaysTitle: "Jours liés",
+      linkedDaysMessage: "Ces jours forment un itinéraire continu et nécessitent une participation séquentielle. Vous ne pouvez pas vous inscrire au deuxième jour sans participer au premier, et vous ne pouvez pas sélectionner un seul d'entre eux.",
+      linkedDaysConfirm: "Compris, sélectionner les deux jours",
+      linkedDaysCancel: "Annuler"
     },
     de: {
       selectDays: "Wähle deine Trek-Tage",
@@ -153,7 +174,11 @@ export default function NifgashimDayCardsSelector({
       viewMap: "Karte ansehen",
       downloadPdf: "PDF herunterladen",
       generating: "Erstellen...",
-      selectedDaysTitle: "Ausgewählte Trek-Tage"
+      selectedDaysTitle: "Ausgewählte Trek-Tage",
+      linkedDaysTitle: "Verknüpfte Tage",
+      linkedDaysMessage: "Diese Tage bilden eine durchgehende Route und erfordern eine aufeinanderfolgende Teilnahme. Sie können sich nicht für den zweiten Tag anmelden, ohne am ersten teilzunehmen, und Sie können nicht nur einen von ihnen auswählen.",
+      linkedDaysConfirm: "Verstanden, beide Tage auswählen",
+      linkedDaysCancel: "Abbrechen"
     },
     it: {
       selectDays: "Seleziona i tuoi giorni di trek",
@@ -175,7 +200,11 @@ export default function NifgashimDayCardsSelector({
       viewMap: "Vedi mappa",
       downloadPdf: "Scarica PDF",
       generating: "Generazione...",
-      selectedDaysTitle: "Giorni del trek selezionati"
+      selectedDaysTitle: "Giorni del trek selezionati",
+      linkedDaysTitle: "Giorni collegati",
+      linkedDaysMessage: "Questi giorni formano un percorso continuo e richiedono una partecipazione sequenziale. Non è possibile registrarsi per il secondo giorno senza partecipare al primo e non è possibile selezionare solo uno di essi.",
+      linkedDaysConfirm: "Capito, seleziona entrambi i giorni",
+      linkedDaysCancel: "Annulla"
     }
   };
 
@@ -514,7 +543,14 @@ export default function NifgashimDayCardsSelector({
                {/* Image Section */}
                   <div 
                     className="relative w-full bg-gradient-to-br from-slate-400 via-slate-500 to-slate-600 cursor-pointer group overflow-hidden"
-                    onClick={() => !isDisabled && handleDayToggle(day)}
+                    onClick={() => {
+                      if (isDisabled) return;
+                      if (isLinked && !isSelected(day.id)) {
+                        setShowLinkedDaysDialog(day);
+                      } else {
+                        handleDayToggle(day);
+                      }
+                    }}
                   >
                     {imageUrl && typeof imageUrl === 'string' && imageUrl.length > 5 ? (
                       <img 
@@ -565,6 +601,19 @@ export default function NifgashimDayCardsSelector({
                    {isNegev ? (language === 'he' ? 'נ' : 'N') : (language === 'he' ? 'צ' : 'C')}
                  </div>
 
+                 {/* Linked Days Indicator */}
+                 {isLinked && (
+                   <motion.div 
+                     className={`absolute top-6 ${isRTL ? 'left-1' : 'right-1'} bg-purple-600/90 backdrop-blur-sm text-white p-1.5 rounded-full shadow-lg`}
+                     animate={{ 
+                       scale: [1, 1.15, 1],
+                     }}
+                     transition={{ duration: 2, repeat: Infinity }}
+                   >
+                     <Link2 className="w-3 h-3" />
+                   </motion.div>
+                 )}
+
 
 
                  {/* Selected Checkmark */}
@@ -580,7 +629,14 @@ export default function NifgashimDayCardsSelector({
                {/* Content Section */}
                <div 
                  className="p-2 flex-1 flex flex-col cursor-pointer"
-                 onClick={() => !isDisabled && handleDayToggle(day)}
+                 onClick={() => {
+                   if (isDisabled) return;
+                   if (isLinked && !isSelected(day.id)) {
+                     setShowLinkedDaysDialog(day);
+                   } else {
+                     handleDayToggle(day);
+                   }
+                 }}
                >
                  <h3 className="font-bold text-xs leading-tight">{day.daily_title}</h3>
 
@@ -712,6 +768,100 @@ export default function NifgashimDayCardsSelector({
               </motion.div>
             </motion.div>
           </>
+        )}
+      </AnimatePresence>
+
+      {/* Linked Days Dialog */}
+      <AnimatePresence>
+        {showLinkedDaysDialog && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowLinkedDaysDialog(null)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+            >
+              {/* Header */}
+              <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-white">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-white/20 rounded-full">
+                    <Link2 className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-bold">{trans.linkedDaysTitle}</h3>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-6">
+                <p className="text-gray-700 leading-relaxed mb-6">
+                  {trans.linkedDaysMessage}
+                </p>
+
+                {/* Visual representation of linked days */}
+                <div className="flex items-center justify-center gap-2 mb-6 p-4 bg-purple-50 rounded-xl">
+                  {(() => {
+                    const linkedPartner = linkedDaysPairs.find(pair => {
+                      const pairDays = Array.isArray(pair) ? pair : [pair.day_id_1, pair.day_id_2];
+                      return pairDays.includes(showLinkedDaysDialog.day_number);
+                    });
+                    const pairDays = linkedPartner ? (Array.isArray(linkedPartner) ? linkedPartner : [linkedPartner.day_id_1, linkedPartner.day_id_2]) : [];
+                    const sortedPair = [...pairDays].sort((a, b) => a - b);
+                    
+                    return sortedPair.map((dayNum, idx) => {
+                      const dayObj = trekDays.find(d => d.day_number === dayNum);
+                      return (
+                        <React.Fragment key={dayNum}>
+                          <div className="flex flex-col items-center">
+                            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                              {dayNum}
+                            </div>
+                            <span className="text-xs text-gray-600 mt-1 text-center max-w-[80px] truncate">
+                              {dayObj?.daily_title || `Day ${dayNum}`}
+                            </span>
+                          </div>
+                          {idx === 0 && (
+                            <div className="flex items-center">
+                              <div className="w-8 h-1 bg-purple-300 rounded-full" />
+                              <Link2 className="w-5 h-5 text-purple-500 mx-1" />
+                              <div className="w-8 h-1 bg-purple-300 rounded-full" />
+                            </div>
+                          )}
+                        </React.Fragment>
+                      );
+                    });
+                  })()}
+                </div>
+
+                {/* Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    onClick={() => {
+                      handleDayToggle(showLinkedDaysDialog);
+                      setShowLinkedDaysDialog(null);
+                    }}
+                    className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+                  >
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    {trans.linkedDaysConfirm}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowLinkedDaysDialog(null)}
+                    className="flex-1"
+                  >
+                    {trans.linkedDaysCancel}
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 
