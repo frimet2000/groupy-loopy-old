@@ -57,7 +57,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       hasSpouse: "הורה נוסף מצטרף",
       addId: "הוסף ת\"ז",
       vehicleDetails: "פרטי רכב",
-      hasVehicle: "האם יש רכב?",
+      hasVehicle: "האם אגיע ברכבי?",
       vehicleNumber: "מספר רכב",
       optional: "אופציונלי",
       vehiclePlaceholder: "12-345-67"
@@ -89,7 +89,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       hasSpouse: "Do you have a spouse/partner?",
       addId: "Add ID",
       vehicleDetails: "Vehicle Details",
-      hasVehicle: "Do you have a vehicle?",
+      hasVehicle: "Will I arrive with my vehicle?",
       vehicleNumber: "Vehicle Number",
       optional: "Optional",
       vehiclePlaceholder: "12-345-67"
@@ -114,6 +114,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       duplicatePhone: "Этот номер телефона уже зарегистрирован",
       addId: "Добавить ID",
       vehicleDetails: "Детали транспортного средства",
+      hasVehicle: "Приеду ли я на своем автомобиле?",
       vehicleNumber: "Номер автомобиля",
       optional: "необязательно",
       vehiclePlaceholder: "12-345-67"
@@ -138,6 +139,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       duplicatePhone: "Este número de teléfono ya está registrado",
       addId: "Añadir ID",
       vehicleDetails: "Detalles del vehículo",
+      hasVehicle: "¿Llegaré con mi vehículo?",
       vehicleNumber: "Número de vehículo",
       optional: "Opcional",
       vehiclePlaceholder: "12-345-67"
@@ -160,7 +162,12 @@ export default function ParticipantForm({ userType, participants, setParticipant
       selectAge: "Sélectionner l'âge",
       duplicateId: "Ce numéro d'ID est déjà enregistré",
       duplicatePhone: "Ce numéro de téléphone est déjà enregistré",
-      addId: "Ajouter ID"
+      addId: "Ajouter ID",
+      vehicleDetails: "Détails du véhicule",
+      hasVehicle: "Arriverai-je avec mon véhicule?",
+      vehicleNumber: "Numéro de véhicule",
+      optional: "Facultatif",
+      vehiclePlaceholder: "12-345-67"
     },
     de: {
       title: "Teilnehmerdetails",
@@ -180,7 +187,12 @@ export default function ParticipantForm({ userType, participants, setParticipant
       selectAge: "Altersbereich wählen",
       duplicateId: "Diese ID-Nummer ist bereits registriert",
       duplicatePhone: "Diese Telefonnummer ist bereits registriert",
-      addId: "ID hinzufügen"
+      addId: "ID hinzufügen",
+      vehicleDetails: "Fahrzeugdetails",
+      hasVehicle: "Komme ich mit meinem Fahrzeug?",
+      vehicleNumber: "Fahrzeugnummer",
+      optional: "Optional",
+      vehiclePlaceholder: "12-345-67"
     },
     it: {
       title: "Dettagli partecipanti",
