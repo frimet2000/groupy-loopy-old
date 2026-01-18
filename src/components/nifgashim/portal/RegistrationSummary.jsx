@@ -16,6 +16,7 @@ export default function RegistrationSummary({ userType, participants, selectedDa
       family: "משפחתי",
       group: "קבוצה מאורגנת",
       participants: "משתתפים",
+      totalParticipants: "סך הכל משתתפים",
       selectedDays: "ימים נבחרים",
       totalCost: "עלות כוללת",
       free: "חינם",
