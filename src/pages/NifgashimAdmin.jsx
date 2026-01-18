@@ -63,6 +63,7 @@ import QRScannerTool from '../components/nifgashim/QRScannerTool';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, AreaChart, Area } from 'recharts';
 
 export default function NifgashimAdmin() {
   const { language, isRTL } = useLanguage();
@@ -2335,60 +2336,140 @@ export default function NifgashimAdmin() {
 
               {/* Statistics Tab */}
               <TabsContent value="statistics" className="space-y-6">
-                {/* Age Statistics */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                      <Users className="w-5 h-5" />
-                      {language === 'he' ? 'סטטיסטיקות גילאים' : 'Age Statistics'}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border-2 border-blue-200">
-                        <div className="text-3xl font-bold text-blue-900">{ageStats.adults}</div>
-                        <div className="text-sm text-blue-700 font-medium">{language === 'he' ? 'מבוגרים' : 'Adults'}</div>
-                      </div>
-                      <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-4 border-2 border-pink-200">
-                        <div className="text-3xl font-bold text-pink-900">{ageStats.children}</div>
-                        <div className="text-sm text-pink-700 font-medium">{language === 'he' ? 'ילדים' : 'Children'}</div>
-                      </div>
-                    </div>
+                {/* Summary Cards Row */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                  <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0">
+                    <CardContent className="p-4">
+                      <div className="text-3xl sm:text-4xl font-bold">{ageStats.adults + ageStats.children}</div>
+                      <div className="text-sm opacity-90">{language === 'he' ? 'סה״כ משתתפים' : 'Total Participants'}</div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0">
+                    <CardContent className="p-4">
+                      <div className="text-3xl sm:text-4xl font-bold">₪{stats.revenue.toLocaleString()}</div>
+                      <div className="text-sm opacity-90">{language === 'he' ? 'סה״כ הכנסות' : 'Total Revenue'}</div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0">
+                    <CardContent className="p-4">
+                      <div className="text-3xl sm:text-4xl font-bold">{uniqueRegistrations.length}</div>
+                      <div className="text-sm opacity-90">{language === 'he' ? 'רישומים' : 'Registrations'}</div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0">
+                    <CardContent className="p-4">
+                      <div className="text-3xl sm:text-4xl font-bold">{groupRegistrations.length}</div>
+                      <div className="text-sm opacity-90">{language === 'he' ? 'קבוצות' : 'Groups'}</div>
+                    </CardContent>
+                  </Card>
+                </div>
 
-                    <div className="space-y-2">
-                      <p className="text-sm font-semibold text-gray-700 mb-3">
-                        {language === 'he' ? 'פילוח לפי טווח גילאים:' : 'By Age Range:'}
-                      </p>
-                      {Object.entries(ageStats.byAgeRange).map(([range, count]) => {
-                        const totalParticipants = ageStats.adults + ageStats.children;
-                        const isChild = range === '0-9';
+                {/* Payment Status Pie Chart */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                        <DollarSign className="w-5 h-5" />
+                        {trans.paymentBreakdown}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {(() => {
+                        const paymentData = [
+                          { name: trans.completed, value: uniqueRegistrations.filter(r => r.payment_status === 'completed' || r.status === 'completed').length, color: '#22c55e' },
+                          { name: trans.pending, value: uniqueRegistrations.filter(r => r.payment_status === 'pending' && r.status !== 'completed').length, color: '#eab308' },
+                          { name: trans.partial, value: uniqueRegistrations.filter(r => r.payment_status === 'partial').length, color: '#f97316' },
+                          { name: trans.exempt, value: uniqueRegistrations.filter(r => r.payment_status === 'exempt').length, color: '#3b82f6' },
+                        ].filter(d => d.value > 0);
+                        
                         return (
-                          <div key={range} className="flex items-center gap-3">
-                            <div className="w-20 text-xs font-semibold text-gray-700 flex items-center gap-1">
-                              {range}
-                              {isChild && <span className="text-pink-500">👶</span>}
-                            </div>
-                            <div className="flex-1 bg-gray-100 rounded-full h-6 overflow-hidden">
-                              <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: totalParticipants > 0 ? `${(count / totalParticipants) * 100}%` : '0%' }}
-                                className={`h-full flex items-center justify-end px-2 ${
-                                  isChild 
-                                    ? 'bg-gradient-to-r from-pink-400 to-pink-600' 
-                                    : 'bg-gradient-to-r from-blue-400 to-blue-600'
-                                }`}
-                              >
-                                {count > 0 && <span className="text-white text-xs font-bold">{count}</span>}
-                              </motion.div>
+                          <div className="flex flex-col items-center">
+                            <ResponsiveContainer width="100%" height={250}>
+                              <PieChart>
+                                <Pie
+                                  data={paymentData}
+                                  cx="50%"
+                                  cy="50%"
+                                  innerRadius={60}
+                                  outerRadius={100}
+                                  paddingAngle={2}
+                                  dataKey="value"
+                                  label={({ name, value }) => `${name}: ${value}`}
+                                  labelLine={false}
+                                >
+                                  {paymentData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                  ))}
+                                </Pie>
+                                <Tooltip />
+                              </PieChart>
+                            </ResponsiveContainer>
+                            <div className="flex flex-wrap justify-center gap-3 mt-4">
+                              {paymentData.map((entry, index) => (
+                                <div key={index} className="flex items-center gap-2">
+                                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
+                                  <span className="text-sm">{entry.name}: {entry.value}</span>
+                                </div>
+                              ))}
                             </div>
                           </div>
                         );
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
+                      })()}
+                    </CardContent>
+                  </Card>
 
-                {/* Registrations by Day Chart */}
+                  {/* Age Distribution Pie Chart */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                        <Users className="w-5 h-5" />
+                        {language === 'he' ? 'התפלגות גילאים' : 'Age Distribution'}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {(() => {
+                        const ageData = [
+                          { name: language === 'he' ? 'מבוגרים (10+)' : 'Adults (10+)', value: ageStats.adults, color: '#3b82f6' },
+                          { name: language === 'he' ? 'ילדים (0-9)' : 'Children (0-9)', value: ageStats.children, color: '#ec4899' },
+                        ].filter(d => d.value > 0);
+                        
+                        return (
+                          <div className="flex flex-col items-center">
+                            <ResponsiveContainer width="100%" height={250}>
+                              <PieChart>
+                                <Pie
+                                  data={ageData}
+                                  cx="50%"
+                                  cy="50%"
+                                  innerRadius={60}
+                                  outerRadius={100}
+                                  paddingAngle={2}
+                                  dataKey="value"
+                                  label={({ name, value, percent }) => `${Math.round(percent * 100)}%`}
+                                >
+                                  {ageData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                  ))}
+                                </Pie>
+                                <Tooltip />
+                              </PieChart>
+                            </ResponsiveContainer>
+                            <div className="flex flex-wrap justify-center gap-4 mt-4">
+                              {ageData.map((entry, index) => (
+                                <div key={index} className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+                                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: entry.color }} />
+                                  <span className="text-sm font-medium">{entry.name}: <span className="font-bold">{entry.value}</span></span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Registrations by Day Bar Chart */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
@@ -2397,79 +2478,245 @@ export default function NifgashimAdmin() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-3">
-                      {Object.entries(registrationsByDay).sort(([a], [b]) => parseInt(a) - parseInt(b)).map(([day, count]) => (
-                        <div key={day} className="flex items-center gap-3">
-                          <div className="w-16 sm:w-20 text-xs sm:text-sm font-semibold text-gray-700">
-                            {language === 'he' ? `יום ${day}` : `Day ${day}`}
-                          </div>
-                          <div className="flex-1 bg-gray-100 rounded-full h-6 sm:h-8 overflow-hidden">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${(count / registrations.length) * 100}%` }}
-                              className="h-full bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-end px-2 sm:px-3"
+                    {(() => {
+                      const dayData = Object.entries(registrationsByDay)
+                        .sort(([a], [b]) => parseInt(a) - parseInt(b))
+                        .map(([day, count]) => ({
+                          day: language === 'he' ? `יום ${day}` : `Day ${day}`,
+                          count,
+                          dayNum: parseInt(day)
+                        }));
+                      
+                      return (
+                        <ResponsiveContainer width="100%" height={300}>
+                          <BarChart data={dayData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                            <XAxis dataKey="day" tick={{ fontSize: 12 }} />
+                            <YAxis tick={{ fontSize: 12 }} />
+                            <Tooltip 
+                              contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
+                              labelStyle={{ fontWeight: 'bold' }}
+                            />
+                            <Bar 
+                              dataKey="count" 
+                              fill="url(#colorGradient)" 
+                              radius={[4, 4, 0, 0]}
+                              name={language === 'he' ? 'נרשמים' : 'Registrations'}
+                            />
+                            <defs>
+                              <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stopColor="#8b5cf6" />
+                                <stop offset="100%" stopColor="#6366f1" />
+                              </linearGradient>
+                            </defs>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      );
+                    })()}
+                  </CardContent>
+                </Card>
+
+                {/* Age Range Bar Chart */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                      <BarChart3 className="w-5 h-5" />
+                      {language === 'he' ? 'פילוח לפי טווח גילאים' : 'Age Range Breakdown'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {(() => {
+                      const ageRangeData = Object.entries(ageStats.byAgeRange)
+                        .map(([range, count]) => ({
+                          range,
+                          count,
+                          isChild: range === '0-9'
+                        }));
+                      
+                      return (
+                        <ResponsiveContainer width="100%" height={300}>
+                          <BarChart data={ageRangeData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                            <XAxis dataKey="range" tick={{ fontSize: 12 }} />
+                            <YAxis tick={{ fontSize: 12 }} />
+                            <Tooltip 
+                              contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
+                            />
+                            <Bar 
+                              dataKey="count" 
+                              radius={[4, 4, 0, 0]}
+                              name={language === 'he' ? 'משתתפים' : 'Participants'}
                             >
-                              <span className="text-white text-xs sm:text-sm font-bold">{count}</span>
-                            </motion.div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                              {ageRangeData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.isChild ? '#ec4899' : '#3b82f6'} />
+                              ))}
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      );
+                    })()}
                   </CardContent>
                 </Card>
 
-                {/* Payment Breakdown */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                      <DollarSign className="w-5 h-5" />
-                      {trans.paymentBreakdown}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                      {['completed', 'pending', 'partial', 'exempt'].map(status => {
-                        const count = registrations.filter(r => r.payment_status === status).length;
+                {/* Registration Type Breakdown */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* User Type Pie Chart */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                        <UsersRound className="w-5 h-5" />
+                        {language === 'he' ? 'סוגי רישום' : 'Registration Types'}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {(() => {
+                        const individualsCount = uniqueRegistrations.filter(r => {
+                          const allP = r.participants || [];
+                          const total = r.is_organized_group && r.groupInfo?.totalParticipants
+                            ? r.groupInfo.totalParticipants
+                            : (allP.length || 1);
+                          return total === 1 && !r.is_organized_group;
+                        }).length;
+                        
+                        const familiesCount = uniqueRegistrations.filter(r => {
+                          const allP = r.participants || [];
+                          const total = r.is_organized_group && r.groupInfo?.totalParticipants
+                            ? r.groupInfo.totalParticipants
+                            : (allP.length || 1);
+                          return total > 1 && !r.is_organized_group;
+                        }).length;
+                        
+                        const groupsCount = groupRegistrations.length;
+                        
+                        const typeData = [
+                          { name: trans.individuals, value: individualsCount, color: '#3b82f6' },
+                          { name: trans.families, value: familiesCount, color: '#8b5cf6' },
+                          { name: trans.organizedGroups, value: groupsCount, color: '#f97316' },
+                        ].filter(d => d.value > 0);
+                        
                         return (
-                          <div key={status} className="text-center p-3 sm:p-4 bg-gray-50 rounded-lg">
-                            <div className="text-xl sm:text-2xl font-bold text-gray-900">{count}</div>
-                            <div className="text-xs sm:text-sm text-gray-600 mt-1">{trans[status]}</div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Groups Breakdown */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                      <UsersRound className="w-5 h-5" />
-                      {trans.groupsBreakdown}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {['military', 'school', 'youth_group', 'other'].map(type => {
-                        const groups = registrations.filter(
-                          r => isGroupRegistration(r) && r.group_type === type
-                        );
-                        if (groups.length === 0) return null;
-                        return (
-                          <div key={type} className="p-3 sm:p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="font-semibold text-sm sm:text-base">{trans[type]}</span>
-                              <Badge variant="secondary">{groups.length}</Badge>
-                            </div>
-                            <div className="space-y-1 text-xs sm:text-sm text-gray-700">
-                              {groups.map((g, i) => (
-                                <div key={i}>• {g.group_name}</div>
+                          <div className="flex flex-col items-center">
+                            <ResponsiveContainer width="100%" height={250}>
+                              <PieChart>
+                                <Pie
+                                  data={typeData}
+                                  cx="50%"
+                                  cy="50%"
+                                  innerRadius={50}
+                                  outerRadius={90}
+                                  paddingAngle={2}
+                                  dataKey="value"
+                                  label={({ percent }) => `${Math.round(percent * 100)}%`}
+                                >
+                                  {typeData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                  ))}
+                                </Pie>
+                                <Tooltip />
+                              </PieChart>
+                            </ResponsiveContainer>
+                            <div className="flex flex-wrap justify-center gap-3 mt-4">
+                              {typeData.map((entry, index) => (
+                                <div key={index} className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+                                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
+                                  <span className="text-sm">{entry.name}: <span className="font-bold">{entry.value}</span></span>
+                                </div>
                               ))}
                             </div>
                           </div>
                         );
-                      })}
+                      })()}
+                    </CardContent>
+                  </Card>
+
+                  {/* Groups Breakdown */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                        <UsersRound className="w-5 h-5" />
+                        {trans.groupsBreakdown}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {(() => {
+                        const groupTypeData = ['military', 'school', 'youth_group', 'other'].map(type => ({
+                          name: trans[type],
+                          value: uniqueRegistrations.filter(r => isGroupRegistration(r) && r.group_type === type).length
+                        })).filter(d => d.value > 0);
+                        
+                        const colors = ['#22c55e', '#3b82f6', '#f97316', '#8b5cf6'];
+                        
+                        return groupTypeData.length > 0 ? (
+                          <div className="flex flex-col items-center">
+                            <ResponsiveContainer width="100%" height={250}>
+                              <PieChart>
+                                <Pie
+                                  data={groupTypeData}
+                                  cx="50%"
+                                  cy="50%"
+                                  outerRadius={90}
+                                  paddingAngle={2}
+                                  dataKey="value"
+                                  label={({ name, value }) => `${value}`}
+                                >
+                                  {groupTypeData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                                  ))}
+                                </Pie>
+                                <Tooltip />
+                              </PieChart>
+                            </ResponsiveContainer>
+                            <div className="flex flex-wrap justify-center gap-3 mt-4">
+                              {groupTypeData.map((entry, index) => (
+                                <div key={index} className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+                                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: colors[index % colors.length] }} />
+                                  <span className="text-sm">{entry.name}: <span className="font-bold">{entry.value}</span></span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-center py-12 text-gray-500">
+                            {language === 'he' ? 'אין קבוצות מאורגנות' : 'No organized groups'}
+                          </div>
+                        );
+                      })()}
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Revenue Summary Card */}
+                <Card className="bg-gradient-to-br from-emerald-50 to-green-100 border-2 border-green-200">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg text-green-800">
+                      <TrendingUp className="w-5 h-5" />
+                      {language === 'he' ? 'סיכום פיננסי' : 'Financial Summary'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                      <div className="bg-white rounded-xl p-4 shadow-sm border border-green-200">
+                        <p className="text-sm text-gray-600 mb-1">{language === 'he' ? 'הכנסות בפועל' : 'Actual Revenue'}</p>
+                        <p className="text-2xl font-bold text-green-700">₪{stats.revenue.toLocaleString()}</p>
+                      </div>
+                      <div className="bg-white rounded-xl p-4 shadow-sm border border-yellow-200">
+                        <p className="text-sm text-gray-600 mb-1">{language === 'he' ? 'ממתין לגבייה' : 'Pending Collection'}</p>
+                        <p className="text-2xl font-bold text-yellow-700">
+                          ₪{uniqueRegistrations.filter(r => r.payment_status === 'pending').reduce((sum, r) => sum + (r.total_amount || r.amount || 0), 0).toLocaleString()}
+                        </p>
+                      </div>
+                      <div className="bg-white rounded-xl p-4 shadow-sm border border-blue-200">
+                        <p className="text-sm text-gray-600 mb-1">{language === 'he' ? 'ממוצע לרישום' : 'Avg per Registration'}</p>
+                        <p className="text-2xl font-bold text-blue-700">
+                          ₪{uniqueRegistrations.length > 0 ? Math.round(stats.revenue / uniqueRegistrations.filter(r => r.payment_status === 'completed').length || 1) : 0}
+                        </p>
+                      </div>
+                      <div className="bg-white rounded-xl p-4 shadow-sm border border-purple-200">
+                        <p className="text-sm text-gray-600 mb-1">{language === 'he' ? 'אחוז גבייה' : 'Collection Rate'}</p>
+                        <p className="text-2xl font-bold text-purple-700">
+                          {uniqueRegistrations.length > 0 ? Math.round((stats.paid / uniqueRegistrations.length) * 100) : 0}%
+                        </p>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
