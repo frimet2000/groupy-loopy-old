@@ -121,7 +121,18 @@ export default function ParticipantForm({ userType, participants, setParticipant
       vehicleNumber: "Номер автомобиля",
       optional: "необязательно",
       vehiclePlaceholder: "12-345-67",
-      addChildContact: "Добавить контактные данные ребенка?"
+      addChildContact: "Добавить контактные данные ребенка?",
+      participantName: "Полное имя",
+      idNumber: "ID номер",
+      ageRange: "Возрастная группа",
+      phone: "Телефон",
+      email: "Email (необязательно)",
+      add: "Добавить участника",
+      participants: "Участники",
+      selectAge: "Выберите возраст",
+      duplicateId: "Этот ID уже зарегистрирован",
+      duplicatePhone: "Этот номер телефона уже зарегистрирован",
+      addId: "Добавить ID"
       optional: "необязательно",
       vehiclePlaceholder: "12-345-67"
     },
