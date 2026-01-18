@@ -1289,7 +1289,7 @@ export default function NifgashimAdmin() {
                     <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div>
-                    <div className="text-2xl sm:text-3xl font-bold text-green-900">1</div>
+                    <div className="text-2xl sm:text-3xl font-bold text-green-900">{stats.paid}</div>
                     <div className="text-xs sm:text-sm text-green-700 font-medium">{trans.totalPaid}</div>
                   </div>
                 </div>
@@ -1309,7 +1309,7 @@ export default function NifgashimAdmin() {
                     <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div>
-                    <div className="text-2xl sm:text-3xl font-bold text-yellow-900">2</div>
+                    <div className="text-2xl sm:text-3xl font-bold text-yellow-900">{stats.pending}</div>
                     <div className="text-xs sm:text-sm text-yellow-700 font-medium">{trans.totalPending}</div>
                   </div>
                 </div>
