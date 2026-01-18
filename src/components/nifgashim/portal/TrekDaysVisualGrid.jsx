@@ -434,33 +434,49 @@ export default function TrekDaysVisualGrid({ registrations, trekDays, language, 
           })}
         </div>
 
-        {/* Summary Stats */}
-        <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="bg-blue-50 rounded-lg p-3 text-center border border-blue-200">
-            <div className="text-2xl font-bold text-blue-700">
-              {Object.values(participantsByDay).reduce((sum, d) => sum + d.total, 0)}
+        {/* Summary Stats - Count UNIQUE participants across all registrations, not per day */}
+        {(() => {
+          // Calculate unique totals from registrations, not from participantsByDay
+          let uniqueTotal = 0;
+          let uniqueAdults = 0;
+          let uniqueChildren = 0;
+          let uniquePaid = 0;
+          
+          registrations.forEach(reg => {
+            const allParticipants = reg.participants || [];
+            const isPaid = reg.payment_status === 'completed' || reg.status === 'completed';
+            
+            allParticipants.forEach(p => {
+              uniqueTotal++;
+              const pAge = p.age_range ? parseInt(p.age_range.split('-')[0]) : null;
+              const isChild = pAge !== null && pAge < 10;
+              if (isChild) uniqueChildren++;
+              else uniqueAdults++;
+              if (isPaid) uniquePaid++;
+            });
+          });
+          
+          return (
+            <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-blue-50 rounded-lg p-3 text-center border border-blue-200">
+                <div className="text-2xl font-bold text-blue-700">{uniqueTotal}</div>
+                <div className="text-xs text-blue-600">{trans.participants} {trans.total}</div>
+              </div>
+              <div className="bg-indigo-50 rounded-lg p-3 text-center border border-indigo-200">
+                <div className="text-2xl font-bold text-indigo-700">{uniqueAdults}</div>
+                <div className="text-xs text-indigo-600">{trans.adults}</div>
+              </div>
+              <div className="bg-pink-50 rounded-lg p-3 text-center border border-pink-200">
+                <div className="text-2xl font-bold text-pink-700">{uniqueChildren}</div>
+                <div className="text-xs text-pink-600">{trans.children}</div>
+              </div>
+              <div className="bg-green-50 rounded-lg p-3 text-center border border-green-200">
+                <div className="text-2xl font-bold text-green-700">{uniquePaid}</div>
+                <div className="text-xs text-green-600">{trans.paid}</div>
+              </div>
             </div>
-            <div className="text-xs text-blue-600">{trans.participants} {trans.total}</div>
-          </div>
-          <div className="bg-indigo-50 rounded-lg p-3 text-center border border-indigo-200">
-            <div className="text-2xl font-bold text-indigo-700">
-              {Object.values(participantsByDay).reduce((sum, d) => sum + d.adults, 0)}
-            </div>
-            <div className="text-xs text-indigo-600">{trans.adults}</div>
-          </div>
-          <div className="bg-pink-50 rounded-lg p-3 text-center border border-pink-200">
-            <div className="text-2xl font-bold text-pink-700">
-              {Object.values(participantsByDay).reduce((sum, d) => sum + d.children, 0)}
-            </div>
-            <div className="text-xs text-pink-600">{trans.children}</div>
-          </div>
-          <div className="bg-green-50 rounded-lg p-3 text-center border border-green-200">
-            <div className="text-2xl font-bold text-green-700">
-              {Object.values(participantsByDay).reduce((sum, d) => sum + d.paid, 0)}
-            </div>
-            <div className="text-xs text-green-600">{trans.paid}</div>
-          </div>
-        </div>
+          );
+        })()}
       </CardContent>
 
       {/* Participants Dialog */}
