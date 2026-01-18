@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'No email found for registration' }, { status: 400 });
     }
 
-    // Generate QR codes for each participant
+    // Generate QR codes for each participant and upload to storage
     const qrCodes = [];
     for (let i = 0; i < participants.length; i++) {
       const participant = participants[i];
@@ -44,9 +44,10 @@ Deno.serve(async (req) => {
       const qrString = JSON.stringify(qrData);
       const encodedQR = btoa(qrString);
 
-      const qrCodeDataUrl = await QRCode.toDataURL(encodedQR, {
+      // Generate QR as buffer
+      const qrBuffer = await QRCode.toBuffer(encodedQR, {
         errorCorrectionLevel: 'H',
-        type: 'image/png',
+        type: 'png',
         width: 300,
         margin: 2,
         color: {
@@ -55,10 +56,17 @@ Deno.serve(async (req) => {
         }
       });
 
+      // Upload QR image to storage
+      const blob = new Blob([qrBuffer], { type: 'image/png' });
+      const file = new File([blob], `qr-${registrationId}-${i}.png`, { type: 'image/png' });
+      
+      const uploadResult = await base44.asServiceRole.integrations.Core.UploadFile({ file });
+      const qrUrl = uploadResult.file_url;
+
       qrCodes.push({
         name: participant.name,
         idNumber: participant.id_number,
-        qrCode: qrCodeDataUrl
+        qrUrl: qrUrl
       });
     }
 
