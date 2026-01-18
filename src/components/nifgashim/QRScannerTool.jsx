@@ -9,7 +9,6 @@ import { base44 } from '@/api/base44Client';
 import { 
   QrCode, 
   Camera, 
-  CameraOff, 
   CheckCircle, 
   XCircle, 
   AlertTriangle,
@@ -18,30 +17,30 @@ import {
   Phone,
   Loader2,
   RefreshCw,
-  Volume2
+  ArrowRight,
+  ScanLine,
+  UserCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
 export default function QRScannerTool({ trekDays = [], language = 'he', isRTL = false }) {
-  const [isScanning, setIsScanning] = useState(false);
+  const [scannerState, setScannerState] = useState('idle'); // idle, scanning, result, verifying
   const [selectedDay, setSelectedDay] = useState('all');
   const [lastScan, setLastScan] = useState(null);
   const [scanHistory, setScanHistory] = useState([]);
-  const [verifying, setVerifying] = useState(false);
   const [stats, setStats] = useState({ total: 0, today: 0 });
-  const scannerRef = useRef(null);
   const html5QrCodeRef = useRef(null);
 
   const translations = {
     he: {
-      title: 'סורק QR - צ\'ק-אין משתתפים',
+      title: 'סורק QR - צ\'ק-אין',
       startScan: 'התחל סריקה',
-      stopScan: 'עצור סריקה',
-      selectDay: 'בחר יום טיול',
+      nextScan: 'סרוק הבא',
+      selectDay: 'בחר יום',
       allDays: 'כל הימים',
       day: 'יום',
-      scanning: 'סורק...',
+      scanning: 'מחפש קוד QR...',
       verified: 'אומת בהצלחה!',
       alreadyCheckedIn: 'כבר נרשם היום',
       notRegistered: 'לא רשום ליום זה',
@@ -57,26 +56,28 @@ export default function QRScannerTool({ trekDays = [], language = 'he', isRTL = 
       exempt: 'פטור',
       group: 'קבוצה',
       checkedInAt: 'נסרק בשעה',
-      todayCheckIns: 'צ\'ק-אינים היום',
-      totalCheckIns: 'סה״כ צ\'ק-אינים',
+      todayCheckIns: 'היום',
+      totalCheckIns: 'סה״כ',
       recentScans: 'סריקות אחרונות',
-      cameraPermission: 'נא לאשר גישה למצלמה',
       cameraError: 'שגיאה בפתיחת המצלמה',
-      wrongDay: 'משתתף לא רשום ליום זה'
+      wrongDay: 'לא רשום ליום זה',
+      checkInSuccess: 'צ\'ק-אין הושלם',
+      continueToNext: 'המשך לסריקה הבאה',
+      tapToStart: 'לחץ להתחלת סריקה'
     },
     en: {
-      title: 'QR Scanner - Participant Check-In',
+      title: 'QR Scanner - Check-In',
       startScan: 'Start Scanning',
-      stopScan: 'Stop Scanning',
-      selectDay: 'Select Trek Day',
+      nextScan: 'Scan Next',
+      selectDay: 'Select Day',
       allDays: 'All Days',
       day: 'Day',
-      scanning: 'Scanning...',
-      verified: 'Verified Successfully!',
+      scanning: 'Looking for QR code...',
+      verified: 'Verified!',
       alreadyCheckedIn: 'Already Checked In',
-      notRegistered: 'Not Registered for This Day',
-      invalidQR: 'Invalid QR Code',
-      notFound: 'Registration Not Found',
+      notRegistered: 'Not Registered',
+      invalidQR: 'Invalid QR',
+      notFound: 'Not Found',
       participant: 'Participant',
       phone: 'Phone',
       people: 'People',
@@ -87,168 +88,179 @@ export default function QRScannerTool({ trekDays = [], language = 'he', isRTL = 
       exempt: 'Exempt',
       group: 'Group',
       checkedInAt: 'Checked In At',
-      todayCheckIns: 'Today\'s Check-Ins',
-      totalCheckIns: 'Total Check-Ins',
-      recentScans: 'Recent Scans',
-      cameraPermission: 'Please allow camera access',
-      cameraError: 'Error opening camera',
-      wrongDay: 'Participant not registered for this day'
+      todayCheckIns: 'Today',
+      totalCheckIns: 'Total',
+      recentScans: 'Recent',
+      cameraError: 'Camera error',
+      wrongDay: 'Wrong day',
+      checkInSuccess: 'Check-in complete',
+      continueToNext: 'Continue to next',
+      tapToStart: 'Tap to start scanning'
     },
     ru: {
-      title: 'QR Сканер - Регистрация участников',
-      startScan: 'Начать сканирование',
-      stopScan: 'Остановить',
-      selectDay: 'Выберите день',
+      title: 'QR Сканер - Регистрация',
+      startScan: 'Начать',
+      nextScan: 'Следующий',
+      selectDay: 'Выбрать день',
       allDays: 'Все дни',
       day: 'День',
-      scanning: 'Сканирование...',
+      scanning: 'Поиск QR...',
       verified: 'Подтверждено!',
       alreadyCheckedIn: 'Уже зарегистрирован',
-      notRegistered: 'Не зарегистрирован на этот день',
+      notRegistered: 'Не зарегистрирован',
       invalidQR: 'Недействительный QR',
-      notFound: 'Регистрация не найдена',
+      notFound: 'Не найдено',
       participant: 'Участник',
       phone: 'Телефон',
       people: 'Людей',
-      registeredDays: 'Зарегистрированные дни',
+      registeredDays: 'Дни',
       payment: 'Оплата',
       paid: 'Оплачено',
       pending: 'Ожидание',
       exempt: 'Освобожден',
       group: 'Группа',
-      checkedInAt: 'Время регистрации',
-      todayCheckIns: 'Регистраций сегодня',
-      totalCheckIns: 'Всего регистраций',
-      recentScans: 'Последние сканирования',
-      cameraPermission: 'Разрешите доступ к камере',
+      checkedInAt: 'Время',
+      todayCheckIns: 'Сегодня',
+      totalCheckIns: 'Всего',
+      recentScans: 'Последние',
       cameraError: 'Ошибка камеры',
-      wrongDay: 'Участник не зарегистрирован на этот день'
+      wrongDay: 'Неверный день',
+      checkInSuccess: 'Регистрация завершена',
+      continueToNext: 'Продолжить',
+      tapToStart: 'Нажмите для сканирования'
     },
     es: {
-      title: 'Escáner QR - Check-In de Participantes',
-      startScan: 'Iniciar Escaneo',
-      stopScan: 'Detener',
-      selectDay: 'Seleccionar Día',
-      allDays: 'Todos los Días',
+      title: 'Escáner QR - Check-In',
+      startScan: 'Iniciar',
+      nextScan: 'Siguiente',
+      selectDay: 'Seleccionar día',
+      allDays: 'Todos',
       day: 'Día',
-      scanning: 'Escaneando...',
+      scanning: 'Buscando QR...',
       verified: '¡Verificado!',
       alreadyCheckedIn: 'Ya registrado',
-      notRegistered: 'No registrado para este día',
-      invalidQR: 'QR Inválido',
-      notFound: 'Registro no encontrado',
+      notRegistered: 'No registrado',
+      invalidQR: 'QR inválido',
+      notFound: 'No encontrado',
       participant: 'Participante',
       phone: 'Teléfono',
       people: 'Personas',
-      registeredDays: 'Días registrados',
+      registeredDays: 'Días',
       payment: 'Pago',
       paid: 'Pagado',
       pending: 'Pendiente',
       exempt: 'Exento',
       group: 'Grupo',
-      checkedInAt: 'Registrado a las',
-      todayCheckIns: 'Check-ins hoy',
-      totalCheckIns: 'Total check-ins',
-      recentScans: 'Escaneos recientes',
-      cameraPermission: 'Permita el acceso a la cámara',
+      checkedInAt: 'Hora',
+      todayCheckIns: 'Hoy',
+      totalCheckIns: 'Total',
+      recentScans: 'Recientes',
       cameraError: 'Error de cámara',
-      wrongDay: 'Participante no registrado para este día'
+      wrongDay: 'Día incorrecto',
+      checkInSuccess: 'Check-in completado',
+      continueToNext: 'Continuar',
+      tapToStart: 'Toca para escanear'
     },
     fr: {
-      title: 'Scanner QR - Enregistrement des Participants',
+      title: 'Scanner QR - Check-In',
       startScan: 'Commencer',
-      stopScan: 'Arrêter',
-      selectDay: 'Sélectionner le Jour',
-      allDays: 'Tous les Jours',
+      nextScan: 'Suivant',
+      selectDay: 'Jour',
+      allDays: 'Tous',
       day: 'Jour',
-      scanning: 'Scan en cours...',
+      scanning: 'Recherche QR...',
       verified: 'Vérifié!',
       alreadyCheckedIn: 'Déjà enregistré',
-      notRegistered: 'Non inscrit pour ce jour',
-      invalidQR: 'QR Invalide',
-      notFound: 'Inscription non trouvée',
+      notRegistered: 'Non inscrit',
+      invalidQR: 'QR invalide',
+      notFound: 'Non trouvé',
       participant: 'Participant',
       phone: 'Téléphone',
       people: 'Personnes',
-      registeredDays: 'Jours inscrits',
+      registeredDays: 'Jours',
       payment: 'Paiement',
       paid: 'Payé',
       pending: 'En attente',
       exempt: 'Exempté',
       group: 'Groupe',
-      checkedInAt: 'Enregistré à',
-      todayCheckIns: 'Enregistrements aujourd\'hui',
-      totalCheckIns: 'Total enregistrements',
-      recentScans: 'Scans récents',
-      cameraPermission: 'Autorisez l\'accès à la caméra',
-      cameraError: 'Erreur de caméra',
-      wrongDay: 'Participant non inscrit pour ce jour'
+      checkedInAt: 'Heure',
+      todayCheckIns: "Aujourd'hui",
+      totalCheckIns: 'Total',
+      recentScans: 'Récents',
+      cameraError: 'Erreur caméra',
+      wrongDay: 'Mauvais jour',
+      checkInSuccess: 'Enregistrement terminé',
+      continueToNext: 'Continuer',
+      tapToStart: 'Appuyez pour scanner'
     },
     de: {
-      title: 'QR-Scanner - Teilnehmer Check-In',
-      startScan: 'Scan starten',
-      stopScan: 'Stoppen',
-      selectDay: 'Tag auswählen',
-      allDays: 'Alle Tage',
+      title: 'QR-Scanner - Check-In',
+      startScan: 'Starten',
+      nextScan: 'Nächster',
+      selectDay: 'Tag wählen',
+      allDays: 'Alle',
       day: 'Tag',
-      scanning: 'Scanne...',
+      scanning: 'Suche QR...',
       verified: 'Verifiziert!',
       alreadyCheckedIn: 'Bereits eingecheckt',
-      notRegistered: 'Nicht für diesen Tag registriert',
+      notRegistered: 'Nicht registriert',
       invalidQR: 'Ungültiger QR',
-      notFound: 'Registrierung nicht gefunden',
+      notFound: 'Nicht gefunden',
       participant: 'Teilnehmer',
       phone: 'Telefon',
       people: 'Personen',
-      registeredDays: 'Registrierte Tage',
+      registeredDays: 'Tage',
       payment: 'Zahlung',
       paid: 'Bezahlt',
       pending: 'Ausstehend',
       exempt: 'Befreit',
       group: 'Gruppe',
-      checkedInAt: 'Eingecheckt um',
-      todayCheckIns: 'Check-ins heute',
-      totalCheckIns: 'Gesamt Check-ins',
-      recentScans: 'Letzte Scans',
-      cameraPermission: 'Bitte Kamerazugriff erlauben',
+      checkedInAt: 'Zeit',
+      todayCheckIns: 'Heute',
+      totalCheckIns: 'Gesamt',
+      recentScans: 'Letzte',
       cameraError: 'Kamerafehler',
-      wrongDay: 'Teilnehmer nicht für diesen Tag registriert'
+      wrongDay: 'Falscher Tag',
+      checkInSuccess: 'Check-in abgeschlossen',
+      continueToNext: 'Weiter',
+      tapToStart: 'Tippen zum Scannen'
     },
     it: {
-      title: 'Scanner QR - Check-In Partecipanti',
-      startScan: 'Avvia Scansione',
-      stopScan: 'Ferma',
-      selectDay: 'Seleziona Giorno',
-      allDays: 'Tutti i Giorni',
+      title: 'Scanner QR - Check-In',
+      startScan: 'Inizia',
+      nextScan: 'Prossimo',
+      selectDay: 'Giorno',
+      allDays: 'Tutti',
       day: 'Giorno',
-      scanning: 'Scansione...',
+      scanning: 'Ricerca QR...',
       verified: 'Verificato!',
       alreadyCheckedIn: 'Già registrato',
-      notRegistered: 'Non registrato per questo giorno',
-      invalidQR: 'QR Non Valido',
-      notFound: 'Registrazione non trovata',
+      notRegistered: 'Non registrato',
+      invalidQR: 'QR non valido',
+      notFound: 'Non trovato',
       participant: 'Partecipante',
       phone: 'Telefono',
       people: 'Persone',
-      registeredDays: 'Giorni registrati',
+      registeredDays: 'Giorni',
       payment: 'Pagamento',
       paid: 'Pagato',
       pending: 'In attesa',
       exempt: 'Esente',
       group: 'Gruppo',
-      checkedInAt: 'Registrato alle',
-      todayCheckIns: 'Check-in oggi',
-      totalCheckIns: 'Totale check-in',
-      recentScans: 'Scansioni recenti',
-      cameraPermission: 'Consentire l\'accesso alla fotocamera',
+      checkedInAt: 'Ora',
+      todayCheckIns: 'Oggi',
+      totalCheckIns: 'Totale',
+      recentScans: 'Recenti',
       cameraError: 'Errore fotocamera',
-      wrongDay: 'Partecipante non registrato per questo giorno'
+      wrongDay: 'Giorno sbagliato',
+      checkInSuccess: 'Check-in completato',
+      continueToNext: 'Continua',
+      tapToStart: 'Tocca per scansionare'
     }
   };
 
   const t = translations[language] || translations.en;
 
-  // Play success/error sound
   const playSound = (type) => {
     try {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -259,21 +271,26 @@ export default function QRScannerTool({ trekDays = [], language = 'he', isRTL = 
       gainNode.connect(audioContext.destination);
       
       if (type === 'success') {
-        oscillator.frequency.value = 800;
+        oscillator.frequency.value = 880;
         gainNode.gain.value = 0.3;
+        oscillator.start();
+        setTimeout(() => {
+          oscillator.frequency.value = 1100;
+        }, 100);
+        setTimeout(() => oscillator.stop(), 200);
       } else {
-        oscillator.frequency.value = 300;
+        oscillator.frequency.value = 200;
         gainNode.gain.value = 0.2;
+        oscillator.start();
+        setTimeout(() => oscillator.stop(), 300);
       }
-      
-      oscillator.start();
-      setTimeout(() => oscillator.stop(), 150);
-    } catch (e) {
-      // Sound not supported
-    }
+    } catch (e) {}
   };
 
   const startScanner = async () => {
+    setScannerState('scanning');
+    setLastScan(null);
+    
     try {
       const html5QrCode = new Html5Qrcode("qr-reader");
       html5QrCodeRef.current = html5QrCode;
@@ -286,22 +303,17 @@ export default function QRScannerTool({ trekDays = [], language = 'he', isRTL = 
           aspectRatio: 1.0
         },
         async (decodedText) => {
-          // Prevent multiple scans of same code
-          if (verifying) return;
-          
-          setVerifying(true);
+          // Stop scanner immediately on detection
+          await stopScanner();
+          setScannerState('verifying');
           await handleScan(decodedText);
-          setVerifying(false);
         },
-        (errorMessage) => {
-          // Ignore scan errors (no QR found)
-        }
+        () => {}
       );
-
-      setIsScanning(true);
     } catch (err) {
       console.error('Camera error:', err);
       toast.error(t.cameraError);
+      setScannerState('idle');
     }
   };
 
@@ -310,11 +322,8 @@ export default function QRScannerTool({ trekDays = [], language = 'he', isRTL = 
       try {
         await html5QrCodeRef.current.stop();
         html5QrCodeRef.current = null;
-      } catch (e) {
-        console.error('Error stopping scanner:', e);
-      }
+      } catch (e) {}
     }
-    setIsScanning(false);
   };
 
   const handleScan = async (qrData) => {
@@ -335,27 +344,24 @@ export default function QRScannerTool({ trekDays = [], language = 'he', isRTL = 
 
       setLastScan(scanResult);
       setScanHistory(prev => [scanResult, ...prev.slice(0, 19)]);
+      setScannerState('result');
 
       if (result.success) {
         playSound('success');
         setStats(prev => ({ ...prev, total: prev.total + 1, today: prev.today + 1 }));
-        toast.success(`✅ ${result.participantName} - ${t.verified}`);
       } else {
         playSound('error');
-        if (result.status === 'already_checked_in') {
-          toast.warning(`⚠️ ${result.participantName} - ${t.alreadyCheckedIn}`);
-        } else if (result.status === 'wrong_day') {
-          toast.error(`❌ ${t.wrongDay}`);
-        } else {
-          toast.error(`❌ ${t[result.status] || result.message}`);
-        }
       }
     } catch (error) {
       console.error('Verification error:', error);
       playSound('error');
-      setLastScan({ success: false, status: 'error', message: error.message });
-      toast.error(t.invalidQR);
+      setLastScan({ success: false, status: 'invalid', message: error.message });
+      setScannerState('result');
     }
+  };
+
+  const handleNextScan = () => {
+    startScanner();
   };
 
   useEffect(() => {
@@ -364,45 +370,25 @@ export default function QRScannerTool({ trekDays = [], language = 'he', isRTL = 
     };
   }, []);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'verified': return 'bg-green-500';
-      case 'already_checked_in': return 'bg-yellow-500';
-      case 'wrong_day': return 'bg-orange-500';
-      case 'not_found': return 'bg-red-500';
-      case 'invalid': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'verified': return <CheckCircle className="w-6 h-6 text-green-500" />;
-      case 'already_checked_in': return <AlertTriangle className="w-6 h-6 text-yellow-500" />;
-      default: return <XCircle className="w-6 h-6 text-red-500" />;
-    }
-  };
-
   return (
-    <div className="space-y-4" dir={isRTL ? 'rtl' : 'ltr'}>
-      {/* Header with Stats */}
+    <div className="space-y-3" dir={isRTL ? 'rtl' : 'ltr'}>
+      {/* Compact Header */}
       <Card className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-0">
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                <QrCode className="w-6 h-6" />
-              </div>
-              <div>
-                <h2 className="text-lg sm:text-xl font-bold">{t.title}</h2>
-                <p className="text-sm text-white/80">
-                  {t.todayCheckIns}: {stats.today} | {t.totalCheckIns}: {stats.total}
-                </p>
-              </div>
+        <CardContent className="p-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <QrCode className="w-5 h-5" />
+              <span className="font-bold text-sm">{t.title}</span>
             </div>
-            
+            <div className="flex items-center gap-3 text-xs">
+              <span>{t.todayCheckIns}: <strong>{stats.today}</strong></span>
+              <span>{t.totalCheckIns}: <strong>{stats.total}</strong></span>
+            </div>
+          </div>
+          
+          <div className="mt-2">
             <Select value={selectedDay} onValueChange={setSelectedDay}>
-              <SelectTrigger className="w-40 bg-white/20 border-white/30 text-white">
+              <SelectTrigger className="w-full h-8 bg-white/20 border-white/30 text-white text-sm">
                 <SelectValue placeholder={t.selectDay} />
               </SelectTrigger>
               <SelectContent>
@@ -418,185 +404,215 @@ export default function QRScannerTool({ trekDays = [], language = 'he', isRTL = 
         </CardContent>
       </Card>
 
-      {/* Scanner Area */}
+      {/* Main Scanner/Result Area */}
       <Card className="overflow-hidden">
         <CardContent className="p-0">
-          <div className="relative">
-            {/* QR Scanner Container */}
-            <div 
-              id="qr-reader" 
-              ref={scannerRef}
-              className={`w-full ${isScanning ? 'min-h-[300px] sm:min-h-[400px]' : 'h-0'}`}
-              style={{ 
-                background: '#000',
-                transition: 'min-height 0.3s ease'
-              }}
-            />
+          <AnimatePresence mode="wait">
+            {/* Idle State - Show Start Button */}
+            {scannerState === 'idle' && (
+              <motion.div
+                key="idle"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="p-8 text-center"
+              >
+                <Button
+                  onClick={startScanner}
+                  className="w-full h-32 bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-2xl flex flex-col items-center justify-center gap-3 shadow-lg"
+                >
+                  <Camera className="w-12 h-12" />
+                  <span className="text-lg font-bold">{t.startScan}</span>
+                </Button>
+              </motion.div>
+            )}
 
-            {!isScanning && (
-              <div className="p-8 text-center bg-gradient-to-br from-gray-50 to-gray-100">
-                <div className="w-24 h-24 mx-auto mb-4 bg-indigo-100 rounded-full flex items-center justify-center">
-                  <Camera className="w-12 h-12 text-indigo-600" />
+            {/* Scanning State - Show Camera */}
+            {scannerState === 'scanning' && (
+              <motion.div
+                key="scanning"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <div 
+                  id="qr-reader" 
+                  className="w-full min-h-[350px]"
+                  style={{ background: '#000' }}
+                />
+                <div className="bg-indigo-600 text-white p-3 text-center flex items-center justify-center gap-2">
+                  <ScanLine className="w-5 h-5 animate-pulse" />
+                  <span className="font-medium">{t.scanning}</span>
                 </div>
-                <p className="text-gray-600 mb-4">{t.cameraPermission}</p>
-              </div>
+              </motion.div>
             )}
 
-            {verifying && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                <Loader2 className="w-12 h-12 text-white animate-spin" />
-              </div>
+            {/* Verifying State */}
+            {scannerState === 'verifying' && (
+              <motion.div
+                key="verifying"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="p-12 flex flex-col items-center justify-center"
+              >
+                <Loader2 className="w-16 h-16 text-indigo-600 animate-spin mb-4" />
+                <p className="text-gray-600 font-medium">מאמת...</p>
+              </motion.div>
             )}
-          </div>
 
-          {/* Control Button */}
-          <div className="p-4 bg-white border-t">
-            <Button
-              onClick={isScanning ? stopScanner : startScanner}
-              className={`w-full h-14 text-lg font-bold ${
-                isScanning 
-                  ? 'bg-red-500 hover:bg-red-600' 
-                  : 'bg-green-500 hover:bg-green-600'
-              }`}
-            >
-              {isScanning ? (
-                <>
-                  <CameraOff className="w-6 h-6 mr-2" />
-                  {t.stopScan}
-                </>
-              ) : (
-                <>
-                  <Camera className="w-6 h-6 mr-2" />
-                  {t.startScan}
-                </>
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Last Scan Result */}
-      <AnimatePresence>
-        {lastScan && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Card className={`border-2 ${
-              lastScan.success 
-                ? 'border-green-400 bg-green-50' 
-                : lastScan.status === 'already_checked_in'
-                ? 'border-yellow-400 bg-yellow-50'
-                : 'border-red-400 bg-red-50'
-            }`}>
-              <CardContent className="p-4">
-                <div className="flex items-start gap-4">
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
-                    lastScan.success ? 'bg-green-100' : 
-                    lastScan.status === 'already_checked_in' ? 'bg-yellow-100' : 'bg-red-100'
-                  }`}>
-                    {getStatusIcon(lastScan.status)}
-                  </div>
+            {/* Result State - Show Scan Result */}
+            {scannerState === 'result' && lastScan && (
+              <motion.div
+                key="result"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+              >
+                {/* Result Header */}
+                <div className={`p-6 text-center ${
+                  lastScan.success 
+                    ? 'bg-gradient-to-br from-green-500 to-emerald-600' 
+                    : lastScan.status === 'already_checked_in'
+                    ? 'bg-gradient-to-br from-yellow-500 to-amber-600'
+                    : 'bg-gradient-to-br from-red-500 to-rose-600'
+                } text-white`}>
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", bounce: 0.5 }}
+                  >
+                    {lastScan.success ? (
+                      <CheckCircle className="w-20 h-20 mx-auto mb-3" />
+                    ) : lastScan.status === 'already_checked_in' ? (
+                      <AlertTriangle className="w-20 h-20 mx-auto mb-3" />
+                    ) : (
+                      <XCircle className="w-20 h-20 mx-auto mb-3" />
+                    )}
+                  </motion.div>
                   
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-lg font-bold">
-                        {lastScan.participantName || t.participant}
-                      </h3>
-                      <Badge className={getStatusColor(lastScan.status)}>
-                        {lastScan.success ? t.verified : t[lastScan.status] || lastScan.message}
-                      </Badge>
+                  <h2 className="text-2xl font-bold mb-1">
+                    {lastScan.participantName || t.participant}
+                  </h2>
+                  <p className="text-lg opacity-90">
+                    {lastScan.success ? t.checkInSuccess : 
+                     lastScan.status === 'already_checked_in' ? t.alreadyCheckedIn :
+                     lastScan.status === 'wrong_day' ? t.wrongDay :
+                     lastScan.status === 'not_found' ? t.notFound :
+                     t.invalidQR}
+                  </p>
+                </div>
+
+                {/* Participant Details */}
+                {(lastScan.success || lastScan.status === 'already_checked_in' || lastScan.status === 'wrong_day') && (
+                  <div className="p-4 bg-gray-50 space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      {lastScan.totalPeople && (
+                        <div className="bg-white rounded-xl p-3 flex items-center gap-3 shadow-sm">
+                          <Users className="w-5 h-5 text-indigo-600" />
+                          <div>
+                            <p className="text-xs text-gray-500">{t.people}</p>
+                            <p className="font-bold">{lastScan.totalPeople}</p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {lastScan.participantPhone && (
+                        <div className="bg-white rounded-xl p-3 flex items-center gap-3 shadow-sm">
+                          <Phone className="w-5 h-5 text-green-600" />
+                          <div>
+                            <p className="text-xs text-gray-500">{t.phone}</p>
+                            <p className="font-bold text-sm" dir="ltr">{lastScan.participantPhone}</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
-
-                    {lastScan.success && (
-                      <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-gray-500" />
-                          <span>{lastScan.totalPeople} {t.people}</span>
+                    
+                    {lastScan.registeredDays && (
+                      <div className="bg-white rounded-xl p-3 shadow-sm">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Calendar className="w-5 h-5 text-purple-600" />
+                          <span className="text-sm text-gray-600">{t.registeredDays}</span>
                         </div>
-                        
-                        {lastScan.participantPhone && (
-                          <div className="flex items-center gap-2">
-                            <Phone className="w-4 h-4 text-gray-500" />
-                            <span dir="ltr">{lastScan.participantPhone}</span>
-                          </div>
-                        )}
-                        
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-gray-500" />
-                          <span>{t.registeredDays}: {lastScan.registeredDays?.join(', ')}</span>
-                        </div>
-                        
-                        <div>
-                          <Badge className={
-                            lastScan.paymentStatus === 'completed' ? 'bg-green-500' :
-                            lastScan.paymentStatus === 'exempt' ? 'bg-blue-500' : 'bg-yellow-500'
-                          }>
-                            {t.payment}: {t[lastScan.paymentStatus] || lastScan.paymentStatus}
-                          </Badge>
-                        </div>
-
-                        {lastScan.isGroup && (
-                          <div className="col-span-2">
-                            <Badge variant="outline" className="border-purple-300 bg-purple-50">
-                              {t.group}: {lastScan.groupName}
+                        <div className="flex flex-wrap gap-1">
+                          {lastScan.registeredDays.map(day => (
+                            <Badge key={day} variant="secondary" className="bg-purple-100 text-purple-700">
+                              {t.day} {day}
                             </Badge>
-                          </div>
-                        )}
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {lastScan.paymentStatus && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600">{t.payment}:</span>
+                        <Badge className={
+                          lastScan.paymentStatus === 'completed' ? 'bg-green-500' :
+                          lastScan.paymentStatus === 'exempt' ? 'bg-blue-500' : 'bg-yellow-500'
+                        }>
+                          {lastScan.paymentStatus === 'completed' ? t.paid :
+                           lastScan.paymentStatus === 'exempt' ? t.exempt : t.pending}
+                        </Badge>
+                      </div>
+                    )}
+
+                    {lastScan.isGroup && lastScan.groupName && (
+                      <div className="bg-purple-50 rounded-xl p-3 flex items-center gap-2">
+                        <Users className="w-5 h-5 text-purple-600" />
+                        <span className="text-sm">{t.group}: <strong>{lastScan.groupName}</strong></span>
                       </div>
                     )}
 
                     {lastScan.status === 'already_checked_in' && lastScan.checkedInAt && (
-                      <p className="text-sm text-yellow-700 mt-2">
+                      <div className="bg-yellow-50 rounded-xl p-3 text-center text-yellow-800">
                         {t.checkedInAt}: {new Date(lastScan.checkedInAt).toLocaleTimeString()}
-                      </p>
-                    )}
-
-                    {lastScan.status === 'wrong_day' && lastScan.registeredDays && (
-                      <p className="text-sm text-orange-700 mt-2">
-                        {t.registeredDays}: {lastScan.registeredDays.join(', ')}
-                      </p>
+                      </div>
                     )}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                )}
 
-      {/* Recent Scans History */}
-      {scanHistory.length > 1 && (
+                {/* Continue Button */}
+                <div className="p-4 border-t">
+                  <Button
+                    onClick={handleNextScan}
+                    className="w-full h-14 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-lg font-bold rounded-xl shadow-lg"
+                  >
+                    <ScanLine className="w-6 h-6 mr-2" />
+                    {t.nextScan}
+                    <ArrowRight className={`w-5 h-5 ${isRTL ? 'mr-2 rotate-180' : 'ml-2'}`} />
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </CardContent>
+      </Card>
+
+      {/* Recent Scans - Compact */}
+      {scanHistory.length > 0 && scannerState !== 'scanning' && (
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2 mb-2 text-sm text-gray-600">
               <RefreshCw className="w-4 h-4" />
               {t.recentScans}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-3">
-            <div className="space-y-2 max-h-48 overflow-y-auto">
-              {scanHistory.slice(1, 10).map((scan, idx) => (
-                <div 
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {scanHistory.slice(0, 8).map((scan, idx) => (
+                <Badge 
                   key={idx} 
-                  className={`flex items-center justify-between p-2 rounded-lg text-sm ${
-                    scan.success ? 'bg-green-50' : 'bg-red-50'
+                  variant="outline"
+                  className={`${
+                    scan.success ? 'border-green-300 bg-green-50 text-green-700' : 
+                    scan.status === 'already_checked_in' ? 'border-yellow-300 bg-yellow-50 text-yellow-700' :
+                    'border-red-300 bg-red-50 text-red-700'
                   }`}
                 >
-                  <div className="flex items-center gap-2">
-                    {scan.success ? (
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                    ) : (
-                      <XCircle className="w-4 h-4 text-red-500" />
-                    )}
-                    <span className="font-medium">{scan.participantName || '-'}</span>
-                  </div>
-                  <span className="text-xs text-gray-500">
-                    {new Date(scan.scannedAt).toLocaleTimeString()}
-                  </span>
-                </div>
+                  {scan.success ? <CheckCircle className="w-3 h-3 mr-1" /> : 
+                   scan.status === 'already_checked_in' ? <AlertTriangle className="w-3 h-3 mr-1" /> :
+                   <XCircle className="w-3 h-3 mr-1" />}
+                  {scan.participantName?.split(' ')[0] || '-'}
+                </Badge>
               ))}
             </div>
           </CardContent>
