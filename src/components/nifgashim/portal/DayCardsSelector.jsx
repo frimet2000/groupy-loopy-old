@@ -625,13 +625,13 @@ export default function NifgashimDayCardsSelector({
                  {/* Linked Days Indicator */}
                  {isLinked && linkedColor && (
                    <motion.div 
-                     className={`absolute top-6 ${isRTL ? 'left-1' : 'right-1'} ${linkedColor.bg} backdrop-blur-sm text-white p-1.5 rounded-full shadow-lg`}
+                     className={`absolute bottom-1 ${isRTL ? 'right-1' : 'left-1'} ${linkedColor.bg} backdrop-blur-sm text-white p-1 rounded-full shadow-lg`}
                      animate={{ 
-                       scale: [1, 1.15, 1],
+                       scale: [1, 1.1, 1],
                      }}
                      transition={{ duration: 2, repeat: Infinity }}
                    >
-                     <Link2 className="w-3.5 h-3.5" />
+                     <Link2 className="w-3 h-3" />
                    </motion.div>
                  )}
 
