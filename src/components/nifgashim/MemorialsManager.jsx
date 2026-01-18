@@ -547,7 +547,7 @@ Return a JSON object mapping memorial indices (0-based) to day numbers. Example:
       whileTap={{ scale: 0.98 }}
     >
       <Card 
-        className={`${isDragging ? 'shadow-2xl rotate-2' : 'cursor-pointer hover:shadow-lg'} transition-all`}
+        className={`${isDragging ? 'shadow-2xl rotate-2' : 'cursor-pointer hover:shadow-lg'} transition-all group`}
         onClick={() => memorial.status !== 'pending' && setSelectedMemorial(memorial)}
       >
         <CardContent className="p-3">
@@ -570,32 +570,46 @@ Return a JSON object mapping memorial indices (0-based) to day numbers. Example:
                 </div>
               )}
             </div>
-            {memorial.status === 'pending' && (
-              <div className="flex gap-1">
+            <div className="flex gap-1">
+              {memorial.status === 'pending' ? (
+                <>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleApprove(memorial);
+                    }}
+                    className="text-green-600 hover:bg-green-50"
+                  >
+                    <Check className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleReject(memorial);
+                    }}
+                    className="text-red-600 hover:bg-red-50"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </>
+              ) : (
                 <Button
                   size="sm"
                   variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleApprove(memorial);
+                    handleDelete(memorial);
                   }}
-                  className="text-green-600 hover:bg-green-50"
+                  className="text-red-600 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  <Check className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4" />
                 </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleReject(memorial);
-                  }}
-                  className="text-red-600 hover:bg-red-50"
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
