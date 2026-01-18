@@ -59,7 +59,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       hasSpouse: "הורה נוסף מצטרף",
       addId: "הוסף ת\"ז",
       vehicleDetails: "פרטי רכב",
-      hasVehicle: "האם אגיע עם רכב",
+      hasVehicle: "אגיע עם רכב",
       vehicleNumber: "מספר רכב",
       optional: "אופציונלי",
       vehiclePlaceholder: "12-345-67",
