@@ -131,17 +131,8 @@ export default function NifgashimPortal() {
 
   const linkedDaysPairs = React.useMemo(() => {
     const pairs = nifgashimTrip?.linked_days_pairs || nifgashimTrip?.day_pairs || [];
-    
-    return pairs.map(pair => {
-      if (Array.isArray(pair) && typeof pair[0] === 'number') {
-        const id1 = trekDays.find(d => d.day_number === pair[0])?.id;
-        const id2 = trekDays.find(d => d.day_number === pair[1])?.id;
-        if (id1 && id2) return [id1, id2];
-        return null;
-      }
-      return pair;
-    }).filter(Boolean);
-  }, [nifgashimTrip, trekDays]);
+    return Array.isArray(pairs) ? pairs : [];
+  }, [nifgashimTrip]);
 
   React.useEffect(() => {
     const checkAdmin = async () => {
