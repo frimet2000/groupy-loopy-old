@@ -100,6 +100,7 @@ export default function RegistrationSummary({ userType, participants, selectedDa
       family: "Famiglia",
       group: "Gruppo organizzato",
       participants: "Partecipanti",
+      totalParticipants: "Numero totale di partecipanti",
       selectedDays: "Giorni selezionati",
       totalCost: "Costo totale",
       free: "Gratuito",
