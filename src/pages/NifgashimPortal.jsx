@@ -377,15 +377,14 @@ export default function NifgashimPortal() {
   const trans = translations[language] || translations.en;
 
   const steps = userType === 'group' 
-    ? [
+  ? [
         { id: 1, label: trans.stepUserType },
         { id: 2, label: trans.stepParticipants },
-        { id: 3, label: language === 'he' ? 'הצהרות' : 'Declarations' },
-        { id: 4, label: language === 'he' ? 'בטיחות' : language === 'ru' ? 'Безопасность' : language === 'es' ? 'Seguridad' : language === 'fr' ? 'Sécurité' : language === 'de' ? 'Sicherheit' : language === 'it' ? 'Sicurezza' : 'Safety' },
-        { id: 5, label: trans.stepHealth },
-        { id: 6, label: trans.stepDays },
-        { id: 7, label: trans.stepMemorial },
-        { id: 8, label: trans.stepSummary }
+        { id: 3, label: language === 'he' ? 'בטיחות' : language === 'ru' ? 'Безопасность' : language === 'es' ? 'Seguridad' : language === 'fr' ? 'Sécurité' : language === 'de' ? 'Sicherheit' : language === 'it' ? 'Sicurezza' : 'Safety' },
+        { id: 4, label: trans.stepHealth },
+        { id: 5, label: trans.stepDays },
+        { id: 6, label: trans.stepMemorial },
+        { id: 7, label: trans.stepSummary }
       ]
     : [
         { id: 1, label: trans.stepUserType },
@@ -872,7 +871,7 @@ export default function NifgashimPortal() {
               />
             )}
 
-            {currentStep === 4 && userType === 'group' && (
+            {currentStep === 3 && userType === 'group' && (
               <SafetyInstructions
                 accepted={safetyInstructionsAccepted}
                 onAccept={setSafetyInstructionsAccepted}
@@ -888,7 +887,7 @@ export default function NifgashimPortal() {
               />
             )}
 
-            {currentStep === 5 && userType === 'group' && (
+            {currentStep === 4 && userType === 'group' && (
               <GroupHealthDeclaration
                 accepted={groupHealthDeclarationAccepted}
                 onAccept={setGroupHealthDeclarationAccepted}
@@ -897,7 +896,7 @@ export default function NifgashimPortal() {
               />
             )}
 
-            {currentStep === (userType === 'group' ? 6 : 5) && (
+            {currentStep === (userType === 'group' ? 5 : 5) && (
               <NifgashimDayCardsSelector
                 trekDays={trekDays}
                 linkedDaysPairs={linkedDaysPairs}
@@ -908,14 +907,14 @@ export default function NifgashimPortal() {
               />
             )}
 
-            {currentStep === (userType === 'group' ? 7 : 6) && (
+            {currentStep === (userType === 'group' ? 6 : 6) && (
               <NifgashimMemorialForm
                 formData={memorialData}
                 setFormData={setMemorialData}
               />
             )}
 
-            {currentStep === (userType === 'group' ? 8 : 7) && (
+            {currentStep === (userType === 'group' ? 7 : 7) && (
               <div className="space-y-4">
                 <NifgashimRegistrationSummary
                   userType={userType}
@@ -1043,7 +1042,7 @@ export default function NifgashimPortal() {
 
           {userType === 'group' ? (
             <>
-              {currentStep < 8 && currentStep !== 8 ? (
+              {currentStep < 7 ? (
                 <Button
                   onClick={() => setCurrentStep(prev => prev + 1)}
                   disabled={
@@ -1055,16 +1054,16 @@ export default function NifgashimPortal() {
                       !groupInfo.totalParticipants ||
                       Number(groupInfo.totalParticipants) <= 0
                     )) ||
-                    (currentStep === 4 && !safetyInstructionsAccepted) ||
-                    (currentStep === 5 && !groupHealthDeclarationAccepted) ||
-                    (currentStep === 6 && selectedDays.length === 0)
+                    (currentStep === 3 && !safetyInstructionsAccepted) ||
+                    (currentStep === 4 && !groupHealthDeclarationAccepted) ||
+                    (currentStep === 5 && selectedDays.length === 0)
                   }
                   className="px-6 bg-blue-600 hover:bg-blue-700"
                 >
                   {trans.next}
                   <ArrowRight className={`w-4 h-4 ${isRTL ? 'mr-2' : 'ml-2'}`} />
                 </Button>
-              ) : currentStep === 8 ? (
+              ) : currentStep === 7 ? (
                 <Button
                   onClick={handleSubmit}
                   disabled={submitting}
