@@ -518,6 +518,27 @@ export default function NifgashimDayCardsSelector({
           };
           const linkedPartnerNumber = getLinkedPartner();
           const isLinked = linkedPartnerNumber !== null;
+          
+          // Get unique color for each linked pair
+          const getLinkedPairColor = () => {
+            const colors = [
+              { bg: 'bg-purple-600/90', text: 'text-purple-600' },
+              { bg: 'bg-pink-600/90', text: 'text-pink-600' },
+              { bg: 'bg-teal-600/90', text: 'text-teal-600' },
+              { bg: 'bg-amber-600/90', text: 'text-amber-600' },
+              { bg: 'bg-rose-600/90', text: 'text-rose-600' },
+              { bg: 'bg-cyan-600/90', text: 'text-cyan-600' },
+            ];
+            for (let i = 0; i < linkedDaysPairs.length; i++) {
+              const pair = linkedDaysPairs[i];
+              const pairDays = Array.isArray(pair) ? pair : [pair.day_id_1, pair.day_id_2];
+              if (pairDays.includes(day.day_number)) {
+                return colors[i % colors.length];
+              }
+            }
+            return colors[0];
+          };
+          const linkedColor = isLinked ? getLinkedPairColor() : null;
 
            const imageUrl = day.image_url;
 
@@ -542,7 +563,7 @@ export default function NifgashimDayCardsSelector({
              >
                {/* Image Section */}
                   <div 
-                    className="relative w-full h-28 sm:h-32 md:h-40 bg-gradient-to-br from-slate-400 via-slate-500 to-slate-600 cursor-pointer group overflow-hidden rounded-t-lg"
+                    className="relative w-full bg-gradient-to-br from-slate-400 via-slate-500 to-slate-600 cursor-pointer group overflow-hidden"
                     onClick={() => {
                       if (isDisabled) return;
                       if (isLinked && !isSelected(day.id)) {
@@ -571,15 +592,15 @@ export default function NifgashimDayCardsSelector({
                     ) : null}
 
                  {/* Overlay Gradient */}
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 md:from-black/60 md:opacity-60 pointer-events-none" />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
 
                  {/* Day Number and Date - Bottom Right */}
                  <div className={`absolute bottom-1 ${isRTL ? 'left-2' : 'right-2'} flex flex-col items-end gap-0.5`}>
-                   <div className="bg-white/90 backdrop-blur-sm px-1 py-0.5 rounded text-[10px] font-bold text-gray-900">
+                   <div className="bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded text-xs font-bold text-gray-900">
                      {language === 'he' ? `יום ${day.day_number}` : `Day ${day.day_number}`}
                    </div>
                    {day.date && (
-                     <div className="bg-white/90 backdrop-blur-sm px-1 py-0.5 rounded text-[10px] font-medium text-gray-700">
+                     <div className="bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded text-xs font-medium text-gray-700">
                        {formatDate(day.date)}
                      </div>
                    )}
@@ -597,30 +618,29 @@ export default function NifgashimDayCardsSelector({
                  </button>
 
                  {/* Category Badge */}
-                 <div className={`absolute top-1 ${isRTL ? 'left-1' : 'right-1'} ${isNegev ? 'bg-orange-500/80' : 'bg-blue-500/80'} backdrop-blur-sm text-white text-[10px] px-1 py-0.5 rounded-full shadow-sm z-[2]`}>
+                 <div className={`absolute top-1 ${isRTL ? 'left-8' : 'right-8'} ${isNegev ? 'bg-orange-500/80' : 'bg-blue-500/80'} backdrop-blur-sm text-white text-xs px-1 py-0.5 rounded-full shadow-sm`}>
                    {isNegev ? (language === 'he' ? 'נ' : 'N') : (language === 'he' ? 'צ' : 'C')}
                  </div>
 
-                 {/* Linked Badge with Animation */}
-                 {isLinked && (
+                 {/* Linked Days Indicator */}
+                 {isLinked && linkedColor && (
                    <motion.div 
-                     className={`absolute top-6 ${isRTL ? 'left-1' : 'right-1'} bg-purple-600/95 backdrop-blur-sm text-white text-[10px] px-1.5 py-0.5 rounded-md shadow-lg flex items-center gap-1 font-bold z-[2]`}
+                     className={`absolute bottom-1 ${isRTL ? 'right-1' : 'left-1'} ${linkedColor.bg} backdrop-blur-sm text-white p-1 rounded-full shadow-lg`}
                      animate={{ 
-                       scale: selected ? [1, 1.1, 1] : 1,
-                       boxShadow: selected 
-                         ? ['0 0 0 0 rgba(139, 92, 246, 0.4)', '0 0 0 10px rgba(139, 92, 246, 0)', '0 0 0 0 rgba(139, 92, 246, 0)']
-                         : '0 2px 6px rgba(0,0,0,0.3)'
+                       scale: [1, 1.1, 1],
                      }}
-                     transition={{ duration: 1.5, repeat: selected ? Infinity : 0 }}
+                     transition={{ duration: 2, repeat: Infinity }}
                    >
-                     🔗 {linkedPartnerNumber}
+                     <Link2 className="w-3 h-3" />
                    </motion.div>
                  )}
 
+
+
                  {/* Selected Checkmark */}
                  {selected && (
-                   <div className={`absolute bottom-1 ${isRTL ? 'right-auto left-1' : 'left-1'} bg-blue-600/90 text-white rounded-full p-1.5 md:p-2 shadow-lg ring-2 ring-white/70 pointer-events-none z-[2]`}>
-                     <CheckCircle2 className="w-3 h-3" />
+                   <div className={`absolute top-1 ${isRTL ? 'left-auto right-1' : 'right-1'} bg-blue-600 text-white rounded-full p-1 shadow-lg`}>
+                     <CheckCircle2 className="w-5 h-5" />
                    </div>
                  )}
 
@@ -631,13 +651,13 @@ export default function NifgashimDayCardsSelector({
                <div 
                  className="p-2 flex-1 flex flex-col cursor-pointer"
                  onClick={() => {
-                      if (isDisabled) return;
-                      if (isLinked && !isSelected(day.id)) {
-                        setShowLinkedDaysDialog(day);
-                      } else {
-                        handleDayToggle(day);
-                      }
-                    }}
+                   if (isDisabled) return;
+                   if (isLinked && !isSelected(day.id)) {
+                     setShowLinkedDaysDialog(day);
+                   } else {
+                     handleDayToggle(day);
+                   }
+                 }}
                >
                  <h3 className="font-bold text-xs leading-tight">{day.daily_title}</h3>
 
