@@ -764,8 +764,8 @@ export default function NifgashimPortal() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">{trans.title}</h1>
-          <p className="text-gray-600">{trans.subtitle}</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">{trans.title}</h1>
+          <p className="text-lg sm:text-xl font-semibold text-blue-700 bg-blue-50 border-2 border-blue-200 rounded-xl py-3 px-4">{trans.subtitle}</p>
         </motion.div>
 
         <Card className="mb-6">
