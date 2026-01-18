@@ -130,8 +130,26 @@ export default function NifgashimPortal() {
   }, [nifgashimTrip]);
 
   const linkedDaysPairs = React.useMemo(() => {
-    const pairs = nifgashimTrip?.linked_days_pairs || nifgashimTrip?.day_pairs || [];
-    return Array.isArray(pairs) ? pairs : [];
+    const basePairs =
+      (Array.isArray(nifgashimTrip?.linked_days_pairs)
+        ? nifgashimTrip.linked_days_pairs
+        : Array.isArray(nifgashimTrip?.day_pairs)
+        ? nifgashimTrip.day_pairs
+        : []) || [];
+
+    const pairs = [...basePairs];
+
+    if (nifgashimTrip?.id === '6946647d7d7b248feaf1b118') {
+      const hasSixSeven = pairs.some((pair) => {
+        if (!Array.isArray(pair)) return false;
+        return pair.includes(6) && pair.includes(7);
+      });
+      if (!hasSixSeven) {
+        pairs.push([6, 7]);
+      }
+    }
+
+    return pairs;
   }, [nifgashimTrip]);
 
   React.useEffect(() => {
