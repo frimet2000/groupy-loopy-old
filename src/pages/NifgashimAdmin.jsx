@@ -2074,22 +2074,30 @@ export default function NifgashimAdmin() {
                                           {leaderPhone || '-'}
                                         </p>
                                       </div>
-                                      <div>
-                                        <p className="text-gray-500">
-                                          {language === 'he' ? 'משתתפים' : 'Participants'}
+                                      <div className="bg-blue-50 rounded p-2 border border-blue-200">
+                                        <p className="text-blue-600 text-xs font-semibold">
+                                          {language === 'he' ? 'סה״כ רשומים' : 'Total Registered'}
                                         </p>
-                                        <p className="font-semibold text-gray-900">
+                                        <p className="font-bold text-lg text-blue-700">
                                           {participantsCount}
                                         </p>
                                       </div>
-                                      <div>
-                                        <p className="text-gray-500">
-                                          {language === 'he' ? 'סכום' : 'Amount'}
+                                      <div className={`rounded p-2 border ${reg.groupInfo?.totalParticipants && participantsCount === reg.groupInfo?.totalParticipants ? 'bg-green-50 border-green-200' : 'bg-orange-50 border-orange-200'}`}>
+                                        <p className={`text-xs font-semibold ${reg.groupInfo?.totalParticipants && participantsCount === reg.groupInfo?.totalParticipants ? 'text-green-600' : 'text-orange-600'}`}>
+                                          {language === 'he' ? 'סה״כ צפויים' : 'Total Expected'}
                                         </p>
-                                        <p className="font-semibold text-gray-900">
-                                          ₪{amountPaid}
+                                        <p className={`font-bold text-lg ${reg.groupInfo?.totalParticipants && participantsCount === reg.groupInfo?.totalParticipants ? 'text-green-700' : 'text-orange-700'}`}>
+                                          {reg.groupInfo?.totalParticipants || 0}
                                         </p>
                                       </div>
+                                    </div>
+                                    <div className="bg-purple-50 rounded p-2 border border-purple-200">
+                                      <p className="text-purple-600 text-xs font-semibold mb-1">
+                                        {language === 'he' ? 'סכום' : 'Amount'}
+                                      </p>
+                                      <p className="font-bold text-lg text-purple-700">
+                                        ₪{amountPaid}
+                                      </p>
                                     </div>
 
                                     <div className="mt-2">
