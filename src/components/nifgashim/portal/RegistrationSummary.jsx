@@ -262,79 +262,18 @@ export default function RegistrationSummary({ userType, participants, selectedDa
                </Button>
 
                {/* Quick Add Form */}
-               <AnimatePresence>
-                 {showAddForm && (
-                   <motion.div
-                     initial={{ opacity: 0, height: 0 }}
-                     animate={{ opacity: 1, height: 'auto' }}
-                     exit={{ opacity: 0, height: 0 }}
-                     className="mt-3 p-4 bg-white rounded-lg border-2 border-purple-200 space-y-3"
-                   >
-                     <input
-                       type="text"
-                       placeholder={language === 'he' ? 'שם מלא' : 'Full Name'}
-                       id="quick-name"
-                       dir={isRTL ? 'rtl' : 'ltr'}
-                       className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-purple-500"
-                     />
-                     <input
-                       type="text"
-                       placeholder={language === 'he' ? 'תעודת זהות' : 'ID Number'}
-                       id="quick-id"
-                       maxLength="9"
-                       className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-purple-500"
-                     />
-                     <select
-                       id="quick-age"
-                       className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-purple-500"
-                     >
-                       <option value="">{language === 'he' ? 'בחר גיל' : 'Select Age'}</option>
-                       <option value="0-9">{trans.childAge}</option>
-                       <option value="10-18">{trans.childAge}</option>
-                       <option value="19-25">{trans.parentAge}</option>
-                       <option value="26-35">{trans.parentAge}</option>
-                       <option value="36-50">{trans.parentAge}</option>
-                       <option value="51-65">{trans.parentAge}</option>
-                       <option value="65+">{trans.parentAge}</option>
-                     </select>
-
-                     <div className="flex gap-2 pt-2 flex-col sm:flex-row">
-                       <Button
-                         onClick={() => {
-                           const name = document.getElementById('quick-name')?.value;
-                           const id = document.getElementById('quick-id')?.value;
-                           const age = document.getElementById('quick-age')?.value;
-
-                           if (name && id && age && id.length === 9) {
-                             const newParticipant = {
-                               id: Date.now(),
-                               name,
-                               id_number: id,
-                               age_range: age,
-                               phone: '',
-                               email: ''
-                             };
-                             if (onParticipantsChange) {
-                               onParticipantsChange([...participants, newParticipant]);
-                             }
-                             setShowAddForm(false);
-                           }
-                         }}
-                         className="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-sm"
-                       >
-                         {language === 'he' ? 'הוסף' : 'Add'}
-                       </Button>
-                       <Button
-                         onClick={() => setShowAddForm(false)}
-                         variant="outline"
-                         className="flex-1 text-sm"
-                       >
-                         {language === 'he' ? 'ביטול' : 'Cancel'}
-                       </Button>
-                     </div>
-                   </motion.div>
-                 )}
-               </AnimatePresence>
+               <QuickAddParticipantForm
+                 isOpen={showAddForm}
+                 onClose={() => setShowAddForm(false)}
+                 onAdd={(newParticipant) => {
+                   if (onParticipantsChange) {
+                     onParticipantsChange([...participants, newParticipant]);
+                   }
+                   setShowAddForm(false);
+                 }}
+                 language={language}
+                 isRTL={isRTL}
+               />
              </motion.div>
            )}
          </div>
