@@ -433,6 +433,27 @@ export default function ThankYouView({
         </Button>
       </div>
 
+      {/* Countdown Redirect Notice */}
+      <Card className="shadow-lg border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50">
+        <CardContent className="p-6 text-center">
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <div className="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center text-2xl font-bold animate-pulse">
+              {countdown}
+            </div>
+          </div>
+          <p className="text-indigo-800 font-semibold text-lg mb-2">
+            {trans.redirecting} {countdown} {trans.seconds}
+          </p>
+          <Button
+            onClick={() => window.location.href = groupyLoginUrl}
+            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+          >
+            <ArrowRight className={`w-5 h-5 ${isRTL ? 'ml-2 rotate-180' : 'mr-2'}`} />
+            {language === 'he' ? 'עבור עכשיו' : language === 'ru' ? 'Перейти сейчас' : language === 'es' ? 'Ir ahora' : language === 'fr' ? 'Aller maintenant' : language === 'de' ? 'Jetzt gehen' : language === 'it' ? 'Vai ora' : 'Go now'}
+          </Button>
+        </CardContent>
+      </Card>
+
       {/* Footer Text */}
       <div className="text-center text-sm text-gray-500 pt-6 border-t border-gray-200">
         <p dir={isRTL ? 'rtl' : 'ltr'}>
