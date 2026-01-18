@@ -449,17 +449,23 @@ export default function NifgashimPortal() {
       return;
     }
 
-    const amount = calculateTotalAmount();
-    console.log('Amount calculated for payment:', amount);
-    setTotalAmount(amount);
+    try {
+      const amount = calculateTotalAmount();
+      console.log('Amount calculated for payment:', amount);
+      setTotalAmount(amount);
 
-    if (amount > 0) {
-      // Show payment method selection
-      setCurrentStep(8);
-      return;
+      if (amount > 0) {
+        console.log('Moving to payment step 8');
+        setCurrentStep(8);
+        return;
+      }
+
+      console.log('Amount is 0, completing registration without payment');
+      await completeRegistration(null);
+    } catch (error) {
+      console.error('handleSubmit error:', error);
+      toast.error(language === 'he' ? 'שגיאה בהכנת התשלום' : 'Error preparing payment');
     }
-
-    await completeRegistration(null);
   };
 
   const handleGrowPayment = async () => {
