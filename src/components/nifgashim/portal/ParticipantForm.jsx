@@ -434,7 +434,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
                 </div>
               )}
               
-              {(userType !== 'individual' || participants.length === 0) && (userType === 'individual' || (participants.length < 2 && hasSpouse) || participants.length < 1 || participants.length >= (spouseExists ? 2 : 1)) && (
+              {userType !== 'group' && (userType === 'individual' ? participants.length === 0 : true) && (
                 <>
                   <h3 className="font-semibold text-lg">
                     {userType === 'individual'
