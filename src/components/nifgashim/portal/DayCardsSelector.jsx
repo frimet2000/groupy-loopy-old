@@ -682,22 +682,18 @@ export default function NifgashimDayCardsSelector({
                  <h3 className="font-bold text-xs leading-tight">{day.daily_title}</h3>
 
                  <div className="mt-auto text-xs text-gray-600 space-y-0.5">
-                   <div className={cn(
-                     "w-1 h-1 rounded-full",
-                     day.difficulty === 'easy' ? 'bg-green-500' :
-                     day.difficulty === 'moderate' ? 'bg-yellow-500' :
-                     'bg-red-500'
-                   )} />
-                   <div>
-                     <MapPin className="w-2 h-2 inline" />
-                     <span className="text-xs"> {day.daily_distance_km}</span>
-                   </div>
-                   {day.elevation_gain_m > 0 && (
-                     <div>
-                       <Mountain className="w-2 h-2 inline" />
-                       <span className="text-xs"> {day.elevation_gain_m}m</span>
-                     </div>
-                   )}
+                  <div className={cn(
+                    "w-1 h-1 rounded-full",
+                    day.difficulty === 'easy' ? 'bg-green-500' :
+                    day.difficulty === 'moderate' ? 'bg-yellow-500' :
+                    'bg-red-500'
+                  )} />
+                  {day.elevation_gain_m > 0 && (
+                    <div>
+                      <Mountain className="w-2 h-2 inline" />
+                      <span className="text-xs"> {day.elevation_gain_m}m</span>
+                    </div>
+                  )}
                  </div>
                </div>
              </motion.div>
