@@ -52,6 +52,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       parent1: "הורה 1",
       parent2: "הורה 2",
       child: "ילד/ה",
+      noChildrenNote: "אם לא מצטרפים ילדים, ניתן להמשיך לשלב הבא",
       invalidId: "תעודת זהות חייבת להכיל 9 ספרות בדיוק",
       invalidPhone: "טלפון נייד חייב להכיל 10 ספרות בדיוק",
       requiredFields: "יש למלא את כל השדות החובה",
@@ -85,6 +86,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       parent1: "Parent 1",
       parent2: "Parent 2",
       child: "Child",
+      noChildrenNote: "If no children are joining, proceed to the next step",
       invalidId: "ID must be exactly 9 digits",
       invalidPhone: "Phone must be exactly 10 digits",
       requiredFields: "Please fill in all required fields",
@@ -122,6 +124,7 @@ export default function ParticipantForm({ userType, participants, setParticipant
       optional: "необязательно",
       vehiclePlaceholder: "12-345-67",
       addChildContact: "Добавить контактные данные ребенка?",
+      noChildrenNote: "Если дети не присоединяются, перейдите к следующему шагу",
       participantName: "Полное имя",
       idNumber: "ID номер",
       ageRange: "Возрастная группа",
@@ -160,7 +163,8 @@ export default function ParticipantForm({ userType, participants, setParticipant
       vehicleNumber: "Número de vehículo",
       optional: "Opcional",
       vehiclePlaceholder: "12-345-67",
-      addChildContact: "¿Agregar datos de contacto del niño?"
+      addChildContact: "¿Agregar datos de contacto del niño?",
+      noChildrenNote: "Si no se unen niños, continúe al siguiente paso"
     },
     fr: {
       title: "Détails des participants",
@@ -186,7 +190,8 @@ export default function ParticipantForm({ userType, participants, setParticipant
       vehicleNumber: "Numéro de véhicule",
       optional: "Facultatif",
       vehiclePlaceholder: "12-345-67",
-      addChildContact: "Ajouter les coordonnées de l'enfant?"
+      addChildContact: "Ajouter les coordonnées de l'enfant?",
+      noChildrenNote: "Si aucun enfant ne participe, passez à l'étape suivante"
     },
     de: {
       title: "Teilnehmerdetails",
@@ -212,7 +217,8 @@ export default function ParticipantForm({ userType, participants, setParticipant
       vehicleNumber: "Fahrzeugnummer",
       optional: "Optional",
       vehiclePlaceholder: "12-345-67",
-      addChildContact: "Kontaktdaten des Kindes hinzufügen?"
+      addChildContact: "Kontaktdaten des Kindes hinzufügen?",
+      noChildrenNote: "Wenn keine Kinder teilnehmen, fahren Sie mit dem nächsten Schritt fort"
     },
     it: {
       title: "Dettagli partecipanti",
@@ -237,7 +243,8 @@ export default function ParticipantForm({ userType, participants, setParticipant
       vehicleNumber: "Numero veicolo",
       optional: "Facoltativo",
       vehiclePlaceholder: "12-345-67",
-      addChildContact: "Aggiungere i dati di contatto del bambino?"
+      addChildContact: "Aggiungere i dati di contatto del bambino?",
+      noChildrenNote: "Se non partecipano bambini, procedere al passaggio successivo"
     }
   };
 
@@ -419,6 +426,13 @@ export default function ParticipantForm({ userType, participants, setParticipant
         )}
 
         <div className="space-y-4">
+          {/* Note for child section */}
+          {userType !== 'group' && userType !== 'individual' && participants.length >= (spouseExists ? 2 : 1) && (
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-700 text-center">
+              {trans.noChildrenNote}
+            </div>
+          )}
+          
           {userType !== 'group' && (
             <>
               {participants.length === 0 && userType !== 'individual' && (
