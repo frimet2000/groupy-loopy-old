@@ -77,6 +77,10 @@ export default function ThankYouView({
     he: {
       title: "תודה שנרשמת לנפגשים בשביל ישראל!",
       subtitle: "ההרשמה שלך התקבלה בהצלחה",
+      groupTitle: "בקשת ההרשמה נשלחה בהצלחה!",
+      groupSubtitle: "ההרשמה תישלח לאישור מנהלי המסע",
+      groupPending: "ההרשמה ממתינה לאישור",
+      groupPendingMessage: "ההרשמה שלכם נשלחה למנהלי המסע לאישור. לאחר שההרשמה תאושר, תקבלו מייל עם כל הפרטים והמידע הנדרש.",
       confirmation: "אישור הרשמה",
       participants: "משתתפים",
       selectedDays: "ימים נבחרים",
@@ -86,6 +90,9 @@ export default function ThankYouView({
       step1: "תקבל אישור במייל עם כל הפרטים",
       step2: "הצטרף לקבוצת WhatsApp של הטראק",
       step3: "עקוב אחר עדכונים באזור האישי שלך",
+      groupStep1: "מנהלי המסע יבדקו את בקשת ההרשמה",
+      groupStep2: "תקבל מייל לאחר אישור ההרשמה",
+      groupStep3: "בעקבות האישור תוכל להצטרף לקבוצת WhatsApp של המסע",
       shareWithFriends: "שתף עם חברים",
       loginToTrack: "התחבר למעקב אחר הטיול",
       redirecting: "מעביר אותך לדף הטיול בעוד",
@@ -97,6 +104,10 @@ export default function ThankYouView({
     en: {
       title: "Thank You for Registering to Nifgashim for Israel!",
       subtitle: "Your registration has been successfully received",
+      groupTitle: "Registration Request Sent Successfully!",
+      groupSubtitle: "Your registration will be sent for trek organizers approval",
+      groupPending: "Registration Pending Approval",
+      groupPendingMessage: "Your registration has been sent to the trek organizers for approval. Once approved, you'll receive an email with all details and required information.",
       confirmation: "Registration Confirmation",
       participants: "Participants",
       selectedDays: "Selected Days",
@@ -106,6 +117,9 @@ export default function ThankYouView({
       step1: "You'll receive an email confirmation with all details",
       step2: "Join the trek's WhatsApp group",
       step3: "Follow updates in your personal area",
+      groupStep1: "Trek organizers will review your registration request",
+      groupStep2: "You'll receive an email after registration approval",
+      groupStep3: "Following approval, you can join the trek's WhatsApp group",
       shareWithFriends: "Share with Friends",
       loginToTrack: "Login to Track Your Trip",
       redirecting: "Redirecting you to the trip page in",
@@ -117,6 +131,10 @@ export default function ThankYouView({
     ru: {
       title: "Спасибо за регистрацию на Nifgashim для Израиля!",
       subtitle: "Ваша регистрация успешно получена",
+      groupTitle: "Заявка на регистрацию успешно отправлена!",
+      groupSubtitle: "Ваша регистрация будет отправлена на утверждение организаторам",
+      groupPending: "Регистрация ожидает утверждения",
+      groupPendingMessage: "Ваша регистрация отправлена организаторам трека на утверждение. После утверждения вы получите электронное письмо со всеми деталями и необходимой информацией.",
       confirmation: "Подтверждение регистрации",
       participants: "Участники",
       selectedDays: "Выбранные дни",
@@ -126,6 +144,9 @@ export default function ThankYouView({
       step1: "Вы получите подтверждение по электронной почте со всеми деталями",
       step2: "Присоединяйтесь к группе WhatsApp трека",
       step3: "Следите за обновлениями в личном кабинете",
+      groupStep1: "Организаторы трека рассмотрят вашу заявку",
+      groupStep2: "Вы получите письмо после утверждения регистрации",
+      groupStep3: "После утверждения вы сможете присоединиться к группе WhatsApp трека",
       shareWithFriends: "Поделиться с друзьями",
       loginToTrack: "Войти для отслеживания поездки",
       redirecting: "Переход на страницу поездки через",
@@ -137,6 +158,10 @@ export default function ThankYouView({
     es: {
       title: "¡Gracias por registrarte en Nifgashim para Israel!",
       subtitle: "Tu registro ha sido recibido exitosamente",
+      groupTitle: "¡Solicitud de registro enviada exitosamente!",
+      groupSubtitle: "Tu registro será enviado para aprobación de los organizadores",
+      groupPending: "Registro pendiente de aprobación",
+      groupPendingMessage: "Tu registro ha sido enviado a los organizadores del trek para su aprobación. Una vez aprobado, recibirás un correo con todos los detalles e información requerida.",
       confirmation: "Confirmación de registro",
       participants: "Participantes",
       selectedDays: "Días seleccionados",
@@ -146,6 +171,9 @@ export default function ThankYouView({
       step1: "Recibirás un correo de confirmación con todos los detalles",
       step2: "Únete al grupo de WhatsApp del trek",
       step3: "Sigue las actualizaciones en tu área personal",
+      groupStep1: "Los organizadores revisarán tu solicitud de registro",
+      groupStep2: "Recibirás un correo después de la aprobación del registro",
+      groupStep3: "Tras la aprobación, podrás unirte al grupo de WhatsApp del trek",
       shareWithFriends: "Compartir con amigos",
       loginToTrack: "Iniciar sesión para seguimiento",
       redirecting: "Redirigiendo a la página del viaje en",
@@ -157,6 +185,10 @@ export default function ThankYouView({
     fr: {
       title: "Merci de vous être inscrit à Nifgashim pour Israël!",
       subtitle: "Votre inscription a été reçue avec succès",
+      groupTitle: "Demande d'inscription envoyée avec succès!",
+      groupSubtitle: "Votre inscription sera envoyée pour approbation des organisateurs",
+      groupPending: "Inscription en attente d'approbation",
+      groupPendingMessage: "Votre inscription a été envoyée aux organisateurs du trek pour approbation. Une fois approuvée, vous recevrez un e-mail avec tous les détails et informations requises.",
       confirmation: "Confirmation d'inscription",
       participants: "Participants",
       selectedDays: "Jours sélectionnés",
@@ -166,6 +198,9 @@ export default function ThankYouView({
       step1: "Vous recevrez un e-mail de confirmation avec tous les détails",
       step2: "Rejoignez le groupe WhatsApp du trek",
       step3: "Suivez les mises à jour dans votre espace personnel",
+      groupStep1: "Les organisateurs examineront votre demande d'inscription",
+      groupStep2: "Vous recevrez un e-mail après l'approbation de l'inscription",
+      groupStep3: "Suite à l'approbation, vous pourrez rejoindre le groupe WhatsApp du trek",
       shareWithFriends: "Partager avec des amis",
       loginToTrack: "Connexion pour le suivi",
       redirecting: "Redirection vers la page du voyage dans",
@@ -177,6 +212,10 @@ export default function ThankYouView({
     de: {
       title: "Danke für Ihre Registrierung bei Nifgashim für Israel!",
       subtitle: "Ihre Registrierung wurde erfolgreich empfangen",
+      groupTitle: "Registrierungsantrag erfolgreich gesendet!",
+      groupSubtitle: "Ihre Registrierung wird zur Genehmigung an die Organisatoren gesendet",
+      groupPending: "Registrierung wartet auf Genehmigung",
+      groupPendingMessage: "Ihre Registrierung wurde zur Genehmigung an die Trek-Organisatoren gesendet. Nach der Genehmigung erhalten Sie eine E-Mail mit allen Details und erforderlichen Informationen.",
       confirmation: "Registrierungsbestätigung",
       participants: "Teilnehmer",
       selectedDays: "Ausgewählte Tage",
@@ -186,6 +225,9 @@ export default function ThankYouView({
       step1: "Sie erhalten eine Bestätigungs-E-Mail mit allen Details",
       step2: "Treten Sie der WhatsApp-Gruppe des Treks bei",
       step3: "Folgen Sie Updates in Ihrem persönlichen Bereich",
+      groupStep1: "Die Trek-Organisatoren werden Ihren Registrierungsantrag prüfen",
+      groupStep2: "Sie erhalten eine E-Mail nach Genehmigung der Registrierung",
+      groupStep3: "Nach der Genehmigung können Sie der WhatsApp-Gruppe des Treks beitreten",
       shareWithFriends: "Mit Freunden teilen",
       loginToTrack: "Anmelden zur Nachverfolgung",
       redirecting: "Weiterleitung zur Reiseseite in",
@@ -197,6 +239,10 @@ export default function ThankYouView({
     it: {
       title: "Grazie per esserti registrato a Nifgashim per Israele!",
       subtitle: "La tua registrazione è stata ricevuta con successo",
+      groupTitle: "Richiesta di registrazione inviata con successo!",
+      groupSubtitle: "La tua registrazione sarà inviata per l'approvazione degli organizzatori",
+      groupPending: "Registrazione in attesa di approvazione",
+      groupPendingMessage: "La tua registrazione è stata inviata agli organizzatori del trek per l'approvazione. Una volta approvata, riceverai un'email con tutti i dettagli e le informazioni richieste.",
       confirmation: "Conferma registrazione",
       participants: "Partecipanti",
       selectedDays: "Giorni selezionati",
@@ -206,6 +252,9 @@ export default function ThankYouView({
       step1: "Riceverai un'email di conferma con tutti i dettagli",
       step2: "Unisciti al gruppo WhatsApp del trek",
       step3: "Segui gli aggiornamenti nella tua area personale",
+      groupStep1: "Gli organizzatori del trek esamineranno la tua richiesta di registrazione",
+      groupStep2: "Riceverai un'email dopo l'approvazione della registrazione",
+      groupStep3: "Dopo l'approvazione, potrai unirti al gruppo WhatsApp del trek",
       shareWithFriends: "Condividi con gli amici",
       loginToTrack: "Accedi per il monitoraggio",
       redirecting: "Reindirizzamento alla pagina del viaggio in",
@@ -236,11 +285,25 @@ export default function ThankYouView({
               <CheckCircle className="w-24 h-24 text-green-600 mx-auto mb-6" />
             </motion.div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3" dir={isRTL ? 'rtl' : 'ltr'}>
-              {trans.title}
+              {userType === 'group' ? trans.groupTitle : trans.title}
             </h2>
             <p className="text-xl text-gray-600 mb-6" dir={isRTL ? 'rtl' : 'ltr'}>
-              {trans.subtitle}
+              {userType === 'group' ? trans.groupSubtitle : trans.subtitle}
             </p>
+            
+            {userType === 'group' && (
+              <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 mb-4">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="w-3 h-3 rounded-full bg-amber-500 animate-pulse" />
+                  <p className="text-amber-800 font-bold text-lg">
+                    {trans.groupPending}
+                  </p>
+                </div>
+                <p className="text-amber-700 text-sm text-center">
+                  {trans.groupPendingMessage}
+                </p>
+              </div>
+            )}
             
             {/* Payment Confirmation */}
             {totalAmount > 0 ? (
@@ -296,22 +359,22 @@ export default function ThankYouView({
           <h3 className="text-xl font-bold text-gray-900 mb-4">{trans.nextSteps}</h3>
           <div className="space-y-3">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+              <div className={`w-8 h-8 rounded-full ${userType === 'group' ? 'bg-amber-500' : 'bg-emerald-600'} text-white flex items-center justify-center font-bold flex-shrink-0`}>
                 1
               </div>
-              <p className="text-gray-700 pt-1">{trans.step1}</p>
+              <p className="text-gray-700 pt-1">{userType === 'group' ? trans.groupStep1 : trans.step1}</p>
             </div>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+              <div className={`w-8 h-8 rounded-full ${userType === 'group' ? 'bg-amber-500' : 'bg-emerald-600'} text-white flex items-center justify-center font-bold flex-shrink-0`}>
                 2
               </div>
-              <p className="text-gray-700 pt-1">{trans.step2}</p>
+              <p className="text-gray-700 pt-1">{userType === 'group' ? trans.groupStep2 : trans.step2}</p>
             </div>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+              <div className={`w-8 h-8 rounded-full ${userType === 'group' ? 'bg-amber-500' : 'bg-emerald-600'} text-white flex items-center justify-center font-bold flex-shrink-0`}>
                 3
               </div>
-              <p className="text-gray-700 pt-1">{trans.step3}</p>
+              <p className="text-gray-700 pt-1">{userType === 'group' ? trans.groupStep3 : trans.step3}</p>
             </div>
           </div>
         </CardContent>
