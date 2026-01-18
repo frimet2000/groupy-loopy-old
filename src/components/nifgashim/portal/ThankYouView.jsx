@@ -98,6 +98,7 @@ export default function ThankYouView({
       loginToTrack: "התחבר למעקב אחר הטיול",
       redirecting: "מעביר אותך להרשמה ב-Groupy Loopy בעוד",
       seconds: "שניות",
+      redirectDescription: "שם תוכל/י ליצור קבוצה, לנהל משתתפים ולקבל התראות, תזכורות ועדכונים חשובים לגבי המסע שלך",
       loginMessage: "על מנת לעקוב אחר הטיול ולקבל עדכונים, אנא התחבר למערכת Groupy Loopy",
       viewTrip: "צפה בדף הטיול",
       readGuide: "מדריך לארגון טיולים"
@@ -125,6 +126,7 @@ export default function ThankYouView({
       loginToTrack: "Login to Track Your Trip",
       redirecting: "Redirecting you to Groupy Loopy registration in",
       seconds: "seconds",
+      redirectDescription: "There you can create a group, manage participants, and receive alerts, reminders, and important updates about your trip",
       loginMessage: "To track your trip and receive updates, please login to Groupy Loopy",
       viewTrip: "View Trip Page",
       readGuide: "Trip Planning Guide"
@@ -152,6 +154,7 @@ export default function ThankYouView({
       loginToTrack: "Войти для отслеживания поездки",
       redirecting: "Переход на регистрацию в Groupy Loopy через",
       seconds: "секунд",
+      redirectDescription: "Там вы сможете создать группу, управлять участниками и получать оповещения, напоминания и важные обновления о вашей поездке",
       loginMessage: "Чтобы отслеживать поездку и получать обновления, войдите в Groupy Loopy",
       viewTrip: "Просмотр страницы поездки",
       readGuide: "Руководство по планированию поездок"
@@ -179,6 +182,7 @@ export default function ThankYouView({
       loginToTrack: "Iniciar sesión para seguimiento",
       redirecting: "Redirigiendo al registro de Groupy Loopy en",
       seconds: "segundos",
+      redirectDescription: "Allí podrás crear un grupo, gestionar participantes y recibir alertas, recordatorios y actualizaciones importantes sobre tu viaje",
       loginMessage: "Para seguir tu viaje y recibir actualizaciones, inicia sesión en Groupy Loopy",
       viewTrip: "Ver página del viaje",
       readGuide: "Guía de planificación de viajes"
@@ -206,6 +210,7 @@ export default function ThankYouView({
       loginToTrack: "Connexion pour le suivi",
       redirecting: "Redirection vers l'inscription Groupy Loopy dans",
       seconds: "secondes",
+      redirectDescription: "Vous pourrez y créer un groupe, gérer les participants et recevoir des alertes, rappels et mises à jour importantes concernant votre voyage",
       loginMessage: "Pour suivre votre voyage et recevoir des mises à jour, connectez-vous à Groupy Loopy",
       viewTrip: "Voir la page du voyage",
       readGuide: "Guide de planification de voyage"
@@ -233,6 +238,7 @@ export default function ThankYouView({
       loginToTrack: "Anmelden zur Nachverfolgung",
       redirecting: "Weiterleitung zur Groupy Loopy Registrierung in",
       seconds: "Sekunden",
+      redirectDescription: "Dort können Sie eine Gruppe erstellen, Teilnehmer verwalten und wichtige Benachrichtigungen, Erinnerungen und Updates zu Ihrer Reise erhalten",
       loginMessage: "Um Ihre Reise zu verfolgen und Updates zu erhalten, melden Sie sich bei Groupy Loopy an",
       viewTrip: "Reiseseite anzeigen",
       readGuide: "Reiseplanungsführer"
@@ -260,6 +266,7 @@ export default function ThankYouView({
       loginToTrack: "Accedi per il monitoraggio",
       redirecting: "Reindirizzamento alla registrazione Groupy Loopy in",
       seconds: "secondi",
+      redirectDescription: "Lì potrai creare un gruppo, gestire i partecipanti e ricevere avvisi, promemoria e aggiornamenti importanti sul tuo viaggio",
       loginMessage: "Per monitorare il tuo viaggio e ricevere aggiornamenti, accedi a Groupy Loopy",
       viewTrip: "Visualizza pagina del viaggio",
       readGuide: "Guida alla pianificazione del viaggio"
@@ -435,7 +442,7 @@ export default function ThankYouView({
 
       {/* Countdown Redirect Notice */}
       <Card className="shadow-lg border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50">
-        <CardContent className="p-6 text-center">
+        <CardContent className="p-6 text-center" dir={isRTL ? 'rtl' : 'ltr'}>
           <div className="flex items-center justify-center gap-3 mb-3">
             <div className="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center text-2xl font-bold animate-pulse">
               {countdown}
@@ -443,6 +450,9 @@ export default function ThankYouView({
           </div>
           <p className="text-indigo-800 font-semibold text-lg mb-2">
             {trans.redirecting} {countdown} {trans.seconds}
+          </p>
+          <p className="text-indigo-700 text-sm mb-4 max-w-md mx-auto">
+            {trans.redirectDescription}
           </p>
           <Button
             onClick={() => window.location.href = groupyLoginUrl}
