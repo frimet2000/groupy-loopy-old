@@ -96,7 +96,7 @@ export default function ThankYouView({
       groupStep3: "בעקבות האישור תוכל להצטרף לקבוצת WhatsApp של המסע",
       shareWithFriends: "שתף עם חברים",
       loginToTrack: "התחבר למעקב אחר הטיול",
-      redirecting: "מעביר אותך לדף הטיול בעוד",
+      redirecting: "מעביר אותך להרשמה ב-Groupy Loopy בעוד",
       seconds: "שניות",
       loginMessage: "על מנת לעקוב אחר הטיול ולקבל עדכונים, אנא התחבר למערכת Groupy Loopy",
       viewTrip: "צפה בדף הטיול",
