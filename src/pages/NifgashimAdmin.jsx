@@ -2222,25 +2222,44 @@ export default function NifgashimAdmin() {
                                       </Button>
                                     )}
                                     {reg.group_approval_status === 'pending' && (
-                                      <div className="flex gap-2">
-                                        <Button
-                                          size="sm"
-                                          variant="outline"
-                                          onClick={() => handleApproveGroup(reg.id)}
-                                          className="flex-1 gap-1 text-green-700 border-green-300"
-                                        >
-                                          <Check className="w-4 h-4" />
-                                          {trans.approve}
-                                        </Button>
-                                        <Button
-                                          size="sm"
-                                          variant="outline"
-                                          onClick={() => handleRejectGroup(reg.id)}
-                                          className="flex-1 gap-1 text-red-700 border-red-300"
-                                        >
-                                          <X className="w-4 h-4" />
-                                          {trans.reject}
-                                        </Button>
+                                      <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg p-3 border-2 border-yellow-300 space-y-3">
+                                        <div>
+                                          <p className="text-xs font-semibold text-yellow-900 mb-2">
+                                            {language === 'he' ? 'אישור קבוצה' : 'Group Approval'}
+                                          </p>
+                                          <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                                            <div className="bg-white rounded p-2 border border-yellow-200">
+                                              <p className="text-gray-600">{language === 'he' ? 'משתתפים רשומים' : 'Registered'}</p>
+                                              <p className="font-bold text-lg text-yellow-700">{participantsCount}</p>
+                                            </div>
+                                            <div className={`rounded p-2 border ${participantsCount === reg.groupInfo?.totalParticipants || participantsCount > 0 ? 'bg-green-50 border-green-200' : 'bg-orange-50 border-orange-200'}`}>
+                                              <p className="text-gray-600">{language === 'he' ? 'סה״כ צפויים' : 'Total Expected'}</p>
+                                              <p className={`font-bold text-lg ${participantsCount === reg.groupInfo?.totalParticipants || participantsCount > 0 ? 'text-green-700' : 'text-orange-700'}`}>
+                                                {reg.groupInfo?.totalParticipants || 0}
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div className="flex gap-2">
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => handleApproveGroup(reg.id)}
+                                            className="flex-1 gap-1 text-green-700 border-green-300 hover:bg-green-50"
+                                          >
+                                            <Check className="w-4 h-4" />
+                                            {trans.approve}
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => handleRejectGroup(reg.id)}
+                                            className="flex-1 gap-1 text-red-700 border-red-300 hover:bg-red-50"
+                                          >
+                                            <X className="w-4 h-4" />
+                                            {trans.reject}
+                                          </Button>
+                                        </div>
                                       </div>
                                     )}
                                   </div>
