@@ -897,55 +897,53 @@ export default function NifgashimAdmin() {
     });
   });
 
-  // Age statistics - matching registration form age ranges
-  const ageStats = {
-    adults: 0,
-    children: 0,
-    byAgeRange: {
-      '0-9': 0,
-      '10-18': 0,
-      '19-25': 0,
-      '26-35': 0,
-      '36-50': 0,
-      '51-65': 0,
-      '65+': 0
-    }
-  };
+  // Age statistics - count UNIQUE participants across all registrations
+  const ageStats = React.useMemo(() => {
+    const stats = {
+      adults: 0,
+      children: 0,
+      byAgeRange: {
+        '0-9': 0,
+        '10-18': 0,
+        '19-25': 0,
+        '26-35': 0,
+        '36-50': 0,
+        '51-65': 0,
+        '65+': 0
+      }
+    };
 
-  uniqueRegistrations.forEach(reg => {
-    const allParticipants = reg.participants || [];
-    
-    // If we have participants array, count from there
-    if (allParticipants.length > 0) {
-      allParticipants.forEach(p => {
-        // Check age_range to determine if child or adult
-        if (p.age_range) {
-          // Count by age range bucket
-          if (ageStats.byAgeRange[p.age_range] !== undefined) {
-            ageStats.byAgeRange[p.age_range]++;
-          }
-          
-          const ageStart = parseInt(p.age_range.split('-')[0]);
-          // Consider children as those under 10 (adult payment threshold)
-          if (!isNaN(ageStart) && ageStart < 10) {
-            ageStats.children++;
-          } else {
-            ageStats.adults++;
-          }
-        } else {
-          // No age_range means adult
-          ageStats.adults++;
-        }
-      });
-    } else {
-      // Fallback to old logic for legacy registrations
-      ageStats.adults += 1;
-      if (reg.family_members?.spouse) ageStats.adults += 1;
+    // Count participants from each unique registration (not per day!)
+    uniqueRegistrations.forEach(reg => {
+      const allParticipants = reg.participants || [];
       
-      const childrenCount = reg.children_details?.length || 0;
-      ageStats.children += childrenCount;
-    }
-  });
+      if (allParticipants.length > 0) {
+        allParticipants.forEach(p => {
+          if (p.age_range) {
+            if (stats.byAgeRange[p.age_range] !== undefined) {
+              stats.byAgeRange[p.age_range]++;
+            }
+            
+            const ageStart = parseInt(p.age_range.split('-')[0]);
+            if (!isNaN(ageStart) && ageStart < 10) {
+              stats.children++;
+            } else {
+              stats.adults++;
+            }
+          } else {
+            stats.adults++;
+          }
+        });
+      } else {
+        // Fallback for legacy registrations
+        stats.adults += 1;
+        if (reg.family_members?.spouse) stats.adults += 1;
+        stats.children += reg.children_details?.length || 0;
+      }
+    });
+
+    return stats;
+  }, [uniqueRegistrations]);
 
   // Download Excel with full payment data
   const downloadExcel = () => {
