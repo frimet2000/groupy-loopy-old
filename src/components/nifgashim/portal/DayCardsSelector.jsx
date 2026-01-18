@@ -477,9 +477,18 @@ export default function NifgashimDayCardsSelector({
            const selected = isSelected(day.id);
            const isDisabled = isDayDisabled(day);
            const isNegev = isNegevDay(day);
-           const isLinked = linkedDaysPairs.some(pair => 
-             Array.isArray(pair) ? pair.includes(day.day_number) : (pair.day_id_1 === day.day_number || pair.day_id_2 === day.day_number)
-           );
+           // Find linked day_numbers for this day
+          const getLinkedPartner = () => {
+            for (const pair of linkedDaysPairs) {
+              const pairDays = Array.isArray(pair) ? pair : [pair.day_id_1, pair.day_id_2];
+              if (pairDays.includes(day.day_number)) {
+                return pairDays.find(d => d !== day.day_number);
+              }
+            }
+            return null;
+          };
+          const linkedPartnerNumber = getLinkedPartner();
+          const isLinked = linkedPartnerNumber !== null;
 
            const imageUrl = day.image_url;
 
@@ -559,16 +568,16 @@ export default function NifgashimDayCardsSelector({
                  {/* Linked Badge with Animation */}
                  {isLinked && (
                    <motion.div 
-                     className={`absolute top-6 ${isRTL ? 'left-8' : 'right-8'} bg-purple-500/90 backdrop-blur-sm text-white text-xs px-1.5 py-0.5 rounded-full shadow-lg flex items-center gap-1`}
+                     className={`absolute top-6 ${isRTL ? 'left-8' : 'right-8'} bg-purple-600/95 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-lg shadow-lg flex items-center gap-1 font-bold`}
                      animate={{ 
                        scale: selected ? [1, 1.1, 1] : 1,
                        boxShadow: selected 
-                         ? ['0 0 0 0 rgba(139, 92, 246, 0.4)', '0 0 0 8px rgba(139, 92, 246, 0)', '0 0 0 0 rgba(139, 92, 246, 0)']
-                         : '0 2px 4px rgba(0,0,0,0.2)'
+                         ? ['0 0 0 0 rgba(139, 92, 246, 0.4)', '0 0 0 10px rgba(139, 92, 246, 0)', '0 0 0 0 rgba(139, 92, 246, 0)']
+                         : '0 2px 6px rgba(0,0,0,0.3)'
                      }}
                      transition={{ duration: 1.5, repeat: selected ? Infinity : 0 }}
                    >
-                     🔗
+                     🔗 {linkedPartnerNumber}
                    </motion.div>
                  )}
 
