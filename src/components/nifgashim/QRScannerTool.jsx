@@ -407,6 +407,20 @@ export default function QRScannerTool({ trekDays = [], language = 'he', isRTL = 
       {/* Main Scanner/Result Area */}
       <Card className="overflow-hidden">
         <CardContent className="p-0">
+          {/* QR Reader div - always in DOM but hidden when not scanning */}
+          <div 
+            id="qr-reader" 
+            className={`w-full ${scannerState === 'scanning' ? 'min-h-[350px]' : 'hidden'}`}
+            style={{ background: '#000' }}
+          />
+          
+          {scannerState === 'scanning' && (
+            <div className="bg-indigo-600 text-white p-3 text-center flex items-center justify-center gap-2">
+              <ScanLine className="w-5 h-5 animate-pulse" />
+              <span className="font-medium">{t.scanning}</span>
+            </div>
+          )}
+
           <AnimatePresence mode="wait">
             {/* Idle State - Show Start Button */}
             {scannerState === 'idle' && (
@@ -424,26 +438,6 @@ export default function QRScannerTool({ trekDays = [], language = 'he', isRTL = 
                   <Camera className="w-12 h-12" />
                   <span className="text-lg font-bold">{t.startScan}</span>
                 </Button>
-              </motion.div>
-            )}
-
-            {/* Scanning State - Show Camera */}
-            {scannerState === 'scanning' && (
-              <motion.div
-                key="scanning"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <div 
-                  id="qr-reader" 
-                  className="w-full min-h-[350px]"
-                  style={{ background: '#000' }}
-                />
-                <div className="bg-indigo-600 text-white p-3 text-center flex items-center justify-center gap-2">
-                  <ScanLine className="w-5 h-5 animate-pulse" />
-                  <span className="font-medium">{t.scanning}</span>
-                </div>
               </motion.div>
             )}
 
