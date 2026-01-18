@@ -501,7 +501,7 @@ export default function NifgashimDayCardsSelector({
              >
                {/* Image Section */}
                   <div 
-                    className="relative h-24 w-full bg-gradient-to-br from-slate-400 via-slate-500 to-slate-600 cursor-pointer group overflow-hidden"
+                    className="relative w-full bg-gradient-to-br from-slate-400 via-slate-500 to-slate-600 cursor-pointer group overflow-hidden"
                     onClick={() => !isDisabled && handleDayToggle(day)}
                   >
                     {imageUrl && typeof imageUrl === 'string' && imageUrl.length > 5 ? (
@@ -578,23 +578,20 @@ export default function NifgashimDayCardsSelector({
                  <h3 className="font-bold text-xs leading-tight">{day.daily_title}</h3>
 
                  <div className="mt-auto text-xs text-gray-600 space-y-0.5">
-                   <div className="flex items-center gap-0.5">
-                     <div className={cn(
-                       "w-1 h-1 rounded-full",
-                       day.difficulty === 'easy' ? 'bg-green-500' :
-                       day.difficulty === 'moderate' ? 'bg-yellow-500' :
-                       'bg-red-500'
-                     )} />
-                     <span className="text-xs">{day.difficulty && typeof day.difficulty === 'string' ? (trans.difficulty[day.difficulty]?.[0] || day.difficulty?.[0] || '-') : '-'}</span>
-                   </div>
-                   <div className="flex items-center gap-0.5">
-                     <MapPin className="w-2 h-2" />
-                     <span className="text-xs">{day.daily_distance_km}</span>
+                   <div className={cn(
+                     "w-1 h-1 rounded-full",
+                     day.difficulty === 'easy' ? 'bg-green-500' :
+                     day.difficulty === 'moderate' ? 'bg-yellow-500' :
+                     'bg-red-500'
+                   )} />
+                   <div>
+                     <MapPin className="w-2 h-2 inline" />
+                     <span className="text-xs"> {day.daily_distance_km}</span>
                    </div>
                    {day.elevation_gain_m > 0 && (
-                     <div className="flex items-center gap-0.5">
-                       <Mountain className="w-2 h-2" />
-                       <span className="text-xs">{day.elevation_gain_m}m</span>
+                     <div>
+                       <Mountain className="w-2 h-2 inline" />
+                       <span className="text-xs"> {day.elevation_gain_m}m</span>
                      </div>
                    )}
                  </div>
