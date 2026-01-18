@@ -14,13 +14,13 @@ export default function GroupHealthDeclaration({ accepted, onAccept, leaderName 
   const declarations = {
     he: {
       title: "הצהרת בריאות מדריך הקבוצה",
-      declarationText: `אני ${leaderName} ראש קבוצת מצהיר/ה כי:
+      declarationText: `אני ${leaderName} ראש קבוצת מצהיר כי:
 
 1. קראתי את כל הוראות הבטיחות ופרטי המסלולים אליהם נרשמנו.
 
 2. וידאתי שכל חברי הקבוצה בריאים וכשירים להשתתף במסלולים אליהם נרשמנו.
 
-3. אני אחראי/ת להתנהגות תקינה של חברי קבוצתי בהתאם להוראות הבטיחות ונחיות מארגני המסע.
+3. אני אחראי להתנהגות תקינה של חברי קבוצתי בהתאם להוראות הבטיחות ונחיות מארגני המסע.
 
 4. אני אדווח למארגני המסע על כל בעיה רפואית או בטיחותית שתיווצר מזמן השתתפותנו במסע, ואפעל בהתאם להוראותיהם.`,
       
@@ -29,7 +29,7 @@ export default function GroupHealthDeclaration({ accepted, onAccept, leaderName 
     },
     en: {
       title: "Group Leader Health Declaration",
-      declarationText: `I ${leaderName}, group leader of , declare that:
+      declarationText: `I ${leaderName}, group leader, declare that:
 
 1. I have read all safety instructions and details of the routes to which we registered.
 
@@ -44,7 +44,7 @@ export default function GroupHealthDeclaration({ accepted, onAccept, leaderName 
     },
     ru: {
       title: "Декларация здоровья руководителя группы",
-      declarationText: `Я ${leaderName}, руководитель группы , заявляю, что:
+      declarationText: `Я ${leaderName}, руководитель группы, заявляю, что:
 
 1. Я прочитал все инструкции по безопасности и детали маршрутов, на которые мы зарегистрированы.
 
@@ -59,7 +59,7 @@ export default function GroupHealthDeclaration({ accepted, onAccept, leaderName 
     },
     es: {
       title: "Declaración de Salud del Líder de Grupo",
-      declarationText: `Yo ${leaderName}, líder del grupo , declaro que:
+      declarationText: `Yo ${leaderName}, líder del grupo, declaro que:
 
 1. He leído todas las instrucciones de seguridad y detalles de las rutas a las que nos registramos.
 
@@ -74,7 +74,7 @@ export default function GroupHealthDeclaration({ accepted, onAccept, leaderName 
     },
     fr: {
       title: "Déclaration de Santé du Chef de Groupe",
-      declarationText: `Moi ${leaderName}, chef du groupe , déclare que:
+      declarationText: `Moi ${leaderName}, chef du groupe, déclare que:
 
 1. J'ai lu toutes les instructions de sécurité et les détails des itinéraires auxquels nous nous sommes inscrits.
 
@@ -89,7 +89,7 @@ export default function GroupHealthDeclaration({ accepted, onAccept, leaderName 
     },
     de: {
       title: "Gesundheitserklärung des Gruppenleiters",
-      declarationText: `Ich ${leaderName}, Gruppenleiter von , erkläre, dass:
+      declarationText: `Ich ${leaderName}, Gruppenleiter, erkläre, dass:
 
 1. Ich alle Sicherheitsanweisungen und Details der Routen gelesen habe, für die wir uns angemeldet haben.
 
@@ -104,7 +104,7 @@ export default function GroupHealthDeclaration({ accepted, onAccept, leaderName 
     },
     it: {
       title: "Dichiarazione di Salute del Capo Gruppo",
-      declarationText: `Io ${leaderName}, capo del gruppo , dichiaro che:
+      declarationText: `Io ${leaderName}, capo del gruppo, dichiaro che:
 
 1. Ho letto tutte le istruzioni di sicurezza e i dettagli dei percorsi a cui ci siamo registrati.
 
