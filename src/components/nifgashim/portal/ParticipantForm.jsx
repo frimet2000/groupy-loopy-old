@@ -377,20 +377,6 @@ export default function ParticipantForm({ userType, participants, setParticipant
                   {trans.hasVehicle}
                 </Label>
               </div>
-
-              {vehicleInfo.hasVehicle && (
-                <div className="grid sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
-                  <div>
-                    <Label>{trans.vehicleNumber}</Label>
-                    <Input 
-                      value={vehicleInfo?.number || ''}
-                      onChange={(e) => setVehicleInfo && setVehicleInfo({...vehicleInfo, number: e.target.value})}
-                      placeholder={trans.vehiclePlaceholder}
-                      dir="ltr"
-                    />
-                  </div>
-                </div>
-              )}
             </div>
           </div>
           </>
@@ -577,20 +563,6 @@ export default function ParticipantForm({ userType, participants, setParticipant
                   {trans.hasVehicle}
                 </Label>
               </div>
-
-              {vehicleInfo.hasVehicle && (
-                <div className="grid sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
-                  <div>
-                    <Label>{trans.vehicleNumber}</Label>
-                    <Input 
-                      value={vehicleInfo?.number || ''}
-                      onChange={(e) => setVehicleInfo && setVehicleInfo({...vehicleInfo, number: e.target.value})}
-                      placeholder={trans.vehiclePlaceholder}
-                      dir="ltr"
-                    />
-                  </div>
-                </div>
-              )}
             </div>
           </div>
           </>
