@@ -1633,13 +1633,6 @@ export default function TripDetails() {
                     }
                         {language === 'he' ? 'הוסף ליומן' : language === 'ru' ? 'В календарь' : language === 'es' ? 'Agregar a calendario' : language === 'fr' ? 'Ajouter au calendrier' : language === 'de' ? 'Zum Kalender' : language === 'it' ? 'Aggiungi al calendario' : 'Add to Calendar'}
                       </Button>
-                      <Button
-                    onClick={() => setShowEditParticipantDialog(true)}
-                    className="bg-emerald-600 hover:bg-emerald-700 gap-2 h-11 shadow-lg w-full sm:w-auto">
-
-                        <Edit className="w-4 h-4" />
-                        {language === 'he' ? 'ערוך משפחה' : 'Edit Family'}
-                      </Button>
                       {!canEdit &&
                   <Button
                     variant="outline"
