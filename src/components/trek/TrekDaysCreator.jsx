@@ -218,11 +218,9 @@ export default function TrekDaysCreator({ trekDays, setTrekDays, dayPairs = [], 
                     )}
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        {day.day_number >= 2 && (
-                          <Badge variant="default" className="bg-indigo-600">
-                            {language === 'he' ? `יום ${day.day_number - 1}` : `Day ${day.day_number - 1}`}
-                          </Badge>
-                        )}
+                        <Badge variant="default" className="bg-indigo-600">
+                          {language === 'he' ? `יום ${day.day_number}` : `Day ${day.day_number}`}
+                        </Badge>
                         {day.category_id && categories.find(c => c.id === day.category_id) && (
                           <Badge 
                             variant="default"
@@ -389,17 +387,11 @@ export default function TrekDaysCreator({ trekDays, setTrekDays, dayPairs = [], 
               <div key={idx} className="flex items-center justify-between p-3 bg-white border border-indigo-200 rounded-lg shadow-sm">
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="bg-indigo-50">
-                    {pair[0] >= 2 
-                      ? (language === 'he' ? `יום ${pair[0] - 1}` : `Day ${pair[0] - 1}`)
-                      : (language === 'he' ? 'התכנסות' : 'Gathering')
-                    }
+                    {language === 'he' ? `יום ${pair[0]}` : `Day ${pair[0]}`}
                   </Badge>
                   <LinkIcon className="w-4 h-4 text-gray-400" />
                   <Badge variant="outline" className="bg-indigo-50">
-                    {pair[1] >= 2 
-                      ? (language === 'he' ? `יום ${pair[1] - 1}` : `Day ${pair[1] - 1}`)
-                      : (language === 'he' ? 'התכנסות' : 'Gathering')
-                    }
+                    {language === 'he' ? `יום ${pair[1]}` : `Day ${pair[1]}`}
                   </Badge>
                 </div>
                 <Button

@@ -580,11 +580,9 @@ export default function NifgashimDayCardsSelector({
 
                  {/* Day Number and Date - Bottom Right */}
                  <div className={`absolute bottom-1 ${isRTL ? 'left-2' : 'right-2'} flex flex-col items-end gap-0.5`}>
-                   {day.day_number >= 2 && (
-                     <div className="bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded text-xs font-bold text-gray-900">
-                       {language === 'he' ? `יום ${day.day_number - 1}` : `Day ${day.day_number - 1}`}
-                     </div>
-                   )}
+                   <div className="bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded text-xs font-bold text-gray-900">
+                     {language === 'he' ? `יום ${day.day_number}` : `Day ${day.day_number}`}
+                   </div>
                    {day.date && (
                      <div className="bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded text-xs font-medium text-gray-700">
                        {formatDate(day.date)}
