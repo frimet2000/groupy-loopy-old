@@ -232,14 +232,17 @@ export default function TripChat({ trip, currentUserEmail, onSendMessage, sendin
     );
   };
 
-  const filteredParticipants = otherParticipants.filter((p) => {
+  const filteredParticipants = React.useMemo(() => {
+    if (!searchQuery.trim()) return otherParticipants;
+    
     const query = searchQuery.toLowerCase();
-    return (
+    return otherParticipants.filter((p) => 
       p.name?.toLowerCase().includes(query) ||
       p.email?.toLowerCase().includes(query) ||
-      p.phone?.toLowerCase().includes(query)
+      p.phone?.toLowerCase().includes(query) ||
+      p.id_number?.toLowerCase().includes(query)
     );
-  });
+  }, [otherParticipants, searchQuery]);
 
   const renderMessage = (msg, isPrivate = false) => {
     const isMine = msg.sender_email === currentUserEmail;
