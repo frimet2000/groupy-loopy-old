@@ -148,16 +148,6 @@ export default function NifgashimParticipantsView({ tripId, language, isRTL }) {
         </Card>
       </div>
 
-      {/* Participants by Day Table */}
-      {trip?.trek_days && (
-        <ParticipantsByDayTable
-          registrations={registrations}
-          trekDays={trip.trek_days}
-          language={language}
-          isRTL={isRTL}
-        />
-      )}
-
       {/* Registrations List */}
       <Card>
         <CardHeader>
