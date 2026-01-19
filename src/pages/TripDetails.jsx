@@ -1852,7 +1852,7 @@ export default function TripDetails() {
                   <span className="text-sm">{language === 'he' ? 'משתתפים' : language === 'ru' ? 'Участники' : language === 'es' ? 'Participantes' : language === 'fr' ? 'Participants' : language === 'de' ? 'Teilnehmer' : language === 'it' ? 'Partecipanti' : 'Participants'}</span>
                 </TabsTrigger>
                 )}
-                {(canEdit || !trip.hidden_tabs?.includes('equipment')) && (
+                {isTabVisible('equipment') && (
                 <TabsTrigger value="equipment" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-500/50 data-[state=active]:border-2 data-[state=active]:border-indigo-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
                   <Backpack className="w-4 h-4 text-indigo-600 group-data-[state=active]:text-white" />
                   <span className="text-sm">{language === 'he' ? 'ציוד' : language === 'ru' ? 'Снаряжение' : language === 'es' ? 'Equipo' : language === 'fr' ? 'Équipement' : language === 'de' ? 'Ausrüstung' : language === 'it' ? 'Attrezzatura' : 'Equipment'}</span>
