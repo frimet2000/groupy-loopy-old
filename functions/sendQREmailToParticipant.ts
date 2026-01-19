@@ -70,10 +70,71 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Get trip details to get day names and dates
+    let tripDetails = null;
+    try {
+      tripDetails = await base44.asServiceRole.entities.Trip.get(registration.trip_id);
+    } catch (e) {
+      console.log('Could not fetch trip details:', e);
+    }
+
     const selectedDays = registration.selected_days || [];
-    const selectedDaysText = selectedDays.length > 0 
-      ? selectedDays.sort((a, b) => a - b).join(', ')
-      : '-';
+    const selectedDaysData = registration.selectedDays || [];
+    
+    // Build beautiful days list with dates and names
+    let selectedDaysText = '-';
+    let selectedDaysHtml = '';
+    
+    if (selectedDays.length > 0) {
+      const sortedDays = [...selectedDays].sort((a, b) => a - b);
+      const trekDays = tripDetails?.trek_days || [];
+      
+      const daysInfo = sortedDays.map(dayNum => {
+        // Try to find day info from selectedDaysData first (has full details)
+        const savedDay = selectedDaysData.find(d => d.day_number === dayNum);
+        // Or from trip's trek_days
+        const trekDay = trekDays.find(d => d.day_number === dayNum);
+        
+        const dayTitle = savedDay?.daily_title || trekDay?.daily_title || '';
+        const dayDate = savedDay?.date || trekDay?.date || '';
+        
+        let formattedDate = '';
+        if (dayDate) {
+          const d = new Date(dayDate);
+          formattedDate = d.toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short'
+          });
+        }
+        
+        return { dayNum, dayTitle, formattedDate };
+      });
+      
+      // Simple text version
+      selectedDaysText = daysInfo.map(d => `${language === 'he' ? 'יום' : 'Day'} ${d.dayNum}`).join(', ');
+      
+      // Beautiful HTML table version
+      selectedDaysHtml = `
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          ${daysInfo.map(d => `
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+              <td style="padding: 12px 8px; text-align: ${language === 'he' ? 'right' : 'left'};">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;">
+                    ${d.dayNum}
+                  </span>
+                  <div>
+                    <div style="font-weight: 600; color: #1e293b;">${d.dayTitle || (language === 'he' ? `יום ${d.dayNum}` : `Day ${d.dayNum}`)}</div>
+                    ${d.formattedDate ? `<div style="font-size: 12px; color: #64748b;">📅 ${d.formattedDate}</div>` : ''}
+                  </div>
+                </div>
+              </td>
+            </tr>
+          `).join('')}
+        </table>
+      `;
+    }
 
     const translations = {
       he: {
