@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Users, User, UserPlus, X, Dog } from 'lucide-react';
 import ParticipantStats from './ParticipantStats';
-import NifgashimParticipantsView from '../nifgashim/NifgashimParticipantsView';
 
 export default function ParticipantsTabContent({
   trip,
@@ -25,16 +24,10 @@ export default function ParticipantsTabContent({
   formatDate,
   t
 }) {
-  const isNifgashimTrip = trip.activity_type === 'trek' && trip.title?.includes('נפגשים');
-
   return (
     <div className="space-y-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
-      {isNifgashimTrip ? (
-        <NifgashimParticipantsView tripId={trip.id} language={language} isRTL={isRTL} />
-      ) : (
-        <>
-          {/* Participant Statistics - visible to everyone */}
-          <ParticipantStats
+      {/* Participant Statistics - visible to everyone */}
+      <ParticipantStats
         trip={trip}
         userProfiles={userProfiles}
         calculateAge={calculateAge}
@@ -362,8 +355,6 @@ export default function ParticipantsTabContent({
           </TooltipProvider>
         </CardContent>
       </Card>
-        </>
-      )}
     </div>
   );
 }

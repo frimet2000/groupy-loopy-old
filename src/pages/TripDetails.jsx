@@ -29,6 +29,7 @@ import ParticipantStats from '../components/participants/ParticipantStats';
 import EditParticipantDialog from '../components/participants/EditParticipantDialog';
 import JoinTripDialog from '../components/dialogs/JoinTripDialog';
 import ParticipantsTabContent from '../components/participants/ParticipantsTabContent';
+import NifgashimParticipantsView from '../components/nifgashim/NifgashimParticipantsView';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -2229,21 +2230,27 @@ export default function TripDetails() {
             </TabsContent>
 
             <TabsContent value="participants" className="mt-0">
-              <ParticipantsTabContent 
-                trip={trip}
-                userProfiles={userProfiles}
-                calculateAge={calculateAge}
-                language={language}
-                isRTL={isRTL}
-                isOrganizer={isOrganizer}
-                canEdit={canEdit}
-                setShowAddOrganizerDialog={setShowAddOrganizerDialog}
-                setSelectedProfileEmail={setSelectedProfileEmail}
-                setShowProfileDialog={setShowProfileDialog}
-                handleRemoveOrganizer={handleRemoveOrganizer}
-                formatDate={formatDate}
-                t={t}
-              />
+              {trip.activity_type === 'trek' && trip.title?.includes('נפגשים') ? (
+                <div className="space-y-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
+                  <NifgashimParticipantsView tripId={trip.id} language={language} isRTL={isRTL} />
+                </div>
+              ) : (
+                <ParticipantsTabContent 
+                  trip={trip}
+                  userProfiles={userProfiles}
+                  calculateAge={calculateAge}
+                  language={language}
+                  isRTL={isRTL}
+                  isOrganizer={isOrganizer}
+                  canEdit={canEdit}
+                  setShowAddOrganizerDialog={setShowAddOrganizerDialog}
+                  setSelectedProfileEmail={setSelectedProfileEmail}
+                  setShowProfileDialog={setShowProfileDialog}
+                  handleRemoveOrganizer={handleRemoveOrganizer}
+                  formatDate={formatDate}
+                  t={t}
+                />
+              )}
             </TabsContent>
 
             <TabsContent value="map" className="mt-0">
