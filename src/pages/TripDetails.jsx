@@ -28,7 +28,7 @@ import TabVisibilityManager from '../components/trips/TabVisibilityManager';
 import ParticipantStats from '../components/participants/ParticipantStats';
 import EditParticipantDialog from '../components/participants/EditParticipantDialog';
 import JoinTripDialog from '../components/dialogs/JoinTripDialog';
-import NifgashimParticipantsView from '../components/nifgashim/NifgashimParticipantsView';
+import ParticipantsTabContent from '../components/participants/ParticipantsTabContent';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
