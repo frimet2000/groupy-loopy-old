@@ -216,6 +216,30 @@ export default function TripDetails() {
   const hasPendingRequest = trip?.pending_requests?.some((r) => r.email === user?.email);
   const isFull = !trip?.flexible_participants && trip?.current_participants >= trip?.max_participants;
 
+  // Visibility helper for tabs (organizers always see all)
+  const isTabVisible = React.useCallback(
+    (id) => canEdit || !((trip?.hidden_tabs || []).includes(id)),
+    [canEdit, trip?.hidden_tabs]
+  );
+
+  // Ensure active tab is always visible to current user
+  useEffect(() => {
+    if (!trip) return;
+    const order = [
+      'details','map','navigate','participants','equipment','itinerary','budget','social',
+      'chat','gallery','experiences','location','reminders','contributions','invite','waiver'
+    ];
+    const isAccessibleExtra = (id) => (
+      ['chat','gallery','experiences','location','reminders','contributions','invite'].includes(id)
+        ? (hasJoined || isOrganizer)
+        : true
+    );
+    if (!isTabVisible(activeTab) || !isAccessibleExtra(activeTab)) {
+      const firstVisible = order.find((id) => isTabVisible(id) && isAccessibleExtra(id)) || 'details';
+      setActiveTab(firstVisible);
+    }
+  }, [trip?.hidden_tabs, hasJoined, isOrganizer]);
+
   // Track view
   useEffect(() => {
     const trackView = async () => {
