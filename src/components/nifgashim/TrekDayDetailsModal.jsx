@@ -12,17 +12,14 @@ import {
   TrendingUp, TrendingDown, Sunrise, Sunset, CloudSun, Info, Navigation
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { GoogleMap, Marker, Polyline, useJsApiLoader } from '@react-google-maps/api';
+import { GoogleMap, Marker, Polyline } from '@react-google-maps/api';
 import { base44 } from '@/api/base44Client';
+import { useGoogleMaps } from '../maps/GoogleMapsProvider';
 
 export default function TrekDayDetailsModal({ day, memorial, organizers, tripId, onClose, language, isRTL }) {
   const [mapCenter, setMapCenter] = useState({ lat: 31.7683, lng: 35.2137 });
   const [liveLocations, setLiveLocations] = useState([]);
-
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'GOOGLE_MAPS_API_KEY',
-    libraries: ['places']
-  });
+  const { isLoaded } = useGoogleMaps();
 
   // Get live locations
   useEffect(() => {
