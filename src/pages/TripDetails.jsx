@@ -217,10 +217,10 @@ export default function TripDetails() {
   const isFull = !trip?.flexible_participants && trip?.current_participants >= trip?.max_participants;
 
   // Visibility helper for tabs (organizers always see all)
-  const isTabVisible = React.useCallback(
-    (id) => canEdit || !((trip?.hidden_tabs || []).includes(id)),
-    [canEdit, trip?.hidden_tabs]
-  );
+  const isTabVisible = (id) => {
+    if (canEdit) return true;
+    return !(trip?.hidden_tabs || []).includes(id);
+  };
 
   // Ensure active tab is always visible to current user
   useEffect(() => {
