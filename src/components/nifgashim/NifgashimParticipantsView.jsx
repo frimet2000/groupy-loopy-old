@@ -5,10 +5,15 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Users, Calendar, CheckCircle, Clock, Dog } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Users, Calendar, CheckCircle, Clock, Dog, Search, ArrowUpDown } from 'lucide-react';
 import ParticipantsByDayTable from './portal/ParticipantsByDayTable';
 
 export default function NifgashimParticipantsView({ tripId, language, isRTL }) {
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [sortBy, setSortBy] = React.useState('date');
+
   // Fetch portal registrations
   const { data: registrations = [], isLoading } = useQuery({
     queryKey: ['nifgashimRegistrations', tripId],
@@ -73,6 +78,47 @@ export default function NifgashimParticipantsView({ tripId, language, isRTL }) {
       pendingCount: registrations.length - paidCount
     };
   }, [registrations]);
+
+  // Filter and sort registrations
+  const filteredAndSortedRegistrations = React.useMemo(() => {
+    let filtered = registrations;
+
+    // Search filter
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase().trim();
+      filtered = filtered.filter(reg => {
+        const allParticipants = reg.participants || [];
+        return (
+          (reg.customer_name || '').toLowerCase().includes(searchLower) ||
+          (reg.customer_email || '').toLowerCase().includes(searchLower) ||
+          (reg.user_email || '').toLowerCase().includes(searchLower) ||
+          (reg.group_name || '').toLowerCase().includes(searchLower) ||
+          allParticipants.some(p => 
+            (p.name || '').toLowerCase().includes(searchLower) ||
+            (p.email || '').toLowerCase().includes(searchLower) ||
+            (p.phone || '').includes(searchTerm) ||
+            (p.id_number || '').includes(searchTerm)
+          )
+        );
+      });
+    }
+
+    // Sort
+    const sorted = [...filtered];
+    if (sortBy === 'date') {
+      sorted.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+    } else if (sortBy === 'name') {
+      sorted.sort((a, b) => {
+        const nameA = (a.customer_name || a.customer_email || a.user_email || '').toLowerCase();
+        const nameB = (b.customer_name || b.customer_email || b.user_email || '').toLowerCase();
+        return nameA.localeCompare(nameB);
+      });
+    } else if (sortBy === 'participants') {
+      sorted.sort((a, b) => (b.participants?.length || 0) - (a.participants?.length || 0));
+    }
+
+    return sorted;
+  }, [registrations, searchTerm, sortBy]);
 
   if (isLoading) {
     return (
@@ -155,15 +201,47 @@ export default function NifgashimParticipantsView({ tripId, language, isRTL }) {
             <Users className="w-5 h-5 text-emerald-600" />
             {language === 'he' ? 'כל ההרשמות' : 'All Registrations'} ({registrations.length})
           </CardTitle>
+          
+          {/* Search and Sort */}
+          <div className="flex flex-col sm:flex-row gap-3 mt-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Input
+                placeholder={language === 'he' ? 'חיפוש לפי שם, אימייל, טלפון, ת"ז...' : 'Search by name, email, phone, ID...'}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-full sm:w-[200px]">
+                <ArrowUpDown className="w-4 h-4 mr-2" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="date">
+                  {language === 'he' ? 'תאריך הרשמה' : 'Registration Date'}
+                </SelectItem>
+                <SelectItem value="name">
+                  {language === 'he' ? 'שם' : 'Name'}
+                </SelectItem>
+                <SelectItem value="participants">
+                  {language === 'he' ? 'מספר משתתפים' : 'Number of Participants'}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </CardHeader>
         <CardContent>
-          {registrations.length === 0 ? (
+          {filteredAndSortedRegistrations.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              {language === 'he' ? 'אין הרשמות עדיין' : 'No registrations yet'}
+              {searchTerm 
+                ? (language === 'he' ? 'לא נמצאו תוצאות' : 'No results found')
+                : (language === 'he' ? 'אין הרשמות עדיין' : 'No registrations yet')}
             </div>
           ) : (
             <div className="space-y-3">
-              {registrations.map((reg, idx) => {
+              {filteredAndSortedRegistrations.map((reg, idx) => {
                 const isPaid = reg.payment_status === 'completed' || reg.status === 'completed';
                 const participantCount = reg.participants?.length || 0;
                 const childrenCount = (reg.participants || []).filter(p => {
@@ -198,19 +276,6 @@ export default function NifgashimParticipantsView({ tripId, language, isRTL }) {
                           </Badge>
                         )}
                       </div>
-                    </div>
-                    <div>
-                      {isPaid ? (
-                        <Badge className="bg-green-500 text-white gap-1">
-                          <CheckCircle className="w-3 h-3" />
-                          {language === 'he' ? 'שולם' : 'Paid'}
-                        </Badge>
-                      ) : (
-                        <Badge className="bg-yellow-500 text-white gap-1">
-                          <Clock className="w-3 h-3" />
-                          {language === 'he' ? 'ממתין' : 'Pending'}
-                        </Badge>
-                      )}
                     </div>
                   </div>
                 );
