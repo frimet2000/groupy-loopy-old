@@ -2659,11 +2659,6 @@ export default function TripDetails() {
                     </div>
                   </div>
                   </TooltipProvider>
-                </CardContent>
-              </Card>
-                </>
-              )}
-              </div>
             </TabsContent>
 
             <TabsContent value="map" className="mt-0">
