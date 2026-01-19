@@ -42,12 +42,21 @@ export default function NifgashimParticipantsView({ tripId, language, isRTL }) {
     let totalChildren = 0;
     let paidCount = 0;
 
+    if (!Array.isArray(registrations)) return {
+      totalRegistrations: 0,
+      totalParticipants: 0,
+      totalAdults: 0,
+      totalChildren: 0,
+      paidCount: 0,
+      pendingCount: 0
+    };
+
     registrations.forEach(reg => {
-      const participants = reg.participants || [];
+      const participants = Array.isArray(reg.participants) ? reg.participants : [];
       participants.forEach(p => {
         totalParticipants++;
         const ageRange = p.age_range;
-        if (ageRange) {
+        if (ageRange && typeof ageRange === 'string') {
           const age = parseInt(ageRange.split('-')[0]);
           if (age < 10) {
             totalChildren++;

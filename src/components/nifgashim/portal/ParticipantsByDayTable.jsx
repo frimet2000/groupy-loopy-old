@@ -143,7 +143,7 @@ export default function ParticipantsByDayTable({ registrations, trekDays, langua
 
   // Get unique days from trek_days sorted by date
   const sortedDays = useMemo(() => {
-    if (!trekDays || trekDays.length === 0) return [];
+    if (!Array.isArray(trekDays) || trekDays.length === 0) return [];
     return [...trekDays].sort((a, b) => {
       if (a.date && b.date) return new Date(a.date) - new Date(b.date);
       return (a.day_number || 0) - (b.day_number || 0);
@@ -154,9 +154,13 @@ export default function ParticipantsByDayTable({ registrations, trekDays, langua
   const participantsByDay = useMemo(() => {
     const byDay = {};
     
+    if (!Array.isArray(registrations)) return byDay;
+
     registrations.forEach(reg => {
-      const allParticipants = reg.participants || [];
-      const selectedDays = reg.selectedDays || reg.selected_days || [];
+      const allParticipants = Array.isArray(reg.participants) ? reg.participants : [];
+      let selectedDays = reg.selectedDays || reg.selected_days || [];
+      if (!Array.isArray(selectedDays)) selectedDays = [];
+      
       const isPaid = reg.payment_status === 'completed' || reg.status === 'completed';
       
       selectedDays.forEach(day => {
@@ -164,7 +168,7 @@ export default function ParticipantsByDayTable({ registrations, trekDays, langua
         if (!byDay[dayNum]) byDay[dayNum] = [];
         
         allParticipants.forEach(p => {
-          const pAge = p.age_range ? parseInt(p.age_range.split('-')[0]) : null;
+          const pAge = (p.age_range && typeof p.age_range === 'string') ? parseInt(p.age_range.split('-')[0]) : null;
           const isChild = pAge !== null && pAge < 10;
           
           byDay[dayNum].push({

@@ -21,7 +21,7 @@ export default function ParticipantStats({ trip, userProfiles, calculateAge, lan
     parentsByAge: {}
   };
 
-  const participants = trip.participants || [];
+  const participants = Array.isArray(trip.participants) ? trip.participants : [];
 
   participants.forEach(participant => {
     stats.totalFamilies++;

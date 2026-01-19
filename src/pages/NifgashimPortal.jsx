@@ -74,11 +74,11 @@ export default function NifgashimPortal() {
     }
 
     // Debug: log the structure to find where images are
-    console.log('=== Trek Days Structure Debug ===');
-    console.log('First day object:', sourceDays[0]);
-    console.log('Trip photos:', nifgashimTrip?.photos);
-    console.log('Trip image_url:', nifgashimTrip?.image_url);
-    console.log('==================================');
+    // console.log('=== Trek Days Structure Debug ===');
+    // console.log('First day object:', sourceDays[0]);
+    // console.log('Trip photos:', nifgashimTrip?.photos);
+    // console.log('Trip image_url:', nifgashimTrip?.image_url);
+    // console.log('==================================');
 
     // Get images from daily_itinerary if available
     const dailyItineraryImages = {};
