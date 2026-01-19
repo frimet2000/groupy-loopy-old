@@ -344,11 +344,14 @@ Deno.serve(async (req) => {
       <!-- Registration Details -->
       <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
         <h3 style="color: #1e293b; margin-top: 0;">📋 ${t.registrationDetails}</h3>
+        
+        <!-- Selected Days - Beautiful Display -->
+        <div style="margin-bottom: 20px;">
+          <p style="font-weight: 600; color: #1e293b; margin-bottom: 8px;">🗓️ ${t.selectedDays}:</p>
+          ${selectedDaysHtml || `<p style="color: #64748b;">${selectedDaysText}</p>`}
+        </div>
+        
         <table style="width: 100%; color: #475569;">
-          <tr>
-            <td style="padding: 8px 0;"><strong>${t.selectedDays}:</strong></td>
-            <td style="padding: 8px 0;">${selectedDaysText}</td>
-          </tr>
           <tr>
             <td style="padding: 8px 0;"><strong>${t.participants}:</strong></td>
             <td style="padding: 8px 0;">${participants.length}</td>
