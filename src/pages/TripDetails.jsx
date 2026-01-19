@@ -1605,6 +1605,7 @@ export default function TripDetails() {
                       }
                       </span>
                     </motion.div>
+                    {!(trip.activity_type === 'trek' && trip.title?.includes('נפגשים')) && (
                     <motion.div
                     className="flex items-center gap-3 bg-rose-600 px-5 py-3 rounded-xl shadow-2xl hover:shadow-[0_8px_30px_rgba(225,29,72,0.5)] transition-all border-2 border-rose-700"
                     whileHover={{ scale: 1.05, y: -3 }}>
@@ -1631,6 +1632,7 @@ export default function TripDetails() {
                         </span>
                       </div>
                     </motion.div>
+                    )}
                     {trip.activity_type === 'cycling' &&
                   <motion.div
                     className="flex items-center gap-3 bg-cyan-600 px-5 py-3 rounded-xl shadow-2xl hover:shadow-[0_8px_30px_rgba(8,145,178,0.5)] transition-all border-2 border-cyan-700"
@@ -1655,7 +1657,7 @@ export default function TripDetails() {
                   }
                   </div>
 
-                  {user && hasJoined &&
+                  {user && hasJoined && !canEdit &&
                 <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                       <Button
                     onClick={handleAddToCalendar}
@@ -1669,8 +1671,7 @@ export default function TripDetails() {
                     }
                         {language === 'he' ? 'הוסף ליומן' : language === 'ru' ? 'В календарь' : language === 'es' ? 'Agregar a calendario' : language === 'fr' ? 'Ajouter au calendrier' : language === 'de' ? 'Zum Kalender' : language === 'it' ? 'Aggiungi al calendario' : 'Add to Calendar'}
                       </Button>
-                      {!canEdit &&
-                  <Button
+                      <Button
                     variant="outline"
                     onClick={() => leaveMutation.mutate()}
                     disabled={leaveMutation.isLoading}
@@ -1679,7 +1680,6 @@ export default function TripDetails() {
                           <X className="w-4 h-4 mr-2" />
                           {t('leave')}
                         </Button>
-                  }
                     </div>
                 }
 
