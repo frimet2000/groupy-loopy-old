@@ -61,6 +61,11 @@ export default function TabVisibilityManager({ trip, language = 'he', onUpdate }
 
   const isHe = language === 'he';
 
+  // Sync hiddenTabs with trip.hidden_tabs when trip updates
+  React.useEffect(() => {
+    setHiddenTabs(trip?.hidden_tabs || []);
+  }, [trip?.hidden_tabs]);
+
   const handleToggle = (tabId) => {
     setHiddenTabs(prev => 
       prev.includes(tabId) 
