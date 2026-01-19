@@ -24,6 +24,7 @@ import InviteFriends from '../components/collaboration/InviteFriends';
 import TrekDaysDisplay from '../components/trek/TrekDaysDisplay';
 import TrekDaySelector from '../components/trek/TrekDaySelector';
 import ProfilePreviewDialog from '../components/profile/ProfilePreviewDialog';
+import TabVisibilityManager from '../components/trips/TabVisibilityManager';
 import ParticipantStats from '../components/participants/ParticipantStats';
 import EditParticipantDialog from '../components/participants/EditParticipantDialog';
 import JoinTripDialog from '../components/dialogs/JoinTripDialog';
