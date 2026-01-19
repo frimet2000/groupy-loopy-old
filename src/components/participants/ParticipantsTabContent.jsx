@@ -27,18 +27,14 @@ export default function ParticipantsTabContent({
 }) {
   const isNifgashimTrip = trip.activity_type === 'trek' && trip.title?.includes('נפגשים');
 
-  if (isNifgashimTrip) {
-    return (
-      <div className="space-y-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
-        <NifgashimParticipantsView tripId={trip.id} language={language} isRTL={isRTL} />
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
-      {/* Participant Statistics - visible to everyone */}
-      <ParticipantStats
+      {isNifgashimTrip ? (
+        <NifgashimParticipantsView tripId={trip.id} language={language} isRTL={isRTL} />
+      ) : (
+        <>
+          {/* Participant Statistics - visible to everyone */}
+          <ParticipantStats
         trip={trip}
         userProfiles={userProfiles}
         calculateAge={calculateAge}
