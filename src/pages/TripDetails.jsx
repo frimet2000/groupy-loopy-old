@@ -1889,6 +1889,8 @@ export default function TripDetails() {
                       <Package className="w-4 h-4 text-orange-600 group-data-[state=active]:text-white" />
                       <span className="text-sm">{language === 'he' ? 'מביא' : 'Bringing'}</span>
                     </TabsTrigger>
+                    )}
+                    {(canEdit || !trip.hidden_tabs?.includes('invite')) && (
                     <TabsTrigger value="invite" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-cyan-500 data-[state=active]:to-cyan-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-cyan-500/50 data-[state=active]:border-2 data-[state=active]:border-cyan-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
                       <UserPlus className="w-4 h-4 text-cyan-600 group-data-[state=active]:text-white" />
                       <span className="text-sm">{language === 'he' ? 'הזמן' : 'Invite'}</span>
