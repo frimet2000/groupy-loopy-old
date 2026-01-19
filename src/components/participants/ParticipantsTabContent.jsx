@@ -362,6 +362,8 @@ export default function ParticipantsTabContent({
           </TooltipProvider>
         </CardContent>
       </Card>
+        </>
+      )}
     </div>
   );
 }
