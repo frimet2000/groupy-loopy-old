@@ -843,18 +843,25 @@ export default function NifgashimAdmin() {
     // Search in multiple fields
     const allParticipants = reg.participants || [];
     const mainParticipant = allParticipants[0] || {};
-    const participantName = (mainParticipant.name || reg.customer_name || reg.user_email || '').toLowerCase();
-    const groupName = (reg.group_name || reg.groupInfo?.name || '').toLowerCase();
     
     const matchesSearch = 
-      participantName.includes(searchLower) ||
-      groupName.includes(searchLower) ||
+      // Names
+      (mainParticipant.name || '').toLowerCase().includes(searchLower) ||
+      (reg.customer_name || '').toLowerCase().includes(searchLower) ||
+      (reg.group_name || '').toLowerCase().includes(searchLower) ||
+      (reg.groupInfo?.name || '').toLowerCase().includes(searchLower) ||
+      (reg.groupInfo?.leaderName || '').toLowerCase().includes(searchLower) ||
+      // Emails
       (reg.user_email || '').toLowerCase().includes(searchLower) ||
       (reg.customer_email || '').toLowerCase().includes(searchLower) ||
+      // ID Numbers
       (reg.id_number || '').includes(searchTerm) ||
       (mainParticipant.id_number || '').includes(searchTerm) ||
+      // Phones
       (mainParticipant.phone || '').includes(searchTerm) ||
       (reg.emergency_contact_phone || '').includes(searchTerm) ||
+      (reg.groupInfo?.leaderPhone || '').includes(searchTerm) ||
+      // All participants
       allParticipants.some(p => 
         (p.name || '').toLowerCase().includes(searchLower) ||
         (p.id_number || '').includes(searchTerm) ||
