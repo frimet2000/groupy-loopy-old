@@ -2229,20 +2229,21 @@ export default function TripDetails() {
             </TabsContent>
 
             <TabsContent value="participants" className="mt-0">
-              <div className="space-y-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
-              {/* Show portal registrations for Nifgashim trips */}
-              {trip.activity_type === 'trek' && trip.title?.includes('נפגשים') && (
-                <NifgashimParticipantsView tripId={trip.id} language={language} isRTL={isRTL} />
-              )}
-              {!(trip.activity_type === 'trek' && trip.title?.includes('נפגשים')) && (
-                <>
-                  {/* Participant Statistics - visible to everyone */}
-                  <ParticipantStats
-                      trip={trip}
-                      userProfiles={userProfiles}
-                      calculateAge={calculateAge}
-                      language={language}
-                      isRTL={isRTL} />
+              <ParticipantsTabContent 
+                trip={trip}
+                userProfiles={userProfiles}
+                calculateAge={calculateAge}
+                language={language}
+                isRTL={isRTL}
+                isOrganizer={isOrganizer}
+                canEdit={canEdit}
+                setShowAddOrganizerDialog={setShowAddOrganizerDialog}
+                setSelectedProfileEmail={setSelectedProfileEmail}
+                setShowProfileDialog={setShowProfileDialog}
+                handleRemoveOrganizer={handleRemoveOrganizer}
+                formatDate={formatDate}
+                t={t}
+              />
 
 
                   <Card>
