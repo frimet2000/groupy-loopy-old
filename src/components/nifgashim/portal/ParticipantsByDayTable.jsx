@@ -335,7 +335,6 @@ export default function ParticipantsByDayTable({ registrations, trekDays, langua
                   <th className="px-3 py-3 font-semibold border-b text-start">{trans.name}</th>
                   <th className="px-3 py-3 font-semibold border-b hidden sm:table-cell text-start">{trans.phone}</th>
                   <th className="px-3 py-3 font-semibold border-b hidden md:table-cell text-start">{trans.email}</th>
-                  <th className="px-3 py-3 font-semibold border-b text-start">{trans.paymentStatus}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -357,19 +356,6 @@ export default function ParticipantsByDayTable({ registrations, trekDays, langua
                     </td>
                     <td className="px-3 py-3 hidden sm:table-cell text-start" dir="ltr">{p.phone}</td>
                     <td className="px-3 py-3 hidden md:table-cell text-start" dir="ltr">{p.email}</td>
-                    <td className="px-3 py-3 text-start">
-                      {p.isPaid ? (
-                        <Badge className="bg-green-500 text-white gap-1">
-                          <CheckCircle className="w-3 h-3" />
-                          {trans.paid}
-                        </Badge>
-                      ) : (
-                        <Badge className="bg-yellow-500 text-white gap-1">
-                          <Clock className="w-3 h-3" />
-                          {trans.pending}
-                        </Badge>
-                      )}
-                    </td>
                   </tr>
                 ))}
               </tbody>
