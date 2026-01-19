@@ -1865,6 +1865,8 @@ export default function TripDetails() {
                       <GalleryHorizontal className="w-4 h-4 text-pink-600 group-data-[state=active]:text-white" />
                       <span className="text-sm">{language === 'he' ? 'גלריה' : language === 'ru' ? 'Галерея' : language === 'es' ? 'Galería' : language === 'fr' ? 'Galerie' : language === 'de' ? 'Galerie' : language === 'it' ? 'Galleria' : 'Gallery'}</span>
                     </TabsTrigger>
+                    )}
+                    {(canEdit || !trip.hidden_tabs?.includes('experiences')) && (
                     <TabsTrigger value="experiences" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-rose-500 data-[state=active]:to-rose-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-rose-500/50 data-[state=active]:border-2 data-[state=active]:border-rose-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
                       <Heart className="w-4 h-4 text-rose-600 group-data-[state=active]:text-white" />
                       <span className="text-sm">{language === 'he' ? 'חוויות' : language === 'ru' ? 'Впечатления' : language === 'es' ? 'Experiencias' : language === 'fr' ? 'Expériences' : language === 'de' ? 'Erlebnisse' : language === 'it' ? 'Esperienze' : 'Experiences'}</span>
