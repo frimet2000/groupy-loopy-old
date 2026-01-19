@@ -1871,6 +1871,8 @@ export default function TripDetails() {
                       <Heart className="w-4 h-4 text-rose-600 group-data-[state=active]:text-white" />
                       <span className="text-sm">{language === 'he' ? 'חוויות' : language === 'ru' ? 'Впечатления' : language === 'es' ? 'Experiencias' : language === 'fr' ? 'Expériences' : language === 'de' ? 'Erlebnisse' : language === 'it' ? 'Esperienze' : 'Experiences'}</span>
                     </TabsTrigger>
+                    )}
+                    {(canEdit || !trip.hidden_tabs?.includes('location')) && (
                     <TabsTrigger value="location" className="group flex items-center gap-2 whitespace-nowrap data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal-500 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-teal-500/50 data-[state=active]:border-2 data-[state=active]:border-teal-400 text-gray-600 py-2 px-2 md:py-3 md:px-4 rounded-xl transition-all duration-300 hover:scale-105 lg:w-full lg:justify-center">
                       <Radio className="w-4 h-4 text-teal-600 group-data-[state=active]:text-white" />
                       <span className="text-sm">{language === 'he' ? 'מיקום חי' : 'Live Location'}</span>
