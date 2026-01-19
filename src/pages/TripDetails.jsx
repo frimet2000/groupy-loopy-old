@@ -216,9 +216,8 @@ export default function TripDetails() {
   const hasPendingRequest = trip?.pending_requests?.some((r) => r.email === user?.email);
   const isFull = !trip?.flexible_participants && trip?.current_participants >= trip?.max_participants;
 
-  // Visibility helper for tabs (organizers always see all)
+  // Visibility helper for tabs
   const isTabVisible = (id) => {
-    if (canEdit) return true;
     return !(trip?.hidden_tabs || []).includes(id);
   };
 
