@@ -298,6 +298,12 @@ export default function ParticipantForm({ userType, participants, setParticipant
         toast.error(trans.invalidPhone);
         return;
       }
+
+      // For children: validate email if provided (optional but must include @ if entered)
+      if (currentParticipant.email && currentParticipant.email.trim() && !currentParticipant.email.includes('@')) {
+        toast.error(language === 'he' ? 'כתובת אימייל לא תקינה - חייבת להכיל @' : language === 'ru' ? 'Неверный email - должен содержать @' : language === 'es' ? 'Email inválido - debe contener @' : language === 'fr' ? 'Email invalide - doit contenir @' : language === 'de' ? 'Ungültige E-Mail - muss @ enthalten' : language === 'it' ? 'Email non valida - deve contenere @' : 'Invalid email - must contain @');
+        return;
+      }
     }
 
     // Check for duplicate ID number
