@@ -509,9 +509,14 @@ export default function NifgashimDayCardsSelector({
         
         {/* Link indicator for paired days - shown as badges on the cards */}
         {daysForGrid.map((day) => {
-           const selected = isSelected(day);
-           const isDisabled = isDayDisabled(day);
-           const isNegev = isNegevDay(day);
+          const selected = isSelected(day);
+          const isDisabled = isDayDisabled(day);
+          const isNegev = isNegevDay(day);
+
+          // Debug log (remove after testing)
+          if (selected) {
+            console.log('Day selected:', day.day_number, day.daily_title);
+          }
            // Find linked day_numbers for this day
           const getLinkedPartner = () => {
             for (const pair of linkedDaysPairs) {
