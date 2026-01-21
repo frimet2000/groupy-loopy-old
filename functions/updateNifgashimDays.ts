@@ -22,69 +22,13 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Invalid token' }, { status: 403 });
     }
 
-    // Get trip details
-    const trip = await base44.asServiceRole.entities.Trip.get(registration.trip_id);
-    
-    if (!trip) {
-      return Response.json({ error: 'Trip not found' }, { status: 404 });
-    }
-
-    // Calculate new amount
-    const paymentSettings = trip.payment_settings || {};
-    const trekCategories = trip.trek_categories || [];
-    const participants = registration.participants || [];
-    
-    // Count adults and children
-    const adultThreshold = paymentSettings.adult_age_threshold || 10;
-    let adultCount = 0;
-    let childCount = 0;
-    
-    participants.forEach(p => {
-      const ageRange = p.age_range || '';
-      const ageMatch = ageRange.match(/(\d+)/);
-      const age = ageMatch ? parseInt(ageMatch[1]) : 18;
-      if (age >= adultThreshold) {
-        adultCount++;
-      } else {
-        childCount++;
-      }
-    });
-
-    // Calculate cost per category
-    let totalAmount = 0;
+    // Extract day numbers only
     const newSelectedDayNumbers = newSelectedDays.map(d => d.day_number);
-    
-    newSelectedDays.forEach(day => {
-      const category = trekCategories.find(c => c.id === day.category_id);
-      const feePerAdult = category?.fee_per_adult || paymentSettings.base_registration_fee || 0;
-      totalAmount += feePerAdult * adultCount;
-    });
 
-    // Check if additional payment is needed
-    const amountPaid = registration.amount_paid || 0;
-    const additionalPaymentNeeded = totalAmount > amountPaid ? totalAmount - amountPaid : 0;
-
-    // If organized group with approval, may be exempt
-    const isExempt = registration.payment_status === 'exempt' || 
-                     (registration.is_organized_group && paymentSettings.organized_group_free);
-
-    if (additionalPaymentNeeded > 0 && !isExempt) {
-      // Return that additional payment is needed
-      return Response.json({
-        success: false,
-        requiresAdditionalPayment: true,
-        currentAmountPaid: amountPaid,
-        newTotalAmount: totalAmount,
-        additionalPaymentNeeded: additionalPaymentNeeded
-      });
-    }
-
-    // Update registration
+    // Update registration - DO NOT CHANGE PAYMENT AMOUNTS
     await base44.asServiceRole.entities.NifgashimRegistration.update(registrationId, {
       selectedDays: newSelectedDays,
-      selected_days: newSelectedDayNumbers,
-      amount: totalAmount,
-      total_amount: totalAmount
+      selected_days: newSelectedDayNumbers
     });
 
     // Send confirmation email
