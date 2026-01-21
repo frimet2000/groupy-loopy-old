@@ -673,7 +673,7 @@ export default function NifgashimDayCardsSelector({
                  className="p-2 flex-1 flex flex-col cursor-pointer"
                  onClick={() => {
                    if (isDisabled) return;
-                   if (isLinked && !isSelected(day.id)) {
+                   if (isLinked && !isSelected(day)) {
                      setShowLinkedDaysDialog(day);
                    } else {
                      handleDayToggle(day);
