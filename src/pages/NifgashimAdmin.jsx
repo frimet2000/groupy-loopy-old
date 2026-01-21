@@ -743,6 +743,25 @@ export default function NifgashimAdmin() {
 
   const trans = translations[language] || translations.en;
 
+  // Helper to format phone for WhatsApp (add +972 if needed)
+  const formatWhatsAppPhone = (phone) => {
+    if (!phone) return '';
+    const cleaned = phone.replace(/[^0-9]/g, '');
+    // If starts with 972, add +
+    if (cleaned.startsWith('972')) {
+      return '+' + cleaned;
+    }
+    // If starts with 0, replace with +972
+    if (cleaned.startsWith('0')) {
+      return '+972' + cleaned.substring(1);
+    }
+    // If doesn't start with +, assume it needs +972
+    if (!phone.startsWith('+')) {
+      return '+972' + cleaned;
+    }
+    return cleaned;
+  };
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -1630,7 +1649,7 @@ export default function NifgashimAdmin() {
                                         <DropdownMenuItem onClick={() => {
                                           const phone = participantPhone || reg.emergency_contact_phone;
                                           if (phone) {
-                                            window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}`, '_blank');
+                                            window.open(`https://wa.me/${formatWhatsAppPhone(phone)}`, '_blank');
                                           } else {
                                             toast.error(language === 'he' ? 'אין מספר טלפון' : 'No phone number');
                                           }
@@ -2241,7 +2260,7 @@ export default function NifgashimAdmin() {
                                           const phone = leaderPhone;
                                           if (phone) {
                                             window.open(
-                                              `https://wa.me/${phone.replace(/[^0-9]/g, '')}`,
+                                              `https://wa.me/${formatWhatsAppPhone(phone)}`,
                                               '_blank'
                                             );
                                           } else {
