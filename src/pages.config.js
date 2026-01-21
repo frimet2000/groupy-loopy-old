@@ -7,6 +7,7 @@ import Community from './pages/Community';
 import CookiePolicy from './pages/CookiePolicy';
 import CreateTrip from './pages/CreateTrip';
 import Dashboard from './pages/Dashboard';
+import EditNifgashimDays from './pages/EditNifgashimDays';
 import EditTrip from './pages/EditTrip';
 import Features from './pages/Features';
 import Feedback from './pages/Feedback';
@@ -40,7 +41,7 @@ import TripPlanningGuide from './pages/TripPlanningGuide';
 import TripSummary from './pages/TripSummary';
 import VisualEditor from './pages/VisualEditor';
 import Weather from './pages/Weather';
-import EditNifgashimDays from './pages/EditNifgashimDays';
+import CancelNifgashimRegistration from './pages/CancelNifgashimRegistration';
 import __Layout from './Layout.jsx';
 
 
@@ -54,6 +55,7 @@ export const PAGES = {
     "CookiePolicy": CookiePolicy,
     "CreateTrip": CreateTrip,
     "Dashboard": Dashboard,
+    "EditNifgashimDays": EditNifgashimDays,
     "EditTrip": EditTrip,
     "Features": Features,
     "Feedback": Feedback,
@@ -87,7 +89,7 @@ export const PAGES = {
     "TripSummary": TripSummary,
     "VisualEditor": VisualEditor,
     "Weather": Weather,
-    "EditNifgashimDays": EditNifgashimDays,
+    "CancelNifgashimRegistration": CancelNifgashimRegistration,
 }
 
 export const pagesConfig = {

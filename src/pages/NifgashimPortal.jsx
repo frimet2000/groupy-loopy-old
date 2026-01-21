@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { ArrowRight, ArrowLeft, Check, Loader2, CreditCard, Shield, LogIn, Edit3 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Loader2, CreditCard, Shield, LogIn, Edit3, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -826,22 +826,40 @@ export default function NifgashimPortal() {
                 
                 {/* Edit Days Link for existing registrations */}
                 <div className="flex flex-col items-center gap-3 pt-4">
-                  <Link to={createPageUrl('EditNifgashimDays')}>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-2 text-purple-600 hover:text-purple-700 border-purple-200 hover:bg-purple-50"
-                    >
-                      <Edit3 className="w-4 h-4" />
-                      {language === 'he' ? 'כבר נרשמת? שינוי ימי מסע' : 
-                       language === 'ru' ? 'Уже зарегистрированы? Изменить дни' : 
-                       language === 'es' ? '¿Ya registrado? Cambiar días' : 
-                       language === 'fr' ? 'Déjà inscrit? Modifier les jours' : 
-                       language === 'de' ? 'Bereits registriert? Tage ändern' : 
-                       language === 'it' ? 'Già registrato? Cambia giorni' : 
-                       'Already registered? Change days'}
-                    </Button>
-                  </Link>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Link to={createPageUrl('EditNifgashimDays')}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-2 text-purple-600 hover:text-purple-700 border-purple-200 hover:bg-purple-50"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                        {language === 'he' ? 'שינוי ימי מסע' : 
+                         language === 'ru' ? 'Изменить дни' : 
+                         language === 'es' ? 'Cambiar días' : 
+                         language === 'fr' ? 'Modifier les jours' : 
+                         language === 'de' ? 'Tage ändern' : 
+                         language === 'it' ? 'Cambia giorni' : 
+                         'Change days'}
+                      </Button>
+                    </Link>
+                    <Link to={createPageUrl('CancelNifgashimRegistration')}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-2 text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50"
+                      >
+                        <XCircle className="w-4 h-4" />
+                        {language === 'he' ? 'ביטול השתתפות' : 
+                         language === 'ru' ? 'Отменить регистрацию' : 
+                         language === 'es' ? 'Cancelar registro' : 
+                         language === 'fr' ? 'Annuler l\'inscription' : 
+                         language === 'de' ? 'Registrierung stornieren' : 
+                         language === 'it' ? 'Annulla registrazione' : 
+                         'Cancel registration'}
+                      </Button>
+                    </Link>
+                  </div>
                   
                   {/* Admin Login Button */}
                   {!isAdmin && (
