@@ -9,6 +9,20 @@ Deno.serve(async (req) => {
     // Get registration details
     const registration = await base44.asServiceRole.entities.NifgashimRegistration.get(registrationId);
     
+    // Generate edit token if doesn't exist
+    let editToken = registration.edit_token;
+    if (!editToken) {
+      editToken = crypto.randomUUID() + '-' + crypto.randomUUID();
+      await base44.asServiceRole.entities.NifgashimRegistration.update(registrationId, {
+        edit_token: editToken,
+        edit_token_created_at: new Date().toISOString()
+      });
+    }
+    
+    // Build edit URL
+    const baseUrl = req.headers.get('origin') || 'https://groupyloopy.app';
+    const editUrl = `${baseUrl}/EditNifgashimDays?regId=${registrationId}&token=${editToken}`;
+    
     if (!registration) {
       return Response.json({ error: 'Registration not found' }, { status: 404 });
     }
@@ -27,6 +41,7 @@ Deno.serve(async (req) => {
         step1: '1. השלם את התשלום (אם טרם שולם)',
         step2: '2. הורד את האפליקציה וצור קוד QR אישי',
         step3: '3. הגע לנקודות המפגש בזמן',
+        editDays: 'לשינוי ימי המסע לחץ כאן',
         questions: 'שאלות? צור קשר:',
         email: 'info@nifgashim.org.il',
         seeYou: 'נתראה במסע!',
@@ -45,6 +60,7 @@ Deno.serve(async (req) => {
         step1: '1. Complete payment (if not yet paid)',
         step2: '2. Download the app and create your personal QR code',
         step3: '3. Arrive at meeting points on time',
+        editDays: 'Click here to change your trek days',
         questions: 'Questions? Contact:',
         email: 'info@nifgashim.org.il',
         seeYou: 'See you on the trek!',
@@ -161,6 +177,13 @@ Deno.serve(async (req) => {
         ${registration.payment_status !== 'completed' && registration.payment_status !== 'exempt' ? `<p>${t.step1}</p>` : ''}
         <p>${t.step2}</p>
         <p>${t.step3}</p>
+      </div>
+
+      <!-- Edit Days Link -->
+      <div style="text-align: center; margin: 20px 0;">
+        <a href="${editUrl}" style="display: inline-block; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+          ✏️ ${t.editDays}
+        </a>
       </div>
 
       <!-- Contact Info -->
