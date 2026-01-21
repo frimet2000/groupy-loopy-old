@@ -264,8 +264,30 @@ export default function EditNifgashimDays() {
         setTrip(response.data.trip);
         
         // Initialize selected days from registration
-        const existingSelectedDays = response.data.registration.selectedDays || [];
-        setSelectedDays(existingSelectedDays);
+        // Map registration's selected day numbers to full trek day objects
+        const trekDays = response.data.trip?.trek_days || [];
+        const registrationSelectedDayNumbers = response.data.registration.selected_days || [];
+        
+        // Also check selectedDays array for full objects
+        const registrationSelectedDays = response.data.registration.selectedDays || [];
+        
+        let initialSelectedDays = [];
+        
+        if (registrationSelectedDays.length > 0 && typeof registrationSelectedDays[0] === 'object') {
+          // selectedDays contains full day objects - use them but ensure they match trek_days
+          initialSelectedDays = registrationSelectedDays.map(regDay => {
+            // Find matching trek day by day_number
+            const matchingTrekDay = trekDays.find(td => td.day_number === regDay.day_number);
+            return matchingTrekDay || regDay;
+          });
+        } else if (registrationSelectedDayNumbers.length > 0) {
+          // selected_days contains day numbers - map to full objects
+          initialSelectedDays = registrationSelectedDayNumbers
+            .map(dayNum => trekDays.find(td => td.day_number === dayNum))
+            .filter(Boolean);
+        }
+        
+        setSelectedDays(initialSelectedDays);
         
         setMode('edit');
       } else {
