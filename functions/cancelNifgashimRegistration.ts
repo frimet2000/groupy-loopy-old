@@ -9,21 +9,33 @@ Deno.serve(async (req) => {
       return Response.json({ success: false, error: 'Email is required' }, { status: 400 });
     }
 
-    // Find registration by email (and optionally ID number)
-    let query = { customer_email: email, registration_status: { $ne: 'cancelled' } };
+    // Find registration by email - check both customer_email and user_email
+    const allRegistrations = await base44.asServiceRole.entities.NifgashimRegistration.list();
     
-    if (idNumber) {
-      query['participants.id_number'] = idNumber;
-    }
+    let registration = null;
+    
+    // Filter active registrations that match the email
+    const matchingRegs = allRegistrations.filter(reg => {
+      if (reg.registration_status === 'cancelled') return false;
+      
+      const emailMatch = reg.customer_email === email || reg.user_email === email;
+      if (!emailMatch) return false;
+      
+      // If ID provided, also verify it matches one of the participants
+      if (idNumber) {
+        const hasMatchingId = reg.participants?.some(p => p.id_number === idNumber);
+        return hasMatchingId;
+      }
+      
+      return true;
+    });
 
-    const registrations = await base44.asServiceRole.entities.NifgashimRegistration.filter(query);
-
-    if (!registrations || registrations.length === 0) {
+    if (matchingRegs.length === 0) {
       return Response.json({ success: false, error: 'not_found' }, { status: 404 });
     }
 
     // Get the most recent active registration
-    const registration = registrations.sort((a, b) => new Date(b.created_date) - new Date(a.created_date))[0];
+    registration = matchingRegs.sort((a, b) => new Date(b.created_date) - new Date(a.created_date))[0];
 
     // Update registration to cancelled status
     await base44.asServiceRole.entities.NifgashimRegistration.update(registration.id, {
@@ -193,6 +205,22 @@ Deno.serve(async (req) => {
                       💡 <strong>${trans.contact}</strong>
                     </p>
                   </div>
+
+                  <!-- Selected Days (if available) -->
+                  ${registration.selectedDays && registration.selectedDays.length > 0 ? `
+                  <div style="background: #f9fafb; border-radius: 12px; padding: 20px; margin: 25px 0;">
+                    <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 16px;">
+                      ${language === 'he' ? '📅 הימים שבוטלו' : '📅 Cancelled Days'}
+                    </h3>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                      ${registration.selectedDays.map(day => `
+                        <div style="background: white; border: 2px solid #e5e7eb; padding: 8px 16px; border-radius: 20px; font-size: 14px; color: #6b7280;">
+                          ${language === 'he' ? `יום ${day.day_number}` : `Day ${day.day_number}`}
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                  ` : ''}
 
                   <!-- Website Link -->
                   <div style="text-align: center; margin: 30px 0; padding: 25px; background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%); border-radius: 12px;">
