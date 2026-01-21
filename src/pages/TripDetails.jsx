@@ -1,5 +1,6 @@
+
 // @ts-nocheck
-import { SEO } from '@/components/SEO';
+import { TripSEO } from '@/components/SEO';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -137,8 +138,6 @@ export default function TripDetails() {
     const age = today.getFullYear() - birth.getFullYear();
     return age;
   };
-
-  const accessibilityTypes = ['wheelchair', 'visual_impairment', 'hearing_impairment', 'mobility_aid', 'stroller_friendly', 'elderly_friendly'];
 
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get('id');
@@ -944,44 +943,9 @@ export default function TripDetails() {
   const title = trip.title || trip.title_he || trip.title_en || '';
   const description = trip.description || trip.description_he || trip.description_en || '';
 
-  const eventSchema = {
-    "@context": "https://schema.org",
-    "@type": "Event",
-    "name": title,
-    "description": description,
-    "startDate": trip.start_date,
-    "endDate": trip.end_date,
-    "eventStatus": "https://schema.org/EventScheduled",
-    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-    "location": {
-      "@type": "Place",
-      "name": trip.location_name || trip.address || 'Israel',
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": trip.address || '',
-        "addressCountry": "IL"
-      }
-    },
-    "image": [
-      trip.image_url || 'https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=1920'
-    ],
-    "organizer": {
-      "@type": "Person",
-      "name": trip.organizer_name || 'Groupy Loopy User'
-    },
-    "offers": {
-      "@type": "Offer",
-      "price": trip.cost_per_participant || 0,
-      "priceCurrency": "ILS",
-      "url": window.location.href,
-      "availability": "https://schema.org/InStock"
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 pb-32 md:pb-8 overflow-y-auto">
-      <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>
-      <SEO title={title} description={description} />
+      <TripSEO trip={trip} language={language} />
       {/* Hero Image */}
       <div className="relative h-72 md:h-96 overflow-hidden">
         <img
@@ -1933,7 +1897,7 @@ export default function TripDetails() {
                     transition={{
                       duration: 1.5,
                       repeat: Infinity,
-                      ease: "easeInOut"
+                      repeatDelay: 2
                     }}
                     className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full" />
 
@@ -2713,208 +2677,6 @@ export default function TripDetails() {
         isLoading={joinMutation.isLoading}
         onShowTerms={() => setShowTermsDialog(true)} />
 
-
-      {/* Old Dialog Code Removed */}
-      {false &&
-      <Dialog open={showJoinDialog} onOpenChange={setShowJoinDialog}>
-        <DialogContent className="w-[95vw] max-w-2xl p-0 gap-0 h-[90vh] max-h-[90vh] flex flex-col overflow-hidden">
-          <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 flex-shrink-0 border-b">
-            <DialogTitle className="text-lg sm:text-xl">
-              placeholder
-            </DialogTitle>
-            <DialogDescription className="text-sm">
-              placeholder
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
-          <div className="space-y-4">
-            <div className="space-y-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
-              <Label className="text-sm">
-                {language === 'he' ? 'הודעה למארגן (אופציונלי)' : language === 'ru' ? 'Сообщение организатору (необязательно)' : language === 'es' ? 'Mensaje al organizador (opcional)' : language === 'fr' ? 'Message à l\'organisateur (optionnel)' : language === 'de' ? 'Nachricht an Organisator (optional)' : language === 'it' ? 'Messaggio all\'organizzatore (opzionale)' : 'Message to organizer (optional)'}
-              </Label>
-              <Textarea
-                  value={joinMessage}
-                  onChange={(e) => setJoinMessage(e.target.value)}
-                  placeholder={language === 'he' ?
-                  'לדוגמה: שלום, אני בעל ניסיון בטיולים בדרום. יש לכם עוד מקום לאדם נוסף?' :
-                  language === 'ru' ? 'напр., Привет, у меня есть опыт походов на юге. Есть место для ещё одного?' :
-                  language === 'es' ? 'ej., Hola, tengo experiencia haciendo senderismo en el sur. ¿Tienen espacio para uno más?' :
-                  language === 'fr' ? 'ex., Salut, j\'ai de l\'expérience en randonnée dans le sud. Avez-vous de la place pour une personne de plus?' :
-                  language === 'de' ? 'z.B. Hallo, ich habe Erfahrung im Wandern im Süden. Haben Sie noch Platz für eine Person?' :
-                  language === 'it' ? 'es., Ciao, ho esperienza in escursioni al sud. Avete spazio per un\'altra persona?' :
-                  'e.g., Hi, I have experience hiking in the south. Do you have room for one more?'}
-                  rows={3}
-                  dir={language === 'he' ? 'rtl' : 'ltr'}
-                  className="text-sm" />
-
-            </div>
-
-            {/* Trek Day Selection */}
-            <div dir={language === 'he' ? 'rtl' : 'ltr'}>
-            {trip.activity_type === 'trek' && trip.trek_days?.length > 0 &&
-                <TrekDaySelector
-                  trekDays={trip.trek_days}
-                  selectedDays={selectedTrekDays}
-                  setSelectedDays={setSelectedTrekDays} />
-
-                }
-            </div>
-
-            <div className="space-y-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
-              <Label className="text-sm">
-                {t('myAccessibilityNeeds')} ({language === 'he' ? 'אופציונלי' : language === 'ru' ? 'необязательно' : language === 'es' ? 'opcional' : language === 'fr' ? 'optionnel' : language === 'de' ? 'optional' : language === 'it' ? 'opzionale' : 'optional'})
-              </Label>
-              <div className="flex flex-wrap gap-2">
-                {accessibilityTypes.map((type) =>
-                  <Badge
-                    key={type}
-                    variant={accessibilityNeeds.includes(type) ? 'default' : 'outline'}
-                    className={`cursor-pointer transition-all text-xs ${
-                    accessibilityNeeds.includes(type) ?
-                    'bg-purple-600 hover:bg-purple-700' :
-                    'hover:border-purple-500 hover:text-purple-600'}`
-                    }
-                    onClick={() => {
-                      setAccessibilityNeeds((prev) =>
-                      prev.includes(type) ?
-                      prev.filter((t) => t !== type) :
-                      [...prev, type]
-                      );
-                    }}>
-
-                    {t(type)}
-                  </Badge>
-                  )}
-              </div>
-            </div>
-
-            {/* Family Members Selection */}
-            <div className="space-y-3" dir={language === 'he' ? 'rtl' : 'ltr'}>
-              <Label className="text-sm font-semibold">
-                {language === 'he' ? 'מי מצטרף לטיול?' : 'Who is joining the trip?'}
-              </Label>
-              <div className="grid grid-cols-1 gap-2 bg-gray-50 p-3 rounded-lg">
-                <div className="flex items-center gap-3 p-2 bg-white rounded-lg border-2 border-emerald-200">
-                  <Checkbox
-                      id="me"
-                      checked={familyMembers.me}
-                      disabled
-                      className="data-[state=checked]:bg-emerald-600" />
-
-                  <label htmlFor="me" className="flex-1 font-medium text-sm cursor-not-allowed opacity-70">
-                    {language === 'he' ? 'אני' : 'Me'}
-                  </label>
-                </div>
-                
-                <div className="flex items-center gap-3 p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors">
-                  <Checkbox
-                      id="spouse"
-                      checked={familyMembers.spouse}
-                      onCheckedChange={(checked) => setFamilyMembers({ ...familyMembers, spouse: checked })}
-                      className="data-[state=checked]:bg-emerald-600" />
-
-                  <label htmlFor="spouse" className="flex-1 font-medium text-sm cursor-pointer">
-                    {language === 'he' ? 'בן/בת זוג' : 'Spouse/Partner'}
-                  </label>
-                </div>
-
-                {user?.children_age_ranges && user.children_age_ranges.length > 0 && (() => {
-                    const normalizedChildren = user.children_age_ranges.map((child, idx) => {
-                      if (typeof child === 'string') {
-                        return { id: `idx_${idx}`, name: null, age_range: child, gender: null };
-                      }
-                      return { ...child, id: child?.id || `idx_${idx}` };
-                    });
-
-                    return (
-                      <div className="space-y-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
-                      <Label className="text-xs font-semibold">
-                        {language === 'he' ? 'ילדים' : 'Children'}
-                      </Label>
-                      {normalizedChildren.map((child, idx) => {
-                          const refId = child.id;
-                          return (
-                            <div key={refId} className="flex items-center gap-3 p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors">
-                            <Checkbox
-                                id={`child-${refId}`}
-                                checked={selectedChildren.includes(refId)}
-                                onCheckedChange={(checked) => {
-                                  setSelectedChildren((prev) =>
-                                  checked ?
-                                  [...prev, refId] :
-                                  prev.filter((id) => id !== refId)
-                                  );
-                                }}
-                                className="data-[state=checked]:bg-pink-600" />
-
-                            <label htmlFor={`child-${refId}`} className="flex-1 font-medium text-sm cursor-pointer">
-                              {child.name || `${language === 'he' ? 'ילד' : 'Child'} ${idx + 1}`}
-                              {child.age_range &&
-                                <Badge variant="outline" className="ml-2 bg-pink-50 text-pink-700 text-xs">
-                                  {child.age_range}
-                                </Badge>
-                                }
-                            </label>
-                          </div>);
-
-                        })}
-                    </div>);
-
-                  })()}
-
-                <div className="flex items-center gap-3 p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors">
-                  <Checkbox
-                      id="pets"
-                      checked={familyMembers.pets}
-                      onCheckedChange={(checked) => setFamilyMembers({ ...familyMembers, pets: checked })}
-                      className="data-[state=checked]:bg-amber-600" />
-
-                  <label htmlFor="pets" className="flex-1 font-medium text-sm cursor-pointer flex items-center gap-2">
-                    <Dog className="w-4 h-4" />
-                    {language === 'he' ? 'בעלי חיים' : 'Pets'}
-                  </label>
-                </div>
-
-                <div className="space-y-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
-                  <div className="flex items-center gap-3 p-2 bg-white rounded-lg hover:bg-gray-50 transition-colors">
-                    <Checkbox
-                        id="other"
-                        checked={familyMembers.other}
-                        onCheckedChange={(checked) => {
-                          setFamilyMembers({ ...familyMembers, other: checked });
-                          if (!checked) setOtherMemberName('');
-                        }}
-                        className="data-[state=checked]:bg-purple-600" />
-
-                    <label htmlFor="other" className="flex-1 font-medium text-sm cursor-pointer">
-                      {language === 'he' ? 'נוסף' : 'Other'}
-                    </label>
-                  </div>
-                  
-                  {familyMembers.other &&
-                    <Input
-                      value={otherMemberName}
-                      onChange={(e) => setOtherMemberName(e.target.value)}
-                      placeholder={language === 'he' ? 'שם האדם/ים הנוסף/ים' : 'Name of other person(s)'}
-                      dir={language === 'he' ? 'rtl' : 'ltr'}
-                      className="text-sm" />
-
-                    }
-                </div>
-              </div>
-            </div>
-
-            placeholder
-          </div>
-          </div>
-
-          <div className="flex gap-3 px-4 sm:px-6 py-3 sm:py-4 border-t flex-shrink-0 bg-white">
-            placeholder
-          </div>
-        </DialogContent>
-      </Dialog>
-      }
 
       {/* Join Request Notification Dialog */}
       {trip && trip.pending_requests && trip.pending_requests.length > 0 &&
