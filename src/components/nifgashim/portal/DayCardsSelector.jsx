@@ -392,7 +392,7 @@ export default function NifgashimDayCardsSelector({
       if (linkedDayNumbers.length > 0) {
         newSelected = newSelected.filter(d => !linkedDayNumbers.includes(d.day_number));
       } else {
-        newSelected = newSelected.filter(d => d.id !== day.id);
+        newSelected = newSelected.filter(d => d.id !== day.id && d.day_number !== day.day_number);
       }
     } else {
       // Select logic
