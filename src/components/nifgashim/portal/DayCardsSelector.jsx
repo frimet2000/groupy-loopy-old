@@ -353,7 +353,7 @@ export default function NifgashimDayCardsSelector({
   }, [trekDays]);
 
   const handleDayToggle = (day) => {
-    const currentlySelected = isSelected(day.id);
+    const currentlySelected = isSelected(day);
     
     // Check if this day is disabled (Negev max reached for non-selected Negev days)
     if (isDayDisabled(day)) {
