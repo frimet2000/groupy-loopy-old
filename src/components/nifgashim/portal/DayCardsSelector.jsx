@@ -573,7 +573,7 @@ export default function NifgashimDayCardsSelector({
                     className="relative w-full bg-gradient-to-br from-slate-400 via-slate-500 to-slate-600 cursor-pointer group overflow-hidden"
                     onClick={() => {
                       if (isDisabled) return;
-                      if (isLinked && !isSelected(day.id)) {
+                      if (isLinked && !isSelected(day)) {
                         setShowLinkedDaysDialog(day);
                       } else {
                         handleDayToggle(day);
