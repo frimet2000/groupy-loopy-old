@@ -317,7 +317,7 @@ export default function CancelNifgashimRegistration() {
     setIsResending(true);
 
     try {
-      await base44.functions.invoke('resendNifgashimEditLink', {
+      await base44.functions.invoke('resendNifgashimCancelLink', {
         email: resendEmail,
         idNumber: resendIdNumber || undefined,
         language: language
