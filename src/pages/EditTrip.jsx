@@ -282,6 +282,30 @@ export default function EditTrip() {
     }));
   };
 
+  const handleDateChange = (e) => {
+    const newDate = e.target.value;
+    const oldDateStr = formData.date;
+    handleChange('date', newDate);
+
+    if (formData.activity_type === 'trek' && trekDays.length > 0 && oldDateStr && newDate) {
+      const oldDate = new Date(oldDateStr);
+      const date = new Date(newDate);
+      const diffTime = date.getTime() - oldDate.getTime();
+      const diffDays = Math.round(diffTime / (1000 * 3600 * 24));
+
+      if (diffDays !== 0) {
+        const updatedDays = trekDays.map(day => {
+          if (!day.date) return day;
+          const d = new Date(day.date);
+          d.setDate(d.getDate() + diffDays);
+          return { ...day, date: d.toISOString().split('T')[0] };
+        });
+        setTrekDays(updatedDays);
+        toast.info(language === 'he' ? 'תאריכי ימי הטראק עודכנו בהתאם' : 'Trek days dates updated accordingly');
+      }
+    }
+  };
+
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -701,7 +725,7 @@ export default function EditTrip() {
                         <Input
                           type="date"
                           value={formData.date}
-                          onChange={(e) => handleChange('date', e.target.value)}
+                          onChange={handleDateChange}
                           className="p-4"
                         />
                       </div>
