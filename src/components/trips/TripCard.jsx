@@ -40,7 +40,7 @@ const difficultyColors = {
   hard: 'bg-red-100 text-red-700',
 };
 
-export default function TripCard({ trip, currentUser }) {
+export default function TripCard({ trip, currentUser, isArchive = false }) {
   const { t, language, isRTL } = useLanguage();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -198,14 +198,19 @@ export default function TripCard({ trip, currentUser }) {
             <img
               src={trip.image_url || `https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=800&q=85`}
               alt={title}
-              className="w-full h-full object-cover brightness-105 contrast-110 saturate-110"
+              className={`w-full h-full object-cover brightness-105 contrast-110 saturate-110 ${isArchive ? 'grayscale' : ''}`}
               loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         </Link>
             
             <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} flex flex-col gap-2 max-w-[60%] pointer-events-none z-10`}>
-              {hasJoined && (
+              {isArchive && (
+                <Badge variant="secondary" className="bg-gray-800 text-white border-2 border-white font-bold text-sm px-4 py-1.5 shadow-xl w-fit">
+                  {language === 'he' ? 'הסתיים' : 'Ended'}
+                </Badge>
+              )}
+              {hasJoined && !isArchive && (
                 <Badge variant="secondary" className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white border-2 border-white font-bold text-sm px-4 py-1.5 shadow-xl flex items-center gap-1.5 w-fit animate-pulse">
                   <Users className="w-4 h-4" />
                   {language === 'he' ? 'הצטרפת' : language === 'ru' ? 'Вы участвуете' : language === 'es' ? 'Te uniste' : language === 'fr' ? 'Vous participez' : language === 'de' ? 'Sie nehmen teil' : language === 'it' ? 'Partecipi' : 'Joined'}
