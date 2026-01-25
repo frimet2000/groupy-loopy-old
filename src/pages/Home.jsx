@@ -269,7 +269,15 @@ export default function Home() {
   }, [allTrips, user]);
 
   const filteredTrips = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     return trips.filter(trip => {
+      // Filter out past trips
+      const tripDate = new Date(trip.date);
+      tripDate.setHours(0, 0, 0, 0);
+      if (tripDate < today) return false;
+
       // Search (client-side only)
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
@@ -1103,6 +1111,15 @@ export default function Home() {
               </Button>
             </div>
           )}
+
+          <div className="mt-16 text-center border-t border-gray-200 pt-8">
+            <Link to={createPageUrl('Archive')}>
+              <Button variant="ghost" className="text-gray-500 hover:text-emerald-600 gap-2">
+                <History className="w-4 h-4" />
+                {language === 'he' ? 'צפה בארכיון טיולים שהתקיימו' : 'View Past Trips Archive'}
+              </Button>
+            </Link>
+          </div>
       </section>
 
       {/* Live Trips Dialog */}

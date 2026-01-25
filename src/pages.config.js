@@ -42,6 +42,7 @@ import TripPlanningGuide from './pages/TripPlanningGuide';
 import TripSummary from './pages/TripSummary';
 import VisualEditor from './pages/VisualEditor';
 import Weather from './pages/Weather';
+import Archive from './pages/Archive';
 import __Layout from './Layout.jsx';
 
 
@@ -90,6 +91,7 @@ export const PAGES = {
     "TripSummary": TripSummary,
     "VisualEditor": VisualEditor,
     "Weather": Weather,
+    "Archive": Archive,
 }
 
 export const pagesConfig = {
