@@ -515,10 +515,10 @@ export default function NifgashimDayCardsSelector({
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 relative px-0" ref={gridRef}>
-         {/* Rope between linked days - hidden on mobile for performance */}
-        <div className="hidden sm:block">
+         {/* Rope between linked days - only rendered on desktop for performance and stability */}
+        {isDesktop && (
           <RopeOverlay containerRef={gridRef} days={daysForGrid} linkedDaysPairs={linkedDaysPairs} cardRefs={cardRefs} isRTL={isRTL} />
-        </div>
+        )}
         
         {/* Link indicator for paired days - shown as badges on the cards */}
         {daysForGrid.map((day) => {
