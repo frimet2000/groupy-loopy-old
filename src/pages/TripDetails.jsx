@@ -1,4 +1,3 @@
-
 // @ts-nocheck
 import { TripSEO } from '@/components/SEO';
 import React, { useState, useEffect } from 'react';
@@ -212,7 +211,8 @@ export default function TripDetails() {
 
   const isOrganizer = user?.email === trip?.organizer_email;
   const isAdditionalOrganizer = trip?.additional_organizers?.some((o) => o.email === user?.email);
-  const canEdit = isOrganizer || isAdditionalOrganizer;
+  const isAdmin = user?.role === 'admin';
+  const canEdit = isOrganizer || isAdditionalOrganizer || isAdmin;
   const hasJoined = trip?.participants?.some((p) => p.email === user?.email);
   const hasPendingRequest = trip?.pending_requests?.some((r) => r.email === user?.email);
   const isFull = !trip?.flexible_participants && trip?.current_participants >= trip?.max_participants;
