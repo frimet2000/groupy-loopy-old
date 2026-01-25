@@ -503,7 +503,7 @@ export default function NifgashimDayCardsSelector({
         )}
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 relative" ref={gridRef}>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 relative px-2 sm:px-0" ref={gridRef}>
          {/* Rope between linked days */}
         <RopeOverlay containerRef={gridRef} days={daysForGrid} linkedDaysPairs={linkedDaysPairs} cardRefs={cardRefs} isRTL={isRTL} />
         
@@ -561,21 +561,21 @@ export default function NifgashimDayCardsSelector({
                initial={{ opacity: 0, scale: 0.95 }}
                animate={{ 
                  opacity: isDisabled ? 0.5 : 1, 
-                 scale: selected ? 1.03 : 1,
+                 scale: selected ? 1.02 : 1,
                  filter: isDisabled ? 'grayscale(100%)' : 'grayscale(0%)'
                }}
-               whileHover={!isDisabled ? { scale: 1.02 } : {}}
+               whileTap={!isDisabled ? { scale: 0.98 } : {}}
                className={cn(
-                 "relative rounded-lg border-4 transition-all duration-200 overflow-hidden flex flex-col h-full",
+                 "relative rounded-lg border-3 sm:border-4 transition-all duration-200 overflow-hidden flex flex-col h-full touch-manipulation",
                  selected 
-                   ? "border-green-600 shadow-2xl ring-4 ring-green-400 ring-opacity-50 bg-green-50" 
-                   : "border-gray-200 hover:border-blue-300 hover:shadow-sm bg-white",
+                   ? "border-green-600 shadow-xl sm:shadow-2xl ring-2 sm:ring-4 ring-green-400 ring-opacity-50 bg-green-50" 
+                   : "border-gray-200 hover:border-blue-300 hover:shadow-sm bg-white active:border-blue-400",
                  isDisabled && "cursor-not-allowed border-gray-100 bg-gray-50"
                )}
              >
                {/* Image Section */}
                   <div 
-                    className="relative w-full bg-gradient-to-br from-slate-400 via-slate-500 to-slate-600 cursor-pointer group overflow-hidden"
+                    className="relative w-full aspect-square sm:aspect-video bg-gradient-to-br from-slate-400 via-slate-500 to-slate-600 cursor-pointer group overflow-hidden touch-manipulation"
                     onClick={() => {
                       if (isDisabled) return;
                       if (isLinked && !isSelected(day)) {
@@ -638,26 +638,26 @@ export default function NifgashimDayCardsSelector({
                      e.stopPropagation();
                      setSelectedDayForInfo(day);
                    }}
-                   className="absolute top-1 left-1 p-1 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 transition-colors z-10"
+                   className="absolute top-0.5 sm:top-1 left-0.5 sm:left-1 p-1 sm:p-1.5 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 transition-colors z-10 touch-manipulation"
                  >
-                   <Info className="w-3 h-3" />
+                   <Info className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                  </button>
 
                  {/* Category Badge */}
-                 <div className={`absolute top-1 ${isRTL ? 'left-8' : 'right-8'} ${isNegev ? 'bg-orange-500/80' : 'bg-blue-500/80'} backdrop-blur-sm text-white text-xs px-1 py-0.5 rounded-full shadow-sm`}>
+                 <div className={`absolute top-0.5 sm:top-1 ${isRTL ? 'left-6 sm:left-8' : 'right-6 sm:right-8'} ${isNegev ? 'bg-orange-500/80' : 'bg-blue-500/80'} backdrop-blur-sm text-white text-[9px] sm:text-xs px-1 py-0.5 rounded-full shadow-sm`}>
                    {isNegev ? (language === 'he' ? 'נ' : 'N') : (language === 'he' ? 'צ' : 'C')}
                  </div>
 
                  {/* Linked Days Indicator */}
                  {isLinked && linkedColor && (
                    <motion.div 
-                     className={`absolute bottom-2 ${isRTL ? 'right-2' : 'left-2'} ${linkedColor.bg} backdrop-blur-sm text-white p-1 rounded-full shadow-lg sm:bottom-1 sm:${isRTL ? 'right-1' : 'left-1'}`}
+                     className={`absolute bottom-1 sm:bottom-1 ${isRTL ? 'right-1' : 'left-1'} ${linkedColor.bg} backdrop-blur-sm text-white p-0.5 sm:p-1 rounded-full shadow-lg`}
                      animate={{ 
                        scale: [1, 1.1, 1],
                      }}
                      transition={{ duration: 2, repeat: Infinity }}
                    >
-                     <Link2 className="w-3 h-3" />
+                     <Link2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                    </motion.div>
                  )}
 
@@ -665,8 +665,8 @@ export default function NifgashimDayCardsSelector({
 
                  {/* Selected Checkmark - ENHANCED VISIBILITY */}
                  {selected && (
-                   <div className={`absolute top-1 ${isRTL ? 'left-auto right-1' : 'right-1'} bg-green-600 text-white rounded-full p-2 shadow-2xl ring-4 ring-green-300 ring-opacity-70 z-20`}>
-                     <CheckCircle2 className="w-7 h-7" />
+                   <div className={`absolute top-0.5 sm:top-1 ${isRTL ? 'left-auto right-0.5 sm:right-1' : 'right-0.5 sm:right-1'} bg-green-600 text-white rounded-full p-1 sm:p-2 shadow-xl sm:shadow-2xl ring-2 sm:ring-4 ring-green-300 ring-opacity-70 z-20`}>
+                     <CheckCircle2 className="w-5 h-5 sm:w-7 sm:h-7" />
                    </div>
                  )}
 
@@ -675,32 +675,32 @@ export default function NifgashimDayCardsSelector({
 
                {/* Content Section */}
                <div 
-                 className="p-2 flex-1 flex flex-col cursor-pointer"
-                 onClick={() => {
-                   if (isDisabled) return;
-                   if (isLinked && !isSelected(day)) {
-                     setShowLinkedDaysDialog(day);
-                   } else {
-                     handleDayToggle(day);
-                   }
-                 }}
+               className="p-1.5 sm:p-2 flex-1 flex flex-col cursor-pointer touch-manipulation"
+               onClick={() => {
+                 if (isDisabled) return;
+                 if (isLinked && !isSelected(day)) {
+                   setShowLinkedDaysDialog(day);
+                 } else {
+                   handleDayToggle(day);
+                 }
+               }}
                >
-                 <h3 className="font-bold text-xs leading-tight">{day.daily_title}</h3>
+               <h3 className="font-bold text-[10px] sm:text-xs leading-tight line-clamp-2">{day.daily_title}</h3>
 
-                 <div className="mt-auto text-xs text-gray-600 space-y-0.5">
-                  <div className={cn(
-                    "w-1 h-1 rounded-full",
-                    day.difficulty === 'easy' ? 'bg-green-500' :
-                    day.difficulty === 'moderate' ? 'bg-yellow-500' :
-                    'bg-red-500'
-                  )} />
-                  {day.elevation_gain_m > 0 && (
-                    <div>
-                      <Mountain className="w-2 h-2 inline" />
-                      <span className="text-xs"> {day.elevation_gain_m}m</span>
-                    </div>
-                  )}
-                 </div>
+               <div className="mt-auto text-[9px] sm:text-xs text-gray-600 space-y-0.5">
+                <div className={cn(
+                  "w-1 h-1 rounded-full",
+                  day.difficulty === 'easy' ? 'bg-green-500' :
+                  day.difficulty === 'moderate' ? 'bg-yellow-500' :
+                  'bg-red-500'
+                )} />
+                {day.elevation_gain_m > 0 && (
+                  <div>
+                    <Mountain className="w-2 h-2 inline" />
+                    <span> {day.elevation_gain_m}m</span>
+                  </div>
+                )}
+               </div>
                </div>
              </motion.div>
            );
@@ -717,7 +717,7 @@ export default function NifgashimDayCardsSelector({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedDayForInfo(null)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4"
             >
               {/* Modal Content */}
               <motion.div
@@ -726,18 +726,18 @@ export default function NifgashimDayCardsSelector({
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.9, opacity: 0, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative"
+                className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto relative"
               >
                 {/* Close Button */}
                 <button
                   onClick={() => setSelectedDayForInfo(null)}
-                  className="absolute top-4 right-4 z-10 p-2 bg-black/20 hover:bg-black/40 text-white rounded-full transition-colors"
+                  className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10 p-1.5 sm:p-2 bg-black/20 hover:bg-black/40 text-white rounded-full transition-colors touch-manipulation"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
 
                 {/* Hero Image */}
-                <div className="relative h-64 w-full">
+                <div className="relative h-48 sm:h-64 w-full">
                   {selectedDayForInfo.image_url ? (
                     <img 
                       src={selectedDayForInfo.image_url} 
@@ -754,22 +754,22 @@ export default function NifgashimDayCardsSelector({
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 p-6 text-white w-full">
-                    <div className="flex items-center gap-2 text-sm opacity-90 mb-2">
-                        <Calendar className="w-4 h-4" />
+                  <div className="absolute bottom-0 left-0 p-3 sm:p-6 text-white w-full">
+                    <div className="flex items-center gap-2 text-xs sm:text-sm opacity-90 mb-1 sm:mb-2">
+                        <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                         {formatDate(selectedDayForInfo.date)}
                     </div>
-                    <h2 className="text-3xl font-bold">{selectedDayForInfo.daily_title}</h2>
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">{selectedDayForInfo.daily_title}</h2>
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-6 space-y-6">
+                <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                   {/* Stats Row */}
-                  <div className="flex flex-wrap gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap gap-2 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100 text-sm sm:text-base">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
                         <div className={cn(
-                          "w-3 h-3 rounded-full",
+                          "w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full",
                           selectedDayForInfo.difficulty === 'easy' ? 'bg-green-500' :
                           selectedDayForInfo.difficulty === 'moderate' ? 'bg-yellow-500' :
                           'bg-red-500'
@@ -778,21 +778,21 @@ export default function NifgashimDayCardsSelector({
                             {selectedDayForInfo.difficulty && typeof selectedDayForInfo.difficulty === 'string' ? (trans.difficulty[selectedDayForInfo.difficulty] || selectedDayForInfo.difficulty) : '-'}
                         </span>
                     </div>
-                    <div className="w-px h-6 bg-gray-300" />
-                    <div className="flex items-center gap-2">
-                        <MapPin className="w-5 h-5 text-gray-500" />
+                    <div className="w-px h-4 sm:h-6 bg-gray-300" />
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                        <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
                         <span className="font-medium">{selectedDayForInfo.daily_distance_km}</span>
                     </div>
-                    <div className="w-px h-6 bg-gray-300" />
-                    <div className="flex items-center gap-2">
-                        <Mountain className="w-5 h-5 text-gray-500" />
+                    <div className="w-px h-4 sm:h-6 bg-gray-300" />
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                        <Mountain className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
                         <span className="font-medium">{selectedDayForInfo.elevation_gain_m} {trans.meters}</span>
                     </div>
                   </div>
 
                   {/* Description */}
                   {selectedDayForInfo.description && (
-                    <div className="prose max-w-none text-gray-700 leading-relaxed">
+                    <div className="prose prose-sm sm:prose max-w-none text-gray-700 leading-relaxed text-sm sm:text-base">
                       <div dangerouslySetInnerHTML={{ 
                         __html: selectedDayForInfo.description.includes('<') 
                           ? selectedDayForInfo.description 
@@ -802,7 +802,7 @@ export default function NifgashimDayCardsSelector({
                   )}
 
                   {!selectedDayForInfo.description && (
-                    <p className="text-gray-500 italic text-center py-8">
+                    <p className="text-gray-500 italic text-center py-6 sm:py-8 text-sm sm:text-base">
                       {language === 'he' ? 'אין מידע נוסף על יום זה' : 'No additional information for this day'}
                     </p>
                   )}
@@ -822,33 +822,33 @@ export default function NifgashimDayCardsSelector({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowLinkedDaysDialog(null)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+              className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-white">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-white/20 rounded-full">
-                    <Link2 className="w-6 h-6" />
+              <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 sm:p-6 text-white">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="p-2 sm:p-3 bg-white/20 rounded-full">
+                    <Link2 className="w-4 h-4 sm:w-6 sm:h-6" />
                   </div>
-                  <h3 className="text-xl font-bold">{trans.linkedDaysTitle}</h3>
+                  <h3 className="text-lg sm:text-xl font-bold">{trans.linkedDaysTitle}</h3>
                 </div>
               </div>
 
               {/* Content */}
-              <div className="p-6">
-                <p className="text-gray-700 leading-relaxed mb-6">
+              <div className="p-4 sm:p-6">
+                <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-4 sm:mb-6">
                   {trans.linkedDaysMessage}
                 </p>
 
                 {/* Visual representation of linked days */}
-                <div className="flex items-center justify-center gap-2 mb-6 p-4 bg-purple-50 rounded-xl">
+                <div className="flex items-center justify-center gap-1 sm:gap-2 mb-4 sm:mb-6 p-3 sm:p-4 bg-purple-50 rounded-xl">
                   {(() => {
                     const linkedPartner = linkedDaysPairs.find(pair => {
                       const pairDays = Array.isArray(pair) ? pair : [pair.day_id_1, pair.day_id_2];
@@ -862,18 +862,18 @@ export default function NifgashimDayCardsSelector({
                       return (
                         <React.Fragment key={dayNum}>
                           <div className="flex flex-col items-center">
-                            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg sm:rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-lg">
                               {dayNum}
                             </div>
-                            <span className="text-xs text-gray-600 mt-1 text-center max-w-[80px] truncate">
+                            <span className="text-[9px] sm:text-xs text-gray-600 mt-1 text-center max-w-[60px] sm:max-w-[80px] truncate">
                               {dayObj?.daily_title || `Day ${dayNum}`}
                             </span>
                           </div>
                           {idx === 0 && (
                             <div className="flex items-center">
-                              <div className="w-8 h-1 bg-purple-300 rounded-full" />
-                              <Link2 className="w-5 h-5 text-purple-500 mx-1" />
-                              <div className="w-8 h-1 bg-purple-300 rounded-full" />
+                              <div className="w-4 sm:w-8 h-0.5 sm:h-1 bg-purple-300 rounded-full" />
+                              <Link2 className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500 mx-0.5 sm:mx-1" />
+                              <div className="w-4 sm:w-8 h-0.5 sm:h-1 bg-purple-300 rounded-full" />
                             </div>
                           )}
                         </React.Fragment>
@@ -916,25 +916,25 @@ export default function NifgashimDayCardsSelector({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowMap(false)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[80vh] overflow-hidden relative flex flex-col"
+              className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-4xl h-[85vh] sm:h-[80vh] overflow-hidden relative flex flex-col"
             >
-              <div className="p-4 border-b flex items-center justify-between bg-gray-50">
-                <h3 className="font-bold text-lg flex items-center gap-2">
-                    <Map className="w-5 h-5 text-indigo-600" />
+              <div className="p-3 sm:p-4 border-b flex items-center justify-between bg-gray-50">
+                <h3 className="font-bold text-base sm:text-lg flex items-center gap-2">
+                    <Map className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
                     {language === 'he' ? 'מפת המסלול' : 'Route Map'}
                 </h3>
                 <button
                   onClick={() => setShowMap(false)}
-                  className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                  className="p-1.5 sm:p-2 hover:bg-gray-200 rounded-full transition-colors touch-manipulation"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
               
