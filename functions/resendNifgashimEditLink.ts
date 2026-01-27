@@ -192,11 +192,16 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to: email,
-      subject: t.subject,
-      body: emailBody
-    });
+    // Get Gmail access token and send via Gmail API
+    let gmailAccessToken;
+    try {
+      gmailAccessToken = await base44.asServiceRole.connectors.getAccessToken('gmail');
+    } catch (gmailError) {
+      console.error('Failed to get Gmail access token:', gmailError.message);
+      return Response.json({ error: 'Email service not configured' }, { status: 500 });
+    }
+
+    await sendEmailViaGmail(gmailAccessToken, email, t.subject, emailBody);
 
     return Response.json({ success: true });
   } catch (error) {
