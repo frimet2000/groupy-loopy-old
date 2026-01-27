@@ -1,5 +1,40 @@
 // @ts-nocheck
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+
+// Helper function to send email via Gmail API
+async function sendEmailViaGmail(accessToken, to, subject, htmlBody) {
+  // Create email in RFC 2822 format
+  const emailLines = [
+    `To: ${to}`,
+    `Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`,
+    'MIME-Version: 1.0',
+    'Content-Type: text/html; charset=UTF-8',
+    '',
+    htmlBody
+  ];
+  
+  const email = emailLines.join('\r\n');
+  const encodedEmail = btoa(unescape(encodeURIComponent(email)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+
+  const response = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ raw: encodedEmail })
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Gmail API error: ${response.status} - ${errorText}`);
+  }
+
+  return await response.json();
+}
 import QRCode from 'npm:qrcode@1.5.3';
 
 Deno.serve(async (req) => {
