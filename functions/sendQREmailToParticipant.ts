@@ -432,15 +432,13 @@ Deno.serve(async (req) => {
 </html>
     `;
 
-    // Send email using service role to send to any email (not just app users)
+    // Send email using Gmail API (can send to any email)
     try {
-      await base44.asServiceRole.integrations.Core.SendEmail({
-        to: recipientEmail,
-        subject: t.subject,
-        body: emailHtml
-      });
+      console.log('Sending email via Gmail to:', recipientEmail);
+      await sendEmailViaGmail(gmailAccessToken, recipientEmail, t.subject, emailHtml);
+      console.log('Email sent successfully via Gmail');
     } catch (emailError) {
-      console.error('Email send error:', emailError);
+      console.error('Gmail send error:', emailError);
       throw new Error(`Failed to send email to ${recipientEmail}: ${emailError.message}`);
     }
 
