@@ -190,11 +190,14 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to: registration.user_email,
-      subject: t.subject,
-      body: emailBody
-    });
+    // Get Gmail access token and send via Gmail API
+    let gmailAccessToken;
+    try {
+      gmailAccessToken = await base44.asServiceRole.connectors.getAccessToken('gmail');
+      await sendEmailViaGmail(gmailAccessToken, registration.user_email, t.subject, emailBody);
+    } catch (gmailError) {
+      console.error('Failed to send confirmation email:', gmailError.message);
+    }
 
     // Send updated QR code email
     try {
