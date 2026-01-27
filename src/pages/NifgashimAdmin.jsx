@@ -56,9 +56,7 @@ import {
   UserPlus,
   Table,
   MailCheck,
-  Edit3,
-  LogOut,
-  Trash2
+  Edit3
 } from 'lucide-react';
 import ParticipantsByDayTable from '../components/nifgashim/portal/ParticipantsByDayTable';
 import TrekDaysVisualGrid from '../components/nifgashim/portal/TrekDaysVisualGrid';
@@ -739,44 +737,9 @@ export default function NifgashimAdmin() {
       sendingReminders: "Invio...",
       remindersSent: "Promemoria inviati",
       selectForReminder: "Seleziona per promemoria",
-      editDays: "Modifica giorni",
-      logout: "Esci",
-      deleteAccount: "Elimina Account",
-      confirmLogout: "Sei sicuro di voler uscire?",
-      confirmDeleteAccount: "Sei sicuro di voler eliminare il tuo account? Questa azione non può essere annullata."
+      editDays: "Modifica giorni"
     }
   };
-
-  // Add logout/delete translations to all languages
-  translations.he.logout = "התנתק";
-  translations.he.deleteAccount = "מחק חשבון";
-  translations.he.confirmLogout = "האם אתה בטוח שברצונך להתנתק?";
-  translations.he.confirmDeleteAccount = "האם אתה בטוח שברצונך למחוק את החשבון? פעולה זו לא ניתנת לביטול.";
-  
-  translations.en.logout = "Logout";
-  translations.en.deleteAccount = "Delete Account";
-  translations.en.confirmLogout = "Are you sure you want to logout?";
-  translations.en.confirmDeleteAccount = "Are you sure you want to delete your account? This action cannot be undone.";
-  
-  translations.ru.logout = "Выйти";
-  translations.ru.deleteAccount = "Удалить аккаунт";
-  translations.ru.confirmLogout = "Вы уверены, что хотите выйти?";
-  translations.ru.confirmDeleteAccount = "Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить.";
-  
-  translations.es.logout = "Cerrar sesión";
-  translations.es.deleteAccount = "Eliminar cuenta";
-  translations.es.confirmLogout = "¿Estás seguro de que quieres cerrar sesión?";
-  translations.es.confirmDeleteAccount = "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.";
-  
-  translations.fr.logout = "Déconnexion";
-  translations.fr.deleteAccount = "Supprimer le compte";
-  translations.fr.confirmLogout = "Êtes-vous sûr de vouloir vous déconnecter?";
-  translations.fr.confirmDeleteAccount = "Êtes-vous sûr de vouloir supprimer votre compte? Cette action est irréversible.";
-  
-  translations.de.logout = "Abmelden";
-  translations.de.deleteAccount = "Konto löschen";
-  translations.de.confirmLogout = "Sind Sie sicher, dass Sie sich abmelden möchten?";
-  translations.de.confirmDeleteAccount = "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.";
 
   const trans = translations[language] || translations.en;
 
