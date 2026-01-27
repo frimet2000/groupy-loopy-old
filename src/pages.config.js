@@ -24,7 +24,6 @@ import MemorialRequest from './pages/MemorialRequest';
 import MyLists from './pages/MyLists';
 import MyNifgashim from './pages/MyNifgashim';
 import MyTrips from './pages/MyTrips';
-import NifgashimAdmin from './pages/NifgashimAdmin';
 import NifgashimPortal from './pages/NifgashimPortal';
 import NifgashimRegistration from './pages/NifgashimRegistration';
 import NifgashimTrekDayView from './pages/NifgashimTrekDayView';
@@ -43,6 +42,7 @@ import TripPlanningGuide from './pages/TripPlanningGuide';
 import TripSummary from './pages/TripSummary';
 import VisualEditor from './pages/VisualEditor';
 import Weather from './pages/Weather';
+import NifgashimAdmin from './pages/NifgashimAdmin';
 import __Layout from './Layout.jsx';
 
 
@@ -73,7 +73,6 @@ export const PAGES = {
     "MyLists": MyLists,
     "MyNifgashim": MyNifgashim,
     "MyTrips": MyTrips,
-    "NifgashimAdmin": NifgashimAdmin,
     "NifgashimPortal": NifgashimPortal,
     "NifgashimRegistration": NifgashimRegistration,
     "NifgashimTrekDayView": NifgashimTrekDayView,
@@ -92,6 +91,7 @@ export const PAGES = {
     "TripSummary": TripSummary,
     "VisualEditor": VisualEditor,
     "Weather": Weather,
+    "NifgashimAdmin": NifgashimAdmin,
 }
 
 export const pagesConfig = {

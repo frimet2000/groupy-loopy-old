@@ -46,7 +46,8 @@ import {
         Share2,
         BookOpen,
         CloudSun,
-        BarChart3
+        BarChart3,
+        Trash2
       } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
@@ -613,7 +614,25 @@ function LayoutContent({ children, currentPageName }) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="text-red-600">
                       <LogOut className="w-4 h-4 mr-2" />
-                      {t('logout')}
+                      {language === 'he' ? 'התנתק' : language === 'ru' ? 'Выйти' : language === 'es' ? 'Cerrar sesión' : language === 'fr' ? 'Déconnexion' : language === 'de' ? 'Abmelden' : language === 'it' ? 'Esci' : 'Logout'}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => {
+                        const confirmMsg = language === 'he' ? 'האם אתה בטוח שברצונך למחוק את החשבון? פעולה זו לא ניתנת לביטול.' : 
+                          language === 'ru' ? 'Вы уверены, что хотите удалить аккаунт? Это действие нельзя отменить.' :
+                          language === 'es' ? '¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.' :
+                          language === 'fr' ? 'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.' :
+                          language === 'de' ? 'Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.' :
+                          language === 'it' ? 'Sei sicuro di voler eliminare il tuo account? Questa azione non può essere annullata.' :
+                          'Are you sure you want to delete your account? This action cannot be undone.';
+                        if (window.confirm(confirmMsg)) {
+                          toast.info(language === 'he' ? 'לא ניתן למחוק חשבון מכאן. פנה לתמיכה.' : 'Account deletion requires contacting support.');
+                        }
+                      }} 
+                      className="text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      {language === 'he' ? 'מחק חשבון' : language === 'ru' ? 'Удалить аккаунт' : language === 'es' ? 'Eliminar cuenta' : language === 'fr' ? 'Supprimer le compte' : language === 'de' ? 'Konto löschen' : language === 'it' ? 'Elimina account' : 'Delete Account'}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                   </DropdownMenu>
