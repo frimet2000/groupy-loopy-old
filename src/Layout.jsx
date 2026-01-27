@@ -622,10 +622,9 @@ function LayoutContent({ children, currentPageName }) {
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button 
                         onClick={() => base44.auth.redirectToLogin()}
-                        className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold shadow-lg hover:shadow-xl transition-all duration-300 px-5 py-2.5 gap-2 text-base border-2 border-emerald-400/50"
+                        className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                       >
-                        <User className="w-5 h-5" />
-                        {language === 'he' ? 'התחברות / הרשמה' : language === 'ru' ? 'Вход / Регистрация' : language === 'es' ? 'Iniciar / Registrar' : language === 'fr' ? 'Connexion / Inscription' : language === 'de' ? 'Anmelden / Registrieren' : language === 'it' ? 'Accedi / Registrati' : 'Login / Sign Up'}
+                        {language === 'he' ? 'התחבר' : language === 'ru' ? 'Войти' : language === 'es' ? 'Iniciar sesión' : language === 'fr' ? 'Connexion' : language === 'de' ? 'Anmelden' : language === 'it' ? 'Accedi' : 'Login'}
                       </Button>
                     </motion.div>
                   )}
