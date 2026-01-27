@@ -487,9 +487,9 @@ function LayoutContent({ children, currentPageName }) {
               />
             </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-1.5">
-              {navItems.map(item => {
+            {/* Desktop Navigation - Compact */}
+            <nav className="hidden md:flex items-center gap-1">
+              {navItems.slice(0, 5).map(item => {
                 const handleClick = (e) => {
                   if (item.requiresAuth && !user) {
                     e.preventDefault();
@@ -499,36 +499,55 @@ function LayoutContent({ children, currentPageName }) {
 
                 return (
                   <Link key={item.name} to={createPageUrl(item.name)} onClick={handleClick}>
-                    <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }}>
-                      <Button
-                        variant={isActive(item.name) ? "secondary" : "ghost"}
-                        className={`gap-2 transition-all duration-300 relative overflow-hidden ${
-                          isActive(item.name) 
-                            ? 'bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 text-white font-bold shadow-xl shadow-emerald-500/40 border-2 border-emerald-400/50' 
-                            : 'text-gray-600 hover:text-emerald-700 hover:bg-gradient-to-br hover:from-emerald-50/80 hover:to-teal-50/80 hover:shadow-lg hover:shadow-emerald-200/50 hover:border hover:border-emerald-200'
-                        }`}
-                      >
-                        {isActive(item.name) && (
-                          <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                            animate={{ x: ['-100%', '200%'] }}
-                            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                          />
-                        )}
-                        <div className={`relative p-1.5 rounded-lg ${isActive(item.name) ? 'bg-white/20 shadow-inner' : ''}`}>
-                          <item.icon className={`w-4 h-4 ${isActive(item.name) ? 'text-white drop-shadow' : item.color}`} />
-                        </div>
-                        <span className="relative">
-                          {item.label}
-                          {item.name === 'Inbox' && unreadCount > 0 && user && (
-                            <span className="absolute -top-2 -right-3 h-2.5 w-2.5 bg-red-500 rounded-full shadow" />
-                          )}
-                        </span>
-                      </Button>
-                    </motion.div>
+                    <Button
+                      variant={isActive(item.name) ? "secondary" : "ghost"}
+                      size="sm"
+                      className={`gap-1.5 text-xs px-2 ${
+                        isActive(item.name) 
+                          ? 'bg-emerald-600 text-white' 
+                          : 'text-gray-600 hover:text-emerald-700 hover:bg-emerald-50'
+                      }`}
+                    >
+                      <item.icon className={`w-3.5 h-3.5 ${isActive(item.name) ? 'text-white' : item.color}`} />
+                      <span className="hidden lg:inline">{item.label}</span>
+                    </Button>
                   </Link>
                 );
               })}
+              
+              {/* More Menu for additional items */}
+              {navItems.length > 5 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-1.5 text-xs px-2 text-gray-600 hover:text-emerald-700 hover:bg-emerald-50">
+                      <Menu className="w-3.5 h-3.5" />
+                      <span className="hidden lg:inline">{language === 'he' ? 'עוד' : 'More'}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    {navItems.slice(5).map(item => {
+                      const handleClick = (e) => {
+                        if (item.requiresAuth && !user) {
+                          e.preventDefault();
+                          base44.auth.redirectToLogin(createPageUrl(item.name));
+                        }
+                      };
+
+                      return (
+                        <DropdownMenuItem key={item.name} asChild>
+                          <Link to={createPageUrl(item.name)} onClick={handleClick} className="flex items-center gap-2">
+                            <item.icon className={`w-4 h-4 ${item.color}`} />
+                            {item.label}
+                            {item.name === 'Inbox' && unreadCount > 0 && user && (
+                              <span className="h-2 w-2 bg-red-500 rounded-full ml-auto" />
+                            )}
+                          </Link>
+                        </DropdownMenuItem>
+                      );
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </nav>
 
             {/* Right Side */}
