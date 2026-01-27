@@ -56,7 +56,9 @@ import {
   UserPlus,
   Table,
   MailCheck,
-  Edit3
+  Edit3,
+  LogOut,
+  Trash2
 } from 'lucide-react';
 import ParticipantsByDayTable from '../components/nifgashim/portal/ParticipantsByDayTable';
 import TrekDaysVisualGrid from '../components/nifgashim/portal/TrekDaysVisualGrid';
@@ -737,9 +739,44 @@ export default function NifgashimAdmin() {
       sendingReminders: "Invio...",
       remindersSent: "Promemoria inviati",
       selectForReminder: "Seleziona per promemoria",
-      editDays: "Modifica giorni"
+      editDays: "Modifica giorni",
+      logout: "Esci",
+      deleteAccount: "Elimina Account",
+      confirmLogout: "Sei sicuro di voler uscire?",
+      confirmDeleteAccount: "Sei sicuro di voler eliminare il tuo account? Questa azione non può essere annullata."
     }
   };
+
+  // Add logout/delete translations to all languages
+  translations.he.logout = "התנתק";
+  translations.he.deleteAccount = "מחק חשבון";
+  translations.he.confirmLogout = "האם אתה בטוח שברצונך להתנתק?";
+  translations.he.confirmDeleteAccount = "האם אתה בטוח שברצונך למחוק את החשבון? פעולה זו לא ניתנת לביטול.";
+  
+  translations.en.logout = "Logout";
+  translations.en.deleteAccount = "Delete Account";
+  translations.en.confirmLogout = "Are you sure you want to logout?";
+  translations.en.confirmDeleteAccount = "Are you sure you want to delete your account? This action cannot be undone.";
+  
+  translations.ru.logout = "Выйти";
+  translations.ru.deleteAccount = "Удалить аккаунт";
+  translations.ru.confirmLogout = "Вы уверены, что хотите выйти?";
+  translations.ru.confirmDeleteAccount = "Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить.";
+  
+  translations.es.logout = "Cerrar sesión";
+  translations.es.deleteAccount = "Eliminar cuenta";
+  translations.es.confirmLogout = "¿Estás seguro de que quieres cerrar sesión?";
+  translations.es.confirmDeleteAccount = "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.";
+  
+  translations.fr.logout = "Déconnexion";
+  translations.fr.deleteAccount = "Supprimer le compte";
+  translations.fr.confirmLogout = "Êtes-vous sûr de vouloir vous déconnecter?";
+  translations.fr.confirmDeleteAccount = "Êtes-vous sûr de vouloir supprimer votre compte? Cette action est irréversible.";
+  
+  translations.de.logout = "Abmelden";
+  translations.de.deleteAccount = "Konto löschen";
+  translations.de.confirmLogout = "Sind Sie sicher, dass Sie sich abmelden möchten?";
+  translations.de.confirmDeleteAccount = "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.";
 
   const trans = translations[language] || translations.en;
 
@@ -1209,17 +1246,46 @@ export default function NifgashimAdmin() {
           className="mb-6 sm:mb-8"
         >
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 rounded-2xl p-4 sm:p-6 shadow-2xl">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center shadow-lg">
-                <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl sm:text-3xl font-bold text-white">{trans.title}</h1>
-                <p className="text-purple-100 text-xs sm:text-sm mt-1">
-                  {language === 'he' ? 'ניהול מתקדם של רישומים והנצחות' : 'Advanced registrations and memorials management'}
-                </p>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center shadow-lg">
+              <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
             </div>
+            <div>
+              <h1 className="text-xl sm:text-3xl font-bold text-white">{trans.title}</h1>
+              <p className="text-purple-100 text-xs sm:text-sm mt-1">
+                {language === 'he' ? 'ניהול מתקדם של רישומים והנצחות' : 'Advanced registrations and memorials management'}
+              </p>
+            </div>
+          </div>
+
+          {/* Logout and Delete Account Buttons */}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                if (window.confirm(trans.confirmLogout)) {
+                  base44.auth.logout();
+                }
+              }}
+              className="bg-white/10 border-white/30 text-white hover:bg-white/20 gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline">{trans.logout}</span>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                if (window.confirm(trans.confirmDeleteAccount)) {
+                  toast.info(language === 'he' ? 'מחיקת חשבון...' : 'Deleting account...');
+                  base44.auth.logout();
+                }
+              }}
+              className="bg-red-500/20 border-red-300/50 text-red-100 hover:bg-red-500/30 gap-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span className="hidden sm:inline">{trans.deleteAccount}</span>
+            </Button>
+          </div>
           </div>
         </motion.div>
 
