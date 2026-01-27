@@ -1666,18 +1666,27 @@ export default function NifgashimAdmin() {
                                         </DropdownMenuItem>
                                         <DropdownMenuItem onClick={async () => {
                                           try {
+                                            const emailToSend = reg.customer_email || reg.user_email || reg.participants?.[0]?.email;
+                                            
+                                            if (!emailToSend) {
+                                              toast.error(language === 'he' ? 'לא נמצא אימייל למשתתף' : 'No email found for participant');
+                                              return;
+                                            }
+
                                             toast.info(language === 'he' ? 'שולח QR במייל...' : 'Sending QR email...');
                                             const response = await base44.functions.invoke('sendQREmailToParticipant', {
                                               registrationId: reg.id,
-                                              language
+                                              language,
+                                              recipientEmail: emailToSend
                                             });
                                             if (response.data?.success) {
-                                              toast.success(language === 'he' ? 'קוד QR נשלח בהצלחה!' : 'QR code sent successfully!');
+                                              toast.success(language === 'he' ? `קוד QR נשלח ל-${emailToSend}` : `QR code sent to ${emailToSend}`);
                                             } else {
                                               toast.error(response.data?.error || 'Failed to send QR');
                                             }
                                           } catch (err) {
-                                            toast.error(err.message);
+                                            console.error('QR Email error:', err);
+                                            toast.error(err.message || 'Error sending QR email');
                                           }
                                         }}>
                                           <MailCheck className="w-4 h-4 mr-2 text-blue-600" />

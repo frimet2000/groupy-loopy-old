@@ -5,7 +5,7 @@ import QRCode from 'npm:qrcode@1.5.3';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { registrationId, language = 'he' } = await req.json();
+    const { registrationId, language = 'he', recipientEmail: providedEmail } = await req.json();
 
     if (!registrationId) {
       return Response.json({ error: 'Registration ID required' }, { status: 400 });
@@ -20,10 +20,17 @@ Deno.serve(async (req) => {
 
     const participants = registration.participants || [];
     const mainParticipant = participants[0] || {};
-    const recipientEmail = registration.customer_email || registration.user_email || mainParticipant.email;
+    
+    // Use provided email or fallback to registration emails
+    const recipientEmail = providedEmail || registration.customer_email || registration.user_email || mainParticipant.email;
     const recipientName = mainParticipant.name || registration.customer_name || recipientEmail;
 
     if (!recipientEmail) {
+      console.error('No email found:', { 
+        customer_email: registration.customer_email,
+        user_email: registration.user_email,
+        mainParticipant_email: mainParticipant.email
+      });
       return Response.json({ error: 'No email found for registration' }, { status: 400 });
     }
 
