@@ -41,18 +41,12 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json();
-    const { registrationId, language = 'he', recipientEmail: providedEmail, data_env } = body;
+    const { registrationId, language = 'he', recipientEmail: providedEmail } = body;
 
     console.log('Request body:', JSON.stringify(body));
 
     if (!registrationId) {
       return Response.json({ error: 'Registration ID required' }, { status: 400 });
-    }
-
-    // Set environment if provided (for test database support)
-    if (data_env === 'dev') {
-      console.log('Setting data environment to dev');
-      base44.setDataEnvironment('dev');
     }
 
     // Get registration details
