@@ -521,78 +521,102 @@ export default function Home() {
       )}
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-teal-900 to-emerald-950 text-white min-h-[60vh] md:min-h-[85vh] flex items-center touch-manipulation mx-4 sm:mx-6 my-6 rounded-[2.5rem] shadow-[0_20px_80px_rgba(0,0,0,0.5),0_0_60px_rgba(16,185,129,0.3),inset_0_1px_0_rgba(255,255,255,0.1)]">
-        {/* Animated Background Elements */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-emerald-950 to-teal-950 text-white min-h-[65vh] md:min-h-[90vh] flex items-center touch-manipulation mx-3 sm:mx-6 my-4 sm:my-6 rounded-[2rem] sm:rounded-[3rem] shadow-[0_25px_100px_rgba(0,0,0,0.6),0_0_80px_rgba(16,185,129,0.2)]">
+        {/* Premium Animated Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <img
             src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1200&q=85"
             alt="landscape"
-            className="w-full h-full object-cover opacity-40 brightness-110 contrast-125 saturate-125"
+            className="w-full h-full object-cover opacity-30 scale-105"
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/85 via-teal-900/80 to-emerald-950/85" />
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-950/90 via-emerald-950/85 to-teal-950/90" />
+          
+          {/* Mesh Gradient Overlay */}
+          <div className="absolute inset-0 opacity-60" style={{
+            background: `
+              radial-gradient(ellipse 80% 50% at 20% 40%, rgba(16, 185, 129, 0.15), transparent),
+              radial-gradient(ellipse 60% 40% at 80% 60%, rgba(20, 184, 166, 0.12), transparent),
+              radial-gradient(ellipse 40% 30% at 50% 80%, rgba(6, 182, 212, 0.1), transparent)
+            `
+          }} />
 
-          {/* Animated Particles - Reduced for performance */}
-          {[...Array(5)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-2 h-2 bg-emerald-400/20 rounded-full hidden md:block"
-              animate={{
-                x: [Math.random() * window.innerWidth, Math.random() * window.innerWidth],
-                y: [Math.random() * 600, Math.random() * 600],
-                scale: [1, 1.5, 1],
-                opacity: [0.2, 0.4, 0.2]
-              }}
-              transition={{
-                duration: 15 + Math.random() * 10,
-                repeat: Infinity,
-                ease: "linear",
-                delay: i * 0.3
-              }}
-              style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}
-            />
-          ))}
+          {/* Animated Floating Orbs */}
+          <motion.div 
+            className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[100px] hidden lg:block"
+            animate={{ 
+              scale: [1, 1.2, 1],
+              x: [0, 50, 0],
+              y: [0, 30, 0],
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div 
+            className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-teal-500/10 rounded-full blur-[80px] hidden lg:block"
+            animate={{ 
+              scale: [1.2, 1, 1.2],
+              x: [0, -30, 0],
+              y: [0, -50, 0],
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div 
+            className="absolute top-1/2 right-1/3 w-[300px] h-[300px] bg-cyan-500/8 rounded-full blur-[60px] hidden lg:block"
+            animate={{ 
+              scale: [1, 1.3, 1],
+              rotate: [0, 180, 360],
+            }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          />
 
-          {/* Floating Orbs - Desktop only for performance */}
-          <div className="absolute top-20 left-20 w-96 h-96 bg-emerald-400/15 rounded-full blur-3xl hidden md:block" />
-          <div className="absolute bottom-20 right-32 w-80 h-80 bg-teal-400/15 rounded-full blur-3xl hidden md:block" />
+          {/* Subtle Grid Pattern */}
+          <div className="absolute inset-0 opacity-[0.03]" style={{
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px'
+          }} />
 
-          {/* Static overlays for better performance */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.1),transparent_50%)]" />
+          {/* Noise Texture */}
+          <div className="absolute inset-0 opacity-[0.015] mix-blend-overlay" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`
+          }} />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-20">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-24">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
             className="max-w-4xl"
           >
-            {/* Decorative Badge */}
+            {/* Premium Badge */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="inline-flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-emerald-500/30 to-teal-500/30 backdrop-blur-md border border-emerald-400/40 rounded-full px-3 py-1.5 sm:px-5 sm:py-2 mb-4 sm:mb-8 shadow-[0_4px_20px_rgba(16,185,129,0.4)]"
+              className="inline-flex items-center gap-2 sm:gap-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full px-4 py-2 sm:px-6 sm:py-2.5 mb-6 sm:mb-10 shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)]"
             >
-              <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
+              <span className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-emerald-500"></span>
+                <span className="relative inline-flex rounded-full h-full w-full bg-gradient-to-r from-emerald-400 to-teal-400"></span>
               </span>
-              <span className="text-xs sm:text-sm font-medium text-emerald-100">
-                {language === 'he' ? 'פלטפורמת הטיולים המתקדמת של ישראל' : language === 'ru' ? 'Международная платформа для путешествий' : language === 'es' ? 'Plataforma Internacional de Viajes' : language === 'fr' ? 'Plateforme de voyage internationale' : language === 'de' ? 'Internationale Reiseplattform' : language === 'it' ? 'Piattaforma di viaggio internazionale' : 'International Trip Platform'}
+              <span className="text-xs sm:text-sm font-semibold bg-gradient-to-r from-emerald-200 to-teal-200 bg-clip-text text-transparent">
+                {language === 'he' ? '✨ פלטפורמת הטיולים המתקדמת של ישראל' : language === 'ru' ? '✨ Международная платформа для путешествий' : language === 'es' ? '✨ Plataforma Internacional de Viajes' : language === 'fr' ? '✨ Plateforme de voyage internationale' : language === 'de' ? '✨ Internationale Reiseplattform' : language === 'it' ? '✨ Piattaforma di viaggio internazionale' : '✨ International Trip Platform'}
               </span>
             </motion.div>
 
-            {/* Main Title with Gradient */}
+            {/* Main Title - Enhanced Typography */}
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.3 }}
-              className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-3 sm:mb-6"
+              className="text-4xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-black leading-[1.1] mb-4 sm:mb-8 tracking-tight"
             >
-              <span className="bg-gradient-to-r from-white via-emerald-100 to-teal-200 bg-clip-text text-transparent">
-                {language === 'he' ? 'כל הטיולים שלכם במקום אחד' : language === 'ru' ? 'Все ваши поездки в одном месте' : language === 'es' ? 'Todos tus viajes en un solo lugar' : language === 'fr' ? 'Tous vos voyages en un seul endroit' : language === 'de' ? 'Alle Ihre Reisen an einem Ort' : language === 'it' ? 'Tutti i tuoi viaggi in un unico posto' : 'All Your Trips in One Place'}
+              <span className="block bg-gradient-to-r from-white via-white to-emerald-100 bg-clip-text text-transparent drop-shadow-2xl">
+                {language === 'he' ? 'כל הטיולים שלכם' : language === 'ru' ? 'Все ваши поездки' : language === 'es' ? 'Todos tus viajes' : language === 'fr' ? 'Tous vos voyages' : language === 'de' ? 'Alle Ihre Reisen' : language === 'it' ? 'Tutti i tuoi viaggi' : 'All Your Trips'}
+              </span>
+              <span className="block bg-gradient-to-r from-emerald-300 via-teal-300 to-cyan-300 bg-clip-text text-transparent">
+                {language === 'he' ? 'במקום אחד' : language === 'ru' ? 'в одном месте' : language === 'es' ? 'en un solo lugar' : language === 'fr' ? 'en un seul endroit' : language === 'de' ? 'an einem Ort' : language === 'it' ? 'in un unico posto' : 'in One Place'}
               </span>
             </motion.h1>
 
@@ -600,7 +624,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.5 }}
-              className="text-base sm:text-xl md:text-2xl text-emerald-100/90 mb-6 sm:mb-12 leading-relaxed max-w-2xl"
+              className="text-base sm:text-xl md:text-2xl text-white/70 mb-8 sm:mb-14 leading-relaxed max-w-2xl font-light"
             >
               {t('heroSubtitle')}
             </motion.p>
@@ -609,41 +633,41 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.7 }}
-              className="flex flex-col gap-3 sm:gap-4 w-full max-w-md"
+              className="flex flex-col gap-4 sm:gap-5 w-full max-w-lg"
             >
               {/* Primary Actions Row */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <Link to={createPageUrl('CreateTrip')} className="w-full">
-                  <motion.div whileTap={{ scale: 0.95 }} className="w-full">
-                    <Button className="w-full bg-white text-emerald-700 hover:bg-emerald-50 h-12 px-4 text-sm font-bold shadow-2xl border-2 border-emerald-200 hover:border-emerald-300 touch-manipulation hover:shadow-[0_8px_30px_rgba(16,185,129,0.4)] transition-all">
-                      <Plus className="w-5 h-5 mr-2" />
+                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
+                    <Button className="w-full bg-white text-gray-900 hover:bg-gray-50 h-14 sm:h-16 px-5 text-sm sm:text-base font-bold rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.3)] border-0 touch-manipulation transition-all duration-300 group">
+                      <Plus className="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-emerald-600 group-hover:rotate-90 transition-transform duration-300" />
                       {t('createTrip')}
                     </Button>
                   </motion.div>
                 </Link>
-                <motion.div whileTap={{ scale: 0.95 }} className="w-full">
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
                   <Button 
                     onClick={() => document.getElementById('trips-section')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="w-full bg-emerald-600 text-white hover:bg-emerald-700 h-12 px-4 text-sm font-bold shadow-2xl border-2 border-emerald-700 hover:border-emerald-800 touch-manipulation hover:shadow-[0_8px_30px_rgba(16,185,129,0.5)] transition-all"
+                    className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white h-14 sm:h-16 px-5 text-sm sm:text-base font-bold rounded-2xl shadow-[0_10px_40px_rgba(16,185,129,0.4)] border-0 touch-manipulation transition-all duration-300"
                   >
-                    <Users className="w-5 h-5 mr-2" />
-                    {language === 'he' ? 'הצטרף' : 'Join'}
+                    <Users className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+                    {language === 'he' ? 'הצטרף לטיול' : 'Join Trip'}
                   </Button>
                 </motion.div>
               </div>
 
               {/* Secondary Actions Row */}
-              <div className="grid grid-cols-2 gap-3">
-                <motion.div whileTap={{ scale: 0.95 }} className="w-full">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full">
                   <Button 
                     onClick={handleShare}
-                    className="w-full bg-rose-600 text-white hover:bg-rose-700 h-11 px-4 text-sm font-bold shadow-2xl border-2 border-rose-700 hover:border-rose-800 touch-manipulation hover:shadow-[0_8px_30px_rgba(225,29,72,0.5)] transition-all"
+                    className="w-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 h-12 sm:h-14 px-3 text-xs sm:text-sm font-semibold rounded-xl border border-white/20 touch-manipulation transition-all duration-300"
                   >
-                    <Share2 className="w-4 h-4 mr-2" />
+                    <Share2 className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5" />
                     {language === 'he' ? 'שתף' : 'Share'}
                   </Button>
                 </motion.div>
-                <motion.div whileTap={{ scale: 0.95 }} className="w-full">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full">
                   <Button 
                     onClick={() => {
                       const today = new Date();
@@ -659,52 +683,53 @@ export default function Home() {
                         toast.info(language === 'he' ? 'אין טיולים חיים כרגע' : 'No live trips right now');
                       }
                     }}
-                    className="w-full relative bg-green-600 text-white hover:bg-green-700 h-11 px-4 text-sm font-bold shadow-2xl border-2 border-green-700 hover:border-green-800 touch-manipulation hover:shadow-[0_8px_30px_rgba(22,163,74,0.5)] transition-all"
+                    className="w-full relative bg-gradient-to-r from-green-500/80 to-emerald-500/80 backdrop-blur-sm text-white hover:from-green-500 hover:to-emerald-500 h-12 sm:h-14 px-3 text-xs sm:text-sm font-semibold rounded-xl border border-white/10 touch-manipulation transition-all duration-300"
                   >
-                    <Radio className="w-4 h-4 mr-2 animate-pulse" />
-                    {language === 'he' ? 'טיולים חיים' : 'Live'}
+                    <Radio className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 animate-pulse" />
+                    {language === 'he' ? 'חי' : 'Live'}
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping" />
                   </Button>
                 </motion.div>
+                <Link to={createPageUrl('AIRecommendations')} className="w-full">
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full">
+                    <Button className="w-full bg-gradient-to-r from-purple-500/80 to-pink-500/80 backdrop-blur-sm text-white hover:from-purple-500 hover:to-pink-500 h-12 sm:h-14 px-3 text-xs sm:text-sm font-semibold rounded-xl border border-white/10 touch-manipulation transition-all duration-300">
+                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5" />
+                      {language === 'he' ? 'AI' : 'AI'}
+                    </Button>
+                  </motion.div>
+                </Link>
               </div>
-
-              {/* AI Recommendations - Desktop only */}
-              <Link to={createPageUrl('AIRecommendations')} className="hidden sm:block w-full">
-                <motion.div whileTap={{ scale: 0.95 }} className="w-full">
-                  <Button className="w-full bg-purple-600 border-2 border-purple-700 text-white hover:bg-purple-700 hover:border-purple-800 h-12 px-6 text-sm font-bold shadow-2xl hover:shadow-[0_8px_30px_rgba(147,51,234,0.5)] touch-manipulation transition-all">
-                    <span className="font-bold">
-                      {t('aiRecommendations')}
-                    </span>
-                    <ArrowRight className={`w-5 h-5 ${isRTL ? 'mr-2 rotate-180' : 'ml-2'}`} />
-                  </Button>
-                </motion.div>
-              </Link>
             </motion.div>
           </motion.div>
 
-          {/* Enhanced Stats */}
+          {/* Premium Stats Cards */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.9 }}
-            className="flex flex-wrap gap-3 sm:gap-6 mt-8 sm:mt-20"
+            className="flex flex-wrap gap-3 sm:gap-5 mt-10 sm:mt-20"
           >
             {stats.map((stat, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="flex-1 min-w-[90px]"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 1 + index * 0.1 }}
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                className="flex-1 min-w-[100px]"
               >
-                <div className="flex items-center gap-2 sm:gap-4 bg-white rounded-2xl px-3 sm:px-8 py-3 sm:py-5 border-2 border-emerald-200 shadow-xl">
-                  <div className="p-1.5 sm:p-3 bg-emerald-600 rounded-lg sm:rounded-xl">
-                    <stat.icon className="w-5 h-5 sm:w-8 sm:h-8 text-white" />
+                <div className="flex items-center gap-3 sm:gap-4 bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl px-4 sm:px-6 py-4 sm:py-5 border border-white/50 shadow-[0_10px_40px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.5)]">
+                  <div className="p-2.5 sm:p-3.5 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl sm:rounded-2xl shadow-lg">
+                    <stat.icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xl sm:text-3xl font-bold text-gray-900">
+                    <div className="text-2xl sm:text-4xl font-black text-gray-900 leading-none">
                       {stat.value}
                     </div>
-                    <div className="text-xs sm:text-sm text-emerald-700 font-bold truncate">{stat.label}</div>
+                    <div className="text-xs sm:text-sm text-gray-500 font-semibold truncate mt-0.5">{stat.label}</div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
         </div>
