@@ -809,16 +809,15 @@ export default function NifgashimPortal() {
                    language === 'it' ? 'Nel frattempo, guarda il nostro video di presentazione:' :
                    'Meanwhile, watch our introduction video:'}
                 </p>
-                <div className="aspect-video max-w-2xl mx-auto rounded-xl overflow-hidden shadow-lg">
-                  <iframe
-                    width="100%"
-                    height="100%"
-                    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                    title="Groupy Loopy Introduction"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
+                <div className="aspect-video max-w-2xl mx-auto rounded-xl overflow-hidden shadow-lg bg-black">
+                  <video
+                    src="/videos/nifgashim-thankyou.mp4"
+                    className="w-full h-full object-contain"
+                    autoPlay
+                    muted
+                    playsInline
+                    controls
+                  />
                 </div>
               </div>
 
