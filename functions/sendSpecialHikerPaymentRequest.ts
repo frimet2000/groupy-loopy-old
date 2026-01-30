@@ -229,17 +229,42 @@ Deno.serve(async (req) => {
     `;
 
     // Try to send via Gmail API first
+    let emailSent = false;
+    let emailError = null;
+    
     try {
+      console.log('Attempting to send email via Gmail to:', participantEmail);
       const gmailToken = await base44.asServiceRole.connectors.getAccessToken('gmail');
+      console.log('Got Gmail token, sending email...');
       await sendEmailViaGmail(gmailToken, participantEmail, t.subject, htmlBody);
+      emailSent = true;
+      console.log('Email sent successfully via Gmail');
     } catch (gmailError) {
-      console.log('Gmail failed, trying Core.SendEmail:', gmailError.message);
+      console.error('Gmail failed:', gmailError.message);
+      emailError = gmailError.message;
+      
       // Fallback to Core.SendEmail
-      await base44.asServiceRole.integrations.Core.SendEmail({
-        to: participantEmail,
-        subject: t.subject,
-        body: htmlBody
-      });
+      try {
+        console.log('Trying Core.SendEmail as fallback...');
+        await base44.asServiceRole.integrations.Core.SendEmail({
+          to: participantEmail,
+          subject: t.subject,
+          body: htmlBody,
+          from_name: 'נפגשים בשביל ישראל'
+        });
+        emailSent = true;
+        console.log('Email sent successfully via Core.SendEmail');
+      } catch (coreError) {
+        console.error('Core.SendEmail also failed:', coreError.message);
+        emailError = `Gmail: ${gmailError.message}, Core: ${coreError.message}`;
+      }
+    }
+    
+    if (!emailSent) {
+      return Response.json({ 
+        success: false, 
+        error: 'Failed to send email: ' + emailError
+      }, { status: 500 });
     }
 
     return Response.json({ 
