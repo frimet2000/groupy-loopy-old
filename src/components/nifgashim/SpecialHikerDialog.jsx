@@ -28,7 +28,6 @@ export default function SpecialHikerDialog({
 }) {
   const trekDays = trip?.trek_days || [];
   const [selectedDays, setSelectedDays] = useState(() => {
-    // Initialize with all days selected
     return trekDays.map(d => d.day_number);
   });
   const [customAmount, setCustomAmount] = useState('');
@@ -217,7 +216,6 @@ export default function SpecialHikerDialog({
     }
   };
 
-  // Group days by category
   const daysByCategory = trekDays.reduce((acc, day) => {
     const categoryId = day.category_id || 'uncategorized';
     if (!acc[categoryId]) acc[categoryId] = [];
@@ -240,7 +238,6 @@ export default function SpecialHikerDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Special Hiker Banner */}
         <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 rounded-lg p-4">
           <div className="flex items-center gap-3 mb-3">
             <AlertTriangle className="w-5 h-5 text-orange-600" />
@@ -248,7 +245,7 @@ export default function SpecialHikerDialog({
               {t.noteSpecial}
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-3 text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             <div>
               <span className="text-gray-600">{t.participant}:</span>
               <p className="font-semibold">{participantName}</p>
@@ -260,12 +257,11 @@ export default function SpecialHikerDialog({
           </div>
         </div>
 
-        {/* Select All Button */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <Button
             variant="outline"
             onClick={selectAllDays}
-            className="gap-2 border-orange-300 text-orange-700 hover:bg-orange-50"
+            className="gap-2 border-orange-300 text-orange-700 hover:bg-orange-50 w-full sm:w-auto"
           >
             <CheckCircle2 className="w-4 h-4" />
             {t.selectAllDays} ({trekDays.length})
@@ -275,7 +271,6 @@ export default function SpecialHikerDialog({
           </Badge>
         </div>
 
-        {/* Days Selection by Category */}
         <div className="space-y-4 max-h-[300px] overflow-y-auto border rounded-lg p-4 bg-gray-50">
           {Object.entries(daysByCategory).map(([categoryId, days]) => {
             const category = categories.find(c => c.id === categoryId);
@@ -335,7 +330,6 @@ export default function SpecialHikerDialog({
           })}
         </div>
 
-        {/* Custom Price Input */}
         <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-4">
           <Label className="flex items-center gap-2 text-green-800 font-bold mb-2">
             <DollarSign className="w-5 h-5" />
@@ -353,18 +347,19 @@ export default function SpecialHikerDialog({
           />
         </div>
 
-        <DialogFooter className="gap-2">
+        <DialogFooter className="gap-2 flex-col sm:flex-row">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isSubmitting}
+            className="w-full sm:w-auto"
           >
             {t.cancel}
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting || selectedDays.length === 0 || !customAmount}
-            className="gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600"
+            className="gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 w-full sm:w-auto"
           >
             {isSubmitting ? (
               <>
