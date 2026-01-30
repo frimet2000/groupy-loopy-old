@@ -11,7 +11,7 @@ import { Users, Calendar, CreditCard, CheckCircle2, Plus, X, Trash2, UserPlus } 
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
-export default function RegistrationSummary({ userType, participants, selectedDays, trekDays, groupInfo, setParticipants }) {
+export default function RegistrationSummary({ userType, participants, selectedDays, trekDays, groupInfo, setParticipants, isFullTrek = false }) {
   const { language, isRTL } = useLanguage();
   const [showAddForm, setShowAddForm] = useState(false);
   const [newParticipant, setNewParticipant] = useState({
@@ -302,10 +302,18 @@ export default function RegistrationSummary({ userType, participants, selectedDa
 
   const totalPrice = calculatePrice();
 
+  const fullTrekLabel = language === 'he' ? 'טראק מלא' :
+                        language === 'ru' ? 'Полный трек' :
+                        language === 'es' ? 'Trek completo' :
+                        language === 'fr' ? 'Trek complet' :
+                        language === 'de' ? 'Voller Trek' :
+                        language === 'it' ? 'Trek completo' : 'Full Trek';
+
   const userTypeLabels = {
     individual: trans.individual,
     family: trans.family,
-    group: trans.group
+    group: trans.group,
+    full_trek: fullTrekLabel
   };
 
   return (
@@ -550,7 +558,7 @@ export default function RegistrationSummary({ userType, participants, selectedDa
         </div>
 
         {/* Price - only for non-group registrations */}
-        {userType !== 'group' && (
+        {userType !== 'group' && userType !== 'full_trek' && (
           <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-6 rounded-lg border-2 border-amber-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -576,6 +584,36 @@ export default function RegistrationSummary({ userType, participants, selectedDa
               ? `Pagamento per ${participants.filter(p => !p.age_range || parseInt(p.age_range.split('-')[0]) >= 10).length} adulti (10+) × 85₪ per tutto il trek`
               : `Payment for ${participants.filter(p => !p.age_range || parseInt(p.age_range.split('-')[0]) >= 10).length} adults (age 10+) × 85₪ for entire trek`}
           </p>
+          </div>
+        )}
+
+        {/* Full Trek Price Info */}
+        {userType === 'full_trek' && (
+          <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-6 rounded-lg border-2 border-orange-300">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CreditCard className="w-6 h-6 text-orange-600" />
+                <h3 className="font-bold text-xl">{trans.totalCost}</h3>
+              </div>
+              <div className="text-3xl font-bold text-orange-600">
+                270₪
+              </div>
+            </div>
+            <p className="text-sm text-orange-700 mt-2 font-medium">
+              {language === 'he' 
+                ? '⭐ מחיר מיוחד לטראק מלא - התשלום יישלח על ידי מנהל'
+                : language === 'ru'
+                ? '⭐ Специальная цена за полный трек - Оплата будет отправлена администратором'
+                : language === 'es'
+                ? '⭐ Precio especial para trek completo - El pago será enviado por un administrador'
+                : language === 'fr'
+                ? '⭐ Prix spécial pour trek complet - Le paiement sera envoyé par un administrateur'
+                : language === 'de'
+                ? '⭐ Sonderpreis für vollen Trek - Zahlung wird vom Admin gesendet'
+                : language === 'it'
+                ? '⭐ Prezzo speciale per trek completo - Il pagamento sarà inviato da un amministratore'
+                : '⭐ Special price for full trek - Payment will be sent by admin'}
+            </p>
           </div>
         )}
       </CardContent>
