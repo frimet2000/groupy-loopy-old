@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { ArrowRight, ArrowLeft, Check, Loader2, CreditCard, Shield, LogIn, Edit3, XCircle } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Loader2, CreditCard, Shield, LogIn, Edit3, XCircle, Mountain } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -44,6 +44,7 @@ export default function NifgashimPortal() {
   const [groupHealthDeclarationAccepted, setGroupHealthDeclarationAccepted] = useState(false);
   const [individualHealthDeclarationAccepted, setIndividualHealthDeclarationAccepted] = useState(false);
   const [safetyInstructionsAccepted, setSafetyInstructionsAccepted] = useState(false);
+  const [showFullTrekComplete, setShowFullTrekComplete] = useState(false);
 
   const { data: nifgashimTrip, isLoading, refetch } = useQuery({
     queryKey: ['nifgashimPortalTrip'],
@@ -720,6 +721,12 @@ export default function NifgashimPortal() {
       localStorage.removeItem('nifgashim_registration_state_v2');
       localStorage.removeItem('pending_registration_id');
 
+      // For full trek hikers, show video and redirect to login
+      if (isFullTrekHiker) {
+        setShowFullTrekComplete(true);
+        return true;
+      }
+
       setShowThankYou(true);
       return true;
     } catch (error) {
@@ -749,6 +756,87 @@ export default function NifgashimPortal() {
             language={language}
             isRTL={isRTL}
           />
+        </div>
+      </div>
+    );
+  }
+
+  if (showFullTrekComplete) {
+    return (
+      <div className={`min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50 py-8 px-4 ${isRTL ? 'rtl' : 'ltr'}`}>
+        <div className="max-w-4xl mx-auto">
+          <Card className="overflow-hidden">
+            <CardContent className="p-6 sm:p-8 text-center">
+              <Mountain className="w-16 h-16 mx-auto text-orange-600 mb-4" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+                {language === 'he' ? 'ההרשמה לטראק מלא התקבלה!' :
+                 language === 'ru' ? 'Регистрация на полный трек получена!' :
+                 language === 'es' ? '¡Registro para trek completo recibido!' :
+                 language === 'fr' ? 'Inscription au trek complet reçue!' :
+                 language === 'de' ? 'Anmeldung für vollen Trek erhalten!' :
+                 language === 'it' ? 'Registrazione per trek completo ricevuta!' :
+                 'Full Trek Registration Received!'}
+              </h1>
+              <p className="text-lg text-gray-700 mb-6">
+                {language === 'he' ? 'מנהלי נפגשים יבדקו את הבקשה ויישלחו לך בקשת תשלום במייל או בוואטסאפ.' :
+                 language === 'ru' ? 'Администраторы проверят вашу заявку и отправят вам запрос на оплату по email или WhatsApp.' :
+                 language === 'es' ? 'Los administradores revisarán tu solicitud y te enviarán una solicitud de pago por email o WhatsApp.' :
+                 language === 'fr' ? 'Les administrateurs examineront votre demande et vous enverront une demande de paiement par email ou WhatsApp.' :
+                 language === 'de' ? 'Administratoren werden Ihre Anfrage prüfen und Ihnen eine Zahlungsanforderung per E-Mail oder WhatsApp senden.' :
+                 language === 'it' ? 'Gli amministratori esamineranno la tua richiesta e ti invieranno una richiesta di pagamento via email o WhatsApp.' :
+                 'Administrators will review your request and send you a payment request via email or WhatsApp.'}
+              </p>
+              
+              <div className="bg-orange-100 border-2 border-orange-300 rounded-xl p-4 mb-6">
+                <p className="text-orange-800 font-semibold">
+                  {language === 'he' ? `נרשמת ל-${selectedDays.length} ימי טיול` :
+                   language === 'ru' ? `Вы зарегистрированы на ${selectedDays.length} дней похода` :
+                   language === 'es' ? `Te registraste para ${selectedDays.length} días de trek` :
+                   language === 'fr' ? `Vous êtes inscrit pour ${selectedDays.length} jours de trek` :
+                   language === 'de' ? `Sie haben sich für ${selectedDays.length} Trek-Tage angemeldet` :
+                   language === 'it' ? `Ti sei registrato per ${selectedDays.length} giorni di trek` :
+                   `You registered for ${selectedDays.length} trek days`}
+                </p>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-gray-600 mb-3">
+                  {language === 'he' ? 'בינתיים, צפו בסרטון ההיכרות שלנו:' :
+                   language === 'ru' ? 'А пока посмотрите наше вступительное видео:' :
+                   language === 'es' ? 'Mientras tanto, mira nuestro video de introducción:' :
+                   language === 'fr' ? 'En attendant, regardez notre vidéo d\'introduction:' :
+                   language === 'de' ? 'Schauen Sie sich in der Zwischenzeit unser Einführungsvideo an:' :
+                   language === 'it' ? 'Nel frattempo, guarda il nostro video di presentazione:' :
+                   'Meanwhile, watch our introduction video:'}
+                </p>
+                <div className="aspect-video max-w-2xl mx-auto rounded-xl overflow-hidden shadow-lg">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                    title="Groupy Loopy Introduction"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              </div>
+
+              <Button
+                onClick={() => base44.auth.redirectToLogin(createPageUrl('Home'))}
+                className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-8 py-3 text-lg"
+              >
+                <LogIn className="w-5 h-5 mr-2" />
+                {language === 'he' ? 'התחברות לאפליקציה' :
+                 language === 'ru' ? 'Войти в приложение' :
+                 language === 'es' ? 'Iniciar sesión' :
+                 language === 'fr' ? 'Se connecter' :
+                 language === 'de' ? 'Anmelden' :
+                 language === 'it' ? 'Accedi' :
+                 'Login to App'}
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
