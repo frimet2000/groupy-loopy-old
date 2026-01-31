@@ -16,9 +16,9 @@ export default function NifgashimPayment() {
   const [paymentMethod, setPaymentMethod] = useState(null);
   const [paymentComplete, setPaymentComplete] = useState(false);
 
-  // Get URL parameters
+  // Get URL parameters - support multiple param names
   const urlParams = new URLSearchParams(window.location.search);
-  const registrationId = urlParams.get('payment_request') || urlParams.get('registration_id');
+  const registrationId = urlParams.get('payment_request') || urlParams.get('special_hiker') || urlParams.get('registration_id');
   const amount = parseInt(urlParams.get('amount') || '0');
 
   // Fetch registration details
