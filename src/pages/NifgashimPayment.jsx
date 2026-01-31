@@ -21,13 +21,20 @@ export default function NifgashimPayment() {
   const registrationId = urlParams.get('payment_request') || urlParams.get('special_hiker') || urlParams.get('registration_id');
   const amount = parseInt(urlParams.get('amount') || '0');
 
-  // Fetch registration details
+  // Fetch registration details via backend function (no auth required)
   const { data: registration, isLoading, error } = useQuery({
     queryKey: ['paymentRegistration', registrationId],
     queryFn: async () => {
       if (!registrationId) return null;
-      const regs = await base44.entities.NifgashimRegistration.filter({ id: registrationId });
-      return regs[0] || null;
+      try {
+        const response = await base44.functions.invoke('getRegistrationForPayment', { 
+          registrationId 
+        });
+        return response.data?.registration || null;
+      } catch (e) {
+        console.error('Failed to fetch registration:', e);
+        return null;
+      }
     },
     enabled: !!registrationId
   });
